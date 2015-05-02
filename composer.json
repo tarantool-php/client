@@ -1,0 +1,31 @@
+{
+    "name": "tarantool/client",
+    "description": "PHP client for Tarantool.",
+    "keywords": ["tarantool", "client", "pure"],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Eugene Leonovich",
+            "email": "gen.work@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "": "src/"
+        }
+    },
+    "autoload-dev" : {
+        "psr-4": {
+            "Tarantool\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}

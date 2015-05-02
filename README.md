@@ -1,2 +1,1 @@
-# client
-PHP client for Tarantool
+# PHP client for Tarantool
