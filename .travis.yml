@@ -24,7 +24,7 @@ install:
 
 before_script:
     - sudo cp ./tests/Integration/instance.lua /etc/tarantool/instances.enabled
-    - tarantoolctl start instance
+    - sudo tarantoolctl start instance
 
 script:
     - phpunit -v --coverage-clover coverage.clover
