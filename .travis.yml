@@ -19,6 +19,7 @@ before_install:
 
 install:
     - sudo apt-get -y install tarantool
+    - pecl install msgpack
     - composer install
 
 script:
