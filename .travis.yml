@@ -1,0 +1,32 @@
+language: php
+
+php:
+    - 5.4
+    - 5.5
+    - 5.6
+    - hhvm
+    - hhvm-nightly
+
+matrix:
+    allow_failures:
+        - php: hhvm
+        - php: hhvm-nightly
+
+ before_install:
+  - curl http://tarantool.org/dist/public.key | sudo apt-key add -
+  - echo "deb http://tarantool.org/dist/master/ubuntu `lsb_release -c -s` main" | sudo tee -a /etc/apt/sources.list.d/tarantool.list
+  - sudo apt-get update
+
+install:
+  - sudo apt-get -y install tarantool
+
+script:
+    - phpunit -v --coverage-clover coverage.clover
+
+after_script:
+    # code-coverage for scrutinizer-ci
+    - >
+        bash -c 'if [[ $TRAVIS_PHP_VERSION == 5.4 ]]; then
+        wget https://scrutinizer-ci.com/ocular.phar;
+        php ocular.phar code-coverage:upload --format=php-clover coverage.clover;
+        fi;'
