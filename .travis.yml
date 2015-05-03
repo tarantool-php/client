@@ -23,7 +23,7 @@ install:
     - composer install
 
 before_script:
-    - ./tests/Integration/instance.lua
+    - ./tests/Integration/instance.lua >> instance.log &
 
 script:
     - phpunit -v --coverage-clover coverage.clover
