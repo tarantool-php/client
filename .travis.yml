@@ -23,7 +23,8 @@ install:
     - composer install
 
 before_script:
-    - ./tests/Integration/instance.lua > instance.log 2>&1 &
+    - sudo cp ./tests/Integration/instance.lua /etc/tarantool/instances.enabled
+    - tarantoolctl start instance
 
 script:
     - phpunit -v --coverage-clover coverage.clover
