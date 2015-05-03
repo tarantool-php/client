@@ -18,7 +18,8 @@ before_install:
     - sudo apt-get update
 
 install:
-  - sudo apt-get -y install tarantool
+    - sudo apt-get -y install tarantool
+    - composer install
 
 script:
     - phpunit -v --coverage-clover coverage.clover
