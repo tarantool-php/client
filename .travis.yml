@@ -37,7 +37,6 @@ before_script:
             fi;
             sleep 1;
         done
-    - sudo tarantoolctl status instance
 
 script:
     - phpunit -v --coverage-clover coverage.clover
