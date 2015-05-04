@@ -31,12 +31,13 @@ before_script:
     - sudo cp ./tests/Integration/instance.lua /etc/tarantool/instances.enabled
     - sudo tarantoolctl start instance
     - >
-        for i in `seq 1 10`; do 
+        for i in `seq 1 10`; do
             if tarantoolctl status instance; then
-                break; 
-            fi; 
+                break;
+            fi;
             sleep 1;
         done
+    - tarantoolctl status instance
 
 script:
     - phpunit -v --coverage-clover coverage.clover
