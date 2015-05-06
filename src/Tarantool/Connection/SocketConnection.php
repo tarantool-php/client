@@ -49,7 +49,7 @@ class SocketConnection implements Connection
 
     public function disconnect()
     {
-        if (is_resource($this->socket)) {
+        if ($this->socket) {
             socket_close($this->socket);
             $this->socket = null;
         }
@@ -57,12 +57,12 @@ class SocketConnection implements Connection
 
     public function isConnected()
     {
-        return is_resource($this->socket);
+        return null !== $this->socket;
     }
 
     public function send($data)
     {
-        if (!is_resource($this->socket)) {
+        if (!$this->socket) {
             $this->connect();
         }
 
