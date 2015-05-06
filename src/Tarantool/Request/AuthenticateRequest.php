@@ -2,7 +2,7 @@
 
 namespace Tarantool\Request;
 
-use Tarantool\Iproto;
+use Tarantool\IProto;
 
 class AuthenticateRequest extends Request
 {
@@ -30,8 +30,8 @@ class AuthenticateRequest extends Request
         $scramble = self::strxor($hash1, $scramble);
 
         return [
-            Iproto::TUPLE => ['chap-sha1', $scramble],
-            Iproto::USER_NAME => $this->username,
+            IProto::TUPLE => ['chap-sha1', $scramble],
+            IProto::USER_NAME => $this->username,
         ];
     }
 

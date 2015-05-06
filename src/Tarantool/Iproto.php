@@ -2,7 +2,7 @@
 
 namespace Tarantool;
 
-abstract class Iproto
+abstract class IProto
 {
     const CODE = 0x00;
     const SYNC = 0x01;

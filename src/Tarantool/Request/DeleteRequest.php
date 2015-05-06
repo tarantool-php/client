@@ -2,7 +2,7 @@
 
 namespace Tarantool\Request;
 
-use Tarantool\Iproto;
+use Tarantool\IProto;
 
 class DeleteRequest extends Request
 {
@@ -25,9 +25,9 @@ class DeleteRequest extends Request
     public function getBody()
     {
         return [
-            Iproto::SPACE_ID => $this->spaceNo,
-            Iproto::INDEX_ID => $this->indexNo,
-            Iproto::KEY => $this->key,
+            IProto::SPACE_ID => $this->spaceNo,
+            IProto::INDEX_ID => $this->indexNo,
+            IProto::KEY => $this->key,
         ];
     }
 }

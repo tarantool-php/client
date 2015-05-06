@@ -2,7 +2,7 @@
 
 namespace Tarantool\Request;
 
-use Tarantool\Iproto;
+use Tarantool\IProto;
 
 class CallRequest extends Request
 {
@@ -23,8 +23,8 @@ class CallRequest extends Request
     public function getBody()
     {
         return [
-            Iproto::FUNCTION_NAME => $this->funcName,
-            Iproto::TUPLE => $this->args,
+            IProto::FUNCTION_NAME => $this->funcName,
+            IProto::TUPLE => $this->args,
         ];
     }
 }

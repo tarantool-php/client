@@ -2,7 +2,7 @@
 
 namespace Tarantool\Request;
 
-use Tarantool\Iproto;
+use Tarantool\IProto;
 
 class UpdateRequest extends Request
 {
@@ -27,10 +27,10 @@ class UpdateRequest extends Request
     public function getBody()
     {
         return [
-            Iproto::SPACE_ID => $this->spaceNo,
-            Iproto::INDEX_ID => $this->indexNo,
-            Iproto::KEY => [$this->key],
-            Iproto::TUPLE => $this->operations,
+            IProto::SPACE_ID => $this->spaceNo,
+            IProto::INDEX_ID => $this->indexNo,
+            IProto::KEY => [$this->key],
+            IProto::TUPLE => $this->operations,
         ];
     }
 }

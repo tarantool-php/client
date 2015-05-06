@@ -3,7 +3,7 @@
 namespace Tarantool\Connection;
 
 use Tarantool\Exception\ConnectionException;
-use Tarantool\Iproto;
+use Tarantool\IProto;
 
 class SocketConnection implements Connection
 {
@@ -42,7 +42,7 @@ class SocketConnection implements Connection
 
         $this->socket = $socket;
 
-        $greeting = socket_read($socket, Iproto::GREETING_SIZE);
+        $greeting = socket_read($socket, IProto::GREETING_SIZE);
 
         return substr(base64_decode(substr($greeting, 64, 44)), 0, 20);
     }

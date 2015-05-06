@@ -2,7 +2,7 @@
 
 namespace Tarantool\Request;
 
-use Tarantool\Iproto;
+use Tarantool\IProto;
 
 class SelectRequest extends Request
 {
@@ -31,12 +31,12 @@ class SelectRequest extends Request
     public function getBody()
     {
         return [
-            Iproto::KEY => $this->key,
-            Iproto::SPACE_ID => $this->spaceNo,
-            Iproto::INDEX_ID => $this->indexNo,
-            Iproto::LIMIT => $this->limit,
-            Iproto::OFFSET => $this->offset,
-            Iproto::ITERATOR => $this->iterator,
+            IProto::KEY => $this->key,
+            IProto::SPACE_ID => $this->spaceNo,
+            IProto::INDEX_ID => $this->indexNo,
+            IProto::LIMIT => $this->limit,
+            IProto::OFFSET => $this->offset,
+            IProto::ITERATOR => $this->iterator,
         ];
     }
 }

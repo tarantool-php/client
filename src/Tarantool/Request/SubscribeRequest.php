@@ -2,7 +2,7 @@
 
 namespace Tarantool\Request;
 
-use Tarantool\Iproto;
+use Tarantool\IProto;
 
 class SubscribeRequest extends Request
 {
@@ -25,9 +25,9 @@ class SubscribeRequest extends Request
     public function getBody()
     {
         return [
-            Iproto::CLUSTER_UUID => $this->clusterUuid,
-            Iproto::SERVER_UUID => $this->serverUuid,
-            Iproto::VCLOCK => $this->vclock,
+            IProto::CLUSTER_UUID => $this->clusterUuid,
+            IProto::SERVER_UUID => $this->serverUuid,
+            IProto::VCLOCK => $this->vclock,
         ];
     }
 }

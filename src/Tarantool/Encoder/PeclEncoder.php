@@ -3,7 +3,7 @@
 namespace Tarantool\Encoder;
 
 use Tarantool\Exception\Exception;
-use Tarantool\Iproto;
+use Tarantool\IProto;
 use Tarantool\Request\Request;
 use Tarantool\Response;
 
@@ -20,8 +20,8 @@ class PeclEncoder implements Encoder
     public function encode(Request $request)
     {
         $content = pack('C*', 0x82,
-            Iproto::CODE, $request->getType(),
-            Iproto::SYNC, $request->getSync()
+            IProto::CODE, $request->getType(),
+            IProto::SYNC, $request->getSync()
         );
 
         if (null !== $data = $request->getBody()) {
@@ -40,13 +40,13 @@ class PeclEncoder implements Encoder
         }
 
         $header = $this->unpacker->data();
-        $code = $header[Iproto::CODE];
+        $code = $header[IProto::CODE];
         $body = $this->unpacker->execute() ? $this->unpacker->data() : null;
 
         if ($code >= Request::TYPE_ERROR) {
-            throw new Exception($body[Iproto::ERROR], $code & (Request::TYPE_ERROR - 1));
+            throw new Exception($body[IProto::ERROR], $code & (Request::TYPE_ERROR - 1));
         }
 
-        return new Response($header[Iproto::SYNC], $body ? $body[Iproto::DATA] : null);
+        return new Response($header[IProto::SYNC], $body ? $body[IProto::DATA] : null);
     }
 }

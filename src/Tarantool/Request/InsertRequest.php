@@ -2,7 +2,7 @@
 
 namespace Tarantool\Request;
 
-use Tarantool\Iproto;
+use Tarantool\IProto;
 
 class InsertRequest extends Request
 {
@@ -23,8 +23,8 @@ class InsertRequest extends Request
     public function getBody()
     {
         return [
-            Iproto::SPACE_ID => $this->spaceNo,
-            Iproto::TUPLE => $this->values,
+            IProto::SPACE_ID => $this->spaceNo,
+            IProto::TUPLE => $this->values,
         ];
     }
 }

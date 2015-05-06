@@ -2,7 +2,7 @@
 
 namespace Tarantool\Request;
 
-use Tarantool\Iproto;
+use Tarantool\IProto;
 
 class JoinRequest extends Request
 {
@@ -21,7 +21,7 @@ class JoinRequest extends Request
     public function getBody()
     {
         return [
-            Iproto::SERVER_UUID => $this->serverUuid,
+            IProto::SERVER_UUID => $this->serverUuid,
         ];
     }
 }
