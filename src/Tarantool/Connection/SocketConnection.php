@@ -69,9 +69,9 @@ class SocketConnection implements Connection
         $count = socket_write($this->socket, $data, strlen($data));
 
         $length = socket_read($this->socket, 5);
-        $length = msgpack_unpack($length);
+        $length = unpack('Ctype/Nlength', $length);
 
-        $data = socket_read($this->socket, $length);
+        $data = socket_read($this->socket, $length['length']);
 
         return $data;
     }
