@@ -15,8 +15,8 @@ class SocketConnection implements Connection
     private $socket;
 
     /**
-     * @param string|null  $host Default to 'localhost'.
-     * @param int|null     $port Default to 3301.
+     * @param string|null $host Default to 'localhost'.
+     * @param int|null    $port Default to 3301.
      */
     public function __construct($host = null, $port = null)
     {

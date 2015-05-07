@@ -3,6 +3,7 @@
 namespace Tarantool\Tests\Integration;
 
 use Tarantool\Exception\Exception;
+use Tarantool\Tests\Assert;
 
 class DataManipulationTest extends \PHPUnit_Framework_TestCase
 {

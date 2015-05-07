@@ -1,6 +1,6 @@
 <?php
 
-namespace Tarantool\Tests\Integration;
+namespace Tarantool\Tests;
 
 trait Assert
 {

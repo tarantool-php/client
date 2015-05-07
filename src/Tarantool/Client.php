@@ -2,7 +2,7 @@
 
 namespace Tarantool;
 
-use Tarantool\Connection\SocketConnection;
+use Tarantool\Connection\Connection;
 use Tarantool\Encoder\Encoder;
 use Tarantool\Encoder\PeclEncoder;
 use Tarantool\Request\AuthenticateRequest;
@@ -19,22 +19,26 @@ use Tarantool\Schema\Schema;
 class Client
 {
     private $connection;
+    private $encoder;
+    private $schema;
     private $salt;
     private $username;
     private $password;
-    private $schema;
-    private $encoder;
 
     /**
-     * @param string|null  $host Default to 'localhost'.
-     * @param int|null     $port Default to 3301.
-     * @param Encoder|null $encoder
+     * @param Connection|null $connection
+     * @param Encoder|null    $encoder
      */
-    public function __construct($host = null, $port = null, Encoder $encoder = null)
+    public function __construct(Connection $connection, Encoder $encoder = null)
     {
-        $this->connection = new SocketConnection($host, $port);
-        $this->schema = new Schema($this);
+        $this->connection = $connection ?: new SocketConnection();
         $this->encoder = $encoder ?: new PeclEncoder();
+        $this->schema = new Schema($this);
+    }
+
+    public function getConnection()
+    {
+        return $this->connection;
     }
 
     public function connect()
