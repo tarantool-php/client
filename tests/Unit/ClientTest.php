@@ -9,8 +9,19 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 {
     use Assert;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject
+     */
     private $connection;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject
+     */
     private $encoder;
+
+    /**
+     * @var Client
+     */
     private $client;
 
     protected function setUp()
@@ -31,14 +42,12 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     public function testMethodCall($methodName, array $methodArgs)
     {
         $response = $this->getMock('Tarantool\Response', [], [], '', false);
-        $response->expects($this->any())->method('getData')
-            ->will($this->returnValue([[1, 2, 3]]));
 
-        $this->encoder->expects($this->atLeastOnce())->method('encode')
+        $this->encoder->expects($this->once())->method('encode')
             ->with($this->isInstanceOf('Tarantool\Request\Request'))
             ->will($this->returnValue($this->isType('string')));
 
-        $this->encoder->expects($this->atLeastOnce())->method('decode')
+        $this->encoder->expects($this->once())->method('decode')
             ->will($this->returnValue($response));
 
         $response = call_user_func_array([$this->client, $methodName], $methodArgs);
@@ -50,13 +59,13 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     {
         return [
             ['ping', []],
-            ['select', ['foo', [42]]],
-            ['insert', ['foo', [1]]],
-            ['replace', ['foo', [1, 2]]],
-            ['update', ['foo', 1, [['+', 1, 2]]]],
-            ['delete', ['foo', [1]]],
-            ['call', ['foo']],
-            ['evaluate', ['foo']],
+            ['select', [1, [42]]],
+            ['insert', [1, [1]]],
+            ['replace', [1, [1, 2]]],
+            ['update', [1, 1, [['+', 1, 2]]]],
+            ['delete', [1, [1]]],
+            ['call', ['box.stat']],
+            ['evaluate', ['return 42']],
         ];
     }
 }
