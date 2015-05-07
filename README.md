@@ -30,3 +30,8 @@ To run all tests:
 ```sh
 $ phpunit
 ```
+
+
+## License
+
+The library is released under the MIT License. See the bundled [LICENSE](LICENSE) file for details.
