@@ -124,6 +124,28 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @expectedException \Tarantool\Exception\Exception
+     * @expectedExceptionMessage Read access denied for user 'user_foo' to space '_space'
+     */
+    public function testUseCredentialsAfterReconnect()
+    {
+        $client = self::createClient();
+
+        $client->authenticate('user_foo', 'foo');
+        $client->disconnect();
+        $client->select('space_conn');
+    }
+
+    public function testRegenerateSalt()
+    {
+        $client = self::createClient();
+
+        $client->connect();
+        $client->disconnect();
+        $client->authenticate('user_foo', 'foo');
+    }
+
     public function testCacheSchema()
     {
         $total = self::getTotalSelectCalls();

@@ -53,6 +53,7 @@ class Client
     public function disconnect()
     {
         $this->connection->disconnect();
+        $this->salt = null;
     }
 
     public function authenticate($username, $password)
@@ -60,8 +61,8 @@ class Client
         $this->username = $username;
         $this->password = $password;
 
-        if (!$this->salt) {
-            $this->connect();
+        if (!$this->connection->isConnected()) {
+            $this->salt = $this->connection->connect();
         }
 
         $request = new AuthenticateRequest($this->salt, $username, $password);
@@ -152,7 +153,7 @@ class Client
     private function sendRequest($request)
     {
         if (!$this->connection->isConnected()) {
-            $this->connection->connect();
+            $this->connect();
         }
 
         $data = $this->encoder->encode($request);
