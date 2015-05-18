@@ -7,11 +7,12 @@ use Tarantool\Request\Request;
 interface Encoder
 {
     /**
-     * @param Request $request
+     * @param Request  $request
+     * @param int|null $sync
      *
      * @return string
      */
-    public function encode(Request $request);
+    public function encode(Request $request, $sync = null);
 
     /**
      * @param string $data

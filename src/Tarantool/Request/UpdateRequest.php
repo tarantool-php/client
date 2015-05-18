@@ -4,7 +4,7 @@ namespace Tarantool\Request;
 
 use Tarantool\IProto;
 
-class UpdateRequest extends Request
+class UpdateRequest implements Request
 {
     private $spaceNo;
     private $indexNo;

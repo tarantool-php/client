@@ -4,7 +4,7 @@ namespace Tarantool\Request;
 
 use Tarantool\IProto;
 
-class EvaluateRequest extends Request
+class EvaluateRequest implements Request
 {
     private $expr;
     private $args;

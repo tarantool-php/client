@@ -2,7 +2,7 @@
 
 namespace Tarantool\Request;
 
-class PingRequest extends Request
+class PingRequest implements Request
 {
     public function getType()
     {

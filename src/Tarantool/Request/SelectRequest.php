@@ -4,7 +4,7 @@ namespace Tarantool\Request;
 
 use Tarantool\IProto;
 
-class SelectRequest extends Request
+class SelectRequest implements Request
 {
     private $spaceNo;
     private $indexNo;

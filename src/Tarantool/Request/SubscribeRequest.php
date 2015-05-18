@@ -4,7 +4,7 @@ namespace Tarantool\Request;
 
 use Tarantool\IProto;
 
-class SubscribeRequest extends Request
+class SubscribeRequest implements Request
 {
     private $clusterUuid;
     private $serverUuid;

@@ -2,7 +2,7 @@
 
 namespace Tarantool\Request;
 
-abstract class Request
+interface Request
 {
     const TYPE_OK = 0;
     const TYPE_SELECT = 1;
@@ -18,13 +18,6 @@ abstract class Request
     const TYPE_SUBSCRIBE = 66;
     const TYPE_ERROR = 32768;
 
-    protected $sync = 0;
-
-    public function getSync()
-    {
-        return $this->sync;
-    }
-
-    abstract public function getType();
-    abstract public function getBody();
+    public function getType();
+    public function getBody();
 }

@@ -4,7 +4,7 @@ namespace Tarantool\Request;
 
 use Tarantool\IProto;
 
-class ReplaceRequest extends Request
+class ReplaceRequest implements Request
 {
     private $spaceNo;
     private $values;

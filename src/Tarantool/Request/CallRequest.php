@@ -4,7 +4,7 @@ namespace Tarantool\Request;
 
 use Tarantool\IProto;
 
-class CallRequest extends Request
+class CallRequest implements Request
 {
     private $funcName;
     private $args;
