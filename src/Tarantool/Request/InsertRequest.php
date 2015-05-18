@@ -4,7 +4,7 @@ namespace Tarantool\Request;
 
 use Tarantool\IProto;
 
-class InsertRequest extends Request
+class InsertRequest implements Request
 {
     private $spaceNo;
     private $values;

@@ -17,11 +17,14 @@ class PeclEncoder implements Encoder
         $this->unpacker->setOption(\MessagePack::OPT_PHPONLY, false);
     }
 
-    public function encode(Request $request)
+    /**
+     * {@inheritdoc}
+     */
+    public function encode(Request $request, $sync = null)
     {
         $content = pack('C*', 0x82,
             IProto::CODE, $request->getType(),
-            IProto::SYNC, $request->getSync()
+            IProto::SYNC, (int) $sync
         );
 
         if (null !== $data = $request->getBody()) {
@@ -31,6 +34,9 @@ class PeclEncoder implements Encoder
         return msgpack_pack(strlen($content)).$content;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function decode($data)
     {
         $this->unpacker->feed($data);

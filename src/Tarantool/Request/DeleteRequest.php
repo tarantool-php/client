@@ -4,7 +4,7 @@ namespace Tarantool\Request;
 
 use Tarantool\IProto;
 
-class DeleteRequest extends Request
+class DeleteRequest implements Request
 {
     private $spaceNo;
     private $indexNo;

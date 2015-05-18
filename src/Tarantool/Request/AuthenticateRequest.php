@@ -4,7 +4,7 @@ namespace Tarantool\Request;
 
 use Tarantool\IProto;
 
-class AuthenticateRequest extends Request
+class AuthenticateRequest implements Request
 {
     private $salt;
     private $username;

@@ -4,7 +4,7 @@ namespace Tarantool\Request;
 
 use Tarantool\IProto;
 
-class JoinRequest extends Request
+class JoinRequest implements Request
 {
     private $serverUuid;
 
