@@ -24,9 +24,9 @@ class SocketConnection implements Connection
         $this->port = null === $port ? self::DEFAULT_PORT : $port;
     }
 
-    public function connect()
+    public function open()
     {
-        $this->disconnect();
+        $this->close();
 
         if (false === $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP)) {
             throw new ConnectionException(sprintf(
@@ -47,7 +47,7 @@ class SocketConnection implements Connection
         return substr(base64_decode(substr($greeting, 64, 44)), 0, 20);
     }
 
-    public function disconnect()
+    public function close()
     {
         if ($this->socket) {
             socket_close($this->socket);
@@ -55,15 +55,15 @@ class SocketConnection implements Connection
         }
     }
 
-    public function isConnected()
+    public function isClosed()
     {
-        return null !== $this->socket;
+        return null === $this->socket;
     }
 
     public function send($data)
     {
         if (!$this->socket) {
-            $this->connect();
+            $this->open();
         }
 
         $count = socket_write($this->socket, $data, strlen($data));

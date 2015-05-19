@@ -26,12 +26,12 @@ class Client
     private $password;
 
     /**
-     * @param Connection|null $connection
-     * @param Encoder|null    $encoder
+     * @param Connection   $connection
+     * @param Encoder|null $encoder
      */
     public function __construct(Connection $connection, Encoder $encoder = null)
     {
-        $this->connection = $connection ?: new SocketConnection();
+        $this->connection = $connection;
         $this->encoder = $encoder ?: new PeclEncoder();
         $this->schema = new Schema($this);
     }
@@ -43,7 +43,7 @@ class Client
 
     public function connect()
     {
-        $this->salt = $this->connection->connect();
+        $this->salt = $this->connection->open();
 
         if ($this->username) {
             $this->authenticate($this->username, $this->password);
@@ -52,7 +52,7 @@ class Client
 
     public function disconnect()
     {
-        $this->connection->disconnect();
+        $this->connection->close();
         $this->salt = null;
     }
 
@@ -61,8 +61,8 @@ class Client
         $this->username = $username;
         $this->password = $password;
 
-        if (!$this->connection->isConnected()) {
-            $this->salt = $this->connection->connect();
+        if ($this->connection->isClosed()) {
+            $this->salt = $this->connection->open();
         }
 
         $request = new AuthenticateRequest($this->salt, $username, $password);
@@ -152,7 +152,7 @@ class Client
 
     private function sendRequest($request)
     {
-        if (!$this->connection->isConnected()) {
+        if ($this->connection->isClosed()) {
             $this->connect();
         }
 

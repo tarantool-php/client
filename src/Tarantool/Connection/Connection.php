@@ -4,8 +4,8 @@ namespace Tarantool\Connection;
 
 interface Connection
 {
-    public function connect();
-    public function disconnect();
-    public function isConnected();
+    public function open();
+    public function close();
+    public function isClosed();
     public function send($data);
 }
