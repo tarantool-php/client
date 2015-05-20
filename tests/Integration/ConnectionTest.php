@@ -3,6 +3,8 @@
 namespace Tarantool\Tests\Integration;
 
 use Tarantool\Exception\Exception;
+use Tarantool\Schema\Index;
+use Tarantool\Schema\Space;
 use Tarantool\Tests\Assert;
 
 class ConnectionTest extends \PHPUnit_Framework_TestCase
@@ -153,13 +155,24 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
         $client->authenticate('user_foo', 'foo');
     }
 
-    public function testCacheSchema()
+    public function testCacheSpace()
     {
         $total = self::getTotalSelectCalls();
 
         self::$client->flushSchema();
         self::$client->select('space_conn');
         self::$client->select('space_conn');
+
+        $this->assertSame(3, self::getTotalSelectCalls() - $total);
+    }
+
+    public function testCacheIndex()
+    {
+        $total = self::getTotalSelectCalls();
+
+        self::$client->flushSchema();
+        self::$client->select(Space::INDEX, [], 'name');
+        self::$client->select(Space::INDEX, [], 'name');
 
         $this->assertSame(3, self::getTotalSelectCalls() - $total);
     }
