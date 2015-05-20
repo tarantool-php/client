@@ -146,6 +146,13 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
         $client->authenticate('user_foo', 'foo');
     }
 
+    public function testReconnectOnEmptySalt()
+    {
+        $client = self::createClient();
+        $client->getConnection()->open();
+        $client->authenticate('user_foo', 'foo');
+    }
+
     public function testCacheSchema()
     {
         $total = self::getTotalSelectCalls();

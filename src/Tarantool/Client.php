@@ -56,12 +56,17 @@ class Client
         $this->salt = null;
     }
 
+    public function isDisconnected()
+    {
+        return $this->connection->isClosed() || !$this->salt;
+    }
+
     public function authenticate($username, $password)
     {
         $this->username = $username;
         $this->password = $password;
 
-        if ($this->connection->isClosed()) {
+        if ($this->isDisconnected()) {
             $this->salt = $this->connection->open();
         }
 
