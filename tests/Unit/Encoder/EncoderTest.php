@@ -2,10 +2,11 @@
 
 namespace Tarantool\Tests\Unit\Encoder;
 
-use Tarantool\Request\Request;
-
 abstract class EncoderTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var \Tarantool\Encoder\Encoder
+     */
     private $encoder;
 
     protected function setUp()
@@ -44,5 +45,8 @@ abstract class EncoderTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @return \Tarantool\Encoder\Encoder
+     */
     abstract protected function createEncoder();
 }
