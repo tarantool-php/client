@@ -179,7 +179,7 @@ class Client
     private function normalizeIndex($space, $index)
     {
         if (is_string($index)) {
-            return $this->schema->getIndex($space, $index)->getId();
+            return $this->schema->getSpace($space)->getIndex($index)->getId();
         }
 
         return $index;
