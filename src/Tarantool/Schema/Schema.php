@@ -8,6 +8,10 @@ use Tarantool\Exception\Exception;
 class Schema
 {
     private $client;
+
+    /**
+     * @var Space[]
+     */
     private $spaces = [];
 
     public function __construct(Client $client)
@@ -15,10 +19,40 @@ class Schema
         $this->client = $client;
     }
 
+    public function getClient()
+    {
+        return $this->client;
+    }
+
+    public function hasSpace($space)
+    {
+        return isset($this->spaces[$space]);
+    }
+
+    public function addSpace(Space $space)
+    {
+        if (isset($this->spaces[$space->getId()])) {
+            $cachedSpace = $this->spaces[$space->getId()];
+            foreach ($cachedSpace->getIndexes() as $index) {
+                $space->addIndex($index);
+            }
+        }
+
+        $this->spaces[$space->getId()] = $space;
+
+        if ($name = $space->getName()) {
+            $this->spaces[$name] = $space;
+        }
+    }
+
     public function getSpace($space)
     {
         if (isset($this->spaces[$space])) {
             return $this->spaces[$space];
+        }
+
+        if (!is_string($space)) {
+            return new Space($this, $space, null);
         }
 
         $index = is_string($space) ? Index::SPACE_NAME : Index::SPACE_PRIMARY;
@@ -29,45 +63,12 @@ class Schema
             throw new Exception("Space '$space' does not exist");
         }
 
-        $space = new Space($data[0]);
-        $this->addSpace($space);
-
-        return $space;
+        return new Space($this, $data[0][0], $data[0][2]);
     }
 
-    public function getIndex($space, $index)
+    public function getSpaces()
     {
-        $space = $this->getSpace($space);
-
-        if ($space->hasIndex($index)) {
-            return $space->getIndex($index);
-        }
-
-        $_index = is_string($index) ? Index::INDEX_NAME : Index::INDEX_PRIMARY;
-        $response = $this->client->select(Space::INDEX, [$space->getId(), $index], $_index);
-        $data = $response->getData();
-
-        if (empty($data)) {
-            throw new Exception(sprintf('There\'s no index with %s "%s" in space "%s".',
-                is_string($index) ? 'name' : 'id',
-                $index,
-                $space->getName()
-            ));
-        }
-
-        $index = new Index($data[0]);
-        $space->addIndex($index);
-
-        return $index;
-    }
-
-    public function addSpace(Space $space)
-    {
-        $this->spaces[$space->getId()] = $space;
-
-        if ($name = $space->getName()) {
-            $this->spaces[$name] = $space;
-        }
+        return $this->spaces;
     }
 
     public function flush()

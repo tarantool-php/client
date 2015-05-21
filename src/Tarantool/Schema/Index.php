@@ -9,17 +9,21 @@ class Index
     const INDEX_PRIMARY = 0;
     const INDEX_NAME = 2;
 
+    private $space;
     private $id;
     private $name;
-    private $index;
-    private $unique;
 
-    public function __construct(array $data)
+    public function __construct(Space $space, $id, $name)
     {
-        $this->id = $data[1];
-        $this->name = $data[2];
-        $this->index = $data[3];
-        $this->unique = $data[4];
+        $this->id = $id;
+        $this->name = $name;
+        $this->space = $space;
+        $this->space->addIndex($this);
+    }
+
+    public function getSpace()
+    {
+        return $this->space;
     }
 
     public function getId()
