@@ -59,13 +59,15 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     {
         return [
             ['ping', []],
+            ['call', ['box.stat']],
+            ['evaluate', ['return 42']],
+            /*
             ['select', [1, [42]]],
             ['insert', [1, [1]]],
             ['replace', [1, [1, 2]]],
             ['update', [1, 1, [['+', 1, 2]]]],
             ['delete', [1, [1]]],
-            ['call', ['box.stat']],
-            ['evaluate', ['return 42']],
+            */
         ];
     }
 }
