@@ -26,9 +26,12 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider provideAutoConnectData
      */
-    public function testAutoConnect($methodName, array $methodArgs)
+    public function testAutoConnect($methodName, array $methodArgs, $space = null)
     {
-        $response = call_user_func_array([self::$client, $methodName], $methodArgs);
+        $object = $space ? self::$client->getSpace($space) : self::$client;
+        self::$client->disconnect();
+
+        $response = call_user_func_array([$object, $methodName], $methodArgs);
 
         $this->assertResponse($response);
     }
@@ -37,13 +40,15 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     {
         return [
             ['ping', []],
-            ['select', ['space_conn', [42]]],
-            ['insert', ['space_conn', [1]]],
-            ['replace', ['space_conn', [1, 2]]],
-            ['update', ['space_conn', 1, [['+', 1, 2]]]],
-            ['delete', ['space_conn', [1]]],
             ['call', ['box.stat']],
             ['evaluate', ['return 1']],
+
+            ['select', [[42]], 'space_conn'],
+            ['insert', [[time()]], 'space_conn'],
+            ['replace', [[1, 2]], 'space_conn'],
+            ['update', [1, [['+', 1, 2]]], 'space_conn'],
+            ['delete', [[1]], 'space_conn'],
+
         ];
     }
 
@@ -134,7 +139,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
 
         $client->authenticate('user_foo', 'foo');
         $client->disconnect();
-        $client->select('space_conn');
+        $client->getSpace('space_conn')->select();
     }
 
     public function testRegenerateSalt()

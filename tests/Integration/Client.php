@@ -35,4 +35,11 @@ trait Client
 
         return new TarantoolClient(new SocketConnection($host, $port));
     }
+
+    protected static function getTotalSelectCalls()
+    {
+        $response = self::$client->evaluate('return box.stat().SELECT.total');
+
+        return $response->getData()[0];
+    }
 }

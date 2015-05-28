@@ -2,7 +2,13 @@
 
 namespace Tarantool\Schema;
 
+use Tarantool\Client;
 use Tarantool\Exception\Exception;
+use Tarantool\Request\DeleteRequest;
+use Tarantool\Request\InsertRequest;
+use Tarantool\Request\ReplaceRequest;
+use Tarantool\Request\SelectRequest;
+use Tarantool\Request\UpdateRequest;
 
 class Space
 {
@@ -14,26 +20,14 @@ class Space
     const PRIV = 312;
     const CLUSTER = 320;
 
-    private $schema;
+    private $client;
     private $id;
-    private $name;
+    private static $indexes = [];
 
-    /**
-     * @var Index[]
-     */
-    private $indexes = [];
-
-    public function __construct(Schema $schema, $id, $name)
+    public function __construct(Client $client, $id)
     {
+        $this->client = $client;
         $this->id = $id;
-        $this->name = $name;
-        $this->schema = $schema;
-        $this->schema->addSpace($this);
-    }
-
-    public function getSchema()
-    {
-        return $this->schema;
     }
 
     public function getId()
@@ -41,55 +35,86 @@ class Space
         return $this->id;
     }
 
-    public function getName()
+    public function select(array $key = null, $index = null, $limit = null, $offset = null, $iteratorType = null)
     {
-        return $this->name;
+        $key = null === $key ? [] : $key;
+        $offset = null === $offset ? 0 : $offset;
+        $limit = null === $limit ? 0xffffffff : $limit;
+        $iteratorType = null === $iteratorType ? 0 : $iteratorType;
+        $index = $this->normalizeIndex($index);
+
+        $request = new SelectRequest($this->id, $index, $key, $offset, $limit, $iteratorType);
+
+        return $this->client->sendRequest($request);
     }
 
-    public function hasIndex($index)
+    public function insert(array $values)
     {
-        return isset($this->indexes[$index]);
+        $request = new InsertRequest($this->id, $values);
+
+        return $this->client->sendRequest($request);
     }
 
-    public function addIndex(Index $index)
+    public function replace(array $values)
     {
-        $this->indexes[$index->getId()] = $index;
+        $request = new ReplaceRequest($this->id, $values);
 
-        if ($name = $index->getName()) {
-            $this->indexes[$name] = $index;
+        return $this->client->sendRequest($request);
+    }
+
+    public function update($key, array $operations, $index = null)
+    {
+        $index = $this->normalizeIndex($index);
+        $request = new UpdateRequest($this->id, $index, $key, $operations);
+
+        return $this->client->sendRequest($request);
+    }
+
+    public function delete(array $key, $index = null)
+    {
+        $index = null === $index ? 0 : $index;
+        $index = $this->normalizeIndex($this->id, $index);
+
+        $request = new DeleteRequest($this->id, $index, $key);
+
+        return $this->client->sendRequest($request);
+    }
+
+    public function flushIndexes()
+    {
+        self::$indexes = [];
+    }
+
+    private function getIndexByName($indexName)
+    {
+        if (!isset(self::$indexes[$indexName])) {
+            $schema = new Space($this->client, Space::INDEX);
+            $response = $schema->select([$this->id, $indexName], Index::INDEX_NAME);
+            $data = $response->getData();
+
+            if (empty($data)) {
+                throw new Exception(sprintf('There\'s no index with name "%s" in space "%s".',
+                    $indexName,
+                    $this->id
+                ));
+            }
+
+            self::$indexes[$indexName] = $response->getData()[0][1];
         }
+
+        return self::$indexes[$indexName];
     }
 
-    public function getIndex($index)
+    private function normalizeIndex($index)
     {
-        if (isset($this->indexes[$index])) {
-            return $this->indexes[$index];
+        if (null === $index) {
+            return 0;
         }
 
-        $client = $this->schema->getClient();
-
-        $_index = is_string($index) ? Index::INDEX_NAME : Index::INDEX_PRIMARY;
-        $response = $client->select(Space::INDEX, [$this->id, $index], $_index);
-        $data = $response->getData();
-
-        if (empty($data)) {
-            throw new Exception(sprintf('There\'s no index with %s "%s" in space "%s".',
-                is_string($index) ? 'name' : 'id',
-                $index,
-                $this->name ?: $this->id
-            ));
+        if (is_int($index)) {
+            return $index;
         }
 
-        return new Index($this, $data[0][1], $data[0][2]);
-    }
-
-    public function getIndexes()
-    {
-        return $this->indexes;
-    }
-
-    public function flush()
-    {
-        $this->indexes = [];
+        return $this->getIndexByName($index);
     }
 }

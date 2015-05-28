@@ -5,25 +5,23 @@ namespace Tarantool;
 use Tarantool\Connection\Connection;
 use Tarantool\Encoder\Encoder;
 use Tarantool\Encoder\PeclEncoder;
+use Tarantool\Exception\Exception;
 use Tarantool\Request\AuthenticateRequest;
 use Tarantool\Request\CallRequest;
-use Tarantool\Request\DeleteRequest;
 use Tarantool\Request\EvaluateRequest;
-use Tarantool\Request\InsertRequest;
 use Tarantool\Request\PingRequest;
-use Tarantool\Request\ReplaceRequest;
-use Tarantool\Request\SelectRequest;
-use Tarantool\Request\UpdateRequest;
-use Tarantool\Schema\Schema;
+use Tarantool\Request\Request;
+use Tarantool\Schema\Index;
+use Tarantool\Schema\Space;
 
 class Client
 {
     private $connection;
     private $encoder;
-    private $schema;
     private $salt;
     private $username;
     private $password;
+    private $spaces = [];
 
     /**
      * @param Connection   $connection
@@ -33,7 +31,6 @@ class Client
     {
         $this->connection = $connection;
         $this->encoder = $encoder ?: new PeclEncoder();
-        $this->schema = new Schema($this);
     }
 
     public function getConnection()
@@ -82,58 +79,39 @@ class Client
         return $this->sendRequest($request);
     }
 
-    public function select($space, array $key = null, $index = null, $limit = null, $offset = null, $iteratorType = null)
+    /**
+     * @param string|int $space
+     *
+     * @return Space
+     *
+     * @throws Exception
+     */
+    public function getSpace($space)
     {
-        $key = null === $key ? [] : $key;
-        $offset = null === $offset ? 0 : $offset;
-        $limit = null === $limit ? 0xffffffff : $limit;
-        $iteratorType = null === $iteratorType ? 0 : $iteratorType;
+        if (isset($this->spaces[$space])) {
+            return $this->spaces[$space];
+        }
 
-        $space = $this->normalizeSpace($space);
-        $index = null === $index ? 0 : $index;
-        $index = $this->normalizeIndex($space, $index);
+        if (is_string($space)) {
+            $schema = new Space($this, Space::SPACE);
+            $response = $schema->select([$space], Index::SPACE_NAME);
+            $data = $response->getData();
 
-        $request = new SelectRequest($space, $index, $key, $offset, $limit, $iteratorType);
+            if (empty($data)) {
+                throw new Exception("Space '$space' does not exist");
+            }
 
-        return $this->sendRequest($request);
-    }
+            $spaceName = $space;
+            $space = $data[0][0];
+        }
 
-    public function insert($space, array $values)
-    {
-        $space = $this->normalizeSpace($space);
-        $request = new InsertRequest($space, $values);
+        $this->spaces[$space] = new Space($this, $space);
 
-        return $this->sendRequest($request);
-    }
+        if (isset($spaceName)) {
+            $this->spaces[$spaceName] =  $this->spaces[$space];
+        }
 
-    public function replace($space, array $values)
-    {
-        $space = $this->normalizeSpace($space);
-        $request = new ReplaceRequest($space, $values);
-
-        return $this->sendRequest($request);
-    }
-
-    public function update($space, $key, array $operations, $index = null)
-    {
-        $space = $this->normalizeSpace($space);
-        $index = null === $index ? 0 : $index;
-        $index = $this->normalizeIndex($space, $index);
-
-        $request = new UpdateRequest($space, $index, $key, $operations);
-
-        return $this->sendRequest($request);
-    }
-
-    public function delete($space, array $key, $index = null)
-    {
-        $space = $this->normalizeSpace($space);
-        $index = null === $index ? 0 : $index;
-        $index = $this->normalizeIndex($space, $index);
-
-        $request = new DeleteRequest($space, $index, $key);
-
-        return $this->sendRequest($request);
+        return $this->spaces[$space];
     }
 
     public function call($funcName, array $args = [])
@@ -143,11 +121,6 @@ class Client
         return $this->sendRequest($request);
     }
 
-    public function flushSchema()
-    {
-        $this->schema->flush();
-    }
-
     public function evaluate($expr, array $args = [])
     {
         $request = new EvaluateRequest($expr, $args);
@@ -155,7 +128,12 @@ class Client
         return $this->sendRequest($request);
     }
 
-    private function sendRequest($request)
+    public function flushSpaces()
+    {
+        $this->spaces = [];
+    }
+
+    public function sendRequest(Request $request)
     {
         if ($this->connection->isClosed()) {
             $this->connect();
@@ -165,23 +143,5 @@ class Client
         $data = $this->connection->send($data);
 
         return $this->encoder->decode($data);
-    }
-
-    private function normalizeSpace($space)
-    {
-        if (is_string($space)) {
-            return $this->schema->getSpace($space)->getId();
-        }
-
-        return $space;
-    }
-
-    private function normalizeIndex($space, $index)
-    {
-        if (is_string($index)) {
-            return $this->schema->getSpace($space)->getIndex($index)->getId();
-        }
-
-        return $index;
     }
 }

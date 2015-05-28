@@ -3,9 +3,10 @@
 namespace Tarantool\Tests\Integration;
 
 use Tarantool\Exception\Exception;
+use Tarantool\Schema\Space;
 use Tarantool\Tests\Assert;
 
-class DataManipulationTest extends \PHPUnit_Framework_TestCase
+class SpaceTest extends \PHPUnit_Framework_TestCase
 {
     use Assert;
     use Client;
@@ -15,8 +16,8 @@ class DataManipulationTest extends \PHPUnit_Framework_TestCase
      */
     public function testSelect($expectedCount, array $args)
     {
-        array_unshift($args, 'space_data');
-        $response = call_user_func_array([self::$client, 'select'], $args);
+        $space = self::$client->getSpace('space_data');
+        $response = call_user_func_array([$space, 'select'], $args);
 
         $this->assertResponse($response);
         $this->assertCount($expectedCount, $response->getData());
@@ -43,7 +44,7 @@ class DataManipulationTest extends \PHPUnit_Framework_TestCase
 
     public function testSelectEmpty()
     {
-        $response = self::$client->select('space_empty');
+        $response = self::$client->getSpace('space_empty')->select();
 
         $this->assertResponse($response);
         $this->assertEmpty($response->getData());
@@ -55,7 +56,7 @@ class DataManipulationTest extends \PHPUnit_Framework_TestCase
      */
     public function testSelectFromNonExistingSpaceByName()
     {
-        self::$client->select('non_existing_space');
+        self::$client->getSpace('non_existing_space')->select();
     }
 
     /**
@@ -64,7 +65,7 @@ class DataManipulationTest extends \PHPUnit_Framework_TestCase
      */
     public function testSelectFromNonExistingSpaceById()
     {
-        self::$client->select(123456);
+        self::$client->getSpace(123456)->select();
     }
 
     /**
@@ -72,7 +73,8 @@ class DataManipulationTest extends \PHPUnit_Framework_TestCase
      */
     public function testInsert($space, $values)
     {
-        $response = self::$client->insert($space, $values);
+        $space = self::$client->getSpace($space);
+        $response = $space->insert($values);
 
         $this->assertResponse($response);
         $this->assertSame([$values], $response->getData());
@@ -99,7 +101,8 @@ class DataManipulationTest extends \PHPUnit_Framework_TestCase
      */
     public function testInsertTypeMismatchedValues($space, $values)
     {
-        self::$client->insert($space, $values);
+        $space = self::$client->getSpace($space);
+        $space->insert($values);
     }
 
     public function provideInsertDataWithMismatchedTypes()
@@ -122,12 +125,14 @@ class DataManipulationTest extends \PHPUnit_Framework_TestCase
      */
     public function testInsertDuplicateKey()
     {
-        self::$client->insert('space_foobar', [1, 'baz']);
+        $space = self::$client->getSpace('space_foobar');
+        $space->insert([1, 'baz']);
     }
 
     public function testReplace()
     {
-        $response = self::$client->replace('space_foobar', [1, 'baz']);
+        $space = self::$client->getSpace('space_foobar');
+        $response = $space->replace([1, 'baz']);
 
         $this->assertResponse($response);
         $this->assertSame([[1, 'baz']], $response->getData());
@@ -135,7 +140,8 @@ class DataManipulationTest extends \PHPUnit_Framework_TestCase
 
     public function testDelete()
     {
-        $response = self::$client->delete('space_foobar', [2]);
+        $space = self::$client->getSpace('space_foobar');
+        $response = $space->delete([2]);
 
         $this->assertResponse($response);
         $this->assertSame([[2, 'bar']], $response->getData());
@@ -146,7 +152,8 @@ class DataManipulationTest extends \PHPUnit_Framework_TestCase
      */
     public function testUpdate(array $operations, $result)
     {
-        $response = self::$client->update('space_data', 1, $operations);
+        $space = self::$client->getSpace('space_data');
+        $response = $space->update(1, $operations);
 
         $this->assertResponse($response);
         $this->assertSame([$result], $response->getData());
@@ -180,7 +187,8 @@ class DataManipulationTest extends \PHPUnit_Framework_TestCase
 
     public function testUpdateByNonExistingKey()
     {
-        $response = self::$client->update('space_foobar', 42, ['qux']);
+        $space = self::$client->getSpace('space_foobar');
+        $response = $space->update(42, ['qux']);
 
         $this->assertResponse($response);
         $this->assertSame([], $response->getData());
@@ -191,8 +199,10 @@ class DataManipulationTest extends \PHPUnit_Framework_TestCase
      */
     public function testUpdateUsingInvalidArgs(array $operation, $errorMessage, $errorCode)
     {
+        $space = self::$client->getSpace('space_data');
+
         try {
-            self::$client->update('space_data', 1, [$operation]);
+            $space->update(1, [$operation]);
             $this->fail();
         } catch (Exception $e) {
             $this->assertSame($errorMessage, $e->getMessage());
@@ -211,89 +221,30 @@ class DataManipulationTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    /**
-     * @dataProvider providerCallData
-     */
-    public function testCall(array $args, $result)
+    public function testCacheIndex()
     {
-        $response = 1 !== count($args)
-            ? call_user_func_array([self::$client, 'call'], $args)
-            : self::$client->call($args[0]);
+        $space = self::$client->getSpace(Space::INDEX);
 
-        $this->assertResponse($response);
-        $this->assertSame($result, $response->getData());
+        $total = self::getTotalSelectCalls();
+
+        $space->flushIndexes();
+        $space->select([], 'name');
+        $space->select([], 'name');
+
+        $this->assertSame(3, self::getTotalSelectCalls() - $total);
     }
 
-    public function providerCallData()
+    public function testFlushIndexes()
     {
-        return [
-            [['func_foo'], [[['foo' => 'foo', 'bar' => 42]]]],
-            [['func_sum', [42, -24]], [[18]]],
-            [['func_arg', [42]], [[42]]],
-            [['func_arg', [-42]], [[-42]]],
-            [['func_arg', [null]], [[null]]],
-            [['func_arg', ['foo']], [['foo']]],
-            [['func_arg', [[1, 2, 3]]], [[1, 2, 3]]],
-            [['func_mixed'], [
-                [true],
-                [[
-                    's' => [1, 1428578535],
-                    'u' => 1428578535,
-                    'v' => [],
-                    'c' => [
-                        2 => [1, 1428578535],
-                        106 => [1, 1428578535],
-                    ],
-                    'pc' => [
-                        2 => [1, 1428578535, 9243],
-                        106 => [1, 1428578535, 9243],
-                    ],
-                ]],
-                [true]
-            ]],
-        ];
-    }
+        $space = self::$client->getSpace(Space::INDEX);
 
-    /**
-     * @dataProvider providerEvaluateData
-     */
-    public function testEvaluate(array $args, $result)
-    {
-        $response = 1 !== count($args)
-            ? call_user_func_array([self::$client, 'evaluate'], $args)
-            : self::$client->evaluate($args[0]);
+        $total = self::getTotalSelectCalls();
 
-        $this->assertResponse($response);
-        $this->assertSame($result, $response->getData());
-    }
+        $space->flushIndexes();
+        $space->select([], 'name');
+        $space->flushIndexes();
+        $space->select([], 'name');
 
-    public function providerEvaluateData()
-    {
-        return [
-            [['return func_foo()'], [['foo' => 'foo', 'bar' => 42]]],
-            [['return func_sum(...)', [42, -24]], [18]],
-            [['return func_arg(...)', [42]], [42]],
-            [['return func_arg(...)', [-42]], [-42]],
-            [['return func_arg(...)', [null]], [null]],
-            [['return func_arg(...)', ['foo']], ['foo']],
-            [['return func_arg(...)', [[1, 2, 3]]], [[1, 2, 3]]],
-            [['return func_mixed()'], [
-                true,
-                [
-                    's' => [1, 1428578535],
-                    'u' => 1428578535,
-                    'v' => [],
-                    'c' => [
-                        2 => [1, 1428578535],
-                        106 => [1, 1428578535],
-                    ],
-                    'pc' => [
-                        2 => [1, 1428578535, 9243],
-                        106 => [1, 1428578535, 9243],
-                    ],
-                ],
-                true
-            ]],
-        ];
+        $this->assertSame(4, self::getTotalSelectCalls() - $total);
     }
 }
