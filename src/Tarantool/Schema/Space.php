@@ -22,7 +22,7 @@ class Space
 
     private $client;
     private $id;
-    private static $indexes = [];
+    private $indexes = [];
 
     public function __construct(Client $client, $id)
     {
