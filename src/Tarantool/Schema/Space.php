@@ -82,12 +82,12 @@ class Space
 
     public function flushIndexes()
     {
-        self::$indexes = [];
+        $this->indexes = [];
     }
 
     private function getIndexByName($indexName)
     {
-        if (!isset(self::$indexes[$indexName])) {
+        if (!isset($this->indexes[$indexName])) {
             $schema = new Space($this->client, Space::INDEX);
             $response = $schema->select([$this->id, $indexName], Index::INDEX_NAME);
             $data = $response->getData();
@@ -99,10 +99,10 @@ class Space
                 ));
             }
 
-            self::$indexes[$indexName] = $response->getData()[0][1];
+            $this->indexes[$indexName] = $response->getData()[0][1];
         }
 
-        return self::$indexes[$indexName];
+        return $this->indexes[$indexName];
     }
 
     private function normalizeIndex($index)
