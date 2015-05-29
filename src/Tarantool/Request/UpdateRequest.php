@@ -6,15 +6,15 @@ use Tarantool\IProto;
 
 class UpdateRequest implements Request
 {
-    private $spaceNo;
-    private $indexNo;
+    private $spaceId;
+    private $indexId;
     private $key;
     private $operations;
 
-    public function __construct($spaceNo, $indexNo, $key, array $operations)
+    public function __construct($spaceId, $indexId, $key, array $operations)
     {
-        $this->spaceNo = $spaceNo;
-        $this->indexNo = $indexNo;
+        $this->spaceId = $spaceId;
+        $this->indexId = $indexId;
         $this->key = $key;
         $this->operations = $operations;
     }
@@ -27,8 +27,8 @@ class UpdateRequest implements Request
     public function getBody()
     {
         return [
-            IProto::SPACE_ID => $this->spaceNo,
-            IProto::INDEX_ID => $this->indexNo,
+            IProto::SPACE_ID => $this->spaceId,
+            IProto::INDEX_ID => $this->indexId,
             IProto::KEY => [$this->key],
             IProto::TUPLE => $this->operations,
         ];

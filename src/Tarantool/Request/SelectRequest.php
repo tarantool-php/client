@@ -6,17 +6,17 @@ use Tarantool\IProto;
 
 class SelectRequest implements Request
 {
-    private $spaceNo;
-    private $indexNo;
+    private $spaceId;
+    private $indexId;
     private $key;
     private $offset;
     private $limit;
     private $iterator;
 
-    public function __construct($spaceNo, $indexNo, array $key, $offset, $limit, $iterator)
+    public function __construct($spaceId, $indexId, array $key, $offset, $limit, $iterator)
     {
-        $this->spaceNo = $spaceNo;
-        $this->indexNo = $indexNo;
+        $this->spaceId = $spaceId;
+        $this->indexId = $indexId;
         $this->key = $key;
         $this->offset = $offset;
         $this->limit = $limit;
@@ -32,8 +32,8 @@ class SelectRequest implements Request
     {
         return [
             IProto::KEY => $this->key,
-            IProto::SPACE_ID => $this->spaceNo,
-            IProto::INDEX_ID => $this->indexNo,
+            IProto::SPACE_ID => $this->spaceId,
+            IProto::INDEX_ID => $this->indexId,
             IProto::LIMIT => $this->limit,
             IProto::OFFSET => $this->offset,
             IProto::ITERATOR => $this->iterator,

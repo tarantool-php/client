@@ -6,14 +6,14 @@ use Tarantool\IProto;
 
 class DeleteRequest implements Request
 {
-    private $spaceNo;
-    private $indexNo;
+    private $spaceId;
+    private $indexId;
     private $key;
 
-    public function __construct($spaceNo, $indexNo, array $key)
+    public function __construct($spaceId, $indexId, array $key)
     {
-        $this->spaceNo = $spaceNo;
-        $this->indexNo = $indexNo;
+        $this->spaceId = $spaceId;
+        $this->indexId = $indexId;
         $this->key = $key;
     }
 
@@ -25,8 +25,8 @@ class DeleteRequest implements Request
     public function getBody()
     {
         return [
-            IProto::SPACE_ID => $this->spaceNo,
-            IProto::INDEX_ID => $this->indexNo,
+            IProto::SPACE_ID => $this->spaceId,
+            IProto::INDEX_ID => $this->indexId,
             IProto::KEY => $this->key,
         ];
     }

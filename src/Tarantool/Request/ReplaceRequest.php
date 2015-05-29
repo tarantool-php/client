@@ -6,12 +6,12 @@ use Tarantool\IProto;
 
 class ReplaceRequest implements Request
 {
-    private $spaceNo;
+    private $spaceId;
     private $values;
 
-    public function __construct($spaceNo, array $values)
+    public function __construct($spaceId, array $values)
     {
-        $this->spaceNo = $spaceNo;
+        $this->spaceId = $spaceId;
         $this->values = $values;
     }
 
@@ -23,7 +23,7 @@ class ReplaceRequest implements Request
     public function getBody()
     {
         return [
-            IProto::SPACE_ID => $this->spaceNo,
+            IProto::SPACE_ID => $this->spaceId,
             IProto::TUPLE => $this->values,
         ];
     }
