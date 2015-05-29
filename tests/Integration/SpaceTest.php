@@ -188,7 +188,7 @@ class SpaceTest extends \PHPUnit_Framework_TestCase
     public function testUpdateByNonExistingKey()
     {
         $space = self::$client->getSpace('space_foobar');
-        $response = $space->update(42, ['qux']);
+        $response = $space->update(42, [['=', 2, 'qux']]);
 
         $this->assertResponse($response);
         $this->assertSame([], $response->getData());
