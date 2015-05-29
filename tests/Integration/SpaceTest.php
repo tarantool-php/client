@@ -96,7 +96,7 @@ class SpaceTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider provideInsertDataWithMismatchedTypes
      * @expectedException \Tarantool\Exception\Exception
-     * @expectedExceptionMessageRegExp /Tuple field 0 type does not match one required by operation: expected (NUM|STR)/
+     * @expectedExceptionMessageRegExp /Tuple field 1 type does not match one required by operation: expected (NUM|STR)/
      * @expectedExceptionCode 23
      */
     public function testInsertTypeMismatchedValues($space, $values)
