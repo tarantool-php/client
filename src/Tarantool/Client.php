@@ -83,8 +83,6 @@ class Client
      * @param string|int $space
      *
      * @return Space
-     *
-     * @throws Exception
      */
     public function getSpace($space)
     {
@@ -92,26 +90,13 @@ class Client
             return $this->spaces[$space];
         }
 
-        if (is_string($space)) {
-            $schema = new Space($this, Space::SPACE);
-            $response = $schema->select([$space], Index::SPACE_NAME);
-            $data = $response->getData();
-
-            if (empty($data)) {
-                throw new Exception("Space '$space' does not exist");
-            }
-
-            $spaceName = $space;
-            $space = $data[0][0];
+        if (!is_string($space)) {
+            return $this->spaces[$space] = new Space($this, $space);
         }
 
-        $this->spaces[$space] = new Space($this, $space);
+        $spaceId = $this->getSpaceIdByName($space);
 
-        if (isset($spaceName)) {
-            $this->spaces[$spaceName] =  $this->spaces[$space];
-        }
-
-        return $this->spaces[$space];
+        return $this->spaces[$space] = $this->spaces[$spaceId] = new Space($this, $spaceId);
     }
 
     public function call($funcName, array $args = [])
@@ -143,5 +128,18 @@ class Client
         $data = $this->connection->send($data);
 
         return $this->encoder->decode($data);
+    }
+
+    private function getSpaceIdByName($spaceName)
+    {
+        $schema = new Space($this, Space::SPACE);
+        $response = $schema->select([$spaceName], Index::SPACE_NAME);
+        $data = $response->getData();
+
+        if (empty($data)) {
+            throw new Exception("Space '$spaceName' does not exist");
+        }
+
+        return $data[0][0];
     }
 }

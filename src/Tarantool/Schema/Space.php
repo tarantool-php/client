@@ -83,24 +83,24 @@ class Space
         $this->indexes = [];
     }
 
-    private function getIndexByName($indexName)
+    private function getIndexIdByName($indexName)
     {
-        if (!isset($this->indexes[$indexName])) {
-            $schema = new Space($this->client, Space::INDEX);
-            $response = $schema->select([$this->id, $indexName], Index::INDEX_NAME);
-            $data = $response->getData();
-
-            if (empty($data)) {
-                throw new Exception(sprintf('There\'s no index with name "%s" in space "%s".',
-                    $indexName,
-                    $this->id
-                ));
-            }
-
-            $this->indexes[$indexName] = $response->getData()[0][1];
+        if (isset($this->indexes[$indexName])) {
+            return $this->indexes[$indexName];
         }
 
-        return $this->indexes[$indexName];
+        $schema = new Space($this->client, Space::INDEX);
+        $response = $schema->select([$this->id, $indexName], Index::INDEX_NAME);
+        $data = $response->getData();
+
+        if (empty($data)) {
+            throw new Exception(sprintf('There\'s no index with name "%s" in space "%s".',
+                $indexName,
+                $this->id
+            ));
+        }
+
+        return $this->indexes[$indexName] = $response->getData()[0][1];
     }
 
     private function normalizeIndex($index)
@@ -113,6 +113,6 @@ class Space
             return $index;
         }
 
-        return $this->getIndexByName($index);
+        return $this->getIndexIdByName($index);
     }
 }
