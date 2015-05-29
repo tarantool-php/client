@@ -37,9 +37,9 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider provideMethodCallData
+     * @dataProvider provideMessageEncodingData
      */
-    public function testMethodCall($methodName, array $methodArgs)
+    public function testMessageEncoding($methodName, array $methodArgs)
     {
         $response = $this->getMock('Tarantool\Response', [], [], '', false);
 
@@ -55,19 +55,13 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $this->assertResponse($response);
     }
 
-    public function provideMethodCallData()
+    public function provideMessageEncodingData()
     {
         return [
             ['ping', []],
             ['call', ['box.stat']],
             ['evaluate', ['return 42']],
-            /*
-            ['select', [1, [42]]],
-            ['insert', [1, [1]]],
-            ['replace', [1, [1, 2]]],
-            ['update', [1, 1, [['+', 1, 2]]]],
-            ['delete', [1, [1]]],
-            */
+            ['sendRequest', [$this->getMock('Tarantool\Request\Request')]],
         ];
     }
 }
