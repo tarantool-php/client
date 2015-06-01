@@ -16,6 +16,11 @@ matrix:
         - php: hhvm
         - php: hhvm-nightly
         - env: TARANTOOL_CLIENT=pecl
+    exclude:
+        - php: hhvm
+          env: TARANTOOL_CLIENT=pecl
+        - php: hhvm-nightly
+          env: TARANTOOL_CLIENT=pecl
 
 before_install:
     - curl http://tarantool.org/dist/public.key | sudo apt-key add -
