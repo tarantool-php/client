@@ -4,6 +4,7 @@ namespace Tarantool\Tests\Integration;
 
 use Tarantool\Client as TarantoolClient;
 use Tarantool\Connection\SocketConnection;
+use Tarantool\Tests\Adapter\Tarantool;
 
 trait Client
 {
@@ -32,6 +33,10 @@ trait Client
     {
         $host = null === $host ? getenv('TARANTOOL_HOST') : $host;
         $port = null === $port ? getenv('TARANTOOL_PORT') : $port;
+
+        if (getenv('TARANTOOL_CLIENT_PECL')) {
+            return new Tarantool($host, $port);
+        }
 
         return new TarantoolClient(new SocketConnection($host, $port));
     }
