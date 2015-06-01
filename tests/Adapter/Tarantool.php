@@ -13,6 +13,11 @@ class Tarantool
         $this->tarantool = new \Tarantool($host, $port);
     }
 
+    public function getConnection()
+    {
+        return new Connection($this->tarantool);
+    }
+
     public function disconnect()
     {
         return $this->tarantool->close();
@@ -34,6 +39,10 @@ class Tarantool
             $result = call_user_func_array([$this->tarantool, $method], $args);
         } catch (\Exception $e) {
             throw ExceptionFactory::create($e);
+        }
+
+        if (is_bool($result)) {
+            $result = [$result];
         }
 
         return new Response(0, $result);

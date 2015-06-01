@@ -2,6 +2,7 @@
 
 namespace Tarantool\Tests\Adapter;
 
+use Tarantool\Exception\ConnectionException;
 use Tarantool\Exception\Exception;
 
 class ExceptionFactory
@@ -36,6 +37,9 @@ class ExceptionFactory
             case 0 === strpos($message, 'No space'):
                 $message = preg_replace("/No space '([^']+?)' defined/", "Space '\\1' does not exist'", $message);
                 break;
+
+            case 0 === strpos($message, 'Failed to connect. Code 0: php_network_getaddresses: getaddrinfo failed: Name or service not known'):
+                return new ConnectionException('Unable to connect: Unknown host.', $code);
         }
 
         return new Exception($message, $code, $e);
