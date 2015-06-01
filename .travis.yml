@@ -67,7 +67,7 @@ script:
             phpunit -v --testsuite Integration;
         else
             phpunit -v;
-        fi;
+        fi;'
 
 after_script:
     # code-coverage for scrutinizer-ci
