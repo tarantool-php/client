@@ -34,7 +34,7 @@ trait Client
         $host = null === $host ? getenv('TARANTOOL_HOST') : $host;
         $port = null === $port ? getenv('TARANTOOL_PORT') : $port;
 
-        if (getenv('TARANTOOL_CLIENT_PECL')) {
+        if ('pecl' === getenv('TARANTOOL_CLIENT')) {
             return new Tarantool($host, $port);
         }
 
