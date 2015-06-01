@@ -38,6 +38,7 @@ install:
         make;
         sudo make install;
         cd ..;
+        printf "extension = tarantool.so\n" >> ~/.phpenv/versions/$TRAVIS_PHP_VERSION/etc/php.ini;
         fi;'
 
     - composer install
