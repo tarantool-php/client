@@ -7,10 +7,15 @@ php:
     - hhvm
     - hhvm-nightly
 
+env:
+    - TARANTOOL_CLIENT_PECL=
+    - TARANTOOL_CLIENT_PECL=true
+
 matrix:
     allow_failures:
         - php: hhvm
         - php: hhvm-nightly
+        - env: TARANTOOL_CLIENT_PECL=true
 
 before_install:
     - curl http://tarantool.org/dist/public.key | sudo apt-key add -
