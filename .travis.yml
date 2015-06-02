@@ -61,10 +61,10 @@ before_script:
 
 script:
     - >
-        bash -c 'if [[ $TRAVIS_PHP_VERSION == 5.6 ]]; then
-            phpunit -v --coverage-clover coverage.clover;
-        elif [[ $TARANTOOL_CLIENT == 'pecl' ]]; then
+        bash -c 'if [[ $TARANTOOL_CLIENT == pecl ]]; then
             phpunit -v --testsuite Integration;
+        elif [[ $TRAVIS_PHP_VERSION == 5.6 ]]; then
+            phpunit -v --coverage-clover coverage.clover;
         else
             phpunit -v;
         fi;'
