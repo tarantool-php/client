@@ -157,4 +157,19 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
         $client->getConnection()->open();
         $client->authenticate('user_foo', 'foo');
     }
+
+    /**
+     * @group pureonly
+     */
+    public function testRetryableConnection()
+    {
+        $connection = self::$client->getConnection();
+        $client = self::createClient($connection);
+
+        $client->connect();
+        $this->assertFalse($client->isDisconnected());
+
+        $client->disconnect();
+        $this->assertTrue($client->isDisconnected());
+    }
 }

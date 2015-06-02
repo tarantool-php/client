@@ -2,7 +2,9 @@
 
 namespace Tarantool\Tests\Adapter;
 
-class Connection
+use Tarantool\Connection\Connection as BaseConnection;
+
+class Connection implements BaseConnection
 {
     private $tarantool;
 
@@ -14,5 +16,20 @@ class Connection
     public function open()
     {
         $this->tarantool->connect();
+    }
+
+    public function close()
+    {
+        $this->tarantool->close();
+    }
+
+    public function isClosed()
+    {
+        throw new \RuntimeException(sprintf('"%s" is not supported.', __METHOD__));
+    }
+
+    public function send($data)
+    {
+        throw new \RuntimeException(sprintf('"%s" is not supported.', __METHOD__));
     }
 }
