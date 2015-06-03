@@ -73,7 +73,6 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Tarantool\Exception\ConnectionException
-     * @expectedExceptionMessageRegExp /Unable to connect: (Unknown host|Host name lookup failure)\./
      */
     public function testConnectInvalidHost()
     {
@@ -82,7 +81,6 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Tarantool\Exception\ConnectionException
-     * @expectedExceptionMessage Unable to connect: Connection refused.
      */
     public function testConnectInvalidPort()
     {
