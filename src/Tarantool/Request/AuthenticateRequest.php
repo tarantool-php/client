@@ -39,8 +39,8 @@ class AuthenticateRequest implements Request
     {
         $result = '';
 
-        for ($i = 0; $i < strlen($rhs); $i++) {
-            $result .= chr(ord($rhs[$i]) ^ ord($lhs[$i]));
+        for ($i = 0; $i < 20; $i++) {
+            $result .= $rhs[$i] ^ $lhs[$i];
         }
 
         return $result;
