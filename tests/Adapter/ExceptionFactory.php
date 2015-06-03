@@ -40,6 +40,10 @@ class ExceptionFactory
 
             case 0 === strpos($message, 'Failed to connect. Code 0: php_network_getaddresses: getaddrinfo failed: Name or service not known'):
                 return new ConnectionException('Unable to connect: Unknown host.', $code);
+
+            case 0 === strpos($message, 'Failed to connect. Code 111: Connection refused'):
+            case 0 === strpos($message, 'Invalid primary port value: '):
+                return new ConnectionException('Unable to connect: Connection refused.');
         }
 
         return new Exception($message, $code, $e);

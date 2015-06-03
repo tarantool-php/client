@@ -10,7 +10,11 @@ class Tarantool
 
     public function __construct($host, $port)
     {
-        $this->tarantool = new \Tarantool($host, $port);
+        try {
+            $this->tarantool = new \Tarantool($host, $port);
+        } catch (\Exception $e) {
+            throw ExceptionFactory::create($e);
+        }
     }
 
     public function getConnection()
