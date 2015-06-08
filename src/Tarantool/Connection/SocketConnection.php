@@ -62,10 +62,6 @@ class SocketConnection implements Connection
 
     public function send($data)
     {
-        if (!$this->socket) {
-            $this->open();
-        }
-
         $count = socket_write($this->socket, $data, strlen($data));
 
         $length = socket_read($this->socket, 5);
