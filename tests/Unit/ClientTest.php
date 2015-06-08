@@ -37,9 +37,22 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider provideMessageEncodingData
+     * @dataProvider provideCallbackData
      */
-    public function testMessageEncoding($methodName, array $methodArgs)
+    public function testOpenConnectionBeforeSend($methodName, array $methodArgs)
+    {
+        $this->connection->expects($this->once())->method('isClosed')
+            ->will($this->returnValue(true));
+
+        $this->connection->expects($this->once())->method('open');
+
+        call_user_func_array([$this->client, $methodName], $methodArgs);
+    }
+
+    /**
+     * @dataProvider provideCallbackData
+     */
+    public function testEncodeDecodeMessage($methodName, array $methodArgs)
     {
         $response = $this->getMock('Tarantool\Response', [], [], '', false);
 
@@ -55,7 +68,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $this->assertResponse($response);
     }
 
-    public function provideMessageEncodingData()
+    public function provideCallbackData()
     {
         return [
             ['ping', []],
