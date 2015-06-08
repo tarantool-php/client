@@ -44,7 +44,7 @@ class SocketConnection implements Connection
 
         $greeting = socket_read($socket, IProto::GREETING_SIZE);
 
-        return substr(base64_decode(substr($greeting, 64, 44)), 0, 20);
+        return IProto::parseSalt($greeting);
     }
 
     public function close()
@@ -65,9 +65,9 @@ class SocketConnection implements Connection
         $count = socket_write($this->socket, $data, strlen($data));
 
         $length = socket_read($this->socket, 5);
-        $length = unpack('Ctype/Nlength', $length);
+        $length = IProto::parseLenght($length);
 
-        $data = socket_read($this->socket, $length['length']);
+        $data = socket_read($this->socket, $length);
 
         return $data;
     }

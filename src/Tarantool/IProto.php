@@ -2,6 +2,8 @@
 
 namespace Tarantool;
 
+use Tarantool\Exception\Exception;
+
 abstract class IProto
 {
     const CODE = 0x00;
@@ -22,4 +24,18 @@ abstract class IProto
     const DATA = 0x30;
     const ERROR = 0x31;
     const GREETING_SIZE = 128;
+
+    public static function parseSalt($greeting)
+    {
+        return substr(base64_decode(substr($greeting, 64, 44)), 0, 20);
+    }
+
+    public static function parseLenght($data)
+    {
+        if (false === $data = unpack('Ctype/Nlength', $data)) {
+            throw new Exception('Unable to parse length value.');
+        }
+
+        return $data['length'];
+    }
 }
