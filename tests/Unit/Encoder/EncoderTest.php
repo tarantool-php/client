@@ -2,8 +2,12 @@
 
 namespace Tarantool\Tests\Unit\Encoder;
 
+use Tarantool\Tests\Assert;
+
 abstract class EncoderTest extends \PHPUnit_Framework_TestCase
 {
+    use Assert;
+
     /**
      * @var \Tarantool\Encoder\Encoder
      */
@@ -42,6 +46,26 @@ abstract class EncoderTest extends \PHPUnit_Framework_TestCase
             [0, null, 0xffff + 1, '0982000001ce00010000'],
             [0, null, 0xffffffff + 1, '0d82000001cf0000000100000000'],
             [0, [1 => 2], 0, '088200000100810102'],
+        ];
+    }
+
+    /**
+     * @dataProvider provideDecodedData
+     */
+    public function testDecode($hexData, $expectedData, $expectedSync)
+    {
+        $response = $this->encoder->decode(hex2bin($hexData));
+
+        $this->assertResponse($response);
+        $this->assertSame($expectedData, $response->getData());
+        $this->assertSame($expectedSync, $response->getSync());
+    }
+
+    public function provideDecodedData()
+    {
+        return [
+            'ping()' => ['8200ce0000000001cf000000000000000080', null, 0],
+            'evaluate("return 42")' => ['8200ce0000000001cf00000000000000008130dd000000012a', [42], 0],
         ];
     }
 
