@@ -41,10 +41,14 @@ class PeclEncoder implements Encoder
         $this->unpacker->feed($data);
 
         if (!$this->unpacker->execute()) {
-            throw new Exception('Bad response.');
+            throw new Exception('Unable to decode data.');
         }
 
         $header = $this->unpacker->data();
+        if (!is_array($header)) {
+            throw new Exception('Unable to decode data.');
+        }
+
         $code = $header[IProto::CODE];
         $body = $this->unpacker->execute() ? $this->unpacker->data() : null;
 

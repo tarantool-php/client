@@ -15,7 +15,7 @@ abstract class EncoderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider provideEncodeData
+     * @dataProvider provideEncodedData
      */
     public function testEncode($type, $body, $sync, $expectedHexResult)
     {
@@ -31,7 +31,7 @@ abstract class EncoderTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expectedHexResult, bin2hex($result));
     }
 
-    public function provideEncodeData()
+    public function provideEncodedData()
     {
         return [
             [9, null, null, '058200090100'],
@@ -42,6 +42,24 @@ abstract class EncoderTest extends \PHPUnit_Framework_TestCase
             [0, null, 0xffff + 1, '0982000001ce00010000'],
             [0, null, 0xffffffff + 1, '0d82000001cf0000000100000000'],
             [0, [1 => 2], 0, '088200000100810102'],
+        ];
+    }
+
+    /**
+     * @dataProvider provideBadlyDecodedData
+     * @expectedException \Tarantool\Exception\Exception
+     * @expectedExceptionMessage Unable to decode data.
+     */
+    public function testThrowExceptionOnBadlyDecodedData($data)
+    {
+        $this->encoder->decode($data);
+    }
+
+    public function provideBadlyDecodedData()
+    {
+        return [
+            [null],
+            ["\0"],
         ];
     }
 
