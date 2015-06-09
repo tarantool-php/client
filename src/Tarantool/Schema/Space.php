@@ -30,11 +30,6 @@ class Space
         $this->id = $id;
     }
 
-    public function getId()
-    {
-        return $this->id;
-    }
-
     public function select(array $key = null, $index = null, $limit = null, $offset = null, $iteratorType = null)
     {
         $key = null === $key ? [] : $key;
