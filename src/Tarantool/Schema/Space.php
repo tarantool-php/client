@@ -94,10 +94,7 @@ class Space
         $data = $response->getData();
 
         if (empty($data)) {
-            throw new Exception(sprintf('There\'s no index with name "%s" in space "%s".',
-                $indexName,
-                $this->id
-            ));
+            throw new Exception("No index '$indexName' is defined in space #{$this->id}");
         }
 
         return $this->indexes[$indexName] = $response->getData()[0][1];

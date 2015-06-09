@@ -51,24 +51,6 @@ class SpaceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Tarantool\Exception\Exception
-     * @expectedExceptionMessage Space 'non_existing_space' does not exist
-     */
-    public function testSelectFromNonExistingSpaceByName()
-    {
-        self::$client->getSpace('non_existing_space')->select();
-    }
-
-    /**
-     * @expectedException \Tarantool\Exception\Exception
-     * @expectedExceptionMessage Space '123456' does not exist
-     */
-    public function testSelectFromNonExistingSpaceById()
-    {
-        self::$client->getSpace(123456)->select();
-    }
-
-    /**
      * @dataProvider provideInsertData
      */
     public function testInsert($space, $values)
@@ -219,6 +201,42 @@ class SpaceTest extends \PHPUnit_Framework_TestCase
             [['bad_op', 2, 2], 'Unknown UPDATE operation', 28],
             [[':', 2, 2, 2, '', 'extra'], 'Unknown UPDATE operation', 28],
         ];
+    }
+
+    /**
+     * @expectedException \Tarantool\Exception\Exception
+     * @expectedExceptionMessage Space 'non_existing_space' does not exist
+     */
+    public function testReferenceNonExistingSpaceByName()
+    {
+        self::$client->getSpace('non_existing_space')->select();
+    }
+
+    /**
+     * @expectedException \Tarantool\Exception\Exception
+     * @expectedExceptionMessage Space '123456' does not exist
+     */
+    public function testReferenceNonExistingSpaceById()
+    {
+        self::$client->getSpace(123456)->select();
+    }
+
+    /**
+     * @expectedException \Tarantool\Exception\Exception
+     * @expectedExceptionMessageRegExp /No index 'non_existing_index' is defined in space #\d+?/
+     */
+    public function testReferenceNonExistingIndexByName()
+    {
+        self::$client->getSpace('space_foobar')->select([1], 'non_existing_index');
+    }
+
+    /**
+     * @expectedException \Tarantool\Exception\Exception
+     * @expectedExceptionMessageRegExp /No index #123456 is defined in space 'space_foobar'/
+     */
+    public function testReferenceNonExistingIndexById()
+    {
+        self::$client->getSpace('space_foobar')->select([1], 123456);
     }
 
     public function testCacheIndex()
