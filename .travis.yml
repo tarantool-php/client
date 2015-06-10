@@ -32,12 +32,12 @@ install:
     - sudo apt-get -y install tarantool
 
     - >
-        bash -c 'if [[ $TRAVIS_PHP_VERSION != hhvm* ]]; then
+        bash -c 'if [[ hhvm* != $TRAVIS_PHP_VERSION ]]; then
             pecl install msgpack-0.5.6;
         fi;'
 
     - >
-        bash -c 'if [[ $TARANTOOL_CLIENT == pecl ]]; then
+        bash -c 'if [[ pecl == $TARANTOOL_CLIENT ]]; then
             git clone https://github.com/tarantool/tarantool-php.git;
             cd tarantool-php;
             phpize && ./configure;
@@ -62,9 +62,9 @@ before_script:
 
 script:
     - >
-        bash -c 'if [[ $TARANTOOL_CLIENT == pecl ]]; then
+        bash -c 'if [[ pecl == $TARANTOOL_CLIENT ]]; then
             phpunit -v --testsuite Integration --exclude-group pureonly;
-        elif [[ $TRAVIS_PHP_VERSION == 5.6 ]]; then
+        elif [[ 5.6 == $TRAVIS_PHP_VERSION ]]; then
             phpunit -v --coverage-clover coverage.clover;
         else
             phpunit -v;
@@ -73,7 +73,7 @@ script:
 after_script:
     # code-coverage for scrutinizer-ci
     - >
-        bash -c 'if [[ $TRAVIS_PHP_VERSION == 5.6 ]]; then
+        bash -c 'if [[ pecl != $TARANTOOL_CLIENT ]] && [[ 5.6 == $TRAVIS_PHP_VERSION ]]; then
             wget https://scrutinizer-ci.com/ocular.phar;
             php ocular.phar code-coverage:upload --format=php-clover coverage.clover;
         fi;'
