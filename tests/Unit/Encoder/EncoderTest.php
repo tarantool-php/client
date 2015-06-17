@@ -66,6 +66,7 @@ abstract class EncoderTest extends \PHPUnit_Framework_TestCase
         return [
             'ping()' => ['8200ce0000000001cf000000000000000080', null, 0],
             'evaluate("return 42")' => ['8200ce0000000001cf00000000000000008130dd000000012a', [42], 0],
+            'insert(...)' => ['8200ce0000000001cf00000000000002168130dd0000000192ce000dbdb5aa666f6f5f393030353333', [[900533, 'foo_900533']], 534],
         ];
     }
 

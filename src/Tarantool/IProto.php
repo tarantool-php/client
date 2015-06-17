@@ -23,7 +23,9 @@ abstract class IProto
     const EXPR = 0x27;
     const DATA = 0x30;
     const ERROR = 0x31;
+
     const GREETING_SIZE = 128;
+    const LENGTH_SIZE = 5;
 
     public static function parseSalt($greeting)
     {
@@ -32,7 +34,7 @@ abstract class IProto
 
     public static function parseLenght($data)
     {
-        if (false === $data = unpack('Ctype/Nlength', $data)) {
+        if (false === $data = @unpack('C_/Nlength', $data)) {
             throw new Exception('Unable to parse length value.');
         }
 

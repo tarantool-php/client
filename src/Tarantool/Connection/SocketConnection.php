@@ -64,7 +64,7 @@ class SocketConnection implements Connection
     {
         $count = socket_write($this->socket, $data, strlen($data));
 
-        $length = socket_read($this->socket, 5);
+        $length = socket_read($this->socket, IProto::LENGTH_SIZE);
         $length = IProto::parseLenght($length);
 
         $data = socket_read($this->socket, $length);

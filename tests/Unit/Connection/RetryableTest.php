@@ -90,7 +90,7 @@ class RetryableTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Exception
-     * @exceptionMessage foo
+     * @expectedExceptionMessage foo
      */
     public function testThrowException()
     {
