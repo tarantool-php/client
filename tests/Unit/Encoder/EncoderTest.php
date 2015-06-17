@@ -38,14 +38,14 @@ abstract class EncoderTest extends \PHPUnit_Framework_TestCase
     public function provideEncodedData()
     {
         return [
-            [9, null, null, '058200090100'],
-            [1, null, null, '058200010100'],
-            [0, null, 1, '058200000101'],
-            [0, null, 128, '0682000001cc80'],
-            [0, null, 256, '0782000001cd0100'],
-            [0, null, 0xffff + 1, '0982000001ce00010000'],
-            [0, null, 0xffffffff + 1, '0d82000001cf0000000100000000'],
-            [0, [1 => 2], 0, '088200000100810102'],
+            [9, null, null, 'ce000000058200090100'],
+            [1, null, null, 'ce000000058200010100'],
+            [0, null, 1, 'ce000000058200000101'],
+            [0, null, 128, 'ce0000000682000001cc80'],
+            [0, null, 256, 'ce0000000782000001cd0100'],
+            [0, null, 0xffff + 1, 'ce0000000982000001ce00010000'],
+            [0, null, 0xffffffff + 1, 'ce0000000d82000001cf0000000100000000'],
+            [0, [1 => 2], 0, 'ce000000088200000100810102'],
         ];
     }
 

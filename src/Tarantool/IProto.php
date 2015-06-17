@@ -32,7 +32,12 @@ abstract class IProto
         return substr(base64_decode(substr($greeting, 64, 44)), 0, 20);
     }
 
-    public static function parseLenght($data)
+    public static function packLength($length)
+    {
+        return pack('CN', 0xce, $length);
+    }
+
+    public static function unpackLength($data)
     {
         if (false === $data = @unpack('C_/Nlength', $data)) {
             throw new Exception('Unable to parse length value.');

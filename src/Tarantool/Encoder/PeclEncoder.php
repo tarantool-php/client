@@ -30,7 +30,7 @@ class PeclEncoder implements Encoder
             $content .= msgpack_pack($data);
         }
 
-        return msgpack_pack(strlen($content)).$content;
+        return IProto::packLength(strlen($content)).$content;
     }
 
     /**

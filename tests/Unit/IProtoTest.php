@@ -14,19 +14,20 @@ class IProtoTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($salt, IProto::parseSalt($greeting));
     }
 
-    public function testParseLength()
+    public function testPackUnpackLength()
     {
-        $data = pack('CN', 0xce, 42);
+        $packed = IProto::packLength(42);
 
-        $this->assertSame(42, IProto::parseLenght($data));
+        $this->assertInternalType('string', $packed);
+        $this->assertSame(42, IProto::unpackLength($packed));
     }
 
     /**
      * @expectedException \Tarantool\Exception\Exception
      * @expectedExceptionMessage Unable to parse length value.
      */
-    public function testParseLengthFromMalformedData()
+    public function testUnpackLengthFromMalformedData()
     {
-        IProto::parseLenght('foo');
+        IProto::unpackLength('foo');
     }
 }
