@@ -7,7 +7,7 @@ use Tarantool\IProto;
 
 class SocketConnection implements Connection
 {
-    const DEFAULT_HOST = 'localhost';
+    const DEFAULT_HOST = '127.0.0.1';
     const DEFAULT_PORT = 3301;
 
     private $host;
