@@ -5,6 +5,7 @@ box.cfg {
     log_level = 6,
     wal_mode = 'none',
     snap_dir = '/tmp',
+    slab_alloc_arena = .1,
 }
 
 box.schema.user.grant('guest', 'read,write,execute', 'universe')
