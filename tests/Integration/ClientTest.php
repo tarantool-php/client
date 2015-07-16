@@ -30,6 +30,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
             [['func_arg', [42]], [[42]]],
             [['func_arg', [-42]], [[-42]]],
             [['func_arg', [null]], [[null]]],
+            [['func_arg', [false]], [[false]]],
             [['func_arg', ['foo']], [['foo']]],
             [['func_arg', [[1, 2, 3]]], [[1, 2, 3]]],
             [['func_mixed'], [
@@ -73,6 +74,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
             [['return func_arg(...)', [42]], [42]],
             [['return func_arg(...)', [-42]], [-42]],
             [['return func_arg(...)', [null]], [null]],
+            [['return func_arg(...)', [false]], [false]],
             [['return func_arg(...)', ['foo']], ['foo']],
             [['return func_arg(...)', [[1, 2, 3]]], [[1, 2, 3]]],
             [['return func_mixed()'], [
