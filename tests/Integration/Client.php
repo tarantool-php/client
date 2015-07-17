@@ -4,8 +4,6 @@ namespace Tarantool\Tests\Integration;
 
 use Tarantool\Client as TarantoolClient;
 use Tarantool\Connection\Connection;
-use Tarantool\Connection\SocketConnection;
-use Tarantool\Tests\Adapter\Tarantool;
 
 trait Client
 {
@@ -32,24 +30,20 @@ trait Client
 
     protected static function createClient($host = null, $port = null)
     {
-        $isPecl = 'pecl' === getenv('TARANTOOL_CLIENT');
+        $builder = new ClientBuilder();
+
+        $builder->setClient(getenv('TARANTOOL_CLIENT'));
+        $builder->setEncoder(getenv('TARANTOOL_ENCODER'));
 
         if ($host instanceof Connection) {
-            if ($isPecl) {
-                throw new \LogicException('Creating the pecl client from the Connection instance is not supported.');
-            }
-
-            return new TarantoolClient($host);
+            $builder->setConnection($host);
+        } else {
+            $builder->setConnection(getenv('TARANTOOL_CONN'));
+            $builder->setHost(null === $host ? getenv('TARANTOOL_CONN_HOST') : $host);
+            $builder->setPort(null === $port ? getenv('TARANTOOL_CONN_PORT') : $port);
         }
 
-        $host = null === $host ? getenv('TARANTOOL_HOST') : $host;
-        $port = null === $port ? getenv('TARANTOOL_PORT') : $port;
-
-        if ($isPecl) {
-            return new Tarantool($host, $port);
-        }
-
-        return new TarantoolClient(new SocketConnection($host, $port));
+        return $builder->build();
     }
 
     protected static function getTotalSelectCalls()
