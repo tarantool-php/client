@@ -17,7 +17,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $encoder;
+    private $packer;
 
     /**
      * @var Client
@@ -27,8 +27,8 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->connection = $this->getMock('Tarantool\Connection\Connection');
-        $this->encoder = $this->getMock('Tarantool\Encoder\Encoder');
-        $this->client = new Client($this->connection, $this->encoder);
+        $this->packer = $this->getMock('Tarantool\Packer\Packer');
+        $this->client = new Client($this->connection, $this->packer);
     }
 
     public function testGetConnection()
@@ -52,15 +52,15 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider provideCallbackData
      */
-    public function testEncodeDecodeMessage($methodName, array $methodArgs)
+    public function testPackUnpackMessage($methodName, array $methodArgs)
     {
         $response = $this->getMock('Tarantool\Response', [], [], '', false);
 
-        $this->encoder->expects($this->once())->method('encode')
+        $this->packer->expects($this->once())->method('pack')
             ->with($this->isInstanceOf('Tarantool\Request\Request'))
             ->will($this->returnValue($this->isType('string')));
 
-        $this->encoder->expects($this->once())->method('decode')
+        $this->packer->expects($this->once())->method('unpack')
             ->will($this->returnValue($response));
 
         $response = call_user_func_array([$this->client, $methodName], $methodArgs);

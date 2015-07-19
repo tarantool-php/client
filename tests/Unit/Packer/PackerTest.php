@@ -1,27 +1,27 @@
 <?php
 
-namespace Tarantool\Tests\Unit\Encoder;
+namespace Tarantool\Tests\Unit\Packer;
 
 use Tarantool\Tests\Assert;
 
-abstract class EncoderTest extends \PHPUnit_Framework_TestCase
+abstract class PackerTest extends \PHPUnit_Framework_TestCase
 {
     use Assert;
 
     /**
-     * @var \Tarantool\Encoder\Encoder
+     * @var \Tarantool\Packer\Packer
      */
-    private $encoder;
+    private $packer;
 
     protected function setUp()
     {
-        $this->encoder = $this->createEncoder();
+        $this->packer = $this->createPacker();
     }
 
     /**
-     * @dataProvider provideEncodedData
+     * @dataProvider providePackData
      */
-    public function testEncode($type, $body, $sync, $expectedHexResult)
+    public function testPack($type, $body, $sync, $expectedHexResult)
     {
         $request = $this->getMock('Tarantool\Request\Request');
 
@@ -31,11 +31,11 @@ abstract class EncoderTest extends \PHPUnit_Framework_TestCase
         $request->expects($this->once())->method('getBody')
             ->will($this->returnValue($body));
 
-        $result = $this->encoder->encode($request, $sync);
+        $result = $this->packer->pack($request, $sync);
         $this->assertSame($expectedHexResult, bin2hex($result));
     }
 
-    public function provideEncodedData()
+    public function providePackData()
     {
         return [
             [9, null, null, 'ce000000058200090100'],
@@ -50,18 +50,18 @@ abstract class EncoderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider provideDecodedData
+     * @dataProvider provideUnpackData
      */
-    public function testDecode($hexData, $expectedData, $expectedSync)
+    public function testUnpack($hexData, $expectedData, $expectedSync)
     {
-        $response = $this->encoder->decode(hex2bin($hexData));
+        $response = $this->packer->unpack(hex2bin($hexData));
 
         $this->assertResponse($response);
         $this->assertSame($expectedData, $response->getData());
         $this->assertSame($expectedSync, $response->getSync());
     }
 
-    public function provideDecodedData()
+    public function provideUnpackData()
     {
         return [
             'ping()' => ['8200ce0000000001cf000000000000000080', null, 0],
@@ -71,16 +71,16 @@ abstract class EncoderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider provideBadlyDecodedData
+     * @dataProvider provideBadUnpackData
      * @expectedException \Tarantool\Exception\Exception
-     * @expectedExceptionMessage Unable to decode data.
+     * @expectedExceptionMessage Unable to unpack data.
      */
-    public function testThrowExceptionOnBadlyDecodedData($data)
+    public function testThrowExceptionOnBadUnpackData($data)
     {
-        $this->encoder->decode($data);
+        $this->packer->unpack($data);
     }
 
-    public function provideBadlyDecodedData()
+    public function provideBadUnpackData()
     {
         return [
             [null],
@@ -89,7 +89,7 @@ abstract class EncoderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \Tarantool\Encoder\Encoder
+     * @return \Tarantool\Packer\Packer
      */
-    abstract protected function createEncoder();
+    abstract protected function createPacker();
 }

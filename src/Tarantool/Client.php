@@ -3,9 +3,9 @@
 namespace Tarantool;
 
 use Tarantool\Connection\Connection;
-use Tarantool\Encoder\Encoder;
-use Tarantool\Encoder\PeclEncoder;
 use Tarantool\Exception\Exception;
+use Tarantool\Packer\Packer;
+use Tarantool\Packer\PeclPacker;
 use Tarantool\Request\AuthenticateRequest;
 use Tarantool\Request\CallRequest;
 use Tarantool\Request\EvaluateRequest;
@@ -17,20 +17,20 @@ use Tarantool\Schema\Space;
 class Client
 {
     private $connection;
-    private $encoder;
+    private $packer;
     private $salt;
     private $username;
     private $password;
     private $spaces = [];
 
     /**
-     * @param Connection   $connection
-     * @param Encoder|null $encoder
+     * @param Connection  $connection
+     * @param Packer|null $packer
      */
-    public function __construct(Connection $connection, Encoder $encoder = null)
+    public function __construct(Connection $connection, Packer $packer = null)
     {
         $this->connection = $connection;
-        $this->encoder = $encoder ?: new PeclEncoder();
+        $this->packer = $packer ?: new PeclPacker();
     }
 
     public function getConnection()
@@ -124,10 +124,10 @@ class Client
             $this->connect();
         }
 
-        $data = $this->encoder->encode($request);
+        $data = $this->packer->pack($request);
         $data = $this->connection->send($data);
 
-        return $this->encoder->decode($data);
+        return $this->packer->unpack($data);
     }
 
     private function getSpaceIdByName($spaceName)

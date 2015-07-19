@@ -4,6 +4,7 @@ namespace Tarantool\Connection;
 
 use Tarantool\Exception\ConnectionException;
 use Tarantool\IProto;
+use Tarantool\Packer\PackUtils;
 
 class SocketConnection implements Connection
 {
@@ -65,7 +66,7 @@ class SocketConnection implements Connection
         $count = socket_write($this->socket, $data, strlen($data));
 
         $length = socket_read($this->socket, IProto::LENGTH_SIZE);
-        $length = IProto::unpackLength($length);
+        $length = PackUtils::unpackLength($length);
 
         $data = socket_read($this->socket, $length);
 

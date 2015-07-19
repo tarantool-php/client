@@ -1,13 +1,13 @@
 <?php
 
-namespace Tarantool\Encoder;
+namespace Tarantool\Packer;
 
 use Tarantool\Exception\Exception;
 use Tarantool\IProto;
 use Tarantool\Request\Request;
 use Tarantool\Response;
 
-class PeclEncoder implements Encoder
+class PeclPacker implements Packer
 {
     private $unpacker;
 
@@ -20,7 +20,7 @@ class PeclEncoder implements Encoder
     /**
      * {@inheritdoc}
      */
-    public function encode(Request $request, $sync = null)
+    public function pack(Request $request, $sync = null)
     {
         // @see https://github.com/msgpack/msgpack-php/issues/45
         $content = pack('C*', 0x82, IProto::CODE, $request->getType(), IProto::SYNC);
@@ -30,23 +30,23 @@ class PeclEncoder implements Encoder
             $content .= msgpack_pack($data);
         }
 
-        return IProto::packLength(strlen($content)).$content;
+        return PackUtils::packLength(strlen($content)).$content;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function decode($data)
+    public function unpack($data)
     {
         $this->unpacker->feed($data);
 
         if (!$this->unpacker->execute()) {
-            throw new Exception('Unable to decode data.');
+            throw new Exception('Unable to unpack data.');
         }
 
         $header = $this->unpacker->data();
         if (!is_array($header)) {
-            throw new Exception('Unable to decode data.');
+            throw new Exception('Unable to unpack data.');
         }
 
         $code = $header[IProto::CODE];

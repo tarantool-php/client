@@ -5,8 +5,8 @@ namespace Tarantool\Tests\Integration;
 use Tarantool\Client as TarantoolClient;
 use Tarantool\Connection\Connection;
 use Tarantool\Connection\SocketConnection;
-use Tarantool\Encoder\PeclEncoder;
-use Tarantool\Encoder\PeclLiteEncoder;
+use Tarantool\Packer\PeclLitePacker;
+use Tarantool\Packer\PeclPacker;
 use Tarantool\Tests\Adapter\Tarantool;
 
 class ClientBuilder
@@ -17,11 +17,11 @@ class ClientBuilder
     const CONN_TCP = 'tcp';
     const CONN_UNIX = 'unix';
 
-    const ENCODER_PECL = 'pecl';
-    const ENCODER_PECL_LITE = 'pecl_lite';
+    const PACKER_PECL = 'pecl';
+    const PACKER_PECL_LITE = 'pecl_lite';
 
     private $client;
-    private $encoder;
+    private $packer;
     private $connection;
     private $host;
     private $port;
@@ -33,9 +33,9 @@ class ClientBuilder
         return $this;
     }
 
-    public function setEncoder($encoder)
+    public function setPacker($packer)
     {
-        $this->encoder = $encoder;
+        $this->packer = $packer;
 
         return $this;
     }
@@ -68,10 +68,10 @@ class ClientBuilder
         }
 
         $connection = $this->createConnection();
-        $encoder = $this->createEncoder();
+        $packer = $this->createPacker();
 
         if (self::CLIENT_PURE === $this->client) {
-            return new TarantoolClient($connection, $encoder);
+            return new TarantoolClient($connection, $packer);
         }
 
         throw new \UnexpectedValueException(sprintf('""%" client is not supported.', $this->client));
@@ -96,16 +96,16 @@ class ClientBuilder
         throw new \UnexpectedValueException(sprintf('""%" connection is not supported.', $this->connection));
     }
 
-    private function createEncoder()
+    private function createPacker()
     {
-        if (self::ENCODER_PECL === $this->encoder) {
-            return new PeclEncoder();
+        if (self::PACKER_PECL === $this->packer) {
+            return new PeclPacker();
         }
 
-        if (self::ENCODER_PECL_LITE === $this->encoder) {
-            return new PeclLiteEncoder();
+        if (self::PACKER_PECL_LITE === $this->packer) {
+            return new PeclLitePacker();
         }
 
-        throw new \UnexpectedValueException(sprintf('""%" encoder is not supported.', $this->encoder));
+        throw new \UnexpectedValueException(sprintf('""%" packer is not supported.', $this->packer));
     }
 }

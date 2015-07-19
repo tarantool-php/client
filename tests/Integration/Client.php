@@ -33,7 +33,7 @@ trait Client
         $builder = new ClientBuilder();
 
         $builder->setClient(getenv('TARANTOOL_CLIENT'));
-        $builder->setEncoder(getenv('TARANTOOL_ENCODER'));
+        $builder->setPacker(getenv('TARANTOOL_PACKER'));
 
         if ($host instanceof Connection) {
             $builder->setConnection($host);

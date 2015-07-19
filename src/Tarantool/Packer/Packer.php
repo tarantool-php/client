@@ -1,10 +1,10 @@
 <?php
 
-namespace Tarantool\Encoder;
+namespace Tarantool\Packer;
 
 use Tarantool\Request\Request;
 
-interface Encoder
+interface Packer
 {
     /**
      * @param Request  $request
@@ -12,12 +12,12 @@ interface Encoder
      *
      * @return string
      */
-    public function encode(Request $request, $sync = null);
+    public function pack(Request $request, $sync = null);
 
     /**
      * @param string $data
      *
      * @return \Tarantool\Response
      */
-    public function decode($data);
+    public function unpack($data);
 }
