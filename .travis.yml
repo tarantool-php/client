@@ -9,7 +9,6 @@ php:
 env:
     - TARANTOOL_CLIENT=pure
     - TARANTOOL_CLIENT=pecl
-    - TARANTOOL_PACKER=pecl
 
 matrix:
     allow_failures:
