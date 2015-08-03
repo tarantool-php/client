@@ -15,9 +15,6 @@ matrix:
     allow_failures:
         - php: hhvm
         - env: TARANTOOL_CLIENT=pecl
-    include:
-        - php: hhvm
-          env: TARANTOOL_PACKER=pecl_lite
     exclude:
         - php: hhvm
           env: TARANTOOL_CLIENT=pecl
