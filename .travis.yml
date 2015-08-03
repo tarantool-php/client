@@ -7,8 +7,9 @@ php:
     - hhvm
 
 env:
-    - TARANTOOL_CLIENT=pure
     - TARANTOOL_CLIENT=pecl
+    - TARANTOOL_PACKER=pecl
+    - TARANTOOL_PACKER=pecl_lite
 
 matrix:
     allow_failures:
