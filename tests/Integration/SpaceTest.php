@@ -102,31 +102,49 @@ class SpaceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Tarantool\Exception\Exception
-     * @expectedExceptionMessage Duplicate key exists in unique index 'primary' in space 'space_foobar'
+     * @expectedExceptionMessage Duplicate key exists in unique index 'primary' in space 'space_misc'
      * @expectedExceptionCode 3
      */
     public function testInsertDuplicateKey()
     {
-        $space = self::$client->getSpace('space_foobar');
-        $space->insert([1, 'baz']);
+        $space = self::$client->getSpace('space_misc');
+        $space->insert([1, 'bazqux']);
     }
 
     public function testReplace()
     {
-        $space = self::$client->getSpace('space_foobar');
-        $response = $space->replace([1, 'baz']);
+        $space = self::$client->getSpace('space_misc');
+        $response = $space->replace([2, 'replaced']);
 
         $this->assertResponse($response);
-        $this->assertSame([[1, 'baz']], $response->getData());
+        $this->assertSame([[2, 'replaced']], $response->getData());
     }
 
     public function testDelete()
     {
-        $space = self::$client->getSpace('space_foobar');
-        $response = $space->delete([2]);
+        $space = self::$client->getSpace('space_misc');
+        $response = $space->delete([3]);
 
         $this->assertResponse($response);
-        $this->assertSame([[2, 'bar']], $response->getData());
+        $this->assertSame([[3, 'delete_me_1']], $response->getData());
+    }
+
+    public function testDeleteWithIndexId()
+    {
+        $space = self::$client->getSpace('space_misc');
+        $response = $space->delete(['delete_me_2'], 1);
+
+        $this->assertResponse($response);
+        $this->assertSame([[4, 'delete_me_2']], $response->getData());
+    }
+
+    public function testDeleteWithIndexName()
+    {
+        $space = self::$client->getSpace('space_misc');
+        $response = $space->delete(['delete_me_3'], 'secondary');
+
+        $this->assertResponse($response);
+        $this->assertSame([[5, 'delete_me_3']], $response->getData());
     }
 
     /**
@@ -169,7 +187,7 @@ class SpaceTest extends \PHPUnit_Framework_TestCase
 
     public function testUpdateByNonExistingKey()
     {
-        $space = self::$client->getSpace('space_foobar');
+        $space = self::$client->getSpace('space_misc');
         $response = $space->update(42, [['=', 2, 'qux']]);
 
         $this->assertResponse($response);
@@ -227,16 +245,16 @@ class SpaceTest extends \PHPUnit_Framework_TestCase
      */
     public function testReferenceNonExistingIndexByName()
     {
-        self::$client->getSpace('space_foobar')->select([1], 'non_existing_index');
+        self::$client->getSpace('space_misc')->select([1], 'non_existing_index');
     }
 
     /**
      * @expectedException \Tarantool\Exception\Exception
-     * @expectedExceptionMessageRegExp /No index #123456 is defined in space 'space_foobar'/
+     * @expectedExceptionMessageRegExp /No index #123456 is defined in space 'space_misc'/
      */
     public function testReferenceNonExistingIndexById()
     {
-        self::$client->getSpace('space_foobar')->select([1], 123456);
+        self::$client->getSpace('space_misc')->select([1], 123456);
     }
 
     public function testCacheIndex()

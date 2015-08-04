@@ -47,10 +47,14 @@ local function create_fixtures()
     space = create_space('space_empty')
     space:create_index('primary', {type = 'tree', parts = {1, 'num'}})
 
-    space = create_space('space_foobar')
+    space = create_space('space_misc')
     space:create_index('primary', {type = 'hash', parts = {1, 'num'}})
-    space:insert{1, 'foo'}
-    space:insert{2, 'bar'}
+    space:create_index('secondary', {type = 'tree', parts = {2, 'str'}})
+    space:insert{1, 'foobar'}
+    space:insert{2, 'replace_me'}
+    space:insert{3, 'delete_me_1'}
+    space:insert{4, 'delete_me_2'}
+    space:insert{5, 'delete_me_3'}
 
     space = create_space('space_data')
     space:create_index('primary', {type = 'tree', unique = true, parts = {1, 'num'}})
