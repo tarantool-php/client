@@ -67,7 +67,7 @@ class Space
 
     public function delete(array $key, $index = null)
     {
-        $index = $this->normalizeIndex($this->id, $index);
+        $index = $this->normalizeIndex($index);
         $request = new DeleteRequest($this->id, $index, $key);
 
         return $this->client->sendRequest($request);
