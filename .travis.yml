@@ -1,17 +1,18 @@
 language: php
 
+php:
+    - 5.4
+    - 5.5
+    - 5.6
+    - 7.0
+    - hhvm
+
 env:
     - TARANTOOL_CLIENT=pecl
     - TARANTOOL_PACKER=pecl
     - TARANTOOL_PACKER=pecl_lite
 
 matrix:
-    include:
-        - php: 5.4
-        - php: 5.5
-        - php: 5.6
-        - php: 7.0
-        - php: hhvm
     exclude:
         - php: hhvm
           env: TARANTOOL_CLIENT=pecl
