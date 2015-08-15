@@ -50,7 +50,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
                         106 => [1, 1428578535, 9243],
                     ],
                 ]],
-                [true]
+                [true],
             ]],
         ];
     }
@@ -96,7 +96,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
                         106 => [1, 1428578535, 9243],
                     ],
                 ],
-                true
+                true,
             ]],
         ];
     }
