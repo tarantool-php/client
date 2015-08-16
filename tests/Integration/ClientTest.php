@@ -27,31 +27,8 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         return [
             [['func_foo'], [[['foo' => 'foo', 'bar' => 42]]]],
             [['func_sum', [42, -24]], [[18]]],
-            [['func_arg', [42]], [[42]]],
-            [['func_arg', [-42]], [[-42]]],
-            [['func_arg', [null]], [[null]]],
-            [['func_arg', [false]], [[false]]],
-            [['func_arg', ['foo']], [['foo']]],
-            [['func_arg', [[1, 2, 3]]], [[1, 2, 3]]],
             [['func_arg', [ [[42]] ]], [[ 42 ]]],
             [['func_arg', [ [42] ]], [[ 42 ]]],
-            [['func_mixed'], [
-                [true],
-                [[
-                    's' => [1, 1428578535],
-                    'u' => 1428578535,
-                    'v' => [],
-                    'c' => [
-                        2 => [1, 1428578535],
-                        106 => [1, 1428578535],
-                    ],
-                    'pc' => [
-                        2 => [1, 1428578535, 9243],
-                        106 => [1, 1428578535, 9243],
-                    ],
-                ]],
-                [true],
-            ]],
         ];
     }
 
@@ -73,31 +50,8 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         return [
             [['return func_foo()'], [['foo' => 'foo', 'bar' => 42]]],
             [['return func_sum(...)', [42, -24]], [18]],
-            [['return func_arg(...)', [42]], [42]],
-            [['return func_arg(...)', [-42]], [-42]],
-            [['return func_arg(...)', [null]], [null]],
-            [['return func_arg(...)', [false]], [false]],
-            [['return func_arg(...)', ['foo']], ['foo']],
-            [['return func_arg(...)', [[1, 2, 3]]], [[1, 2, 3]]],
             [['return func_arg(...)', [ [[42]] ]], [ [[42]] ]],
             [['return func_arg(...)', [ [42] ]], [ [42] ]],
-            [['return func_mixed()'], [
-                true,
-                [
-                    's' => [1, 1428578535],
-                    'u' => 1428578535,
-                    'v' => [],
-                    'c' => [
-                        2 => [1, 1428578535],
-                        106 => [1, 1428578535],
-                    ],
-                    'pc' => [
-                        2 => [1, 1428578535, 9243],
-                        106 => [1, 1428578535, 9243],
-                    ],
-                ],
-                true,
-            ]],
         ];
     }
 

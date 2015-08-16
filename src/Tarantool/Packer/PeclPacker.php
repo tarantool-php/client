@@ -9,12 +9,13 @@ use Tarantool\Response;
 
 class PeclPacker implements Packer
 {
+    private $packer;
     private $unpacker;
 
-    public function __construct()
+    public function __construct($phpOnly = true)
     {
-        $this->unpacker = new \MessagePackUnpacker();
-        $this->unpacker->setOption(\MessagePack::OPT_PHPONLY, false);
+        $this->packer = new \MessagePack($phpOnly);
+        $this->unpacker = new \MessagePackUnpacker($phpOnly);
     }
 
     /**
@@ -24,10 +25,10 @@ class PeclPacker implements Packer
     {
         // @see https://github.com/msgpack/msgpack-php/issues/45
         $content = pack('C*', 0x82, IProto::CODE, $request->getType(), IProto::SYNC);
-        $content .= msgpack_pack((int) $sync);
+        $content .= $this->packer->pack((int) $sync);
 
         if (null !== $data = $request->getBody()) {
-            $content .= msgpack_pack($data);
+            $content .= $this->packer->pack($data);
         }
 
         return PackUtils::packLength(strlen($content)).$content;
@@ -45,17 +46,21 @@ class PeclPacker implements Packer
         }
 
         $header = $this->unpacker->data();
-        if (!is_array($header)) {
+
+        if (!$this->unpacker->execute()) {
             throw new Exception('Unable to unpack data.');
         }
 
+        $body = (array) $this->unpacker->data();
         $code = $header[IProto::CODE];
-        $body = $this->unpacker->execute() ? $this->unpacker->data() : null;
 
         if ($code >= Request::TYPE_ERROR) {
             throw new Exception($body[IProto::ERROR], $code & (Request::TYPE_ERROR - 1));
         }
 
-        return new Response($header[IProto::SYNC], $body ? $body[IProto::DATA] : null);
+        return new Response(
+            $header[IProto::SYNC],
+            isset($body[IProto::DATA]) ? $body[IProto::DATA] : null
+        );
     }
 }
