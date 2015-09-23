@@ -26,6 +26,7 @@ class MsgpackTest extends \PHPUnit_Framework_TestCase
             [null],
             [false],
             ['string'],
+            ["\x04\x00\xa0\x00\x00"],
             [[1, 2]],
             [[[[1, 2]]]],
             [['foo' => 'bar']],
