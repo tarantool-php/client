@@ -23,7 +23,10 @@ class SpaceTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->client = $this->getMock('Tarantool\Client');
+        $this->client = $this->getMockBuilder('Tarantool\Client')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->space = new Space($this->client, $this->spaceId);
     }
 
