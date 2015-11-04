@@ -10,12 +10,12 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     use Assert;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \Tarantool\Connection\Connection|\PHPUnit_Framework_MockObject_MockObject
      */
     private $connection;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \Tarantool\Packer\Packer|\PHPUnit_Framework_MockObject_MockObject
      */
     private $packer;
 
