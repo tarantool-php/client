@@ -39,6 +39,7 @@ class SpaceTest extends \PHPUnit_Framework_TestCase
             [10, [[1], 'secondary', 11, 10]],
             [9, [[1], 'secondary', 9, 10]],
             [10, [[1], 'secondary', 10, 10]],
+            [20, [[1], 'secondary', null, null, 1]],
         ];
     }
 
