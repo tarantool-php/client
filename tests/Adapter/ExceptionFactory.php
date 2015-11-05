@@ -35,7 +35,7 @@ class ExceptionFactory
 
             case 0 === strpos($message, 'Op must be MAP at pos'):
                 $message = 'Illegal parameters, update operation must be an array {op,..}, got empty array';
-                $code = 20;
+                $code = 1;
                 break;
         }
 
