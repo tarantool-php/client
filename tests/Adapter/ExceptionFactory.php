@@ -34,7 +34,7 @@ class ExceptionFactory
                 break;
 
             case 0 === strpos($message, 'Op must be MAP at pos'):
-                $message = 'Invalid MsgPack - expected an update operation (array)';
+                $message = 'Illegal parameters, update operation must be an array {op,..}, got empty array';
                 $code = 20;
                 break;
         }

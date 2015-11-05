@@ -214,7 +214,7 @@ class SpaceTest extends \PHPUnit_Framework_TestCase
     public function providerInvalidUpdateData()
     {
         return [
-            [[], 'Invalid MsgPack - expected an update operation (array)', 20],
+            [[], 'Illegal parameters, update operation must be an array {op,..}, got empty array', 20],
             [['+', 2, 1], "Argument type in operation '+' on field 2 does not match field type: expected a NUMBER", 26],
             [['', 2, 2], 'Unknown UPDATE operation', 28],
             [['bad_op', 2, 2], 'Unknown UPDATE operation', 28],
