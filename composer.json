@@ -13,6 +13,9 @@
     "require": {
         "php": ">=5.4.0"
     },
+    "require-dev": {
+        "rybakit/msgpack": "@dev"
+    },
     "autoload": {
         "psr-4": {
             "": "src/"

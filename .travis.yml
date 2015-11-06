@@ -11,6 +11,7 @@ env:
     - TARANTOOL_CLIENT=pecl
     - TARANTOOL_PACKER=pecl
     - TARANTOOL_PACKER=pecl_lite
+    - TARANTOOL_PACKER=pure
 
 matrix:
     exclude:

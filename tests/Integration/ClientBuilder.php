@@ -7,6 +7,7 @@ use Tarantool\Connection\Connection;
 use Tarantool\Connection\SocketConnection;
 use Tarantool\Packer\PeclLitePacker;
 use Tarantool\Packer\PeclPacker;
+use Tarantool\Packer\PurePacker;
 use Tarantool\Tests\Adapter\Tarantool;
 
 class ClientBuilder
@@ -17,6 +18,7 @@ class ClientBuilder
     const CONN_TCP = 'tcp';
     const CONN_UNIX = 'unix';
 
+    const PACKER_PURE = 'pure';
     const PACKER_PECL = 'pecl';
     const PACKER_PECL_LITE = 'pecl_lite';
 
@@ -74,7 +76,7 @@ class ClientBuilder
             return new TarantoolClient($connection, $packer);
         }
 
-        throw new \UnexpectedValueException(sprintf('""%" client is not supported.', $this->client));
+        throw new \UnexpectedValueException(sprintf('"%s" client is not supported.', $this->client));
     }
 
     private function createConnection()
@@ -93,11 +95,15 @@ class ClientBuilder
         }
         */
 
-        throw new \UnexpectedValueException(sprintf('""%" connection is not supported.', $this->connection));
+        throw new \UnexpectedValueException(sprintf('"%s" connection is not supported.', $this->connection));
     }
 
     private function createPacker()
     {
+        if (self::PACKER_PURE === $this->packer) {
+            return new PurePacker();
+        }
+
         if (self::PACKER_PECL === $this->packer) {
             return new PeclPacker();
         }
@@ -106,6 +112,6 @@ class ClientBuilder
             return new PeclLitePacker();
         }
 
-        throw new \UnexpectedValueException(sprintf('""%" packer is not supported.', $this->packer));
+        throw new \UnexpectedValueException(sprintf('"%s" packer is not supported.', $this->packer));
     }
 }
