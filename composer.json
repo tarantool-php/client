@@ -14,7 +14,12 @@
         "php": ">=5.4.0"
     },
     "require-dev": {
+        "ext-msgpack": "@dev",
         "rybakit/msgpack": "@dev"
+    },
+    "suggest": {
+        "ext-msgpack": "For using Pecl- or PeclLitePacker.",
+        "rybakit/msgpack": "For using PurePacker."
     },
     "autoload": {
         "psr-4": {
