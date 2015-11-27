@@ -12,7 +12,7 @@ class RetryableTest extends \PHPUnit_Framework_TestCase
     private $wrappedConnection;
 
     /**
-     * @var \Tarantool\Connection\Connection|\PHPUnit_Framework_MockObject_MockObject
+     * @var Retryable
      */
     private $connection;
 
@@ -57,7 +57,7 @@ class RetryableTest extends \PHPUnit_Framework_TestCase
 
     public function testSuccessRetry()
     {
-        $exception = $this->getMock('Tarantool\Exception\ConnectionException');
+        $exception = $this->getMock('Tarantool\Exception\ConnectionException', ['getMessage']);
 
         $this->wrappedConnection->expects($this->exactly(3))->method('open')
             ->will($this->onConsecutiveCalls(
@@ -75,7 +75,7 @@ class RetryableTest extends \PHPUnit_Framework_TestCase
      */
     public function testThrowConnectionException()
     {
-        $exception = $this->getMock('Tarantool\Exception\ConnectionException');
+        $exception = $this->getMock('Tarantool\Exception\ConnectionException', ['getMessage']);
 
         $this->wrappedConnection->expects($this->exactly(3))->method('open')
             ->will($this->onConsecutiveCalls(
