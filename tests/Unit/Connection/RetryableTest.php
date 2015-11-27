@@ -7,12 +7,12 @@ use Tarantool\Connection\Retryable;
 class RetryableTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \Tarantool\Connection\Connection
+     * @var \Tarantool\Connection\Connection|\PHPUnit_Framework_MockObject_MockObject
      */
     private $wrappedConnection;
 
     /**
-     * @var \Tarantool\Connection\Connection
+     * @var \Tarantool\Connection\Connection|\PHPUnit_Framework_MockObject_MockObject
      */
     private $connection;
 
