@@ -22,10 +22,10 @@ class PurePacker implements Packer
 
     public function pack(Request $request, $sync = null)
     {
-        $content = $this->packer->pack([
+        $content = $this->packer->packMap([
             IProto::CODE => $request->getType(),
             IProto::SYNC => (int) $sync,
-        ], MessagePackPacker::FORCE_MAP);
+        ]);
 
         if (null !== $data = $request->getBody()) {
             $content .= $this->packer->pack($data);
