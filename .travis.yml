@@ -20,7 +20,6 @@ matrix:
         - php: hhvm
           env: TARANTOOL_PACKER=pecl
     allow_failures:
-        - php: hhvm
         - env: TARANTOOL_CLIENT=pecl
     fast_finish: true
 
