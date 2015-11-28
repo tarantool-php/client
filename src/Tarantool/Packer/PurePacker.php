@@ -3,21 +3,20 @@
 namespace Tarantool\Packer;
 
 use MessagePack\BufferUnpacker;
-use MessagePack\Packer;
+use MessagePack\Packer as MessagePackPacker;
 use Tarantool\Exception\Exception;
 use Tarantool\IProto;
-use Tarantool\Packer\Packer as BasePacker;
 use Tarantool\Request\Request;
 use Tarantool\Response;
 
-class PurePacker implements BasePacker
+class PurePacker implements Packer
 {
     private $packer;
     private $unpacker;
 
     public function __construct()
     {
-        $this->packer = new Packer();
+        $this->packer = new MessagePackPacker();
         $this->unpacker = new BufferUnpacker();
     }
 
