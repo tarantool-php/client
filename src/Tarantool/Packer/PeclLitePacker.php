@@ -18,8 +18,8 @@ class PeclLitePacker implements Packer
         $content = pack('C*', 0x82, IProto::CODE, $request->getType(), IProto::SYNC);
         $content .= msgpack_pack((int) $sync);
 
-        if (null !== $data = $request->getBody()) {
-            $content .= msgpack_pack($data);
+        if (null !== $body = $request->getBody()) {
+            $content .= msgpack_pack($body);
         }
 
         return PackUtils::packLength(strlen($content)).$content;

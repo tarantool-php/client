@@ -3,20 +3,21 @@
 namespace Tarantool\Packer;
 
 use MessagePack\BufferUnpacker;
-use MessagePack\Packer as MessagePackPacker;
+use MessagePack\Packer;
 use Tarantool\Exception\Exception;
 use Tarantool\IProto;
+use Tarantool\Packer\Packer as BasePacker;
 use Tarantool\Request\Request;
 use Tarantool\Response;
 
-class PurePacker implements Packer
+class PurePacker implements BasePacker
 {
     private $packer;
     private $unpacker;
 
     public function __construct()
     {
-        $this->packer = new MessagePackPacker();
+        $this->packer = new Packer();
         $this->unpacker = new BufferUnpacker();
     }
 
@@ -27,8 +28,8 @@ class PurePacker implements Packer
             IProto::SYNC => (int) $sync,
         ]);
 
-        if (null !== $data = $request->getBody()) {
-            $content .= $this->packer->pack($data);
+        if (null !== $body = $request->getBody()) {
+            $content .= $this->packer->packMap($body);
         }
 
         return PackUtils::packLength(strlen($content)).$content;
