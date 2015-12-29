@@ -1,7 +1,7 @@
 {
     "name": "tarantool/client",
     "description": "PHP client for Tarantool.",
-    "keywords": ["tarantool", "client", "pure"],
+    "keywords": ["tarantool", "client", "pure", "nosql"],
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -11,7 +11,7 @@
         }
     ],
     "require": {
-        "php": ">=5.4.0"
+        "php": "^5.4|^7.0"
     },
     "require-dev": {
         "ext-msgpack": "@dev",
