@@ -19,12 +19,12 @@
         <ini name="error_reporting" value="E_ALL" />
         <ini name="msgpack.php_only" value="0" />
 
-        <env name="TARANTOOL_CLIENT" value="pure" />
-        <env name="TARANTOOL_CONN" value="tcp" />
-        <env name="TARANTOOL_CONN_HOST" value="127.0.0.1" />
-        <env name="TARANTOOL_CONN_PORT" value="3301" />
-        <env name="TARANTOOL_CONN_UNIX" value="unix:///var/run/tarantool/instance.control" />
-        <env name="TARANTOOL_PACKER" value="pecl" />
+        <env name="TNT_CLIENT" value="pure" />
+        <env name="TNT_CONN" value="tcp" />
+        <env name="TNT_CONN_HOST" value="127.0.0.1" />
+        <env name="TNT_CONN_PORT" value="3301" />
+        <env name="TNT_CONN_UNIX" value="unix:///var/run/tarantool/instance.control" />
+        <env name="TNT_PACKER" value="pecl" />
     </php>
 
     <testsuites>

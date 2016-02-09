@@ -57,24 +57,24 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
     public function testCacheSpace()
     {
-        $total = self::getTotalSelectCalls();
+        $total = Utils::getTotalSelectCalls();
 
         self::$client->flushSpaces();
         self::$client->getSpace('space_conn')->select();
         self::$client->getSpace('space_conn')->select();
 
-        $this->assertSame(3, self::getTotalSelectCalls() - $total);
+        $this->assertSame(3, Utils::getTotalSelectCalls() - $total);
     }
 
     public function testFlushSpaces()
     {
-        $total = self::getTotalSelectCalls();
+        $total = Utils::getTotalSelectCalls();
 
         self::$client->flushSpaces();
         self::$client->getSpace('space_conn')->select();
         self::$client->flushSpaces();
         self::$client->getSpace('space_conn')->select();
 
-        $this->assertSame(4, self::getTotalSelectCalls() - $total);
+        $this->assertSame(4, Utils::getTotalSelectCalls() - $total);
     }
 }

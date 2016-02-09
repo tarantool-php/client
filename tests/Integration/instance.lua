@@ -1,5 +1,7 @@
 #!/usr/bin/tarantool
 
+require('console').listen('127.0.0.1:33333')
+
 box.cfg {
     listen = 3301,
     log_level = 6,
@@ -64,9 +66,6 @@ local function create_fixtures()
         space:replace{i, i * 2 % 5, 'tuple_' .. i}
     end
 end
-
-box.session.on_connect(create_fixtures)
-
 
 function func_foo()
     return {foo='foo', bar=42}
