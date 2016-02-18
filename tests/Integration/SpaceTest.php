@@ -14,7 +14,7 @@ class SpaceTest extends \PHPUnit_Framework_TestCase
     /**
      * @beforeClass
      */
-    protected function createFixtures()
+    public static function createFixtures()
     {
         Utils::createClient()->evaluate('create_fixtures()');
     }

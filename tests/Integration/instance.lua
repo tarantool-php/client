@@ -37,7 +37,7 @@ end
 local space = create_space('space_conn')
 space:create_index('primary', {type = 'tree', parts = {1, 'num'}})
 
-local function create_fixtures()
+function create_fixtures()
     local space
 
     space = create_space('space_str')
