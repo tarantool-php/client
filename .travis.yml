@@ -29,6 +29,7 @@ env:
 matrix:
   allow_failures:
     - env: TNT_CLIENT=pecl
+    - env: IMAGE='diegomarangoni/hhvm:cli' TNT_PACKER=pecl_lite
   fast_finish: true
 
 install:
