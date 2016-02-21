@@ -18,10 +18,11 @@ if image.startswith('php:'):
 
     if packer.startswith('pecl'):
         if image.startswith('php:7'):
-            msgpack_ext_version='2.0.0'
+            msgpack_ext_version='php7'
         else:
-            msgpack_ext_version='0.5.7'
-        run_cmds.append('pecl install msgpack-%s && docker-php-ext-enable msgpack' % msgpack_ext_version)
+            msgpack_ext_version='master'
+        run_cmds.append('git clone https://github.com/msgpack/msgpack-php.git {0} && git --git-dir={0}/.git --work-tree={0} checkout {1}'.format('/usr/src/php/ext/msgpack', msgpack_ext_version))
+        run_cmds.append('docker-php-ext-install msgpack')
         composer_cmds.append('remove --dev rybakit/msgpack')
     else:
         composer_cmds.append('remove --dev ext-msgpack')
@@ -36,8 +37,8 @@ else:
         run_cmds.append('apt-get install -y hhvm-dev')
         run_cmds.append('git clone https://github.com/reeze/msgpack-hhvm')
         run_cmds.append('cd msgpack-hhvm && hphpize && cmake . && make')
-        run_cmds.append('echo "hhvm.dynamic_extension_path = `pwd`" | sudo tee -a /etc/hhvm/php.ini')
-        run_cmds.append('echo "hhvm.dynamic_extensions[msgpack] = msgpack.so" | sudo tee -a /etc/hhvm/php.ini')
+        run_cmds.append('echo "hhvm.dynamic_extension_path = `pwd`" | tee -a /etc/hhvm/php.ini')
+        run_cmds.append('echo "hhvm.dynamic_extensions[msgpack] = msgpack.so" | tee -a /etc/hhvm/php.ini')
         run_cmds.append('cd ..')
         composer_cmds.append('remove --dev rybakit/msgpack')
 
