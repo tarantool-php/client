@@ -14,7 +14,7 @@ class ExceptionFactory
         $code = 0;
 
         switch (true) {
-            case 0 === strpos($message, 'Failed to connect. Code '):
+            case 0 === strpos($message, 'Failed to connect '):
             case 0 === strpos($message, 'Invalid primary port value: '):
                 return new ConnectionException($message);
 
