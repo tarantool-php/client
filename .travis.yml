@@ -23,15 +23,13 @@ env:
   - IMAGE='php:7.0-cli' TNT_PACKER=pecl_lite
   - IMAGE='php:7.0-cli' TNT_PACKER=pure
 
-  - IMAGE='brunoric/hhvm:tag-3.9.0' TNT_PACKER=pure
-  - IMAGE='brunoric/hhvm:tag-3.9.0' TNT_PACKER=pecl_lite
-  - IMAGE='brunoric/hhvm:tag-3.12.0' TNT_PACKER=pure
-  - IMAGE='brunoric/hhvm:latest' TNT_PACKER=pure
+  - IMAGE='baptistedonaux/hhvm:3.9' TNT_PACKER=pure
+  - IMAGE='baptistedonaux/hhvm:3.12' TNT_PACKER=pure
+  - IMAGE='baptistedonaux/hhvm:latest' TNT_PACKER=pure
 
 matrix:
   allow_failures:
     - env: IMAGE='php:5.6-cli' TNT_CLIENT=pecl
-    - env: IMAGE='brunoric/hhvm:tag-3.9.0' TNT_PACKER=pecl_lite
   fast_finish: true
 
 install:

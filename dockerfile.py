@@ -33,15 +33,6 @@ if image.startswith('php:'):
 else:
     composer_cmds.append('remove --dev ext-msgpack')
 
-    if packer.startswith('pecl'):
-        run_cmds.append('apt-get install -y hhvm-dev')
-        run_cmds.append('git clone https://github.com/reeze/msgpack-hhvm')
-        run_cmds.append('cd msgpack-hhvm && hphpize && cmake . && make')
-        run_cmds.append('echo "hhvm.dynamic_extension_path = `pwd`" | tee -a /etc/hhvm/php.ini')
-        run_cmds.append('echo "hhvm.dynamic_extensions[msgpack] = msgpack.so" | tee -a /etc/hhvm/php.ini')
-        run_cmds.append('cd ..')
-        composer_cmds.append('remove --dev rybakit/msgpack')
-
 
 if re.match('(?:^|\s+?)--coverage-\w', phpunit_opts):
     run_cmds.append('pecl install xdebug && docker-php-ext-enable xdebug')
