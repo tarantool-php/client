@@ -30,6 +30,7 @@ if image.startswith('php:'):
     if 'pecl' == client:
         run_cmds.append('git clone https://github.com/tarantool/tarantool-php.git /usr/src/php/ext/tarantool')
         run_cmds.append('docker-php-ext-install tarantool')
+        phpunit_opts += ' --exclude-group pureonly '
 else:
     composer_cmds.append('remove --dev ext-msgpack')
 
