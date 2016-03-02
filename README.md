@@ -23,13 +23,55 @@ $ phpunit --testsuite Unit
 ```
 
 To run integration tests:
+
 ```sh
 $ phpunit --testsuite Integration
 ```
 
+> Make sure to start [instance.lua](tests/Integration/instance.lua) first.
+
 To run all tests:
+
 ```sh
 $ phpunit
+```
+
+If you already have Docker installed, you can run the tests in a docker container.
+First, create a container:
+
+```sh
+$ ./dockerfile.py | docker build -t client -
+```
+
+The command above will create a container named `client` with PHP 5.6 runtime.
+You may change the default runtime by defining the `IMAGE` environment variable:
+
+```sh
+$ IMAGE='php:7.0-cli' ./dockerfile.py | docker build -t client -
+```
+
+> See a list of various images [here](.travis.yml#L9-L28).
+
+
+Then run Tarantool instance (needed for integration tests):
+
+```sh
+$ docker run -d --name tarantool -v $(pwd):/client tarantool/tarantool \
+    /client/tests/Integration/instance.lua
+```
+
+And then run both unit and integration tests:
+
+```sh
+$ docker run --rm --name client --link tarantool -v $(pwd):/client -w /client client
+```
+
+To run only integration or unit tests, set the `PHPUNIT_OPTS` environment variable
+to either `--testsuite Integration` or `--testsuite Unit` respectively, e.g.:
+
+```sh
+$ docker run --rm --name client --link tarantool -v $(pwd):/client -w /client \
+    -e PHPUNIT_OPTS='--testsuite Integration' client
 ```
 
 
