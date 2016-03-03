@@ -60,7 +60,7 @@ class MsgpackTest extends \PHPUnit_Framework_TestCase
 
     public function testPackUnpackObject()
     {
-        $packer = getenv('TARANTOOL_PACKER');
+        $packer = getenv('TNT_PACKER');
 
         if (ClientBuilder::PACKER_PECL !== $packer) {
             $this->markTestSkipped(sprintf('Packing/unpacking objects is not supported by "%s" packer.', $packer));

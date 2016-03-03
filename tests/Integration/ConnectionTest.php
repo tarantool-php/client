@@ -55,17 +55,17 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     public function testCreateManyConnections()
     {
         for ($i = 10; $i; $i--) {
-            self::createClient()->connect();
+            Utils::createClient()->connect();
         };
     }
 
-    public function testConnectMany()
+    public function testMultipleConnect()
     {
         self::$client->connect();
         self::$client->connect();
     }
 
-    public function testDisconnectMany()
+    public function tesMultipleDisconnect()
     {
         self::$client->disconnect();
         self::$client->disconnect();
@@ -76,7 +76,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
      */
     public function testConnectInvalidHost()
     {
-        self::createClient('invalid_host')->connect();
+        Utils::createClient('invalid_host')->connect();
     }
 
     /**
@@ -84,7 +84,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
      */
     public function testConnectInvalidPort()
     {
-        self::createClient(null, 123456)->connect();
+        Utils::createClient(null, 123456)->connect();
     }
 
     /**
@@ -92,7 +92,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
      */
     public function testAuthenticate($username, $password)
     {
-        self::createClient()->authenticate($username, $password);
+        Utils::createClient()->authenticate($username, $password);
     }
 
     public function provideCredentials()
@@ -110,7 +110,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     public function testAuthenticateWithInvalidCredentials($username, $password, $errorMessage, $errorCode)
     {
         try {
-            self::createClient()->authenticate($username, $password);
+            Utils::createClient()->authenticate($username, $password);
             $this->fail();
         } catch (Exception $e) {
             $this->assertSame($errorMessage, $e->getMessage());
@@ -133,7 +133,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
      */
     public function testUseCredentialsAfterReconnect()
     {
-        $client = self::createClient();
+        $client = Utils::createClient();
 
         $client->authenticate('user_foo', 'foo');
         $client->disconnect();
@@ -142,7 +142,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
 
     public function testRegenerateSalt()
     {
-        $client = self::createClient();
+        $client = Utils::createClient();
 
         $client->connect();
         $client->disconnect();
@@ -151,7 +151,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
 
     public function testReconnectOnEmptySalt()
     {
-        $client = self::createClient();
+        $client = Utils::createClient();
         $client->getConnection()->open();
         $client->authenticate('user_foo', 'foo');
     }
@@ -162,7 +162,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     public function testRetryableConnection()
     {
         $connection = self::$client->getConnection();
-        $client = self::createClient($connection);
+        $client = Utils::createClient($connection);
 
         $client->connect();
         $this->assertFalse($client->isDisconnected());

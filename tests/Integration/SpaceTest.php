@@ -12,6 +12,14 @@ class SpaceTest extends \PHPUnit_Framework_TestCase
     use Client;
 
     /**
+     * @beforeClass
+     */
+    public static function createFixtures()
+    {
+        Utils::createClient()->evaluate('create_fixtures()');
+    }
+
+    /**
      * @dataProvider provideSelectData
      */
     public function testSelect($expectedCount, array $args)
@@ -213,13 +221,20 @@ class SpaceTest extends \PHPUnit_Framework_TestCase
 
     public function providerInvalidUpdateData()
     {
-        return [
-            [[], 'Illegal parameters, update operation must be an array {op,..}, got empty array', 1],
+        $data = [
             [['+', 2, 1], "Argument type in operation '+' on field 2 does not match field type: expected a NUMBER", 26],
             [['', 2, 2], 'Unknown UPDATE operation', 28],
             [['bad_op', 2, 2], 'Unknown UPDATE operation', 28],
             [[':', 2, 2, 2, '', 'extra'], 'Unknown UPDATE operation', 28],
         ];
+
+        if (version_compare(Utils::getTarantoolVersion(), '1.6.7', '<')) {
+            $data[] = [[], 'Invalid MsgPack - expected an update operation (array)', 20];
+        } else {
+            $data[] = [[], 'Illegal parameters, update operation must be an array {op,..}, got empty array', 1];
+        }
+
+        return $data;
     }
 
     /**
@@ -262,26 +277,26 @@ class SpaceTest extends \PHPUnit_Framework_TestCase
     {
         $space = self::$client->getSpace(Space::INDEX);
 
-        $total = self::getTotalSelectCalls();
+        $total = Utils::getTotalSelectCalls();
 
         $space->flushIndexes();
         $space->select([], 'name');
         $space->select([], 'name');
 
-        $this->assertSame(3, self::getTotalSelectCalls() - $total);
+        $this->assertSame(3, Utils::getTotalSelectCalls() - $total);
     }
 
     public function testFlushIndexes()
     {
         $space = self::$client->getSpace(Space::INDEX);
 
-        $total = self::getTotalSelectCalls();
+        $total = Utils::getTotalSelectCalls();
 
         $space->flushIndexes();
         $space->select([], 'name');
         $space->flushIndexes();
         $space->select([], 'name');
 
-        $this->assertSame(4, self::getTotalSelectCalls() - $total);
+        $this->assertSame(4, Utils::getTotalSelectCalls() - $total);
     }
 }

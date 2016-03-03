@@ -1,101 +1,48 @@
-language: php
+sudo: required
 
-php:
-    - 5.4
-    - 5.5
-    - 5.6
-    - 7.0
-    - hhvm
+language: python
+
+services:
+  - docker
 
 env:
-    - TARANTOOL_CLIENT=pecl
-    - TARANTOOL_PACKER=pecl
-    - TARANTOOL_PACKER=pecl_lite
-    - TARANTOOL_PACKER=pure
+  - IMAGE='php:5.4-cli' TNT_PACKER=pecl
+  - IMAGE='php:5.4-cli' TNT_PACKER=pecl_lite
+  - IMAGE='php:5.4-cli' TNT_PACKER=pure
+
+  - IMAGE='php:5.5-cli' TNT_PACKER=pecl
+  - IMAGE='php:5.5-cli' TNT_PACKER=pecl_lite
+  - IMAGE='php:5.5-cli' TNT_PACKER=pure
+
+  - IMAGE='php:5.6-cli' TNT_PACKER=pecl
+  - IMAGE='php:5.6-cli' TNT_PACKER=pecl_lite
+  - IMAGE='php:5.6-cli' TNT_PACKER=pure PHPUNIT_OPTS='--coverage-clover=coverage.clover'
+  - IMAGE='php:5.6-cli' TNT_CLIENT=pecl
+
+  - IMAGE='php:7.0-cli' TNT_PACKER=pecl
+  - IMAGE='php:7.0-cli' TNT_PACKER=pecl_lite
+  - IMAGE='php:7.0-cli' TNT_PACKER=pure
+
+  - IMAGE='baptistedonaux/hhvm:3.9' TNT_PACKER=pure
+  - IMAGE='baptistedonaux/hhvm:3.12' TNT_PACKER=pure
+  - IMAGE='baptistedonaux/hhvm:latest' TNT_PACKER=pure
 
 matrix:
-    exclude:
-        - php: hhvm
-          env: TARANTOOL_CLIENT=pecl
-        - php: hhvm
-          env: TARANTOOL_PACKER=pecl
-    allow_failures:
-        - env: TARANTOOL_CLIENT=pecl
-    fast_finish: true
-
-before_install:
-    - curl http://tarantool.org/dist/public.key | sudo apt-key add -
-    - echo "deb http://tarantool.org/dist/1.6/ubuntu `lsb_release -c -s` main" | sudo tee -a /etc/apt/sources.list.d/tarantool.list
-    - sudo apt-get update
+  allow_failures:
+    - env: IMAGE='php:5.6-cli' TNT_CLIENT=pecl
+  fast_finish: true
 
 install:
-    - sudo apt-get -y install tarantool
-
-    - >
-        if [[ $TRAVIS_PHP_VERSION == 7.0 ]]; then
-            git clone https://github.com/msgpack/msgpack-php.git;
-            cd msgpack-php;
-            git checkout php7;
-            phpize && ./configure;
-            make;
-            sudo make install;
-            cd ..;
-            printf "extension = msgpack.so\n" >> ~/.phpenv/versions/$TRAVIS_PHP_VERSION/etc/php.ini;
-
-            composer global require phpunit/phpunit-mock-objects:3.0.*@dev;
-            composer global require sebastian/resource-operations:1.0.*@dev;
-            composer global require phpunit/phpunit:5.0.*@dev;
-            export PATH="~/.composer/vendor/bin:$PATH";
-        elif [[ $TRAVIS_PHP_VERSION == hhvm* ]]; then
-            tests/install_msgpack_hhvm.sh;
-        else
-            git clone https://github.com/msgpack/msgpack-php.git;
-            cd msgpack-php;
-            phpize && ./configure;
-            make;
-            sudo make install;
-            cd ..;
-            printf "extension = msgpack.so\n" >> ~/.phpenv/versions/$TRAVIS_PHP_VERSION/etc/php.ini;
-        fi
-
-    - >
-        if [[ $TARANTOOL_CLIENT == pecl ]]; then
-            git clone https://github.com/tarantool/tarantool-php.git;
-            cd tarantool-php;
-            phpize && ./configure;
-            make;
-            sudo make install;
-            cd ..;
-            printf "extension = tarantool.so\n" >> ~/.phpenv/versions/$TRAVIS_PHP_VERSION/etc/php.ini;
-        fi
-
-    - composer install
-
-before_script:
-    - sudo cp ./tests/Integration/instance.lua /etc/tarantool/instances.enabled
-    - sudo tarantoolctl start instance
-    - >
-        for i in `seq 1 10`; do
-            if sudo tarantoolctl status instance; then
-                break;
-            fi;
-            sleep 1;
-        done
+  - ./dockerfile.py | tee /dev/tty | docker build -t client -
 
 script:
-    - >
-        if [[ $TARANTOOL_CLIENT == pecl ]]; then
-            phpunit --testsuite Integration --exclude-group pureonly;
-        elif [[ $TRAVIS_PHP_VERSION == 5.6 ]]; then
-            phpunit --coverage-clover coverage.clover;
-        else
-            phpunit;
-        fi
+  - docker run -d --name tarantool -v $(pwd):/client tarantool/tarantool /client/tests/Integration/instance.lua
+  - docker run --rm --name client --link tarantool -v $(pwd):/client -w /client client
 
 after_script:
-    # code-coverage for scrutinizer-ci
-    - >
-        if [[ -f coverage.clover ]]; then
-            wget https://scrutinizer-ci.com/ocular.phar;
-            php ocular.phar code-coverage:upload --format=php-clover coverage.clover;
-        fi
+  - docker run --rm --name client -v $(pwd):/client -w /client client bash -c "
+      if [[ -f coverage.clover ]]; then
+        curl -sSOL https://scrutinizer-ci.com/ocular.phar &&
+        php ocular.phar code-coverage:upload --format=php-clover coverage.clover;
+      fi
+    "
