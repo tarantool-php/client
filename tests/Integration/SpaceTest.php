@@ -275,7 +275,7 @@ class SpaceTest extends \PHPUnit_Framework_TestCase
 
     public function testCacheIndex()
     {
-        $space = self::$client->getSpace(Space::INDEX);
+        $space = self::$client->getSpace(Space::VINDEX);
 
         $total = Utils::getTotalSelectCalls();
 
@@ -288,7 +288,7 @@ class SpaceTest extends \PHPUnit_Framework_TestCase
 
     public function testFlushIndexes()
     {
-        $space = self::$client->getSpace(Space::INDEX);
+        $space = self::$client->getSpace(Space::VINDEX);
 
         $total = Utils::getTotalSelectCalls();
 

@@ -129,7 +129,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Tarantool\Exception\Exception
-     * @expectedExceptionMessage Read access denied for user 'user_foo' to space '_space'
+     * @expectedExceptionMessage Space 'space_conn' does not exist
      */
     public function testUseCredentialsAfterReconnect()
     {

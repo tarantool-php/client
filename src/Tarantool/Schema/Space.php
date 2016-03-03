@@ -12,13 +12,8 @@ use Tarantool\Request\UpdateRequest;
 
 class Space
 {
-    const SCHEMA = 272;
-    const SPACE = 280;
-    const INDEX = 288;
-    const FUNC = 296;
-    const USER = 304;
-    const PRIV = 312;
-    const CLUSTER = 320;
+    const VSPACE = 281;
+    const VINDEX = 289;
 
     private $client;
     private $id;
@@ -89,7 +84,7 @@ class Space
             return $this->indexes[$indexName];
         }
 
-        $schema = new Space($this->client, Space::INDEX);
+        $schema = new Space($this->client, Space::VINDEX);
         $response = $schema->select([$this->id, $indexName], Index::INDEX_NAME);
         $data = $response->getData();
 
