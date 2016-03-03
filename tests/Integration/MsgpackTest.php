@@ -58,6 +58,9 @@ class MsgpackTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($array, $response->getData()[0], '', 0.0, 5, true);
     }
 
+    /**
+     * @group pureonly
+     */
     public function testPackUnpackObject()
     {
         $packer = getenv('TNT_PACKER');
