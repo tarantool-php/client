@@ -23,7 +23,7 @@
     },
     "autoload": {
         "psr-4": {
-            "": "src/"
+            "Tarantool\\": "src/"
         }
     },
     "autoload-dev" : {
