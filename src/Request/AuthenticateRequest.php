@@ -10,7 +10,7 @@ class AuthenticateRequest implements Request
     private $username;
     private $password;
 
-    public function __construct($salt, $username, $password)
+    public function __construct($salt, $username, $password = null)
     {
         $this->salt = $salt;
         $this->username = $username;
@@ -24,6 +24,13 @@ class AuthenticateRequest implements Request
 
     public function getBody()
     {
+        if (null === $this->password) {
+            return [
+                IProto::TUPLE => [],
+                IProto::USER_NAME => $this->username,
+            ];
+        }
+
         $hash1 = sha1($this->password, true);
         $hash2 = sha1($hash1, true);
         $scramble = sha1($this->salt.$hash2, true);

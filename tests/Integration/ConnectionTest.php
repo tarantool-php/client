@@ -90,14 +90,22 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider provideCredentials
      */
-    public function testAuthenticate($username, $password)
+    public function testAuthenticate($username, $password = null)
     {
-        Utils::createClient()->authenticate($username, $password);
+        $client = Utils::createClient();
+
+        if (1 === func_num_args()) {
+            $client->authenticate($username);
+        } else {
+            $client->authenticate($username, $password);
+        }
     }
 
     public function provideCredentials()
     {
         return [
+            ['guest'],
+            ['guest', null],
             ['user_foo', 'foo'],
             ['user_empty', ''],
             ['user_big', '123456789012345678901234567890123456789012345678901234567890'],
@@ -107,10 +115,17 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider provideInvalidCredentials
      */
-    public function testAuthenticateWithInvalidCredentials($username, $password, $errorMessage, $errorCode)
+    public function testAuthenticateWithInvalidCredentials($errorMessage, $errorCode, $username, $password = null)
     {
+        $client = Utils::createClient();
+
         try {
-            Utils::createClient()->authenticate($username, $password);
+            if (3 === func_num_args()) {
+                $client->authenticate($username);
+            } else {
+                $client->authenticate($username, $password);
+            }
+
             $this->fail();
         } catch (Exception $e) {
             $this->assertSame($errorMessage, $e->getMessage());
@@ -121,9 +136,12 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     public function provideInvalidCredentials()
     {
         return [
-            ['non_existing_user', 'password', "User 'non_existing_user' is not found", 45],
-            ['guest', 'password', "Incorrect password supplied for user 'guest'", 47],
-            ['guest', '', "Incorrect password supplied for user 'guest'", 47],
+            ["User 'non_existing_user' is not found", 45, 'non_existing_user', 'password'],
+            ["User 'non_existing_user' is not found", 45, 'non_existing_user'],
+            ["Incorrect password supplied for user 'guest'", 47, 'guest', 'password'],
+            ["Incorrect password supplied for user 'guest'", 47, 'guest', ''],
+            ["Incorrect password supplied for user 'guest'", 47, 'guest', 0],
+            ["Invalid MsgPack - authentication request body", 20, 'user_conn'],
         ];
     }
 
