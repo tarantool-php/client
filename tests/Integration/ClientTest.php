@@ -100,6 +100,12 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $this->fail();
     }
 
+    /**
+     * @group pureonly
+     *
+     * Pecl extension sends auth request and rereads schema in batches on authenticate:
+     * https://github.com/tarantool/tarantool-php/blob/3e20c8cea4224cb441eb50624c406cbd40368318/src/tarantool.c#L732
+     */
     public function testSpacesAreNotFlushedAfterFailedAuthentication()
     {
         $client = Utils::createClient();
