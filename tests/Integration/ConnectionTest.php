@@ -131,7 +131,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
      * @expectedException \Tarantool\Exception\Exception
      * @expectedExceptionMessage Space 'space_conn' does not exist
      */
-    public function testUseCredentialsAfterReconnect()
+    public function testUseCredentialsAreSetAfterReconnect()
     {
         $client = Utils::createClient();
 
