@@ -16,6 +16,12 @@ if image.startswith('php:'):
     run_cmds.append('apt-get install -y zlib1g-dev && docker-php-ext-install zip')
     run_cmds.append('docker-php-ext-install sockets')
 
+    if 'pecl' == client:
+        run_cmds.append('git clone https://github.com/tarantool/tarantool-php.git /usr/src/php/ext/tarantool')
+        run_cmds.append('docker-php-ext-install tarantool')
+        phpunit_opts += ' --exclude-group pureonly'
+        packer = ''
+
     if packer.startswith('pecl'):
         if image.startswith('php:7'):
             msgpack_ext_version='php7'
@@ -26,11 +32,6 @@ if image.startswith('php:'):
         composer_cmds.append('remove --dev rybakit/msgpack')
     else:
         composer_cmds.append('remove --dev ext-msgpack')
-
-    if 'pecl' == client:
-        run_cmds.append('git clone https://github.com/tarantool/tarantool-php.git /usr/src/php/ext/tarantool')
-        run_cmds.append('docker-php-ext-install tarantool')
-        phpunit_opts += ' --exclude-group pureonly'
 else:
     composer_cmds.append('remove --dev ext-msgpack')
 
