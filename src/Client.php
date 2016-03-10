@@ -60,16 +60,19 @@ class Client
 
     public function authenticate($username, $password)
     {
-        $this->username = $username;
-        $this->password = $password;
-
         if ($this->isDisconnected()) {
             $this->salt = $this->connection->open();
         }
 
         $request = new AuthenticateRequest($this->salt, $username, $password);
+        $response = $this->sendRequest($request);
 
-        return $this->sendRequest($request);
+        $this->username = $username;
+        $this->password = $password;
+
+        $this->flushSpaces();
+
+        return $response;
     }
 
     public function ping()

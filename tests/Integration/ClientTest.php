@@ -2,6 +2,7 @@
 
 namespace Tarantool\Tests\Integration;
 
+use Tarantool\Exception\Exception;
 use Tarantool\Tests\Assert;
 
 class ClientTest extends \PHPUnit_Framework_TestCase
@@ -76,5 +77,43 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         self::$client->getSpace('space_conn')->select();
 
         $this->assertSame(4, Utils::getTotalSelectCalls() - $total);
+    }
+
+    public function testSpacesAreFlushedAfterSuccessfulAuthentication()
+    {
+        $client = Utils::createClient();
+
+        $client->getSpace('space_conn')->select();
+        $client->authenticate('user_foo', 'foo');
+
+        try {
+            $client->getSpace('space_conn')->select();
+        } catch (Exception $e) {
+            // this error means that the client tried to select 'space_conn'
+            // from '_vspace' to get the space id instead of getting it directly
+            // from the cache (otherwise it will be 'Read access denied' error)
+            $this->assertSame("Space 'space_conn' does not exist", $e->getMessage());
+
+            return;
+        }
+
+        $this->fail();
+    }
+
+    public function testSpacesAreNotFlushedAfterFailedAuthentication()
+    {
+        $client = Utils::createClient();
+
+        $client->getSpace('space_conn')->select();
+        $total = Utils::getTotalSelectCalls();
+
+        try {
+            $client->authenticate('user_foo', 'incorrect_password');
+        } catch (Exception $e) {
+            $this->assertSame("Incorrect password supplied for user 'user_foo'", $e->getMessage());
+        }
+
+        $client->getSpace('space_conn')->select();
+        $this->assertSame(1, Utils::getTotalSelectCalls() - $total);
     }
 }
