@@ -127,11 +127,31 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    public function testAuthenticateDoesntSetInvalidCredentials()
+    {
+        $client = Utils::createClient();
+
+        $client->authenticate('user_conn', 'conn');
+        $client->getSpace('space_conn')->select();
+
+        try {
+            $client->authenticate('user_foo', 'incorrect_password');
+        } catch (Exception $e) {
+            $this->assertSame("Incorrect password supplied for user 'user_foo'", $e->getMessage());
+            $client->disconnect();
+            $client->getSpace('space_conn')->select();
+
+            return;
+        }
+
+        $this->fail();
+    }
+
     /**
      * @expectedException \Tarantool\Exception\Exception
      * @expectedExceptionMessage Space 'space_conn' does not exist
      */
-    public function testUseCredentialsAreSetAfterReconnect()
+    public function testUseCredentialsAfterReconnect()
     {
         $client = Utils::createClient();
 

@@ -10,20 +10,12 @@ box.cfg {
     slab_alloc_arena = .1,
 }
 
-box.schema.user.grant('guest', 'read,write,execute', 'universe')
-
-local credentials = {
-    user_foo = 'foo',
-    user_empty = '',
-    user_big = '123456789012345678901234567890123456789012345678901234567890' -- '1234567890' * 6
-}
-
-for username, password in pairs(credentials) do
+local function create_user(username, password)
     if box.schema.user.exists(username) then
         box.schema.user.drop(username)
     end
 
-    box.schema.user.create(username, { password = password })
+    return box.schema.user.create(username, { password = password })
 end
 
 local function create_space(name)
@@ -34,8 +26,23 @@ local function create_space(name)
     return box.schema.space.create(name, {temporary = true})
 end
 
+box.schema.user.grant('guest', 'read,write,execute', 'universe')
+
+local credentials = {
+    user_foo = 'foo',
+    user_empty = '',
+    user_big = '123456789012345678901234567890123456789012345678901234567890' -- '1234567890' * 6
+}
+
+for username, password in pairs(credentials) do
+    create_user(username, password)
+end
+
 local space = create_space('space_conn')
 space:create_index('primary', {type = 'tree', parts = {1, 'num'}})
+
+create_user('user_conn', 'conn')
+box.schema.user.grant('user_conn', 'read,write', 'space', 'space_conn')
 
 function create_fixtures()
     local space
