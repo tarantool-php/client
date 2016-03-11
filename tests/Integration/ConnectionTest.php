@@ -147,15 +147,17 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
 
     public function testAuthenticateDoesntSetInvalidCredentials()
     {
-        self::$client->authenticate('user_conn', 'conn');
-        self::$client->getSpace('space_conn')->select();
+        $client = Utils::createClient();
+
+        $client->authenticate('user_conn', 'conn');
+        $client->getSpace('space_conn')->select();
 
         try {
-            self::$client->authenticate('user_foo', 'incorrect_password');
+            $client->authenticate('user_foo', 'incorrect_password');
         } catch (Exception $e) {
             $this->assertSame("Incorrect password supplied for user 'user_foo'", $e->getMessage());
-            self::$client->disconnect();
-            self::$client->getSpace('space_conn')->select();
+            $client->disconnect();
+            $client->getSpace('space_conn')->select();
 
             return;
         }
@@ -190,6 +192,14 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
         $client = Utils::createClient();
         $client->getConnection()->open();
         $client->authenticate('user_foo', 'foo');
+    }
+
+    public function testReadLargeResponse()
+    {
+        $data = str_repeat('x', 1024 * 1024);
+        $result = self::$client->call('func_arg', [$data]);
+
+        $this->assertSame($data, $result->getData()[0][0]);
     }
 
     /**

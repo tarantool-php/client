@@ -63,13 +63,29 @@ class SocketConnection implements Connection
 
     public function send($data)
     {
-        $count = socket_write($this->socket, $data, strlen($data));
+        if (false === socket_write($this->socket, $data, strlen($data))) {
+            throw $this->createConnectionException();
+        }
 
-        $length = socket_read($this->socket, IProto::LENGTH_SIZE);
+        $length = null;
+        if (false === socket_recv($this->socket, $length, IProto::LENGTH_SIZE, MSG_WAITALL)) {
+            throw $this->createConnectionException();
+        }
+
         $length = PackUtils::unpackLength($length);
 
-        $data = socket_read($this->socket, $length);
+        $data = null;
+        if (false === socket_recv($this->socket, $data, $length, MSG_WAITALL)) {
+            throw $this->createConnectionException();
+        }
 
         return $data;
+    }
+
+    private function createConnectionException()
+    {
+        $errorCode = socket_last_error($this->socket);
+
+        return new ConnectionException(socket_strerror($errorCode), $errorCode);
     }
 }
