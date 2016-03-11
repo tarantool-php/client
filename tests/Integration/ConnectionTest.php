@@ -197,9 +197,9 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     public function testReadLargeResponse()
     {
         $data = str_repeat('x', 1024 * 1024);
-        $result = self::$client->call('func_arg', [$data]);
+        $result = self::$client->evaluate('return ...', [$data]);
 
-        $this->assertSame($data, $result->getData()[0][0]);
+        $this->assertTrue($data === $result->getData()[0]);
     }
 
     /**
