@@ -34,7 +34,7 @@ class Space
     {
         $key = null === $key ? [] : $key;
         $offset = null === $offset ? 0 : $offset;
-        $limit = null === $limit ? 0xffffffff : $limit;
+        $limit = null === $limit ? PHP_INT_MAX : $limit;
         $iteratorType = null === $iteratorType ? 0 : $iteratorType;
         $index = $this->normalizeIndex($index);
 
