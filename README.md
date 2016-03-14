@@ -14,6 +14,33 @@ $ composer require tarantool/client
 ```
 
 
+## Usage
+
+```php
+use Tarantool\Client;
+use Tarantool\Connection\SocketConnection;
+
+$conn = new SocketConnection();
+// $conn = new SocketConnection('127.0.0.1');
+// $conn = new SocketConnection('127.0.0.1', 3301);
+
+$client = new Client($conn, new PurePacker());
+// $client = new Client($conn);
+// $client = new Client($conn, new PeclPacker());
+// $client = new Client($conn, new PeclLitePacker());
+
+$space = $client->getSpace('my_space');
+$result = $space->select();
+var_dump($result->getData());
+
+$result = $client->evaluate('return ...', [42]);
+var_dump($result->getData());
+
+$result = $client->call('box.stat');
+var_dump($result->getData());
+```
+
+
 ## Tests
 
 To run unit tests:
