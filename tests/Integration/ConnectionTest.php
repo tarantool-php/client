@@ -2,7 +2,9 @@
 
 namespace Tarantool\Tests\Integration;
 
+use Tarantool\Exception\ConnectionException;
 use Tarantool\Exception\Exception;
+use Tarantool\Packer\PackUtils;
 use Tarantool\Tests\Assert;
 
 class ConnectionTest extends \PHPUnit_Framework_TestCase
@@ -200,6 +202,23 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
         $result = self::$client->evaluate('return ...', [$data]);
 
         $this->assertTrue($data === $result->getData()[0]);
+    }
+
+    /**
+     * @group pureonly
+     *
+     * @expectedException \Tarantool\Exception\ConnectionException
+     * @expectedExceptionMessage Unable to read response length.
+     */
+    public function testMalformedRequestThrowsException()
+    {
+        $conn = self::$client->getConnection();
+
+        $data = 'malformed';
+        $data = PackUtils::packLength(strlen($data)).$data;
+
+        $conn->open();
+        $conn->send($data);
     }
 
     /**

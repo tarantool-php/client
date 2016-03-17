@@ -6,7 +6,7 @@ use Tarantool\Connection\Connection;
 
 abstract class Utils
 {
-    public static function createClient($host = null, $port = null)
+    public static function createClient($host = null, $port = null, array $connectionOptions = null)
     {
         $builder = new ClientBuilder();
 
@@ -17,8 +17,13 @@ abstract class Utils
             $builder->setConnection($host);
         } else {
             $builder->setConnection(getenv('TNT_CONN'));
+
             $builder->setHost(null === $host ? getenv('TNT_CONN_HOST') : $host);
             $builder->setPort(null === $port ? getenv('TNT_CONN_PORT') : $port);
+
+            if ($connectionOptions) {
+                $builder->setConnectionOptions($connectionOptions);
+            }
         }
 
         return $builder->build();

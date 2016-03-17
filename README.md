@@ -18,11 +18,11 @@ $ composer require tarantool/client
 
 ```php
 use Tarantool\Client;
-use Tarantool\Connection\SocketConnection;
+use Tarantool\Connection\StreamConnection;
 
-$conn = new SocketConnection();
-// $conn = new SocketConnection('127.0.0.1');
-// $conn = new SocketConnection('127.0.0.1', 3301);
+$conn = new StreamConnection();
+// $conn = new StreamConnection('tcp://127.0.0.1:3301');
+// $conn = new StreamConnection('tcp://127.0.0.1:3301', ['socket_timeout' => 5.0]);
 
 $client = new Client($conn, new PurePacker());
 // $client = new Client($conn);

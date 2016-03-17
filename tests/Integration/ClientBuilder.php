@@ -4,7 +4,7 @@ namespace Tarantool\Tests\Integration;
 
 use Tarantool\Client as TarantoolClient;
 use Tarantool\Connection\Connection;
-use Tarantool\Connection\SocketConnection;
+use Tarantool\Connection\StreamConnection;
 use Tarantool\Packer\PeclLitePacker;
 use Tarantool\Packer\PeclPacker;
 use Tarantool\Packer\PurePacker;
@@ -25,6 +25,7 @@ class ClientBuilder
     private $client;
     private $packer;
     private $connection;
+    private $connectionOptions;
     private $host;
     private $port;
 
@@ -45,6 +46,13 @@ class ClientBuilder
     public function setConnection($connection)
     {
         $this->connection = $connection;
+
+        return $this;
+    }
+
+    public function setConnectionOptions(array $options)
+    {
+        $this->connectionOptions = $options;
 
         return $this;
     }
@@ -86,12 +94,15 @@ class ClientBuilder
         }
 
         if (self::CONN_TCP === $this->connection) {
-            return new SocketConnection($this->host, $this->port);
+            return new StreamConnection(
+                sprintf('tcp://%s:%s', $this->host, $this->port),
+                $this->connectionOptions
+            );
         }
 
         /*
         if (self::CONN_UNIX === $this->connection) {
-            return new StreamConnection($this->unixUri, $this->port);
+            return new StreamConnection(...);
         }
         */
 
