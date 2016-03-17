@@ -210,7 +210,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
      * @expectedException \Tarantool\Exception\ConnectionException
      * @expectedExceptionMessage Unable to read response length.
      */
-    public function testMalformedRequestThrowsException()
+    public function testThrowExceptionOnMalformedRequest()
     {
         $conn = self::$client->getConnection();
 
