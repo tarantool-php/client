@@ -14,12 +14,11 @@ composer_cmds = []
 
 if image.startswith('php:'):
     run_cmds.append('apt-get install -y zlib1g-dev && docker-php-ext-install zip')
-    run_cmds.append('docker-php-ext-install sockets')
 
     if 'pecl' == client:
         run_cmds.append('git clone https://github.com/tarantool/tarantool-php.git /usr/src/php/ext/tarantool')
         run_cmds.append('docker-php-ext-install tarantool')
-        phpunit_opts += ' --exclude-group pureonly'
+        phpunit_opts += ' --exclude-group pureonly --testsuite Integration'
         packer = ''
 
     if packer.startswith('pecl'):
