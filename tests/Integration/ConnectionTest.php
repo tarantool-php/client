@@ -2,7 +2,6 @@
 
 namespace Tarantool\Tests\Integration;
 
-use Tarantool\Exception\ConnectionException;
 use Tarantool\Exception\Exception;
 use Tarantool\Packer\PackUtils;
 use Tarantool\Tests\Assert;
