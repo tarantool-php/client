@@ -24,9 +24,9 @@ if image.startswith('php:'):
 
     if packer.startswith('pecl'):
         if image.startswith('php:7'):
-            msgpack_ext_version='php7'
-        else:
             msgpack_ext_version='master'
+        else:
+            msgpack_ext_version='php5'
         run_cmds.append('git clone https://github.com/msgpack/msgpack-php.git {0} && git --git-dir={0}/.git --work-tree={0} checkout {1}'.format('/usr/src/php/ext/msgpack', msgpack_ext_version))
         run_cmds.append('docker-php-ext-install msgpack')
         composer_cmds.append('remove --dev rybakit/msgpack')
