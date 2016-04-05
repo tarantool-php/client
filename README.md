@@ -23,6 +23,7 @@ use Tarantool\Connection\StreamConnection;
 $conn = new StreamConnection();
 // $conn = new StreamConnection('tcp://127.0.0.1:3301');
 // $conn = new StreamConnection('tcp://127.0.0.1:3301', ['socket_timeout' => 5.0]);
+// $conn = new StreamConnection('unix:///var/run/tarantool/instance.control');
 
 $client = new Client($conn, new PurePacker());
 // $client = new Client($conn);

@@ -29,16 +29,6 @@ class StreamConnection implements Connection
         }
     }
 
-    public static function createFromUri($uri, array $options = null)
-    {
-        return new self($uri, $options);
-    }
-
-    public static function createFromHostPort($host, $port = null, array $options = null)
-    {
-        return new self(sprintf("tcp://%s:%s", $host, $port), $options);
-    }
-
     public function open()
     {
         $this->close();

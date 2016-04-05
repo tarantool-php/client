@@ -9,31 +9,32 @@ class IProtoTest extends \PHPUnit_Framework_TestCase
     public function testParseGreeting()
     {
         $salt = '12345678901234567890';
-        $greeting = base64_encode(str_repeat('x', 48).$salt.str_repeat('x', 100));
+
+        $greeting = str_pad('Tarantool', 63, ' ')."\n";
+        $greeting .= str_pad(base64_encode($salt.str_repeat('_', 12)), 63, ' ')."\n";
 
         $this->assertSame($salt, IProto::parseGreeting($greeting));
     }
 
     /**
-     * * @dataProvider provideInvalidGreetings
+     * @dataProvider Tarantool\Tests\GreetingDataProvider::provideGreetingsWithInvalidServerName
      *
      * @expectedException \Tarantool\Exception\Exception
-     * @expectedExceptionMessage Unable to parse greeting.
+     * @expectedExceptionMessage Invalid greeting: unable to recognize Tarantool server.
      */
-    public function testParseGreetingThrowsException($greeting)
+    public function testParseGreetingThrowsExceptionOnInvalidServer($greeting)
     {
         IProto::parseGreeting($greeting);
     }
 
-    public function provideInvalidGreetings()
+    /**
+     * @dataProvider Tarantool\Tests\GreetingDataProvider::provideGreetingsWithInvalidSalt
+     *
+     * @expectedException \Tarantool\Exception\Exception
+     * @expectedExceptionMessage Invalid greeting: unable to parse salt.
+     */
+    public function testParseGreetingThrowsExceptionOnInvalidSalt($greeting)
     {
-        return [
-            [''],
-            ['1'],
-            [str_repeat('2', 64)],
-            [str_repeat('3', 65)],
-            [str_repeat('4', 66)],
-            [substr(str_repeat('тутсолинет', 13), 0, 128)],
-        ];
+        IProto::parseGreeting($greeting);
     }
 }

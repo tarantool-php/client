@@ -2,6 +2,7 @@
 
 namespace Tarantool\Tests\Integration;
 
+use Tarantool\Exception\ConnectionException;
 use Tarantool\Exception\Exception;
 use Tarantool\Packer\PackUtils;
 use Tarantool\Tests\Assert;
@@ -10,6 +11,8 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
 {
     use Assert;
     use Client;
+
+    private static $fakeServerPort = 8000;
 
     protected function setUp()
     {
@@ -95,11 +98,9 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     {
         $client = Utils::createClient();
 
-        if (1 === func_num_args()) {
-            $client->authenticate($username);
-        } else {
-            $client->authenticate($username, $password);
-        }
+        (1 === func_num_args())
+            ? $client->authenticate($username)
+            : $client->authenticate($username, $password);
     }
 
     public function provideCredentials()
@@ -121,11 +122,9 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
         $client = Utils::createClient();
 
         try {
-            if (3 === func_num_args()) {
-                $client->authenticate($username);
-            } else {
-                $client->authenticate($username, $password);
-            }
+            (3 === func_num_args())
+                ? $client->authenticate($username)
+                : $client->authenticate($username, $password);
 
             $this->fail();
         } catch (Exception $e) {
@@ -201,6 +200,121 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
         $result = self::$client->evaluate('return ...', [$data]);
 
         $this->assertTrue($data === $result->getData()[0]);
+    }
+
+    /**
+     * @dataProvider Tarantool\Tests\GreetingDataProvider::provideGreetingsWithInvalidServerName
+     */
+    public function testParseGreetingWithInvalidServerName($greeting)
+    {
+        $port = ++self::$fakeServerPort;
+
+        (new FakeServerBuilder())
+            ->setPort($port)
+            ->setResponse($greeting)
+            ->start();
+
+        $client = Utils::createClient('0.0.0.0', $port);
+
+        try {
+            $client->connect();
+        } catch (Exception $e) {
+            $this->assertSame(
+                '' === $greeting ? 'Unable to read greeting.' : 'Invalid greeting: unable to recognize Tarantool server.',
+                $e->getMessage()
+            );
+
+            return;
+        }
+
+        $this->fail();
+    }
+
+    /**
+     * @dataProvider Tarantool\Tests\GreetingDataProvider::provideGreetingsWithInvalidSalt
+     *
+     * @expectedException \Tarantool\Exception\Exception
+     * @expectedExceptionMessage Invalid greeting: unable to parse salt.
+     */
+    public function testParseGreetingWithInvalidSalt($greeting)
+    {
+        $port = ++self::$fakeServerPort;
+
+        (new FakeServerBuilder())
+            ->setPort($port)
+            ->setResponse($greeting)
+            ->start();
+
+        $client = Utils::createClient('0.0.0.0', $port);
+        $client->connect();
+    }
+
+    /**
+     * @expectedException \Tarantool\Exception\Exception
+     * @expectedExceptionMessage Unable to read greeting.
+     */
+    public function testReadEmptyGreeting()
+    {
+        $port = ++self::$fakeServerPort;
+
+        (new FakeServerBuilder())
+            ->setPort($port)
+            ->start();
+
+        $client = Utils::createClient('0.0.0.0', $port);
+        $client->connect();
+    }
+
+    public function testConnectTimeout()
+    {
+        $connectTimeout = 2.0;
+
+        // http://stackoverflow.com/a/904609/1160901
+        $client = Utils::createClient('10.255.255.1', null, ['connect_timeout' => $connectTimeout]);
+
+        $start = microtime(true);
+
+        try {
+            $client->ping();
+        } catch (ConnectionException $e) {
+            $time = microtime(true) - $start;
+            $this->assertSame('Unable to connect: Connection timed out.', $e->getMessage());
+            $this->assertGreaterThanOrEqual($connectTimeout, $time);
+            $this->assertLessThanOrEqual($connectTimeout + 0.1, $time);
+
+            return;
+        }
+
+        $this->fail();
+    }
+
+    public function testSocketTimeout()
+    {
+        $socketTimeout = 2.0;
+        $port = rand(8000, 8999);
+
+        (new FakeServerBuilder())
+            ->setPort($port)
+            ->setSocketDelay($socketTimeout + 2)
+            ->start();
+
+        $socketTimeout = 2.0;
+        $client = Utils::createClient('0.0.0.0', $port, ['socket_timeout' => $socketTimeout]);
+
+        $start = microtime(true);
+
+        try {
+            $client->ping();
+        } catch (ConnectionException $e) {
+            $time = microtime(true) - $start;
+            $this->assertSame('Unable to read greeting.', $e->getMessage());
+            $this->assertGreaterThanOrEqual($socketTimeout, $time);
+            $this->assertLessThanOrEqual($socketTimeout + 0.1, $time);
+
+            return;
+        }
+
+        $this->fail();
     }
 
     /**

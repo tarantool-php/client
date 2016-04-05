@@ -36,12 +36,16 @@ abstract class IProto
      */
     public static function parseGreeting($greeting)
     {
+        if ('Tarantool' !== substr($greeting, 0, 9)) {
+            throw new Exception('Invalid greeting: unable to recognize Tarantool server.');
+        }
+
         $salt = substr(base64_decode(substr($greeting, 64, 44), true), 0, 20);
 
         if (isset($salt[19])) {
             return $salt;
         }
 
-        throw new Exception('Unable to parse greeting.');
+        throw new Exception('Invalid greeting: unable to parse salt.');
     }
 }
