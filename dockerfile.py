@@ -7,6 +7,7 @@ import re
 image = os.getenv('IMAGE', 'php:5.6-cli')
 client = os.getenv('TNT_CLIENT', 'pure')
 packer = os.getenv('TNT_PACKER', 'pecl')
+conn = os.getenv('TNT_CONN', 'tcp')
 phpunit_opts = os.getenv('PHPUNIT_OPTS', '')
 
 run_cmds = []
@@ -55,7 +56,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
     composer global require 'phpunit/phpunit:^4.8|^5.0'
 
 ENV PATH=~/.composer/vendor/bin:$PATH
-ENV TNT_CONN_HOST=tarantool TNT_CONN_PORT=3301
+ENV TNT_CONN_HOST=tarantool TNT_CONN_PORT=3301 TNT_CONN={conn}
 ENV TNT_CLIENT={client} TNT_PACKER={packer}
 
 CMD if [ ! -f composer.lock ]; then {composer_cmds}composer install; fi && ~/.composer/vendor/bin/phpunit {phpunit_opts}
@@ -63,6 +64,7 @@ CMD if [ ! -f composer.lock ]; then {composer_cmds}composer install; fi && ~/.co
     image=image,
     run_cmds=run_cmds,
     composer_cmds=composer_cmds,
+    conn=conn,
     client=client,
     packer=packer,
     phpunit_opts=phpunit_opts

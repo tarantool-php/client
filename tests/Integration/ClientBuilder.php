@@ -28,6 +28,7 @@ class ClientBuilder
     private $connectionOptions;
     private $host;
     private $port;
+    private $unixSocket;
 
     public function setClient($client)
     {
@@ -71,6 +72,13 @@ class ClientBuilder
         return $this;
     }
 
+    public function setUnixSocket($unixSocket)
+    {
+        $this->unixSocket = $unixSocket;
+
+        return $this;
+    }
+
     public function build()
     {
         if (self::CLIENT_PECL === $this->client) {
@@ -100,11 +108,9 @@ class ClientBuilder
             );
         }
 
-        /*
         if (self::CONN_UNIX === $this->connection) {
-            return new StreamConnection(...);
+            return new StreamConnection('unix://'.$this->unixSocket, $this->connectionOptions);
         }
-        */
 
         throw new \UnexpectedValueException(sprintf('"%s" connection is not supported.', $this->connection));
     }

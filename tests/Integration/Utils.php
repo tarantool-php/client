@@ -15,15 +15,18 @@ abstract class Utils
 
         if ($host instanceof Connection) {
             $builder->setConnection($host);
-        } else {
-            $builder->setConnection(getenv('TNT_CONN'));
 
-            $builder->setHost(null === $host ? getenv('TNT_CONN_HOST') : $host);
-            $builder->setPort(null === $port ? getenv('TNT_CONN_PORT') : $port);
+            return $builder->build();
+        }
 
-            if ($connectionOptions) {
-                $builder->setConnectionOptions($connectionOptions);
-            }
+        $builder->setConnection(getenv('TNT_CONN'));
+
+        $builder->setHost(null === $host ? getenv('TNT_CONN_HOST') : $host);
+        $builder->setPort(null === $port ? getenv('TNT_CONN_PORT') : $port);
+        $builder->setUnixSocket(getenv('TNT_CONN_UNIX'));
+
+        if ($connectionOptions) {
+            $builder->setConnectionOptions($connectionOptions);
         }
 
         return $builder->build();
