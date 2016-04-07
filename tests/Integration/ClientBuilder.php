@@ -109,7 +109,7 @@ class ClientBuilder
         }
 
         if (self::CONN_UNIX === $this->connection) {
-            return new StreamConnection('unix://'.$this->unixSocket, $this->connectionOptions);
+            return new StreamConnection($this->unixSocket, $this->connectionOptions);
         }
 
         throw new \UnexpectedValueException(sprintf('"%s" connection is not supported.', $this->connection));
