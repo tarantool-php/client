@@ -135,7 +135,7 @@ class Client
 
     private function getSpaceIdByName($spaceName)
     {
-        $schema = new Space($this, Space::VSPACE);
+        $schema = $this->getSpace(Space::VSPACE);
         $response = $schema->select([$spaceName], Index::SPACE_NAME);
         $data = $response->getData();
 
