@@ -78,7 +78,7 @@ You may change the default runtime by defining the `IMAGE` environment variable:
 $ IMAGE='php:7.0-cli' ./dockerfile.py | docker build -t client -
 ```
 
-> See a list of various images [here](.travis.yml#L9-L28).
+> See a list of various images [here](.travis.yml#L9-L30).
 
 
 Then run Tarantool instance (needed for integration tests):
