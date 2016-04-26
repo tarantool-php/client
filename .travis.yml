@@ -16,7 +16,7 @@ env:
 
   - IMAGE='php:5.6-cli' TNT_PACKER=pecl
   - IMAGE='php:5.6-cli' TNT_PACKER=pecl_lite
-  - IMAGE='php:5.6-cli' TNT_PACKER=pure TNT_CONN=unix
+  - IMAGE='php:5.6-cli' TNT_PACKER=pure TNT_CONN_URI=/client/tarantool_client.sock
   - IMAGE='php:5.6-cli' TNT_PACKER=pure PHPUNIT_OPTS='--coverage-clover=coverage.clover'
   - IMAGE='php:5.6-cli' TNT_CLIENT=pecl
 
@@ -27,7 +27,7 @@ env:
   - IMAGE='baptistedonaux/hhvm:3.9' TNT_PACKER=pure
   - IMAGE='baptistedonaux/hhvm:3.12' TNT_PACKER=pure
   - IMAGE='baptistedonaux/hhvm:latest' TNT_PACKER=pure
-  - IMAGE='baptistedonaux/hhvm:latest' TNT_PACKER=pure TNT_CONN=unix
+  - IMAGE='baptistedonaux/hhvm:latest' TNT_PACKER=pure TNT_CONN_URI=/client/tarantool_client.sock
 
 matrix:
   allow_failures:
@@ -38,7 +38,7 @@ install:
   - ./dockerfile.py | tee /dev/tty | docker build -t client -
 
 script:
-  - docker run -d --name tarantool -v $(pwd):/client -e TNT_CONN_UNIX='/client/tarantool_instance.sock' tarantool/tarantool /client/tests/Integration/instance.lua
+  - docker run -d --name tarantool -v $(pwd):/client -e TNT_LISTEN_URI=TNT_CONN_URI tarantool/tarantool /client/tests/Integration/client.lua
   - docker run --rm --name client --link tarantool -v $(pwd):/client -w /client client
 
 after_script:

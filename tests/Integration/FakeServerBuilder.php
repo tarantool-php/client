@@ -4,23 +4,15 @@ namespace Tarantool\Tests\Integration;
 
 class FakeServerBuilder
 {
-    private $host = '0.0.0.0';
-    private $port = 8000;
+    private $uri = 'tcp://0.0.0.0:8000';
     private $response = '';
-    private $socketDelay = 0;
     private $ttl = 5;
+    private $socketDelay = 0;
     private $logFile = '/tmp/fake_server.log';
 
-    public function setHost($host)
+    public function setUri($uri)
     {
-        $this->host = $host;
-
-        return $this;
-    }
-
-    public function setPort($port)
-    {
-        $this->port = $port;
+        $this->uri = $uri;
 
         return $this;
     }
@@ -57,18 +49,16 @@ class FakeServerBuilder
     {
         return sprintf(
             'php %s/fake_server.php \
-                --host=%s \
-                --port=%d \
+                --uri=%s \
                 --response=%s \
-                --socket_delay=%d \
                 --ttl=%d \
+                --socket_delay=%d \
             >> %s 2>&1 &',
             __DIR__,
-            escapeshellarg($this->host),
-            $this->port,
+            escapeshellarg($this->uri),
             $this->response ? escapeshellarg(base64_encode($this->response)) : '',
-            $this->socketDelay,
             $this->ttl,
+            $this->socketDelay,
             escapeshellarg($this->logFile)
         );
     }
@@ -77,17 +67,17 @@ class FakeServerBuilder
     {
         exec($this->getCommand(), $output, $result);
         if (0 !== $result) {
-            throw new \RuntimeException("Unable to start the fake server ($this->host:$this->port).");
+            throw new \RuntimeException("Unable to start the fake server ($this->uri).");
         }
 
         $stopTime = time() + 5;
         while (time() < $stopTime) {
-            if (@stream_socket_client("$this->host:$this->port")) {
+            if (@stream_socket_client($this->uri)) {
                 return;
             }
             usleep(100);
         }
 
-        throw new \RuntimeException("Unable to connect to the fake server ($this->host:$this->port).");
+        throw new \RuntimeException("Unable to connect to the fake server ($this->uri).");
     }
 }

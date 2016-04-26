@@ -59,7 +59,7 @@ class MsgpackTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @group pureonly
+     * @group pure_only
      */
     public function testPackUnpackObject()
     {

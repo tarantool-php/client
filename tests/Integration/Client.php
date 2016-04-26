@@ -16,7 +16,7 @@ trait Client
      */
     public static function setUpClient()
     {
-        self::$client = Utils::createClient();
+        self::$client = ClientBuilder::createFromEnv()->build();
     }
 
     /**

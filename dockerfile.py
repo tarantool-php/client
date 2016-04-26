@@ -7,7 +7,7 @@ import re
 image = os.getenv('IMAGE', 'php:5.6-cli')
 client = os.getenv('TNT_CLIENT', 'pure')
 packer = os.getenv('TNT_PACKER', 'pecl')
-conn = os.getenv('TNT_CONN', 'tcp')
+conn_uri = os.getenv('TNT_CONN_URI', 'tcp://tarantool:3301')
 phpunit_opts = os.getenv('PHPUNIT_OPTS', '')
 
 run_cmds = []
@@ -19,7 +19,7 @@ if image.startswith('php:'):
     if 'pecl' == client:
         run_cmds.append('git clone https://github.com/tarantool/tarantool-php.git /usr/src/php/ext/tarantool')
         run_cmds.append('docker-php-ext-install tarantool')
-        phpunit_opts += ' --exclude-group pureonly --testsuite Integration'
+        phpunit_opts += ' --exclude-group pure_only --testsuite Integration'
         packer = ''
 
     if packer.startswith('pecl'):
@@ -34,6 +34,12 @@ if image.startswith('php:'):
         composer_cmds.append('remove --dev ext-msgpack')
 else:
     composer_cmds.append('remove --dev ext-msgpack')
+
+
+if conn_uri.startswith('tcp:'):
+    phpunit_opts += ' --exclude-group unix_only'
+else:
+    phpunit_opts += ' --exclude-group tcp_only'
 
 
 if re.match('(?:^|\s+?)--coverage-\w', phpunit_opts):
@@ -56,8 +62,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
     composer global require 'phpunit/phpunit:^4.8|^5.0'
 
 ENV PATH=~/.composer/vendor/bin:$PATH
-ENV TNT_CONN={conn} TNT_CONN_HOST=tarantool TNT_CONN_PORT=3301 TNT_CONN_UNIX='unix:///client/tarantool_instance.sock'
-ENV TNT_CLIENT={client} TNT_PACKER={packer}
+ENV TNT_CLIENT={client} TNT_PACKER={packer} TNT_CONN_URI={conn_uri}
 
 CMD if [ ! -f composer.lock ]; then {composer_cmds}composer install; fi && ~/.composer/vendor/bin/phpunit {phpunit_opts}
 '''.format(
@@ -67,5 +72,6 @@ CMD if [ ! -f composer.lock ]; then {composer_cmds}composer install; fi && ~/.co
     conn=conn,
     client=client,
     packer=packer,
+    conn_uri=conn_uri,
     phpunit_opts=phpunit_opts
 )

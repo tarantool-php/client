@@ -15,20 +15,17 @@ class ClientBuilder
     const CLIENT_PURE = 'pure';
     const CLIENT_PECL = 'pecl';
 
-    const CONN_TCP = 'tcp';
-    const CONN_UNIX = 'unix';
-
     const PACKER_PURE = 'pure';
     const PACKER_PECL = 'pecl';
     const PACKER_PECL_LITE = 'pecl_lite';
 
+    const DEFAULT_TCP_HOST = '127.0.0.1';
+    const DEFAULT_TCP_PORT = 3301;
+
     private $client;
     private $packer;
-    private $connection;
+    private $uri;
     private $connectionOptions;
-    private $host;
-    private $port;
-    private $unixSocket;
 
     public function setClient($client)
     {
@@ -44,13 +41,6 @@ class ClientBuilder
         return $this;
     }
 
-    public function setConnection($connection)
-    {
-        $this->connection = $connection;
-
-        return $this;
-    }
-
     public function setConnectionOptions(array $options)
     {
         $this->connectionOptions = $options;
@@ -58,61 +48,73 @@ class ClientBuilder
         return $this;
     }
 
+    public function isTcpConnection()
+    {
+        return 'tcp:' === substr($this->uri, 0, 4);
+    }
+
     public function setHost($host)
     {
-        $this->host = $host;
+        $port = parse_url($this->uri, PHP_URL_PORT);
+        $this->uri = sprintf('tcp://%s:%d', $host, $port ?: self::DEFAULT_TCP_PORT);
 
         return $this;
     }
 
     public function setPort($port)
     {
-        $this->port = $port;
+        $host = parse_url($this->uri, PHP_URL_HOST);
+        $this->uri = sprintf('tcp://%s:%d', $host ?: self::DEFAULT_TCP_HOST, $port);
 
         return $this;
     }
 
-    public function setUnixSocket($unixSocket)
+    public function setUri($uri)
     {
-        $this->unixSocket = $unixSocket;
+        if ('/' === $uri[0]) {
+            $uri = 'unix://'.$uri;
+        }
+
+        $this->uri = $uri;
 
         return $this;
+    }
+
+    public function getUri()
+    {
+        return $this->uri;
     }
 
     public function build()
     {
         if (self::CLIENT_PECL === $this->client) {
-            return new Tarantool($this->host, $this->port);
+            $host = parse_url($this->uri, PHP_URL_HOST);
+            $port = parse_url($this->uri, PHP_URL_PORT);
+
+            return new Tarantool($host ?: self::DEFAULT_TCP_HOST, $port ?: self::DEFAULT_TCP_PORT);
         }
 
-        $connection = $this->createConnection();
-        $packer = $this->createPacker();
-
         if (self::CLIENT_PURE === $this->client) {
+            $connection = $this->createConnection();
+            $packer = $this->createPacker();
+
             return new TarantoolClient($connection, $packer);
         }
 
         throw new \UnexpectedValueException(sprintf('"%s" client is not supported.', $this->client));
     }
 
+    public static function createFromEnv()
+    {
+        return (new self())
+            ->setClient(getenv('TNT_CLIENT'))
+            ->setPacker(getenv('TNT_PACKER'))
+            ->setUri(getenv('TNT_CONN_URI'));
+    }
+
     private function createConnection()
     {
-        if ($this->connection instanceof Connection) {
-            return $this->connection;
-        }
-
-        if (self::CONN_TCP === $this->connection) {
-            return new StreamConnection(
-                sprintf('tcp://%s:%s', $this->host, $this->port),
-                $this->connectionOptions
-            );
-        }
-
-        if (self::CONN_UNIX === $this->connection) {
-            return new StreamConnection($this->unixSocket, $this->connectionOptions);
-        }
-
-        throw new \UnexpectedValueException(sprintf('"%s" connection is not supported.', $this->connection));
+        return new StreamConnection($this->uri, $this->connectionOptions);
     }
 
     private function createPacker()

@@ -1,19 +1,9 @@
 #!/usr/bin/tarantool
 
-require('console').listen('127.0.0.1:33333')
-
-local os = require('os');
-local listen
-
-if 'unix' == os.getenv('TNT_CONN') then
-    listen = os.getenv('TNT_CONN_UNIX') or '/tmp/tarantool_instance.sock'
-    listen = listen:gsub('^unix://', '')
-else
-    listen = os.getenv('TNT_CONN_PORT') or 3301
-end
+-- require('console').listen('127.0.0.1:33333')
 
 box.cfg {
-    listen = listen,
+    listen = require('os').getenv('TNT_LISTEN_URI') or 3301,
     log_level = 6,
     wal_mode = 'none',
     snap_dir = '/tmp',

@@ -12,8 +12,6 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     use Assert;
     use Client;
 
-    private static $fakeServerPort = 8000;
-
     protected function setUp()
     {
         self::$client->disconnect();
@@ -58,8 +56,10 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateManyConnections()
     {
+        $clientBuilder = ClientBuilder::createFromEnv();
+
         for ($i = 10; $i; $i--) {
-            Utils::createClient()->connect();
+            $clientBuilder->build()->connect();
         };
     }
 
@@ -76,19 +76,29 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group tcp_only
      * @expectedException \Tarantool\Exception\ConnectionException
      */
     public function testConnectInvalidHost()
     {
-        Utils::createClient('invalid_host')->connect();
+        $client = ClientBuilder::createFromEnv()
+            ->setHost('invalid_host')
+            ->build();
+
+        $client->connect();
     }
 
     /**
+     * @group tcp_only
      * @expectedException \Tarantool\Exception\ConnectionException
      */
     public function testConnectInvalidPort()
     {
-        Utils::createClient(null, 123456)->connect();
+        $client = ClientBuilder::createFromEnv()
+            ->setPort(123456)
+            ->build();
+
+        $client->connect();
     }
 
     /**
@@ -96,7 +106,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
      */
     public function testAuthenticate($username, $password = null)
     {
-        $client = Utils::createClient();
+        $client = ClientBuilder::createFromEnv()->build();
 
         (1 === func_num_args())
             ? $client->authenticate($username)
@@ -119,7 +129,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
      */
     public function testAuthenticateWithInvalidCredentials($errorMessage, $errorCode, $username, $password = null)
     {
-        $client = Utils::createClient();
+        $client = ClientBuilder::createFromEnv()->build();
 
         try {
             (3 === func_num_args())
@@ -147,7 +157,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
 
     public function testAuthenticateDoesntSetInvalidCredentials()
     {
-        $client = Utils::createClient();
+        $client = ClientBuilder::createFromEnv()->build();
 
         $client->authenticate('user_conn', 'conn');
         $client->getSpace('space_conn')->select();
@@ -171,7 +181,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
      */
     public function testUseCredentialsAfterReconnect()
     {
-        $client = Utils::createClient();
+        $client = ClientBuilder::createFromEnv()->build();
 
         $client->authenticate('user_foo', 'foo');
         $client->disconnect();
@@ -180,7 +190,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
 
     public function testRegenerateSalt()
     {
-        $client = Utils::createClient();
+        $client = ClientBuilder::createFromEnv()->build();
 
         $client->connect();
         $client->disconnect();
@@ -189,7 +199,8 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
 
     public function testReconnectOnEmptySalt()
     {
-        $client = Utils::createClient();
+        $client = ClientBuilder::createFromEnv()->build();
+
         $client->getConnection()->open();
         $client->authenticate('user_foo', 'foo');
     }
@@ -207,14 +218,14 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
      */
     public function testParseGreetingWithInvalidServerName($greeting)
     {
-        $port = ++self::$fakeServerPort;
+        $clientBuilder = self::createClientBuilderForFakeServer();
 
         (new FakeServerBuilder())
-            ->setPort($port)
+            ->setUri($clientBuilder->getUri())
             ->setResponse($greeting)
             ->start();
 
-        $client = Utils::createClient('0.0.0.0', $port);
+        $client = $clientBuilder->build();
 
         try {
             $client->connect();
@@ -238,14 +249,14 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
      */
     public function testParseGreetingWithInvalidSalt($greeting)
     {
-        $port = ++self::$fakeServerPort;
+        $clientBuilder = self::createClientBuilderForFakeServer();
 
         (new FakeServerBuilder())
-            ->setPort($port)
+            ->setUri($clientBuilder->getUri())
             ->setResponse($greeting)
             ->start();
 
-        $client = Utils::createClient('0.0.0.0', $port);
+        $client = $clientBuilder->build();
         $client->connect();
     }
 
@@ -255,22 +266,29 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
      */
     public function testReadEmptyGreeting()
     {
-        $port = ++self::$fakeServerPort;
+        $clientBuilder = self::createClientBuilderForFakeServer();
 
         (new FakeServerBuilder())
-            ->setPort($port)
+            ->setUri($clientBuilder->getUri())
             ->start();
 
-        $client = Utils::createClient('0.0.0.0', $port);
+        $client = $clientBuilder->build();
         $client->connect();
     }
 
+    /**
+     * @group tcp_only
+     */
     public function testConnectTimeout()
     {
         $connectTimeout = 2.0;
+        $clientBuilder = ClientBuilder::createFromEnv();
 
         // http://stackoverflow.com/a/904609/1160901
-        $client = Utils::createClient('10.255.255.1', null, ['connect_timeout' => $connectTimeout]);
+        $clientBuilder->setHost('10.255.255.1');
+        $clientBuilder->setConnectionOptions(['connect_timeout' => $connectTimeout]);
+
+        $client = $clientBuilder->build();
 
         $start = microtime(true);
 
@@ -291,15 +309,16 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     public function testSocketTimeout()
     {
         $socketTimeout = 2.0;
-        $port = rand(8000, 8999);
+
+        $clientBuilder = self::createClientBuilderForFakeServer();
+        $clientBuilder->setConnectionOptions(['socket_timeout' => $socketTimeout]);
 
         (new FakeServerBuilder())
-            ->setPort($port)
+            ->setUri($clientBuilder->getUri())
             ->setSocketDelay($socketTimeout + 2)
             ->start();
 
-        $socketTimeout = 2.0;
-        $client = Utils::createClient('0.0.0.0', $port, ['socket_timeout' => $socketTimeout]);
+        $client = $clientBuilder->build();
 
         $start = microtime(true);
 
@@ -318,7 +337,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @group pureonly
+     * @group pure_only
      *
      * @expectedException \Tarantool\Exception\ConnectionException
      * @expectedExceptionMessage Unable to read response length.
@@ -335,8 +354,9 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @group pureonly
+     * @group pure_only
      */
+    /*
     public function testRetryableConnection()
     {
         $connection = self::$client->getConnection();
@@ -347,5 +367,22 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
 
         $client->disconnect();
         $this->assertTrue($client->isDisconnected());
+    }
+    */
+
+    private static function createClientBuilderForFakeServer()
+    {
+        static $fakeServerPort = 8000;
+
+        $builder = ClientBuilder::createFromEnv();
+
+        if ($builder->isTcpConnection()) {
+            $builder->setHost('0.0.0.0');
+            $builder->setPort(++$fakeServerPort);
+        } else {
+            $builder->setUri(sprintf('unix://%s/tnt_client_%s.sock', sys_get_temp_dir(), uniqid()));
+        }
+
+        return $builder;
     }
 }

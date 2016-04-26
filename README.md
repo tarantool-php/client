@@ -56,7 +56,7 @@ To run integration tests:
 $ phpunit --testsuite Integration
 ```
 
-> Make sure to start [instance.lua](tests/Integration/instance.lua) first.
+> Make sure to start [client.lua](tests/Integration/client.lua) first.
 
 To run all tests:
 
@@ -85,7 +85,7 @@ Then run Tarantool instance (needed for integration tests):
 
 ```sh
 $ docker run -d --name tarantool -v $(pwd):/client tarantool/tarantool \
-    /client/tests/Integration/instance.lua
+    /client/tests/Integration/client.lua
 ```
 
 And then run both unit and integration tests:

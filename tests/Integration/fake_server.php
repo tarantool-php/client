@@ -1,14 +1,13 @@
 <?php
 
-$options = getopt('', ['response:', 'host:', 'port:', 'ttl:', 'socket_delay:']) + [
+$options = getopt('', ['uri:', 'response:', 'ttl:', 'socket_delay:']) + [
+    'uri' => 'tcp://0.0.0.0:8000',
     'response' => null,
-    'host' => '0.0.0.0',
-    'port' => '8000',
     'ttl' => 5,
     'socket_delay' => null,
 ];
 
-if (!$socket = stream_socket_server($options['host'].':'.$options['port'], $errorCode, $errorMessage)) {
+if (!$socket = stream_socket_server($options['uri'], $errorCode, $errorMessage)) {
     echo "Unable to create server: $errorMessage\n";
     exit($errorCode);
 }
