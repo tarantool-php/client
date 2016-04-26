@@ -13,7 +13,7 @@ class StreamConnection implements Connection
     private $uri;
 
     private $options = [
-        'connect_timeout' => 5.0,
+        'connect_timeout' => 10.0,
         'socket_timeout' => 10.0,
         'persistent' => false,
     ];
