@@ -69,7 +69,6 @@ CMD if [ ! -f composer.lock ]; then {composer_cmds}composer install; fi && ~/.co
     image=image,
     run_cmds=run_cmds,
     composer_cmds=composer_cmds,
-    conn=conn,
     client=client,
     packer=packer,
     conn_uri=conn_uri,
