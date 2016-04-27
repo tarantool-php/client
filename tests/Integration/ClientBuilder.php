@@ -3,7 +3,6 @@
 namespace Tarantool\Tests\Integration;
 
 use Tarantool\Client as TarantoolClient;
-use Tarantool\Connection\Connection;
 use Tarantool\Connection\StreamConnection;
 use Tarantool\Packer\PeclLitePacker;
 use Tarantool\Packer\PeclPacker;
@@ -88,10 +87,7 @@ class ClientBuilder
     public function build()
     {
         if (self::CLIENT_PECL === $this->client) {
-            $host = parse_url($this->uri, PHP_URL_HOST);
-            $port = parse_url($this->uri, PHP_URL_PORT);
-
-            return new Tarantool($host ?: self::DEFAULT_TCP_HOST, $port ?: self::DEFAULT_TCP_PORT);
+            return $this->createPeclClient();
         }
 
         if (self::CLIENT_PURE === $this->client) {
@@ -115,6 +111,22 @@ class ClientBuilder
     private function createConnection()
     {
         return new StreamConnection($this->uri, $this->connectionOptions);
+    }
+
+    private function createPeclClient()
+    {
+        ini_set('tarantool.timeout', empty($this->connectionOptions['connect_timeout'])
+            ? 10 : $this->connectionOptions['connect_timeout']
+        );
+
+        ini_set('tarantool.request_timeout', empty($this->connectionOptions['socket_timeout'])
+            ? 10 : $this->connectionOptions['socket_timeout']
+        );
+
+        $host = parse_url($this->uri, PHP_URL_HOST);
+        $port = parse_url($this->uri, PHP_URL_PORT);
+
+        return new Tarantool($host ?: self::DEFAULT_TCP_HOST, $port ?: self::DEFAULT_TCP_PORT);
     }
 
     private function createPacker()
