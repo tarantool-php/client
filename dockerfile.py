@@ -41,7 +41,7 @@ else:
 
 
 if coverage_file:
-    phpunit_opts = ' --coverage-clover ' + coverage_file
+    phpunit_opts += ' --coverage-clover ' + coverage_file
     run_cmds.append('pecl install xdebug && docker-php-ext-enable xdebug')
 
 run_cmds = " && \\\n    ".join(run_cmds)
@@ -59,7 +59,7 @@ else:
 
 phpunit_exclude_groups = ','.join(phpunit_exclude_groups)
 if phpunit_exclude_groups:
-    phpunit_opts = ' --exclude-group ' + phpunit_exclude_groups
+    phpunit_opts += ' --exclude-group ' + phpunit_exclude_groups
 
 print '''
 FROM {image}
