@@ -19,7 +19,7 @@ if image.startswith('php:'):
     if 'pecl' == client:
         run_cmds.append('git clone https://github.com/tarantool/tarantool-php.git /usr/src/php/ext/tarantool')
         run_cmds.append('docker-php-ext-install tarantool')
-        phpunit_opts += ' --exclude-group pure_only --testsuite Integration'
+        phpunit_opts += ' --testsuite Integration --exclude-group pure_only'
         packer = ''
 
     if packer.startswith('pecl'):
