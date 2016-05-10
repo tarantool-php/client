@@ -77,12 +77,8 @@ class RetryableTest extends \PHPUnit_Framework_TestCase
     {
         $exception = $this->getMock('Tarantool\Exception\ConnectionException', ['getMessage']);
 
-        $this->wrappedConnection->expects($this->exactly(3))->method('open')
-            ->will($this->onConsecutiveCalls(
-                $this->throwException($exception),
-                $this->throwException($exception),
-                $this->throwException($exception)
-            ));
+        $this->wrappedConnection->expects($this->exactly(4))->method('open')
+            ->willThrowException($exception);
 
         $connection = new Retryable($this->wrappedConnection, 3);
         $connection->open();

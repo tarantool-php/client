@@ -3,6 +3,7 @@
 namespace Tarantool\Tests\Integration;
 
 use Tarantool\Client as TarantoolClient;
+use Tarantool\Connection\Retryable;
 use Tarantool\Connection\StreamConnection;
 use Tarantool\Packer\PeclLitePacker;
 use Tarantool\Packer\PeclPacker;
@@ -100,6 +101,9 @@ class ClientBuilder
         throw new \UnexpectedValueException(sprintf('"%s" client is not supported.', $this->client));
     }
 
+    /**
+     * @return self
+     */
     public static function createFromEnv()
     {
         return (new self())
@@ -110,17 +114,32 @@ class ClientBuilder
 
     private function createConnection()
     {
-        return new StreamConnection($this->uri, $this->connectionOptions);
+        $options = $this->connectionOptions;
+
+        if (isset($options['retries'])) {
+            $retries = $options['retries'];
+            unset($options['retries']);
+
+            $conn = new StreamConnection($this->uri, $options);
+
+            return new Retryable($conn, $retries);
+        }
+
+        return new StreamConnection($this->uri, $options);
     }
 
     private function createPeclClient()
     {
-        ini_set('tarantool.timeout', empty($this->connectionOptions['connect_timeout'])
-            ? 10 : $this->connectionOptions['connect_timeout']
+        ini_set('tarantool.timeout', isset($this->connectionOptions['connect_timeout'])
+            ? $this->connectionOptions['connect_timeout'] : 10
         );
 
-        ini_set('tarantool.request_timeout', empty($this->connectionOptions['socket_timeout'])
-            ? 10 : $this->connectionOptions['socket_timeout']
+        ini_set('tarantool.request_timeout', isset($this->connectionOptions['socket_timeout'])
+            ? $this->connectionOptions['socket_timeout'] : 10
+        );
+
+        ini_set('tarantool.retry_count', isset($this->connectionOptions['retries'])
+            ? $this->connectionOptions['retries'] : 0
         );
 
         $host = parse_url($this->uri, PHP_URL_HOST);
