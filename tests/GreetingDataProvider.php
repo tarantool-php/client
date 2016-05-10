@@ -31,4 +31,22 @@ class GreetingDataProvider
             [str_pad('Tarantool', 63, '5')."\nтутсолинеттутсолинеттутсолинеттутсолинеттутсолинеттутсолинеттут\n"],
         ];
     }
+
+    public static function provideValidGreetings()
+    {
+        return [
+            [self::generateGreeting('12345678901234567890'), '12345678901234567890'],
+        ];
+    }
+
+    public static function generateGreeting($salt = null)
+    {
+        $salt = $salt ?: substr(md5(uniqid()), 0, 20);
+
+        $greeting = str_pad('Tarantool', 63, ' ')."\n";
+        $greeting .= str_pad(base64_encode($salt.str_repeat('_', 12)), 63, ' ')."\n";
+
+        return $greeting;
+    }
+
 }

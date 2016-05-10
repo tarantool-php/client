@@ -6,13 +6,11 @@ use Tarantool\IProto;
 
 class IProtoTest extends \PHPUnit_Framework_TestCase
 {
-    public function testParseGreeting()
+    /**
+     * @dataProvider Tarantool\Tests\GreetingDataProvider::provideValidGreetings
+     */
+    public function testParseGreeting($greeting, $salt)
     {
-        $salt = '12345678901234567890';
-
-        $greeting = str_pad('Tarantool', 63, ' ')."\n";
-        $greeting .= str_pad(base64_encode($salt.str_repeat('_', 12)), 63, ' ')."\n";
-
         $this->assertSame($salt, IProto::parseGreeting($greeting));
     }
 
