@@ -44,16 +44,6 @@ class Retryable implements Connection
 
     public function send($data)
     {
-        $retry = 0;
-
-        do {
-            try {
-                return $this->connection->send($data);
-            } catch (ConnectionException $e) {
-            }
-            ++$retry;
-        } while ($retry <= $this->maxRetries);
-
-        throw $e;
+        return $this->connection->send($data);
     }
 }
