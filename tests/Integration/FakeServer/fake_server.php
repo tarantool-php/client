@@ -1,10 +1,12 @@
 <?php
 
-$options = getopt('', ['uri:', 'response:', 'ttl:', 'socket_delay:']) + [
+use Tarantool\Tests\Integration\FakeServer\Handler\NullHandler;
+
+require __DIR__.'/../../../vendor/autoload.php';
+
+$options = getopt('', ['uri:', 'ttl:', 'handler:']) + [
     'uri' => 'tcp://0.0.0.0:8000',
-    'response' => null,
     'ttl' => 5,
-    'socket_delay' => null,
 ];
 
 if (!$socket = stream_socket_server($options['uri'], $errorCode, $errorMessage)) {
@@ -15,15 +17,12 @@ if (!$socket = stream_socket_server($options['uri'], $errorCode, $errorMessage))
 $sid = stream_socket_get_name($socket, false);
 echo "$sid: Server started.\n";
 
+$handler = empty($options['handler'])
+    ? new NullHandler()
+    : unserialize(base64_decode($options['handler']));
+
 while ($conn = @stream_socket_accept($socket, $options['ttl'])) {
-    if ($options['socket_delay']) {
-        printf("$sid:   Sleep %d sec.\n", $options['socket_delay']);
-        sleep($options['socket_delay']);
-    }
-    if ($options['response']) {
-        printf("$sid:   Write response (base64): %s.\n", $options['response']);
-        fwrite($conn, base64_decode($options['response']));
-    }
+    $handler($conn, $sid);
     fclose($conn);
     echo "$sid:   Connection closed.\n";
 }

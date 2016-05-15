@@ -6,6 +6,12 @@ use Tarantool\Exception\ConnectionException;
 use Tarantool\Exception\Exception;
 use Tarantool\Packer\PackUtils;
 use Tarantool\Tests\Assert;
+use Tarantool\Tests\GreetingDataProvider;
+use Tarantool\Tests\Integration\FakeServer\FakeServerBuilder;
+use Tarantool\Tests\Integration\FakeServer\Handler\ChainHandler;
+use Tarantool\Tests\Integration\FakeServer\Handler\NullHandler;
+use Tarantool\Tests\Integration\FakeServer\Handler\ResponseHandler;
+use Tarantool\Tests\Integration\FakeServer\Handler\SocketDelayHandler;
 
 class ConnectionTest extends \PHPUnit_Framework_TestCase
 {
@@ -220,9 +226,8 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     {
         $clientBuilder = self::createClientBuilderForFakeServer();
 
-        (new FakeServerBuilder())
+        (new FakeServerBuilder(new ResponseHandler($greeting)))
             ->setUri($clientBuilder->getUri())
-            ->setResponse($greeting)
             ->start();
 
         $client = $clientBuilder->build();
@@ -251,9 +256,8 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     {
         $clientBuilder = self::createClientBuilderForFakeServer();
 
-        (new FakeServerBuilder())
+        (new FakeServerBuilder(new ResponseHandler($greeting)))
             ->setUri($clientBuilder->getUri())
-            ->setResponse($greeting)
             ->start();
 
         $client = $clientBuilder->build();
@@ -268,7 +272,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     {
         $clientBuilder = self::createClientBuilderForFakeServer();
 
-        (new FakeServerBuilder())
+        (new FakeServerBuilder(new NullHandler()))
             ->setUri($clientBuilder->getUri())
             ->start();
 
@@ -313,9 +317,8 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
         $clientBuilder = self::createClientBuilderForFakeServer();
         $clientBuilder->setConnectionOptions(['socket_timeout' => $socketTimeout]);
 
-        (new FakeServerBuilder())
+        (new FakeServerBuilder(new SocketDelayHandler($socketTimeout + 2)))
             ->setUri($clientBuilder->getUri())
-            ->setSocketDelay($socketTimeout + 2)
             ->start();
 
         $client = $clientBuilder->build();
@@ -353,22 +356,27 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
         $conn->send($data);
     }
 
-    /**
-     * @group pure_only
-     */
-    /*
-    public function testRetryableConnection()
+    public function testConnectionRetry()
     {
-        $connection = self::$client->getConnection();
-        $client = Utils::createClient($connection);
+        $clientBuilder = self::createClientBuilderForFakeServer();
+        $clientBuilder->setConnectionOptions([
+            'socket_timeout' => 2,
+            'retries' => 1,
+        ]);
+        $client = $clientBuilder->build();
+
+        (new FakeServerBuilder(
+            new ChainHandler([
+                new SocketDelayHandler(3, true),
+                new ResponseHandler(GreetingDataProvider::generateGreeting()),
+            ])
+        ))
+            ->setUri($clientBuilder->getUri())
+            ->start()
+        ;
 
         $client->connect();
-        $this->assertFalse($client->isDisconnected());
-
-        $client->disconnect();
-        $this->assertTrue($client->isDisconnected());
     }
-    */
 
     private static function createClientBuilderForFakeServer()
     {

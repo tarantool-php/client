@@ -1,32 +1,24 @@
 <?php
 
-namespace Tarantool\Tests\Integration;
+namespace Tarantool\Tests\Integration\FakeServer;
+
+use Tarantool\Tests\Integration\FakeServer\Handler\Handler;
 
 class FakeServerBuilder
 {
+    private $handler;
     private $uri = 'tcp://0.0.0.0:8000';
-    private $response = '';
     private $ttl = 5;
-    private $socketDelay = 0;
     private $logFile = '/tmp/fake_server.log';
+
+    public function __construct(Handler $handler)
+    {
+        $this->handler = $handler;
+    }
 
     public function setUri($uri)
     {
         $this->uri = $uri;
-
-        return $this;
-    }
-
-    public function setResponse($response)
-    {
-        $this->response = $response;
-
-        return $this;
-    }
-
-    public function setSocketDelay($socketDelay)
-    {
-        $this->socketDelay = $socketDelay;
 
         return $this;
     }
@@ -49,16 +41,14 @@ class FakeServerBuilder
     {
         return sprintf(
             'php %s/fake_server.php \
+                --handler=%s \
                 --uri=%s \
-                --response=%s \
                 --ttl=%d \
-                --socket_delay=%d \
             >> %s 2>&1 &',
             __DIR__,
+            escapeshellarg(base64_encode(serialize($this->handler))),
             escapeshellarg($this->uri),
-            $this->response ? escapeshellarg(base64_encode($this->response)) : '',
             $this->ttl,
-            $this->socketDelay,
             escapeshellarg($this->logFile)
         );
     }
