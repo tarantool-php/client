@@ -84,7 +84,7 @@ class Space
             return $this->indexes[$indexName];
         }
 
-        $schema = new Space($this->client, Space::VINDEX);
+        $schema = $this->client->getSpace(Space::VINDEX);
         $response = $schema->select([$this->id, $indexName], Index::INDEX_NAME);
         $data = $response->getData();
 
