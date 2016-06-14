@@ -50,7 +50,6 @@ class StreamConnection implements Connection
     public function close()
     {
         if ($this->stream) {
-            // is_resource($this->stream)
             fclose($this->stream);
             $this->stream = null;
         }
