@@ -15,7 +15,6 @@ class StreamConnection implements Connection
     private $options = [
         'connect_timeout' => 10.0,
         'socket_timeout' => 10.0,
-        'persistent' => false,
     ];
 
     private $stream;
@@ -33,14 +32,7 @@ class StreamConnection implements Connection
     {
         $this->close();
 
-        $flags = STREAM_CLIENT_CONNECT;
-
-        if ($this->options['persistent']) {
-            $flags |= STREAM_CLIENT_PERSISTENT;
-        }
-
-        $stream = @stream_socket_client($this->uri, $errorCode, $errorMessage, (float) $this->options['connect_timeout'], $flags);
-
+        $stream = @stream_socket_client($this->uri, $errorCode, $errorMessage, (float) $this->options['connect_timeout']);
         if (false === $stream) {
             throw new ConnectionException(sprintf('Unable to connect: %s.', $errorMessage));
         }
