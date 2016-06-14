@@ -94,14 +94,6 @@ And then run both unit and integration tests:
 $ docker run --rm --name client --link tarantool -v $(pwd):/client -w /client client
 ```
 
-To run only integration or unit tests, set the `PHPUNIT_OPTS` environment variable
-to either `--testsuite Integration` or `--testsuite Unit` respectively, e.g.:
-
-```sh
-$ docker run --rm --name client --link tarantool -v $(pwd):/client -w /client \
-    -e PHPUNIT_OPTS='--testsuite Integration' client
-```
-
 
 ## License
 
