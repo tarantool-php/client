@@ -6,25 +6,28 @@ use Tarantool\Exception\ConnectionException;
 
 class Retryable implements Connection
 {
-    const DEFAULT_MAX_ATTEMPTS = 3;
+    const DEFAULT_MAX_RETRIES = 3;
 
     private $connection;
-    private $maxAttempts;
+    private $maxRetries;
 
-    public function __construct(Connection $connection, $maxAttempts = null)
+    public function __construct(Connection $connection, $maxRetries = null)
     {
         $this->connection = $connection;
-        $this->maxAttempts = $maxAttempts ?: self::DEFAULT_MAX_ATTEMPTS;
+        $this->maxRetries = null === $maxRetries ? self::DEFAULT_MAX_RETRIES : $maxRetries;
     }
 
     public function open()
     {
-        for ($attempt = $this->maxAttempts; $attempt; $attempt--) {
+        $retry = 0;
+
+        do {
             try {
                 return $this->connection->open();
             } catch (ConnectionException $e) {
             }
-        }
+            ++$retry;
+        } while ($retry <= $this->maxRetries);
 
         throw $e;
     }

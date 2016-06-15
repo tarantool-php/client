@@ -4,10 +4,12 @@ namespace Tarantool\Tests\Unit;
 
 use Tarantool\Client;
 use Tarantool\Tests\Assert;
+use Tarantool\Tests\PhpUnitCompat;
 
 class ClientTest extends \PHPUnit_Framework_TestCase
 {
     use Assert;
+    use PhpUnitCompat;
 
     /**
      * @var \Tarantool\Connection\Connection|\PHPUnit_Framework_MockObject_MockObject
@@ -26,8 +28,8 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->connection = $this->getMock('Tarantool\Connection\Connection');
-        $this->packer = $this->getMock('Tarantool\Packer\Packer');
+        $this->connection = $this->createMock('Tarantool\Connection\Connection');
+        $this->packer = $this->createMock('Tarantool\Packer\Packer');
         $this->client = new Client($this->connection, $this->packer);
     }
 
@@ -54,7 +56,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
      */
     public function testPackUnpackMessage($methodName, array $methodArgs)
     {
-        $response = $this->getMock('Tarantool\Response', [], [], '', false);
+        $response = $this->createMock('Tarantool\Response');
 
         $this->packer->expects($this->once())->method('pack')
             ->with($this->isInstanceOf('Tarantool\Request\Request'))
@@ -74,7 +76,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
             ['ping', []],
             ['call', ['box.stat']],
             ['evaluate', ['return 42']],
-            ['sendRequest', [$this->getMock('Tarantool\Request\Request')]],
+            ['sendRequest', [$this->createMock('Tarantool\Request\Request')]],
         ];
     }
 }

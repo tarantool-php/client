@@ -5,10 +5,12 @@ namespace Tarantool\Tests\Unit\Packer;
 use Tarantool\IProto;
 use Tarantool\Request\Request;
 use Tarantool\Tests\Assert;
+use Tarantool\Tests\PhpUnitCompat;
 
 abstract class PackerTest extends \PHPUnit_Framework_TestCase
 {
     use Assert;
+    use PhpUnitCompat;
 
     /**
      * @var \Tarantool\Packer\Packer
@@ -25,7 +27,7 @@ abstract class PackerTest extends \PHPUnit_Framework_TestCase
      */
     public function testPack($type, $body, $sync, $expectedHexResult)
     {
-        $request = $this->getMock('Tarantool\Request\Request');
+        $request = $this->createMock('Tarantool\Request\Request');
 
         $request->expects($this->once())->method('getType')
             ->will($this->returnValue($type));

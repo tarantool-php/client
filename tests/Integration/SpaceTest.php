@@ -16,7 +16,8 @@ class SpaceTest extends \PHPUnit_Framework_TestCase
      */
     public static function createFixtures()
     {
-        Utils::createClient()->evaluate('create_fixtures()');
+        $client = ClientBuilder::createFromEnv()->build();
+        $client->evaluate('create_fixtures()');
     }
 
     /**

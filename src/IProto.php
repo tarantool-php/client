@@ -2,6 +2,8 @@
 
 namespace Tarantool;
 
+use Tarantool\Exception\Exception;
+
 abstract class IProto
 {
     const CODE = 0x00;
@@ -25,8 +27,25 @@ abstract class IProto
     const GREETING_SIZE = 128;
     const LENGTH_SIZE = 5;
 
-    public static function parseSalt($greeting)
+    /**
+     * @param string $greeting
+     *
+     * @return string A session salt
+     *
+     * @throws Exception
+     */
+    public static function parseGreeting($greeting)
     {
-        return substr(base64_decode(substr($greeting, 64, 44)), 0, 20);
+        if ('Tarantool' !== substr($greeting, 0, 9)) {
+            throw new Exception('Invalid greeting: unable to recognize Tarantool server.');
+        }
+
+        $salt = substr(base64_decode(substr($greeting, 64, 44), true), 0, 20);
+
+        if (isset($salt[19])) {
+            return $salt;
+        }
+
+        throw new Exception('Invalid greeting: unable to parse salt.');
     }
 }

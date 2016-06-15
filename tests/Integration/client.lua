@@ -1,9 +1,11 @@
 #!/usr/bin/tarantool
 
-require('console').listen('127.0.0.1:33333')
+-- require('console').listen('127.0.0.1:33333')
+
+local listen = require('os').getenv('TNT_LISTEN_URI')
 
 box.cfg {
-    listen = 3301,
+    listen = listen == '' and 3301 or listen,
     log_level = 6,
     wal_mode = 'none',
     snap_dir = '/tmp',

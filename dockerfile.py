@@ -7,19 +7,23 @@ import re
 image = os.getenv('IMAGE', 'php:5.6-cli')
 client = os.getenv('TNT_CLIENT', 'pure')
 packer = os.getenv('TNT_PACKER', 'pecl')
-phpunit_opts = os.getenv('PHPUNIT_OPTS', '')
+conn_uri = os.getenv('TNT_CONN_URI', 'tcp://tarantool:3301')
+coverage_file = os.getenv('COVERAGE_FILE', '')
 
 run_cmds = []
 composer_cmds = []
 
+phpunit_opts = ''
+phpunit_exclude_groups = []
+
 if image.startswith('php:'):
     run_cmds.append('apt-get install -y zlib1g-dev && docker-php-ext-install zip')
-    run_cmds.append('docker-php-ext-install sockets')
 
     if 'pecl' == client:
         run_cmds.append('git clone https://github.com/tarantool/tarantool-php.git /usr/src/php/ext/tarantool')
         run_cmds.append('docker-php-ext-install tarantool')
-        phpunit_opts += ' --exclude-group pureonly'
+        phpunit_opts += ' --testsuite Integration'
+        phpunit_exclude_groups.append('pure_only')
         packer = ''
 
     if packer.startswith('pecl'):
@@ -36,7 +40,8 @@ else:
     composer_cmds.append('remove --dev ext-msgpack')
 
 
-if re.match('(?:^|\s+?)--coverage-\w', phpunit_opts):
+if coverage_file:
+    phpunit_opts += ' --coverage-clover ' + coverage_file
     run_cmds.append('pecl install xdebug && docker-php-ext-enable xdebug')
 
 run_cmds = " && \\\n    ".join(run_cmds)
@@ -47,6 +52,15 @@ composer_cmds = ' && composer '.join(composer_cmds)
 if composer_cmds:
     composer_cmds = 'composer ' + composer_cmds + ' && '
 
+if conn_uri.startswith('tcp:'):
+    phpunit_exclude_groups.append('unix_only')
+else:
+    phpunit_exclude_groups.append('tcp_only')
+
+phpunit_exclude_groups = ','.join(phpunit_exclude_groups)
+if phpunit_exclude_groups:
+    phpunit_opts += ' --exclude-group ' + phpunit_exclude_groups
+
 print '''
 FROM {image}
 
@@ -56,15 +70,15 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
     composer global require 'phpunit/phpunit:^4.8|^5.0'
 
 ENV PATH=~/.composer/vendor/bin:$PATH
-ENV TNT_CONN_HOST=tarantool TNT_CONN_PORT=3301
-ENV TNT_CLIENT={client} TNT_PACKER={packer}
+ENV TNT_CLIENT={client} TNT_PACKER={packer} TNT_CONN_URI={conn_uri}
 
-CMD if [ ! -f composer.lock ]; then {composer_cmds}composer install; fi && ~/.composer/vendor/bin/phpunit {phpunit_opts}
+CMD if [ ! -f composer.lock ]; then {composer_cmds}composer install; fi && ~/.composer/vendor/bin/phpunit{phpunit_opts}
 '''.format(
     image=image,
     run_cmds=run_cmds,
     composer_cmds=composer_cmds,
     client=client,
     packer=packer,
+    conn_uri=conn_uri,
     phpunit_opts=phpunit_opts
 )

@@ -15,6 +15,10 @@ class ExceptionFactory
 
         switch (true) {
             case 0 === strpos($message, 'Failed to connect '):
+                $message = preg_replace('/^Failed to connect \[\d+?\]:(.+)$/', 'Unable to connect:\\1.', $message);
+
+                return new ConnectionException($message);
+
             case 0 === strpos($message, 'Invalid primary port value: '):
                 return new ConnectionException($message);
 

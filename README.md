@@ -18,11 +18,12 @@ $ composer require tarantool/client
 
 ```php
 use Tarantool\Client;
-use Tarantool\Connection\SocketConnection;
+use Tarantool\Connection\StreamConnection;
 
-$conn = new SocketConnection();
-// $conn = new SocketConnection('127.0.0.1');
-// $conn = new SocketConnection('127.0.0.1', 3301);
+$conn = new StreamConnection();
+// $conn = new StreamConnection('tcp://127.0.0.1:3301');
+// $conn = new StreamConnection('tcp://127.0.0.1:3301', ['socket_timeout' => 5.0, 'connect_timeout' => 5.0]);
+// $conn = new StreamConnection('unix:///tmp/tarantool_instance.sock');
 
 $client = new Client($conn, new PurePacker());
 // $client = new Client($conn);
@@ -55,7 +56,7 @@ To run integration tests:
 $ phpunit --testsuite Integration
 ```
 
-> Make sure to start [instance.lua](tests/Integration/instance.lua) first.
+> Make sure to start [client.lua](tests/Integration/client.lua) first.
 
 To run all tests:
 
@@ -77,28 +78,20 @@ You may change the default runtime by defining the `IMAGE` environment variable:
 $ IMAGE='php:7.0-cli' ./dockerfile.py | docker build -t client -
 ```
 
-> See a list of various images [here](.travis.yml#L9-L28).
+> See a list of various images [here](.travis.yml#L9-L30).
 
 
 Then run Tarantool instance (needed for integration tests):
 
 ```sh
 $ docker run -d --name tarantool -v $(pwd):/client tarantool/tarantool \
-    /client/tests/Integration/instance.lua
+    /client/tests/Integration/client.lua
 ```
 
 And then run both unit and integration tests:
 
 ```sh
 $ docker run --rm --name client --link tarantool -v $(pwd):/client -w /client client
-```
-
-To run only integration or unit tests, set the `PHPUNIT_OPTS` environment variable
-to either `--testsuite Integration` or `--testsuite Unit` respectively, e.g.:
-
-```sh
-$ docker run --rm --name client --link tarantool -v $(pwd):/client -w /client \
-    -e PHPUNIT_OPTS='--testsuite Integration' client
 ```
 
 
