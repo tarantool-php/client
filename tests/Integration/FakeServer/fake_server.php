@@ -1,6 +1,6 @@
 <?php
 
-use Tarantool\Client\Tests\Integration\FakeServer\Handler\NullHandler;
+use Tarantool\Client\Tests\Integration\FakeServer\Handler\NoopHandler;
 
 require __DIR__.'/../../../vendor/autoload.php';
 
@@ -18,7 +18,7 @@ $sid = stream_socket_get_name($socket, false);
 echo "$sid: Server started.\n";
 
 $handler = empty($options['handler'])
-    ? new NullHandler()
+    ? new NoopHandler()
     : unserialize(base64_decode($options['handler']));
 
 while ($conn = @stream_socket_accept($socket, $options['ttl'])) {

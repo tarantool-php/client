@@ -2,7 +2,7 @@
 
 namespace Tarantool\Client\Tests\Integration\FakeServer\Handler;
 
-class NullHandler implements Handler
+class NoopHandler implements Handler
 {
     public function __invoke($conn, $sid)
     {

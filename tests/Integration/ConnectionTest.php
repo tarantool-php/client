@@ -9,7 +9,7 @@ use Tarantool\Client\Tests\Assert;
 use Tarantool\Client\Tests\GreetingDataProvider;
 use Tarantool\Client\Tests\Integration\FakeServer\FakeServerBuilder;
 use Tarantool\Client\Tests\Integration\FakeServer\Handler\ChainHandler;
-use Tarantool\Client\Tests\Integration\FakeServer\Handler\NullHandler;
+use Tarantool\Client\Tests\Integration\FakeServer\Handler\NoopHandler;
 use Tarantool\Client\Tests\Integration\FakeServer\Handler\ResponseHandler;
 use Tarantool\Client\Tests\Integration\FakeServer\Handler\SocketDelayHandler;
 
@@ -272,7 +272,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     {
         $clientBuilder = self::createClientBuilderForFakeServer();
 
-        (new FakeServerBuilder(new NullHandler()))
+        (new FakeServerBuilder(new NoopHandler()))
             ->setUri($clientBuilder->getUri())
             ->start();
 
