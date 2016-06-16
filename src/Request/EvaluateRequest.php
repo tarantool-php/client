@@ -1,8 +1,8 @@
 <?php
 
-namespace Tarantool\Request;
+namespace Tarantool\Client\Request;
 
-use Tarantool\IProto;
+use Tarantool\Client\IProto;
 
 class EvaluateRequest implements Request
 {

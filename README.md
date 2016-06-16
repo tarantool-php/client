@@ -17,8 +17,9 @@ $ composer require tarantool/client
 ## Usage
 
 ```php
-use Tarantool\Client;
-use Tarantool\Connection\StreamConnection;
+use Tarantool\Client\Client;
+use Tarantool\Client\Connection\StreamConnection;
+use Tarantool\Client\Packer\PurePacker;
 
 $conn = new StreamConnection();
 // $conn = new StreamConnection('tcp://127.0.0.1:3301');

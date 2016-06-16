@@ -1,6 +1,6 @@
 <?php
 
-namespace Tarantool\Tests;
+namespace Tarantool\Client\Tests;
 
 class GreetingDataProvider
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tarantool\Tests\Integration;
+namespace Tarantool\Client\Tests\Integration;
 
 abstract class Utils
 {

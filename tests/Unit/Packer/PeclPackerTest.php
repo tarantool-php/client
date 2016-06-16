@@ -1,8 +1,8 @@
 <?php
 
-namespace Tarantool\Tests\Unit\Packer;
+namespace Tarantool\Client\Tests\Unit\Packer;
 
-use Tarantool\Packer\PeclPacker;
+use Tarantool\Client\Packer\PeclPacker;
 
 /**
  * @requires extension msgpack

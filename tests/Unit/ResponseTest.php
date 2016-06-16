@@ -1,8 +1,8 @@
 <?php
 
-namespace Tarantool\Tests\Unit;
+namespace Tarantool\Client\Tests\Unit;
 
-use Tarantool\Response;
+use Tarantool\Client\Response;
 
 class ResponseTest extends \PHPUnit_Framework_TestCase
 {

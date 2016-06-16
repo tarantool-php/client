@@ -1,14 +1,14 @@
 <?php
 
-namespace Tarantool\Tests\Integration;
+namespace Tarantool\Client\Tests\Integration;
 
-use Tarantool\Client as TarantoolClient;
-use Tarantool\Connection\Retryable;
-use Tarantool\Connection\StreamConnection;
-use Tarantool\Packer\PeclLitePacker;
-use Tarantool\Packer\PeclPacker;
-use Tarantool\Packer\PurePacker;
-use Tarantool\Tests\Adapter\Tarantool;
+use Tarantool\Client\Client as TarantoolClient;
+use Tarantool\Client\Connection\Retryable;
+use Tarantool\Client\Connection\StreamConnection;
+use Tarantool\Client\Packer\PeclLitePacker;
+use Tarantool\Client\Packer\PeclPacker;
+use Tarantool\Client\Packer\PurePacker;
+use Tarantool\Client\Tests\Adapter\Tarantool;
 
 class ClientBuilder
 {

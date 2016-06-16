@@ -1,13 +1,13 @@
 <?php
 
-namespace Tarantool\Packer;
+namespace Tarantool\Client\Packer;
 
 use MessagePack\BufferUnpacker;
 use MessagePack\Packer as MessagePackPacker;
-use Tarantool\Exception\Exception;
-use Tarantool\IProto;
-use Tarantool\Request\Request;
-use Tarantool\Response;
+use Tarantool\Client\Exception\Exception;
+use Tarantool\Client\IProto;
+use Tarantool\Client\Request\Request;
+use Tarantool\Client\Response;
 
 class PurePacker implements Packer
 {

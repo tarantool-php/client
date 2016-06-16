@@ -1,18 +1,18 @@
 <?php
 
-namespace Tarantool;
+namespace Tarantool\Client;
 
-use Tarantool\Connection\Connection;
-use Tarantool\Exception\Exception;
-use Tarantool\Packer\Packer;
-use Tarantool\Packer\PeclPacker;
-use Tarantool\Request\AuthenticateRequest;
-use Tarantool\Request\CallRequest;
-use Tarantool\Request\EvaluateRequest;
-use Tarantool\Request\PingRequest;
-use Tarantool\Request\Request;
-use Tarantool\Schema\Index;
-use Tarantool\Schema\Space;
+use Tarantool\Client\Connection\Connection;
+use Tarantool\Client\Exception\Exception;
+use Tarantool\Client\Packer\Packer;
+use Tarantool\Client\Packer\PeclPacker;
+use Tarantool\Client\Request\AuthenticateRequest;
+use Tarantool\Client\Request\CallRequest;
+use Tarantool\Client\Request\EvaluateRequest;
+use Tarantool\Client\Request\PingRequest;
+use Tarantool\Client\Request\Request;
+use Tarantool\Client\Schema\Index;
+use Tarantool\Client\Schema\Space;
 
 class Client
 {

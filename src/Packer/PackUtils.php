@@ -1,8 +1,8 @@
 <?php
 
-namespace Tarantool\Packer;
+namespace Tarantool\Client\Packer;
 
-use Tarantool\Exception\Exception;
+use Tarantool\Client\Exception\Exception;
 
 abstract class PackUtils
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tarantool\Connection;
+namespace Tarantool\Client\Connection;
 
 interface Connection
 {

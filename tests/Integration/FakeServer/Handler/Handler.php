@@ -1,6 +1,6 @@
 <?php
 
-namespace Tarantool\Tests\Integration\FakeServer\Handler;
+namespace Tarantool\Client\Tests\Integration\FakeServer\Handler;
 
 interface Handler
 {

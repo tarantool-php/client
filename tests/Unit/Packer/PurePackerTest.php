@@ -1,8 +1,8 @@
 <?php
 
-namespace Tarantool\Tests\Unit\Packer;
+namespace Tarantool\Client\Tests\Unit\Packer;
 
-use Tarantool\Packer\PurePacker;
+use Tarantool\Client\Packer\PurePacker;
 
 /**
  * @requires function MessagePack\Packer::pack

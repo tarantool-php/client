@@ -1,6 +1,6 @@
 <?php
 
-namespace Tarantool;
+namespace Tarantool\Client;
 
 class Response
 {

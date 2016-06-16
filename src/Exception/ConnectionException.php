@@ -1,6 +1,6 @@
 <?php
 
-namespace Tarantool\Exception;
+namespace Tarantool\Client\Exception;
 
 class ConnectionException extends Exception
 {

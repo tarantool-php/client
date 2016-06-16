@@ -1,6 +1,6 @@
 <?php
 
-namespace Tarantool\Schema;
+namespace Tarantool\Client\Schema;
 
 abstract class Index
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tarantool\Request;
+namespace Tarantool\Client\Request;
 
 interface Request
 {

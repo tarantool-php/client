@@ -1,8 +1,8 @@
 <?php
 
-namespace Tarantool\Connection;
+namespace Tarantool\Client\Connection;
 
-use Tarantool\Exception\ConnectionException;
+use Tarantool\Client\Exception\ConnectionException;
 
 class Retryable implements Connection
 {

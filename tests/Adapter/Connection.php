@@ -1,8 +1,8 @@
 <?php
 
-namespace Tarantool\Tests\Adapter;
+namespace Tarantool\Client\Tests\Adapter;
 
-use Tarantool\Connection\Connection as BaseConnection;
+use Tarantool\Client\Connection\Connection as BaseConnection;
 
 class Connection implements BaseConnection
 {

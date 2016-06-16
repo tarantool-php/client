@@ -1,11 +1,11 @@
 <?php
 
-namespace Tarantool\Packer;
+namespace Tarantool\Client\Packer;
 
-use Tarantool\Exception\Exception;
-use Tarantool\IProto;
-use Tarantool\Request\Request;
-use Tarantool\Response;
+use Tarantool\Client\Exception\Exception;
+use Tarantool\Client\IProto;
+use Tarantool\Client\Request\Request;
+use Tarantool\Client\Response;
 
 class PeclPacker implements Packer
 {

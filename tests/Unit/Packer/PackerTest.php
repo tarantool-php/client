@@ -1,11 +1,11 @@
 <?php
 
-namespace Tarantool\Tests\Unit\Packer;
+namespace Tarantool\Client\Tests\Unit\Packer;
 
-use Tarantool\IProto;
-use Tarantool\Request\Request;
-use Tarantool\Tests\Assert;
-use Tarantool\Tests\PhpUnitCompat;
+use Tarantool\Client\IProto;
+use Tarantool\Client\Request\Request;
+use Tarantool\Client\Tests\Assert;
+use Tarantool\Client\Tests\PhpUnitCompat;
 
 abstract class PackerTest extends \PHPUnit_Framework_TestCase
 {
@@ -13,7 +13,7 @@ abstract class PackerTest extends \PHPUnit_Framework_TestCase
     use PhpUnitCompat;
 
     /**
-     * @var \Tarantool\Packer\Packer
+     * @var \Tarantool\Client\Packer\Packer
      */
     private $packer;
 
@@ -27,7 +27,7 @@ abstract class PackerTest extends \PHPUnit_Framework_TestCase
      */
     public function testPack($type, $body, $sync, $expectedHexResult)
     {
-        $request = $this->createMock('Tarantool\Request\Request');
+        $request = $this->createMock('Tarantool\Client\Request\Request');
 
         $request->expects($this->once())->method('getType')
             ->will($this->returnValue($type));
@@ -76,7 +76,7 @@ abstract class PackerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideBadUnpackData
-     * @expectedException \Tarantool\Exception\Exception
+     * @expectedException \Tarantool\Client\Exception\Exception
      * @expectedExceptionMessage Unable to unpack data.
      */
     public function testThrowExceptionOnBadUnpackData($data)
@@ -93,7 +93,7 @@ abstract class PackerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Tarantool\Exception\Exception
+     * @expectedException \Tarantool\Client\Exception\Exception
      * @expectedExceptionMessage foo.
      */
     public function testThrowExceptionOnIProtoError()
@@ -105,7 +105,7 @@ abstract class PackerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \Tarantool\Packer\Packer
+     * @return \Tarantool\Client\Packer\Packer
      */
     abstract protected function createPacker();
 }

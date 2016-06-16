@@ -23,12 +23,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Tarantool\\": "src/"
+            "Tarantool\\Client\\": "src/"
         }
     },
     "autoload-dev" : {
         "psr-4": {
-            "Tarantool\\Tests\\": "tests/"
+            "Tarantool\\Client\\Tests\\": "tests/"
         }
     }
 }

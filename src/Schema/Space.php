@@ -1,14 +1,14 @@
 <?php
 
-namespace Tarantool\Schema;
+namespace Tarantool\Client\Schema;
 
-use Tarantool\Client;
-use Tarantool\Exception\Exception;
-use Tarantool\Request\DeleteRequest;
-use Tarantool\Request\InsertRequest;
-use Tarantool\Request\ReplaceRequest;
-use Tarantool\Request\SelectRequest;
-use Tarantool\Request\UpdateRequest;
+use Tarantool\Client\Client;
+use Tarantool\Client\Exception\Exception;
+use Tarantool\Client\Request\DeleteRequest;
+use Tarantool\Client\Request\InsertRequest;
+use Tarantool\Client\Request\ReplaceRequest;
+use Tarantool\Client\Request\SelectRequest;
+use Tarantool\Client\Request\UpdateRequest;
 
 class Space
 {

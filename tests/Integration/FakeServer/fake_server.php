@@ -1,6 +1,6 @@
 <?php
 
-use Tarantool\Tests\Integration\FakeServer\Handler\NullHandler;
+use Tarantool\Client\Tests\Integration\FakeServer\Handler\NullHandler;
 
 require __DIR__.'/../../../vendor/autoload.php';
 

@@ -1,9 +1,9 @@
 <?php
 
-namespace Tarantool\Tests\Integration;
+namespace Tarantool\Client\Tests\Integration;
 
-use Tarantool\Exception\Exception;
-use Tarantool\Tests\Assert;
+use Tarantool\Client\Exception\Exception;
+use Tarantool\Client\Tests\Assert;
 
 class ClientTest extends \PHPUnit_Framework_TestCase
 {

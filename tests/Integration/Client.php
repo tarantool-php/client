@@ -1,8 +1,8 @@
 <?php
 
-namespace Tarantool\Tests\Integration;
+namespace Tarantool\Client\Tests\Integration;
 
-use Tarantool\Client as TarantoolClient;
+use Tarantool\Client\Client as TarantoolClient;
 
 trait Client
 {

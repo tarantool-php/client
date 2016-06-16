@@ -1,17 +1,17 @@
 <?php
 
-namespace Tarantool\Tests\Integration;
+namespace Tarantool\Client\Tests\Integration;
 
-use Tarantool\Exception\ConnectionException;
-use Tarantool\Exception\Exception;
-use Tarantool\Packer\PackUtils;
-use Tarantool\Tests\Assert;
-use Tarantool\Tests\GreetingDataProvider;
-use Tarantool\Tests\Integration\FakeServer\FakeServerBuilder;
-use Tarantool\Tests\Integration\FakeServer\Handler\ChainHandler;
-use Tarantool\Tests\Integration\FakeServer\Handler\NullHandler;
-use Tarantool\Tests\Integration\FakeServer\Handler\ResponseHandler;
-use Tarantool\Tests\Integration\FakeServer\Handler\SocketDelayHandler;
+use Tarantool\Client\Exception\ConnectionException;
+use Tarantool\Client\Exception\Exception;
+use Tarantool\Client\Packer\PackUtils;
+use Tarantool\Client\Tests\Assert;
+use Tarantool\Client\Tests\GreetingDataProvider;
+use Tarantool\Client\Tests\Integration\FakeServer\FakeServerBuilder;
+use Tarantool\Client\Tests\Integration\FakeServer\Handler\ChainHandler;
+use Tarantool\Client\Tests\Integration\FakeServer\Handler\NullHandler;
+use Tarantool\Client\Tests\Integration\FakeServer\Handler\ResponseHandler;
+use Tarantool\Client\Tests\Integration\FakeServer\Handler\SocketDelayHandler;
 
 class ConnectionTest extends \PHPUnit_Framework_TestCase
 {
@@ -83,7 +83,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @group tcp_only
-     * @expectedException \Tarantool\Exception\ConnectionException
+     * @expectedException \Tarantool\Client\Exception\ConnectionException
      */
     public function testConnectInvalidHost()
     {
@@ -96,7 +96,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @group tcp_only
-     * @expectedException \Tarantool\Exception\ConnectionException
+     * @expectedException \Tarantool\Client\Exception\ConnectionException
      */
     public function testConnectInvalidPort()
     {
@@ -182,7 +182,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Tarantool\Exception\Exception
+     * @expectedException \Tarantool\Client\Exception\Exception
      * @expectedExceptionMessage Space 'space_conn' does not exist
      */
     public function testUseCredentialsAfterReconnect()
@@ -220,7 +220,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider Tarantool\Tests\GreetingDataProvider::provideGreetingsWithInvalidServerName
+     * @dataProvider Tarantool\Client\Tests\GreetingDataProvider::provideGreetingsWithInvalidServerName
      */
     public function testParseGreetingWithInvalidServerName($greeting)
     {
@@ -247,9 +247,9 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider Tarantool\Tests\GreetingDataProvider::provideGreetingsWithInvalidSalt
+     * @dataProvider Tarantool\Client\Tests\GreetingDataProvider::provideGreetingsWithInvalidSalt
      *
-     * @expectedException \Tarantool\Exception\Exception
+     * @expectedException \Tarantool\Client\Exception\Exception
      * @expectedExceptionMessage Invalid greeting: unable to parse salt.
      */
     public function testParseGreetingWithInvalidSalt($greeting)
@@ -265,7 +265,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Tarantool\Exception\Exception
+     * @expectedException \Tarantool\Client\Exception\Exception
      * @expectedExceptionMessage Unable to read greeting.
      */
     public function testReadEmptyGreeting()
@@ -342,7 +342,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     /**
      * @group pure_only
      *
-     * @expectedException \Tarantool\Exception\ConnectionException
+     * @expectedException \Tarantool\Client\Exception\ConnectionException
      * @expectedExceptionMessage Unable to read response length.
      */
     public function testThrowExceptionOnMalformedRequest()

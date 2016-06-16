@@ -1,10 +1,10 @@
 <?php
 
-namespace Tarantool\Connection;
+namespace Tarantool\Client\Connection;
 
-use Tarantool\Exception\ConnectionException;
-use Tarantool\IProto;
-use Tarantool\Packer\PackUtils;
+use Tarantool\Client\Exception\ConnectionException;
+use Tarantool\Client\IProto;
+use Tarantool\Client\Packer\PackUtils;
 
 class StreamConnection implements Connection
 {

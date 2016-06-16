@@ -1,8 +1,8 @@
 <?php
 
-namespace Tarantool\Tests\Adapter;
+namespace Tarantool\Client\Tests\Adapter;
 
-use Tarantool\Response;
+use Tarantool\Client\Response;
 
 class Space
 {

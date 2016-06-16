@@ -1,8 +1,8 @@
 <?php
 
-namespace Tarantool\Packer;
+namespace Tarantool\Client\Packer;
 
-use Tarantool\Request\Request;
+use Tarantool\Client\Request\Request;
 
 interface Packer
 {
@@ -17,7 +17,7 @@ interface Packer
     /**
      * @param string $data
      *
-     * @return \Tarantool\Response
+     * @return \Tarantool\Client\Response
      */
     public function unpack($data);
 }

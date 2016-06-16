@@ -1,8 +1,8 @@
 <?php
 
-namespace Tarantool\Tests\Unit\Packer;
+namespace Tarantool\Client\Tests\Unit\Packer;
 
-use Tarantool\Packer\PackUtils;
+use Tarantool\Client\Packer\PackUtils;
 
 class PackUtilsTest extends \PHPUnit_Framework_TestCase
 {
@@ -15,7 +15,7 @@ class PackUtilsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Tarantool\Exception\Exception
+     * @expectedException \Tarantool\Client\Exception\Exception
      * @expectedExceptionMessage Unable to unpack length value.
      */
     public function testUnpackLengthFromMalformedData()

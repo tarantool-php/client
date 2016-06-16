@@ -1,6 +1,6 @@
 <?php
 
-namespace Tarantool\Tests\Integration;
+namespace Tarantool\Client\Tests\Integration;
 
 class MsgpackTest extends \PHPUnit_Framework_TestCase
 {

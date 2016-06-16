@@ -1,10 +1,10 @@
 <?php
 
-namespace Tarantool\Tests\Integration;
+namespace Tarantool\Client\Tests\Integration;
 
-use Tarantool\Exception\Exception;
-use Tarantool\Schema\Space;
-use Tarantool\Tests\Assert;
+use Tarantool\Client\Exception\Exception;
+use Tarantool\Client\Schema\Space;
+use Tarantool\Client\Tests\Assert;
 
 class SpaceTest extends \PHPUnit_Framework_TestCase
 {
@@ -87,7 +87,7 @@ class SpaceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideInsertDataWithMismatchedTypes
-     * @expectedException \Tarantool\Exception\Exception
+     * @expectedException \Tarantool\Client\Exception\Exception
      * @expectedExceptionMessageRegExp /Tuple field 1 type does not match one required by operation: expected (NUM|STR)/
      * @expectedExceptionCode 23
      */
@@ -111,7 +111,7 @@ class SpaceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Tarantool\Exception\Exception
+     * @expectedException \Tarantool\Client\Exception\Exception
      * @expectedExceptionMessage Duplicate key exists in unique index 'primary' in space 'space_misc'
      * @expectedExceptionCode 3
      */
@@ -239,7 +239,7 @@ class SpaceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Tarantool\Exception\Exception
+     * @expectedException \Tarantool\Client\Exception\Exception
      * @expectedExceptionMessage Space 'non_existing_space' does not exist
      */
     public function testReferenceNonExistingSpaceByName()
@@ -248,7 +248,7 @@ class SpaceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Tarantool\Exception\Exception
+     * @expectedException \Tarantool\Client\Exception\Exception
      * @expectedExceptionMessage Space '123456' does not exist
      */
     public function testReferenceNonExistingSpaceById()
@@ -257,7 +257,7 @@ class SpaceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Tarantool\Exception\Exception
+     * @expectedException \Tarantool\Client\Exception\Exception
      * @expectedExceptionMessageRegExp /No index 'non_existing_index' is defined in space #\d+?/
      */
     public function testReferenceNonExistingIndexByName()
@@ -266,7 +266,7 @@ class SpaceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Tarantool\Exception\Exception
+     * @expectedException \Tarantool\Client\Exception\Exception
      * @expectedExceptionMessageRegExp /No index #123456 is defined in space 'space_misc'/
      */
     public function testReferenceNonExistingIndexById()

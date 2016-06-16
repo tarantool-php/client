@@ -1,6 +1,6 @@
 <?php
 
-namespace Tarantool\Tests;
+namespace Tarantool\Client\Tests;
 
 /**
  * A PHPUnit compatibility layer to run tests written for phpunit v5 with phpunit v4.

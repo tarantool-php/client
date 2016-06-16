@@ -1,8 +1,8 @@
 <?php
 
-namespace Tarantool\Tests\Integration\FakeServer;
+namespace Tarantool\Client\Tests\Integration\FakeServer;
 
-use Tarantool\Tests\Integration\FakeServer\Handler\Handler;
+use Tarantool\Client\Tests\Integration\FakeServer\Handler\Handler;
 
 class FakeServerBuilder
 {

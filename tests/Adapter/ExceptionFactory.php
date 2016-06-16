@@ -1,10 +1,10 @@
 <?php
 
-namespace Tarantool\Tests\Adapter;
+namespace Tarantool\Client\Tests\Adapter;
 
-use Tarantool\Exception\ConnectionException;
-use Tarantool\Exception\Exception;
-use Tarantool\Tests\Integration\Utils;
+use Tarantool\Client\Exception\ConnectionException;
+use Tarantool\Client\Exception\Exception;
+use Tarantool\Client\Tests\Integration\Utils;
 
 class ExceptionFactory
 {

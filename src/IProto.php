@@ -1,8 +1,8 @@
 <?php
 
-namespace Tarantool;
+namespace Tarantool\Client;
 
-use Tarantool\Exception\Exception;
+use Tarantool\Client\Exception\Exception;
 
 abstract class IProto
 {
