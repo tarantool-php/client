@@ -46,9 +46,7 @@ script:
   - docker run --rm --name client --link tarantool -v $(pwd):/client -w /client client
 
 after_script:
-  - docker run --rm --name client -v $(pwd):/client -w /client client bash -c "
-      if [[ -f "$COVERAGE_FILE" ]]; then
-        curl -sSOL https://scrutinizer-ci.com/ocular.phar &&
-        php ocular.phar code-coverage:upload --format=php-clover "$COVERAGE_FILE";
-      fi
-    "
+  - if [[ -f "$COVERAGE_FILE" ]]; then
+      curl -sSOL https://scrutinizer-ci.com/ocular.phar &&
+      php ocular.phar code-coverage:upload --format=php-clover "$COVERAGE_FILE";
+    fi
