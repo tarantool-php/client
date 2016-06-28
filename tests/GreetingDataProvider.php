@@ -48,5 +48,4 @@ class GreetingDataProvider
 
         return $greeting;
     }
-
 }
