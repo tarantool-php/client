@@ -16,7 +16,6 @@ interface Request
     const TYPE_PING = 64;
     const TYPE_JOIN = 65;
     const TYPE_SUBSCRIBE = 66;
-    const TYPE_ERROR = 32768;
 
     public function getType();
     public function getBody();

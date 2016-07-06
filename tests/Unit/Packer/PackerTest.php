@@ -3,7 +3,7 @@
 namespace Tarantool\Client\Tests\Unit\Packer;
 
 use Tarantool\Client\IProto;
-use Tarantool\Client\Request\Request;
+use Tarantool\Client\Response;
 use Tarantool\Client\Tests\Assert;
 use Tarantool\Client\Tests\PhpUnitCompat;
 
@@ -98,7 +98,7 @@ abstract class PackerTest extends \PHPUnit_Framework_TestCase
      */
     public function testThrowExceptionOnIProtoError()
     {
-        $header = pack('CCCnCC', 0x82, IProto::CODE, 0xcd, Request::TYPE_ERROR, IProto::SYNC, 0);
+        $header = pack('CCCnCC', 0x82, IProto::CODE, 0xcd, Response::TYPE_ERROR, IProto::SYNC, 0);
         $body = pack('C*', 0x81, IProto::ERROR, 0xa0 | 4).'foo.';
 
         $this->packer->unpack($header.$body);

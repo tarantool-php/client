@@ -46,8 +46,8 @@ class PeclLitePacker implements Packer
         $body = substr($data, $headerSize);
         $body = msgpack_unpack($body);
 
-        if ($code >= Request::TYPE_ERROR) {
-            throw new Exception($body[IProto::ERROR], $code & (Request::TYPE_ERROR - 1));
+        if ($code >= Response::TYPE_ERROR) {
+            throw new Exception($body[IProto::ERROR], $code & (Response::TYPE_ERROR - 1));
         }
 
         return new Response($header[IProto::SYNC], $body ? $body[IProto::DATA] : null);

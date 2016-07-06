@@ -4,6 +4,8 @@ namespace Tarantool\Client;
 
 class Response
 {
+    const TYPE_ERROR = 0x8000;
+
     private $sync;
     private $data;
 
