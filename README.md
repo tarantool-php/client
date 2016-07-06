@@ -10,7 +10,7 @@
 The recommended way to install the library is through [Composer](http://getcomposer.org):
 
 ```sh
-$ composer require tarantool/client
+$ composer require tarantool/client:@dev
 ```
 
 
