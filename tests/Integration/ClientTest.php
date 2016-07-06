@@ -122,4 +122,14 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $client->getSpace('space_conn')->select();
         $this->assertSame(1, Utils::getTotalSelectCalls() - $total);
     }
+
+    /**
+     * @expectedException \Tarantool\Client\Exception\Exception
+     * @expectedExceptionMessage Foobar.
+     * @expectedExceptionCode 42
+     */
+    public function testException()
+    {
+        self::$client->evaluate('box.error{code = 42, reason = "Foobar."}');
+    }
 }
