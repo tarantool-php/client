@@ -1,4 +1,4 @@
-#!/usr/bin/tarantool
+#!/usr/bin/env tarantool
 
 -- require('console').listen('127.0.0.1:33333')
 
@@ -17,7 +17,7 @@ local function create_user(username, password)
         box.schema.user.drop(username)
     end
 
-    return box.schema.user.create(username, { password = password })
+    return box.schema.user.create(username, {password = password})
 end
 
 local function create_space(name)
