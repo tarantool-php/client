@@ -18,7 +18,7 @@ class PurePacker implements ClientPacker
     public function __construct(Packer $packer = null, BufferUnpacker $bufferUnpacker = null)
     {
         $this->packer = $packer ?: new Packer();
-        $this->bufferUnpacker = $bufferUnpacker?: new BufferUnpacker();
+        $this->bufferUnpacker = $bufferUnpacker ?: new BufferUnpacker();
     }
 
     public function pack(Request $request, $sync = null)
