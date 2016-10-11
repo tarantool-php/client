@@ -3,21 +3,22 @@
 namespace Tarantool\Client\Packer;
 
 use MessagePack\BufferUnpacker;
-use MessagePack\Packer as MessagePackPacker;
+use MessagePack\Packer;
 use Tarantool\Client\Exception\Exception;
 use Tarantool\Client\IProto;
+use Tarantool\Client\Packer\Packer as ClientPacker;
 use Tarantool\Client\Request\Request;
 use Tarantool\Client\Response;
 
-class PurePacker implements Packer
+class PurePacker implements ClientPacker
 {
     private $packer;
-    private $unpacker;
+    private $bufferUnpacker;
 
-    public function __construct()
+    public function __construct(Packer $packer = null, BufferUnpacker $bufferUnpacker = null)
     {
-        $this->packer = new MessagePackPacker();
-        $this->unpacker = new BufferUnpacker();
+        $this->packer = $packer ?: new Packer();
+        $this->bufferUnpacker = $bufferUnpacker?: new BufferUnpacker();
     }
 
     public function pack(Request $request, $sync = null)
@@ -36,7 +37,7 @@ class PurePacker implements Packer
 
     public function unpack($data)
     {
-        $message = $this->unpacker->reset($data)->tryUnpack();
+        $message = $this->bufferUnpacker->reset($data)->tryUnpack();
 
         if (2 !== count($message)) {
             throw new Exception('Unable to unpack data.');

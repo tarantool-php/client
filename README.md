@@ -22,12 +22,13 @@ use Tarantool\Client\Connection\StreamConnection;
 use Tarantool\Client\Packer\PurePacker;
 
 $conn = new StreamConnection();
+// or
 // $conn = new StreamConnection('tcp://127.0.0.1:3301');
 // $conn = new StreamConnection('tcp://127.0.0.1:3301', ['socket_timeout' => 5.0, 'connect_timeout' => 5.0]);
 // $conn = new StreamConnection('unix:///tmp/tarantool_instance.sock');
 
 $client = new Client($conn, new PurePacker());
-// $client = new Client($conn);
+// or
 // $client = new Client($conn, new PeclPacker());
 // $client = new Client($conn, new PeclLitePacker());
 
@@ -41,6 +42,13 @@ var_dump($result->getData());
 $result = $client->call('box.stat');
 var_dump($result->getData());
 ```
+
+> *Note*
+>
+> Using packer classes provided by the library require to install additional dependencies,
+> which are not bundled with the library directly. Therefore, you have to install them manually.
+> For example, if you plan to use PurePacker, install the [rybakit/msgpack](https://github.com/rybakit/msgpack.php#installation) package.
+> See the "[suggestion](composer.json#L21-L22)" section of composer.json for other alternatives.
 
 
 ## Tests
