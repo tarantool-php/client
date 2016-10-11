@@ -45,9 +45,10 @@ var_dump($result->getData());
 
 > *Note*
 >
-> Using packer classes provided by the library require to install additional dependencies which are not bundled 
-> with the library directly. Therefore, you have to install them manually.
-> For example, if you plan to use PurePacker, install the [rybakit/msgpack](https://github.com/rybakit/msgpack.php#installation) package. See the "[suggestion](composer.json#L21-L22)" section of composer.json for other alternatives.
+> Using packer classes provided by the library require to install additional dependencies,
+> which are not bundled with the library directly. Therefore, you have to install them manually.
+> For example, if you plan to use PurePacker, install the [rybakit/msgpack](https://github.com/rybakit/msgpack.php#installation) package.
+> See the "[suggestion](composer.json#L21-L22)" section of composer.json for other alternatives.
 
 
 ## Tests
