@@ -5,7 +5,6 @@ namespace Tarantool\Client;
 use Tarantool\Client\Connection\Connection;
 use Tarantool\Client\Exception\Exception;
 use Tarantool\Client\Packer\Packer;
-use Tarantool\Client\Packer\PeclPacker;
 use Tarantool\Client\Request\AuthenticateRequest;
 use Tarantool\Client\Request\CallRequest;
 use Tarantool\Client\Request\EvaluateRequest;
@@ -24,13 +23,13 @@ class Client
     private $spaces = [];
 
     /**
-     * @param Connection  $connection
-     * @param Packer|null $packer
+     * @param Connection $connection
+     * @param Packer     $packer
      */
-    public function __construct(Connection $connection, Packer $packer = null)
+    public function __construct(Connection $connection, Packer $packer)
     {
         $this->connection = $connection;
-        $this->packer = $packer ?: new PeclPacker();
+        $this->packer = $packer;
     }
 
     public function getConnection()
