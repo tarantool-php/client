@@ -16,8 +16,10 @@ $ composer require tarantool/client:@dev
 
 ## Usage
 
+Sync:
+
 ```php
-use Tarantool\Client\Client;
+use Tarantool\Client\SyncClient;
 use Tarantool\Client\Connection\StreamConnection;
 use Tarantool\Client\Packer\PurePacker;
 
@@ -27,10 +29,10 @@ $conn = new StreamConnection();
 // $conn = new StreamConnection('tcp://127.0.0.1:3301', ['socket_timeout' => 5.0, 'connect_timeout' => 5.0]);
 // $conn = new StreamConnection('unix:///tmp/tarantool_instance.sock');
 
-$client = new Client($conn, new PurePacker());
+$client = new SyncClient($conn, new PurePacker());
 // or
-// $client = new Client($conn, new PeclPacker());
-// $client = new Client($conn, new PeclLitePacker());
+// $client = new SyncClient($conn, new PeclPacker());
+// $client = new SyncClient($conn, new PeclLitePacker());
 
 $space = $client->getSpace('my_space');
 $result = $space->select();
@@ -43,20 +45,30 @@ $result = $client->call('box.stat');
 var_dump($result->getData());
 ```
 
-```php
-$loop = React\EventLoop\Factory::create();
+Async:
 
-$dnsResolverFactory = new \React\Dns\Resolver\Factory();
+```php
+use React\Dns\Resolver\Factory as DnsResolverFactory;
+use React\EventLoop\Factory as EventLoopFactory;
+use React\SocketClient\Connector;
+use Tarantool\Client\Connection\ReactConnection;
+use Tarantool\Client\Packer\PurePacker;
+use Tarantool\Client\ReactClient;
+
+$loop = EventLoopFactory::create();
+
+$dnsResolverFactory = new DnsResolverFactory();
 $dns = $dnsResolverFactory->createCached('8.8.8.8', $loop);
 
-$connector = new \React\SocketClient\Connector($loop, $dns);
-$packer = new \Tarantool\Client\Packer\PurePacker();
+$connector = new Connector($loop, $dns);
+$packer = new PurePacker();
 
-$conn = new \Tarantool\Client\Connection\ReactConnection($connector, $packer);
-$client = new Tarantool\Client\ReactClient($conn);
+$conn = new ReactConnection($connector, $packer);
+$client = new ReactClient($conn);
 
 $client->call("box.stat")->then(function ($data) {
     var_dump($data);
+    exit(42);
 });
 
 
