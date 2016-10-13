@@ -43,6 +43,26 @@ $result = $client->call('box.stat');
 var_dump($result->getData());
 ```
 
+```php
+$loop = React\EventLoop\Factory::create();
+
+$dnsResolverFactory = new \React\Dns\Resolver\Factory();
+$dns = $dnsResolverFactory->createCached('8.8.8.8', $loop);
+
+$connector = new \React\SocketClient\Connector($loop, $dns);
+$packer = new \Tarantool\Client\Packer\PurePacker();
+
+$conn = new \Tarantool\Client\Connection\ReactConnection($connector, $packer);
+$client = new Tarantool\Client\ReactClient($conn);
+
+$client->call("box.stat")->then(function ($data) {
+    var_dump($data);
+});
+
+
+$loop->run();
+```
+
 > *Note*
 >
 > Using packer classes provided by the library require to install additional dependencies,

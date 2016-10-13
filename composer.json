@@ -15,11 +15,13 @@
     },
     "require-dev": {
         "ext-msgpack": "@dev",
-        "rybakit/msgpack": "@dev"
+        "rybakit/msgpack": "@dev",
+        "react/react": "^0.4.2"
     },
     "suggest": {
         "ext-msgpack": "For using Pecl- or PeclLitePacker.",
-        "rybakit/msgpack": "For using PurePacker."
+        "rybakit/msgpack": "For using PurePacker.",
+        "react/react": "For using ReactClient"
     },
     "autoload": {
         "psr-4": {
