@@ -19,9 +19,9 @@ $ composer require tarantool/client:@dev
 Sync:
 
 ```php
-use Tarantool\Client\SyncClient;
 use Tarantool\Client\Connection\StreamConnection;
 use Tarantool\Client\Packer\PurePacker;
+use Tarantool\Client\SyncClient;
 
 $conn = new StreamConnection();
 // or
@@ -66,9 +66,9 @@ $packer = new PurePacker();
 $conn = new ReactConnection($connector, $packer);
 $client = new ReactClient($conn);
 
-$client->call("box.stat")->then(function ($data) {
+$client->call('box.stat')->then(function ($data) {
     var_dump($data);
-    exit(42);
+    exit();
 });
 
 
