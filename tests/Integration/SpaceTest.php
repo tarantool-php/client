@@ -205,7 +205,7 @@ class SpaceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider providerInvalidUpdateData
+     * @dataProvider provideInvalidUpdateData
      */
     public function testUpdateUsingInvalidArgs(array $operation, $errorMessage, $errorCode)
     {
@@ -220,7 +220,7 @@ class SpaceTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    public function providerInvalidUpdateData()
+    public function provideInvalidUpdateData()
     {
         $data = [
             [['+', 2, 1], "Argument type in operation '+' on field 2 does not match field type: expected a NUMBER", 26],

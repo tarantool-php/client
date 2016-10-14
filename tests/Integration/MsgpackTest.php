@@ -7,7 +7,7 @@ class MsgpackTest extends \PHPUnit_Framework_TestCase
     use Client;
 
     /**
-     * @dataProvider providerPackUnpackData
+     * @dataProvider providePackUnpackData
      */
     public function testPackUnpack($data)
     {
@@ -16,7 +16,7 @@ class MsgpackTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($data, $response->getData()[0]);
     }
 
-    public function providerPackUnpackData()
+    public function providePackUnpackData()
     {
         return [
             [42],

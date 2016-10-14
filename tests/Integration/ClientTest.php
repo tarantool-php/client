@@ -11,7 +11,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     use Client;
 
     /**
-     * @dataProvider providerCallData
+     * @dataProvider provideCallData
      */
     public function testCall(array $args, $result)
     {
@@ -23,7 +23,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($result, $response->getData());
     }
 
-    public function providerCallData()
+    public function provideCallData()
     {
         return [
             [['func_foo'], [[['foo' => 'foo', 'bar' => 42]]]],
@@ -34,7 +34,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider providerEvaluateData
+     * @dataProvider provideEvaluateData
      */
     public function testEvaluate(array $args, $result)
     {
@@ -46,7 +46,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($result, $response->getData());
     }
 
-    public function providerEvaluateData()
+    public function provideEvaluateData()
     {
         return [
             [['return func_foo()'], [['foo' => 'foo', 'bar' => 42]]],
