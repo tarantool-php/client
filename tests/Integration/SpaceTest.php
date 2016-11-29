@@ -300,4 +300,18 @@ class SpaceTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame(4, Utils::getTotalSelectCalls() - $total);
     }
+
+    public function testCompositeKeys()
+    {
+        $space = self::$client->getSpace('space_composite');
+        $this->assertSame(1, $space->select([2016, 10])->getData()[0][2]);
+        $this->assertSame(0, $space->select([2016, 11])->getData()[0][2]);
+
+        $space->update([2016, 10], [['=', 2, 0]]);
+        $this->assertSame(0, $space->select([2016, 10])->getData()[0][2]);
+
+        $space->delete([2016, 11]);
+        $this->assertCount(0, $space->select([2016, 11])->getData());
+        $this->assertCount(1, $space->select([2016])->getData());
+    }
 }

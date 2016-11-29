@@ -74,6 +74,11 @@ function create_fixtures()
     for i = 1, 100 do
         space:replace{i, i * 2 % 5, 'tuple_' .. i}
     end
+
+    space = create_space('space_composite')
+    space:create_index('primary', {type = 'tree', unique = true, parts = {1, 'num', 2, 'num'}})
+    space:insert{2016, 10, 1}
+    space:insert{2016, 11, 0}
 end
 
 function func_foo()

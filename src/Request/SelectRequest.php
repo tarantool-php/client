@@ -13,11 +13,11 @@ class SelectRequest implements Request
     private $limit;
     private $iterator;
 
-    public function __construct($spaceId, $indexId, array $key, $offset, $limit, $iterator)
+    public function __construct($spaceId, $indexId, $key, $offset, $limit, $iterator)
     {
         $this->spaceId = $spaceId;
         $this->indexId = $indexId;
-        $this->key = $key;
+        $this->key = (array) $key;
         $this->offset = $offset;
         $this->limit = $limit;
         $this->iterator = $iterator;

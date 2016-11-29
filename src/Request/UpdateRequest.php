@@ -15,7 +15,7 @@ class UpdateRequest implements Request
     {
         $this->spaceId = $spaceId;
         $this->indexId = $indexId;
-        $this->key = $key;
+        $this->key = (array) $key;
         $this->operations = $operations;
     }
 
@@ -29,7 +29,7 @@ class UpdateRequest implements Request
         return [
             IProto::SPACE_ID => $this->spaceId,
             IProto::INDEX_ID => $this->indexId,
-            IProto::KEY => [$this->key],
+            IProto::KEY => $this->key,
             IProto::TUPLE => $this->operations,
         ];
     }
