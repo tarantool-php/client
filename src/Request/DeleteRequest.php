@@ -10,11 +10,11 @@ class DeleteRequest implements Request
     private $indexId;
     private $key;
 
-    public function __construct($spaceId, $indexId, array $key)
+    public function __construct($spaceId, $indexId, $key)
     {
         $this->spaceId = $spaceId;
         $this->indexId = $indexId;
-        $this->key = $key;
+        $this->key = (array) $key;
     }
 
     public function getType()
