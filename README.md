@@ -80,7 +80,7 @@ First, create a container:
 $ ./dockerfile.py | docker build -t client -
 ```
 
-The command above will create a container named `client` with PHP 5.6 runtime.
+The command above will create a container named `client` with PHP 7.1 runtime.
 You may change the default runtime by defining the `IMAGE` environment variable:
 
 ```sh
@@ -93,8 +93,8 @@ $ IMAGE='php:7.0-cli' ./dockerfile.py | docker build -t client -
 Then run Tarantool instance (needed for integration tests):
 
 ```sh
-$ docker run -d --name tarantool -v $(pwd):/client tarantool/tarantool \
-    /client/tests/Integration/client.lua
+$ docker run --name tarantool -p3301:3301 -d -v $(pwd):/client tarantool/tarantool:1.7 \
+    tarantool /client/tests/Integration/client.lua
 ```
 
 And then run both unit and integration tests:

@@ -5,6 +5,7 @@ namespace Tarantool\Client\Tests\Integration;
 use Tarantool\Client\Exception\ConnectionException;
 use Tarantool\Client\Exception\Exception;
 use Tarantool\Client\Packer\PackUtils;
+use Tarantool\Client\Packer\PurePacker;
 use Tarantool\Client\Tests\Assert;
 use Tarantool\Client\Tests\GreetingDataProvider;
 use Tarantool\Client\Tests\Integration\FakeServer\FakeServerBuilder;
@@ -56,7 +57,6 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
             ['replace', [[1, 2]], 'space_conn'],
             ['update', [1, [['+', 1, 2]]], 'space_conn'],
             ['delete', [[1]], 'space_conn'],
-
         ];
     }
 
@@ -66,7 +66,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
 
         for ($i = 10; $i; $i--) {
             $clientBuilder->build()->connect();
-        };
+        }
     }
 
     public function testMultipleConnect()
@@ -108,22 +108,19 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider provideCredentials
+     * @dataProvider provideValidCredentials
      */
-    public function testAuthenticate($username, $password = null)
+    public function testAuthenticateWithValidCredentials($username, $password)
     {
         $client = ClientBuilder::createFromEnv()->build();
-
-        (1 === func_num_args())
-            ? $client->authenticate($username)
-            : $client->authenticate($username, $password);
+        $client->authenticate($username, $password);
     }
 
-    public function provideCredentials()
+    public function provideValidCredentials()
     {
         return [
-            ['guest'],
-            ['guest', null],
+            ['guest', ''],
+            ['guest', null], // will throw an error in future client versions (php ^7.0)
             ['user_foo', 'foo'],
             ['user_empty', ''],
             ['user_big', '123456789012345678901234567890123456789012345678901234567890'],
@@ -133,15 +130,12 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider provideInvalidCredentials
      */
-    public function testAuthenticateWithInvalidCredentials($errorMessage, $errorCode, $username, $password = null)
+    public function testAuthenticateWithInvalidCredentials($errorMessage, $errorCode, $username, $password)
     {
         $client = ClientBuilder::createFromEnv()->build();
 
         try {
-            (3 === func_num_args())
-                ? $client->authenticate($username)
-                : $client->authenticate($username, $password);
-
+            $client->authenticate($username, $password);
             $this->fail();
         } catch (Exception $e) {
             $this->assertSame($errorMessage, $e->getMessage());
@@ -153,11 +147,8 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     {
         return [
             ["User 'non_existing_user' is not found", 45, 'non_existing_user', 'password'],
-            ["User 'non_existing_user' is not found", 45, 'non_existing_user'],
             ["Incorrect password supplied for user 'guest'", 47, 'guest', 'password'],
-            ["Incorrect password supplied for user 'guest'", 47, 'guest', ''],
             ["Incorrect password supplied for user 'guest'", 47, 'guest', 0],
-            ["Invalid MsgPack - authentication request body", 20, 'user_conn'],
         ];
     }
 
@@ -342,8 +333,8 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     /**
      * @group pure_only
      *
-     * @expectedException \Tarantool\Client\Exception\ConnectionException
-     * @expectedExceptionMessage Unable to read response length.
+     * @expectedException \Tarantool\Client\Exception\Exception
+     * @expectedExceptionMessage Invalid MsgPack - packet header
      */
     public function testThrowExceptionOnMalformedRequest()
     {
@@ -353,7 +344,9 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
         $data = PackUtils::packLength(strlen($data)).$data;
 
         $conn->open();
-        $conn->send($data);
+        $data = $conn->send($data);
+
+        (new PurePacker())->unpack($data);
     }
 
     public function testConnectionRetry()
