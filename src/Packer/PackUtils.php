@@ -40,7 +40,7 @@ abstract class PackUtils
         while ($offset < $len) {
             $c = ord($buffer[$offset]);
 
-            if (self::isMap($c) && $offset) {
+            if ($offset && self::isMap($c)) {
                 break;
             }
 
