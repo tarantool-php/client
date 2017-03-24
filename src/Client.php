@@ -37,6 +37,11 @@ class Client
         return $this->connection;
     }
 
+    public function getPacker()
+    {
+        return $this->packer;
+    }
+
     public function connect()
     {
         $this->salt = $this->connection->open();

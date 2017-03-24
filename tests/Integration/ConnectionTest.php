@@ -5,7 +5,6 @@ namespace Tarantool\Client\Tests\Integration;
 use Tarantool\Client\Exception\ConnectionException;
 use Tarantool\Client\Exception\Exception;
 use Tarantool\Client\Packer\PackUtils;
-use Tarantool\Client\Packer\PurePacker;
 use Tarantool\Client\Tests\Assert;
 use Tarantool\Client\Tests\GreetingDataProvider;
 use Tarantool\Client\Tests\Integration\FakeServer\FakeServerBuilder;
@@ -346,7 +345,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
         $conn->open();
         $data = $conn->send($data);
 
-        (new PurePacker())->unpack($data);
+        self::$client->getPacker()->unpack($data);
     }
 
     public function testConnectionRetry()
