@@ -114,6 +114,10 @@ class ClientBuilder
 
     private function createConnection()
     {
+        if (!$this->uri) {
+            throw new \LogicException('Connection URI is not set.');
+        }
+
         $options = $this->connectionOptions;
 
         if (isset($options['retries'])) {

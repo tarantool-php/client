@@ -278,8 +278,8 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
         $connectTimeout = 2.0;
         $clientBuilder = ClientBuilder::createFromEnv();
 
-        // http://stackoverflow.com/a/904609/1160901
-        $clientBuilder->setHost('10.255.255.1');
+        // http://stackoverflow.com/q/100841/1160901
+        $clientBuilder->setHost('127.0.0.0');
         $clientBuilder->setConnectionOptions(['connect_timeout' => $connectTimeout]);
 
         $client = $clientBuilder->build();
@@ -290,7 +290,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
             $client->ping();
         } catch (ConnectionException $e) {
             $time = microtime(true) - $start;
-            $this->assertSame('Unable to connect: Connection timed out.', $e->getMessage());
+            $this->assertRegExp('/Unable to connect: (Connection|Operation) timed out\./', $e->getMessage());
             $this->assertGreaterThanOrEqual($connectTimeout, $time);
             $this->assertLessThanOrEqual($connectTimeout + 0.1, $time);
 
