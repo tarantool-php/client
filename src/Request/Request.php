@@ -10,7 +10,7 @@ interface Request
     const TYPE_REPLACE = 3;
     const TYPE_UPDATE = 4;
     const TYPE_DELETE = 5;
-    const TYPE_CALL = 6;
+    const TYPE_CALL = 10;
     const TYPE_AUTHENTICATE = 7;
     const TYPE_EVALUATE = 8;
     const TYPE_PING = 64;
