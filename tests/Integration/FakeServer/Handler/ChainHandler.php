@@ -4,7 +4,7 @@ namespace Tarantool\Client\Tests\Integration\FakeServer\Handler;
 
 class ChainHandler implements Handler
 {
-    private $handlers = [];
+    private $handlers;
 
     public function __construct(array $handlers)
     {
