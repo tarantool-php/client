@@ -34,7 +34,7 @@ class StreamConnection implements Connection
 
         $stream = @stream_socket_client($this->uri, $errorCode, $errorMessage, (float) $this->options['connect_timeout']);
         if (false === $stream) {
-            throw new ConnectionException(sprintf('Unable to connect: %s.', $errorMessage));
+            throw new ConnectionException(sprintf('Unable to connect to %s: %s.', $this->uri, $errorMessage));
         }
 
         $this->stream = $stream;

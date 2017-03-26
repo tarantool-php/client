@@ -290,7 +290,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
             $client->ping();
         } catch (ConnectionException $e) {
             $time = microtime(true) - $start;
-            $this->assertRegExp('/Unable to connect: (Connection|Operation) timed out\./', $e->getMessage());
+            $this->assertRegExp('/Unable to connect to .+?: (Connection|Operation) timed out\./', $e->getMessage());
             $this->assertGreaterThanOrEqual($connectTimeout, $time);
             $this->assertLessThanOrEqual($connectTimeout + 0.1, $time);
 
