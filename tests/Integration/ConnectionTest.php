@@ -279,7 +279,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
         $clientBuilder = ClientBuilder::createFromEnv();
 
         // http://stackoverflow.com/q/100841/1160901
-        $clientBuilder->setHost('127.0.0.0');
+        $clientBuilder->setHost('10.255.255.1');
         $clientBuilder->setConnectionOptions(['connect_timeout' => $connectTimeout]);
 
         $client = $clientBuilder->build();
