@@ -38,8 +38,9 @@ install:
   - ./dockerfile.py | tee /dev/tty | docker build -t client -
 
 script:
-  - docker run -d --name tarantool -v $(pwd):/client -e TNT_LISTEN_URI=$TNT_CONN_URI tarantool/tarantool:1.7 tarantool /client/tests/Integration/client.lua
-  - docker run --rm --name client --link tarantool -v $(pwd):/client -w /client client
+  - docker network create tarantool-php
+  - docker run -d --net=tarantool-php --name=tarantool -v $(pwd):/client -e TNT_LISTEN_URI=$TNT_CONN_URI tarantool/tarantool:1.7 tarantool /client/tests/Integration/client.lua
+  - docker run --rm --net=tarantool-php --name=client -v $(pwd):/client -w /client client
 
 after_script:
   - if [[ -f "$COVERAGE_FILE" ]]; then
