@@ -36,7 +36,7 @@ abstract class IProto
      */
     public static function parseGreeting($greeting)
     {
-        if ('Tarantool' !== substr($greeting, 0, 9)) {
+        if (0 !== strpos($greeting, 'Tarantool')) {
             throw new Exception('Invalid greeting: unable to recognize Tarantool server.');
         }
 
