@@ -7,7 +7,7 @@ use Tarantool\Client\IProto;
 class IProtoTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @dataProvider Tarantool\Client\Tests\GreetingDataProvider::provideValidGreetings
+     * @dataProvider \Tarantool\Client\Tests\GreetingDataProvider::provideValidGreetings
      */
     public function testParseGreeting($greeting, $salt)
     {
@@ -15,7 +15,7 @@ class IProtoTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider Tarantool\Client\Tests\GreetingDataProvider::provideGreetingsWithInvalidServerName
+     * @dataProvider \Tarantool\Client\Tests\GreetingDataProvider::provideGreetingsWithInvalidServerName
      *
      * @expectedException \Tarantool\Client\Exception\Exception
      * @expectedExceptionMessage Invalid greeting: unable to recognize Tarantool server.
@@ -26,7 +26,7 @@ class IProtoTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider Tarantool\Client\Tests\GreetingDataProvider::provideGreetingsWithInvalidSalt
+     * @dataProvider \Tarantool\Client\Tests\GreetingDataProvider::provideGreetingsWithInvalidSalt
      *
      * @expectedException \Tarantool\Client\Exception\Exception
      * @expectedExceptionMessage Invalid greeting: unable to parse salt.

@@ -50,7 +50,7 @@ class ClientBuilder
 
     public function isTcpConnection()
     {
-        return 'tcp:' === substr($this->uri, 0, 4);
+        return 0 === strpos($this->uri, 'tcp:');
     }
 
     public function setHost($host)

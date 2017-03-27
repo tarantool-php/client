@@ -206,11 +206,11 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
         $data = str_repeat('x', 1024 * 1024);
         $result = self::$client->evaluate('return ...', [$data]);
 
-        $this->assertTrue($data === $result->getData()[0]);
+        $this->assertSame($data, $result->getData()[0]);
     }
 
     /**
-     * @dataProvider Tarantool\Client\Tests\GreetingDataProvider::provideGreetingsWithInvalidServerName
+     * @dataProvider \Tarantool\Client\Tests\GreetingDataProvider::provideGreetingsWithInvalidServerName
      */
     public function testParseGreetingWithInvalidServerName($greeting)
     {
@@ -237,7 +237,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider Tarantool\Client\Tests\GreetingDataProvider::provideGreetingsWithInvalidSalt
+     * @dataProvider \Tarantool\Client\Tests\GreetingDataProvider::provideGreetingsWithInvalidSalt
      *
      * @expectedException \Tarantool\Client\Exception\Exception
      * @expectedExceptionMessage Invalid greeting: unable to parse salt.
