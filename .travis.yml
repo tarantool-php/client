@@ -17,13 +17,13 @@ env:
 
   - IMAGE='php:7.1-cli' TNT_PACKER=pecl
   - IMAGE='php:7.1-cli' TNT_PACKER=pecl_lite
-  - IMAGE='php:7.1-cli' TNT_PACKER=pure TNT_CONN_URI=/client/tarantool_client.sock
+  - IMAGE='php:7.1-cli' TNT_PACKER=pure TNT_CONN_URI=/tmp/tarantool_client.sock
   - IMAGE='php:7.1-cli' TNT_PACKER=pure COVERAGE_FILE='coverage.clover'
 
   - IMAGE='baptistedonaux/hhvm:3.9' TNT_PACKER=pure
   - IMAGE='baptistedonaux/hhvm:3.12' TNT_PACKER=pure
   - IMAGE='baptistedonaux/hhvm:latest' TNT_PACKER=pure
-  - IMAGE='baptistedonaux/hhvm:latest' TNT_PACKER=pure TNT_CONN_URI=/client/tarantool_client.sock
+  - IMAGE='baptistedonaux/hhvm:latest' TNT_PACKER=pure TNT_CONN_URI=/tmp/tarantool_client.sock
 
 matrix:
   allow_failures:
@@ -31,7 +31,7 @@ matrix:
     - env: IMAGE='baptistedonaux/hhvm:3.9' TNT_PACKER=pure
     - env: IMAGE='baptistedonaux/hhvm:3.12' TNT_PACKER=pure
     - env: IMAGE='baptistedonaux/hhvm:latest' TNT_PACKER=pure
-    - env: IMAGE='baptistedonaux/hhvm:latest' TNT_PACKER=pure TNT_CONN_URI=/client/tarantool_client.sock
+    - env: IMAGE='baptistedonaux/hhvm:latest' TNT_PACKER=pure TNT_CONN_URI=/tmp/tarantool_client.sock
   fast_finish: true
 
 install:
@@ -39,8 +39,8 @@ install:
 
 script:
   - docker network create tarantool-php
-  - docker run -d --net=tarantool-php --name=tarantool -v $(pwd):/client -e TNT_LISTEN_URI=$TNT_CONN_URI tarantool/tarantool:1.7 tarantool /client/tests/Integration/client.lua
-  - docker run --rm --net=tarantool-php --name=client -v $(pwd):/client -w /client client
+  - docker run -d --net=tarantool-php --name=tarantool -v /tmp:/tmp -v $(pwd):/client -e TNT_LISTEN_URI=$TNT_CONN_URI tarantool/tarantool:1.7 tarantool /client/tests/Integration/client.lua
+  - docker run --rm --net=tarantool-php --name=client -v /tmp:/tmp -v $(pwd):/client -w /client client
 
 after_script:
   - if [[ -f "$COVERAGE_FILE" ]]; then
