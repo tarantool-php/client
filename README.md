@@ -4,6 +4,9 @@
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/tarantool-php/client/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/tarantool-php/client/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/tarantool-php/client/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/tarantool-php/client/?branch=master)
 
+This version of client requires Tarantool 1.7.1 or above. 
+For older versions of Tarantool please use [v0.2.0](https://github.com/tarantool-php/client/releases/tag/v0.2.0).
+
 
 ## Installation
 
