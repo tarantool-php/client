@@ -28,8 +28,6 @@ local function create_space(name)
     return box.schema.space.create(name, {temporary = true})
 end
 
-box.schema.user.grant('guest', 'read,write,execute', 'universe')
-
 local credentials = {
     user_foo = 'foo',
     user_empty = '',
@@ -41,7 +39,7 @@ for username, password in pairs(credentials) do
 end
 
 local space = create_space('space_conn')
-space:create_index('primary', {type = 'tree', parts = {1, 'num'}})
+space:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
 
 create_user('user_conn', 'conn')
 box.schema.user.grant('user_conn', 'read,write', 'space', 'space_conn')
@@ -53,13 +51,13 @@ function create_fixtures()
     space:create_index('primary', {type = 'hash', parts = {1, 'str'}})
 
     space = create_space('space_num')
-    space:create_index('primary', {type = 'hash', parts = {1, 'num'}})
+    space:create_index('primary', {type = 'hash', parts = {1, 'unsigned'}})
 
     space = create_space('space_empty')
-    space:create_index('primary', {type = 'tree', parts = {1, 'num'}})
+    space:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
 
     space = create_space('space_misc')
-    space:create_index('primary', {type = 'hash', parts = {1, 'num'}})
+    space:create_index('primary', {type = 'hash', parts = {1, 'unsigned'}})
     space:create_index('secondary', {type = 'tree', parts = {2, 'str'}})
     space:insert{1, 'foobar'}
     space:insert{2, 'replace_me'}
@@ -68,15 +66,15 @@ function create_fixtures()
     space:insert{5, 'delete_me_3'}
 
     space = create_space('space_data')
-    space:create_index('primary', {type = 'tree', unique = true, parts = {1, 'num'}})
-    space:create_index('secondary', {type = 'tree', unique = false, parts = {2, 'num', 3, 'str'}})
+    space:create_index('primary', {type = 'tree', unique = true, parts = {1, 'unsigned'}})
+    space:create_index('secondary', {type = 'tree', unique = false, parts = {2, 'unsigned', 3, 'str'}})
 
     for i = 1, 100 do
         space:replace{i, i * 2 % 5, 'tuple_' .. i}
     end
 
     space = create_space('space_composite')
-    space:create_index('primary', {type = 'tree', unique = true, parts = {1, 'num', 2, 'num'}})
+    space:create_index('primary', {type = 'tree', unique = true, parts = {1, 'unsigned', 2, 'unsigned'}})
     space:insert{2016, 10, 1}
     space:insert{2016, 11, 0}
 end

@@ -88,7 +88,7 @@ class SpaceTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider provideInsertDataWithMismatchedTypes
      * @expectedException \Tarantool\Client\Exception\Exception
-     * @expectedExceptionMessageRegExp /Tuple field 1 type does not match one required by operation: expected (NUM|STR)/
+     * @expectedExceptionMessageRegExp /Tuple field 1 type does not match one required by operation: expected .+/
      * @expectedExceptionCode 23
      */
     public function testInsertTypeMismatchedValues($space, $values)
@@ -223,17 +223,12 @@ class SpaceTest extends \PHPUnit_Framework_TestCase
     public function provideInvalidUpdateData()
     {
         $data = [
-            [['+', 2, 1], "Argument type in operation '+' on field 2 does not match field type: expected a NUMBER", 26],
+            [['+', 2, 1], "Argument type in operation '+' on field 2 does not match field type: expected a number", 26],
             [['', 2, 2], 'Unknown UPDATE operation', 28],
             [['bad_op', 2, 2], 'Unknown UPDATE operation', 28],
             [[':', 2, 2, 2, '', 'extra'], 'Unknown UPDATE operation', 28],
+            [[], 'Illegal parameters, update operation must be an array {op,..}, got empty array', 1],
         ];
-
-        if (version_compare(Utils::getTarantoolVersion(), '1.6.7', '<')) {
-            $data[] = [[], 'Invalid MsgPack - expected an update operation (array)', 20];
-        } else {
-            $data[] = [[], 'Illegal parameters, update operation must be an array {op,..}, got empty array', 1];
-        }
 
         return $data;
     }

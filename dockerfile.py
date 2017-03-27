@@ -4,7 +4,7 @@ import os
 import re
 
 
-image = os.getenv('IMAGE', 'php:5.6-cli')
+image = os.getenv('IMAGE', 'php:7.1-cli')
 client = os.getenv('TNT_CLIENT', 'pure')
 packer = os.getenv('TNT_PACKER', 'pecl')
 conn_uri = os.getenv('TNT_CONN_URI', 'tcp://tarantool:3301')

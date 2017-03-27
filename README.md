@@ -4,6 +4,9 @@
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/tarantool-php/client/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/tarantool-php/client/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/tarantool-php/client/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/tarantool-php/client/?branch=master)
 
+This version of client requires Tarantool 1.7.1 or above. 
+For older versions of Tarantool please use [v0.2.0](https://github.com/tarantool-php/client/releases/tag/v0.2.0).
+
 
 ## Installation
 
@@ -80,7 +83,7 @@ First, create a container:
 $ ./dockerfile.py | docker build -t client -
 ```
 
-The command above will create a container named `client` with PHP 5.6 runtime.
+The command above will create a container named `client` with PHP 7.1 runtime.
 You may change the default runtime by defining the `IMAGE` environment variable:
 
 ```sh
@@ -93,8 +96,8 @@ $ IMAGE='php:7.0-cli' ./dockerfile.py | docker build -t client -
 Then run Tarantool instance (needed for integration tests):
 
 ```sh
-$ docker run -d --name tarantool -v $(pwd):/client tarantool/tarantool \
-    /client/tests/Integration/client.lua
+$ docker run --name tarantool -p3301:3301 -d -v $(pwd):/client tarantool/tarantool:1.7 \
+    tarantool /client/tests/Integration/client.lua
 ```
 
 And then run both unit and integration tests:

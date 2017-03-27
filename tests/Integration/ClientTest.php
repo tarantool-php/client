@@ -13,23 +13,44 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider provideCallData
      */
-    public function testCall(array $args, $result)
+    public function testCall($func, array $args, $return)
     {
-        $response = 1 !== count($args)
-            ? call_user_func_array([self::$client, 'call'], $args)
-            : self::$client->call($args[0]);
+        $response = self::$client->call($func, $args);
 
         $this->assertResponse($response);
-        $this->assertSame($result, $response->getData());
+        $this->assertSame($return, $response->getData()[0]);
     }
 
     public function provideCallData()
     {
-        return [
-            [['func_foo'], [[['foo' => 'foo', 'bar' => 42]]]],
-            [['func_sum', [42, -24]], [[18]]],
-            [['func_arg', [ [[42]] ]], [[ 42 ]]],
-            [['func_arg', [ [42] ]], [[ 42 ]]],
+        yield [
+            'func' => 'func_foo',
+            'args' => [],
+            'ret' => ['foo' => 'foo', 'bar' => 42],
+        ];
+
+        yield [
+            'func' => 'func_sum',
+            'args' => [42, -24],
+            'ret' => 18,
+        ];
+
+        yield [
+            'func' => 'func_arg',
+            'args' => [ [42] ],
+            'ret' => [42],
+        ];
+
+        yield [
+            'func' => 'func_arg',
+            'args' => [ [[42]] ],
+            'ret' => [[42]],
+        ];
+
+        yield [
+            'func' => 'func_arg',
+            'args' => [ null ],
+            'ret' => null,
         ];
     }
 

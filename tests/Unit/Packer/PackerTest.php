@@ -3,6 +3,7 @@
 namespace Tarantool\Client\Tests\Unit\Packer;
 
 use Tarantool\Client\IProto;
+use Tarantool\Client\Request\Request;
 use Tarantool\Client\Response;
 use Tarantool\Client\Tests\Assert;
 use Tarantool\Client\Tests\PhpUnitCompat;
@@ -27,7 +28,7 @@ abstract class PackerTest extends \PHPUnit_Framework_TestCase
      */
     public function testPack($type, $body, $sync, $expectedHexResult)
     {
-        $request = $this->createMock('Tarantool\Client\Request\Request');
+        $request = $this->createMock(Request::class);
 
         $request->expects($this->once())->method('getType')
             ->will($this->returnValue($type));
