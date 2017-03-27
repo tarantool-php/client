@@ -3,6 +3,10 @@
 namespace Tarantool\Client\Tests\Unit;
 
 use Tarantool\Client\Client;
+use Tarantool\Client\Connection\Connection;
+use Tarantool\Client\Packer\Packer;
+use Tarantool\Client\Request\Request;
+use Tarantool\Client\Response;
 use Tarantool\Client\Tests\Assert;
 use Tarantool\Client\Tests\PhpUnitCompat;
 
@@ -28,14 +32,19 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->connection = $this->createMock('Tarantool\Client\Connection\Connection');
-        $this->packer = $this->createMock('Tarantool\Client\Packer\Packer');
+        $this->connection = $this->createMock(Connection::class);
+        $this->packer = $this->createMock(Packer::class);
         $this->client = new Client($this->connection, $this->packer);
     }
 
     public function testGetConnection()
     {
         $this->assertSame($this->connection, $this->client->getConnection());
+    }
+
+    public function testGetPacker()
+    {
+        $this->assertSame($this->packer, $this->client->getPacker());
     }
 
     /**
@@ -56,10 +65,10 @@ class ClientTest extends \PHPUnit_Framework_TestCase
      */
     public function testPackUnpackMessage($methodName, array $methodArgs)
     {
-        $response = $this->createMock('Tarantool\Client\Response');
+        $response = $this->createMock(Response::class);
 
         $this->packer->expects($this->once())->method('pack')
-            ->with($this->isInstanceOf('Tarantool\Client\Request\Request'))
+            ->with($this->isInstanceOf(Request::class))
             ->will($this->returnValue($this->isType('string')));
 
         $this->packer->expects($this->once())->method('unpack')
@@ -76,7 +85,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
             ['ping', []],
             ['call', ['box.stat']],
             ['evaluate', ['return 42']],
-            ['sendRequest', [$this->createMock('Tarantool\Client\Request\Request')]],
+            ['sendRequest', [$this->createMock(Request::class)]],
         ];
     }
 }

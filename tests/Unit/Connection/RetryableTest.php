@@ -2,7 +2,9 @@
 
 namespace Tarantool\Client\Tests\Unit\Connection;
 
+use Tarantool\Client\Connection\Connection;
 use Tarantool\Client\Connection\Retryable;
+use Tarantool\Client\Exception\ConnectionException;
 use Tarantool\Client\Tests\PhpUnitCompat;
 
 class RetryableTest extends \PHPUnit_Framework_TestCase
@@ -21,7 +23,7 @@ class RetryableTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->wrappedConnection = $this->createMock('Tarantool\Client\Connection\Connection');
+        $this->wrappedConnection = $this->createMock(Connection::class);
         $this->connection = new Retryable($this->wrappedConnection);
     }
 
@@ -60,7 +62,7 @@ class RetryableTest extends \PHPUnit_Framework_TestCase
 
     public function testSuccessRetry()
     {
-        $exception = $this->getMockBuilder('Tarantool\Client\Exception\ConnectionException')
+        $exception = $this->getMockBuilder(ConnectionException::class)
             ->setMethods(['getMessage'])
             ->getMock();
 
@@ -80,7 +82,7 @@ class RetryableTest extends \PHPUnit_Framework_TestCase
      */
     public function testThrowConnectionException()
     {
-        $exception = $this->getMockBuilder('Tarantool\Client\Exception\ConnectionException')
+        $exception = $this->getMockBuilder(ConnectionException::class)
             ->setMethods(['getMessage'])
             ->getMock();
 

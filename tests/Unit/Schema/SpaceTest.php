@@ -2,6 +2,7 @@
 
 namespace Tarantool\Client\Tests\Unit;
 
+use Tarantool\Client\Client;
 use Tarantool\Client\Schema\Space;
 
 class SpaceTest extends \PHPUnit_Framework_TestCase
@@ -23,7 +24,7 @@ class SpaceTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->client = $this->getMockBuilder('Tarantool\Client\Client')
+        $this->client = $this->getMockBuilder(Client::class)
             ->disableOriginalConstructor()
             ->getMock();
 
