@@ -9,6 +9,7 @@ use Tarantool\Client\Request\InsertRequest;
 use Tarantool\Client\Request\ReplaceRequest;
 use Tarantool\Client\Request\SelectRequest;
 use Tarantool\Client\Request\UpdateRequest;
+use Tarantool\Client\Request\UpsertRequest;
 
 class Space
 {
@@ -61,6 +62,13 @@ class Space
     {
         $index = $this->normalizeIndex($index);
         $request = new UpdateRequest($this->id, $index, $key, $operations);
+
+        return $this->client->sendRequest($request);
+    }
+
+    public function upsert(array $values, array $operations)
+    {
+        $request = new UpsertRequest($this->id, $values, $operations);
 
         return $this->client->sendRequest($request);
     }

@@ -21,6 +21,7 @@ abstract class IProto
     const CLUSTER_UUID = 0x25;
     const VCLOCK = 0x26;
     const EXPR = 0x27;
+    const OPERATIONS = 0x28;
     const DATA = 0x30;
     const ERROR = 0x31;
 

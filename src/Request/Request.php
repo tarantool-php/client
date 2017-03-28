@@ -13,6 +13,7 @@ interface Request
     const TYPE_CALL = 10;
     const TYPE_AUTHENTICATE = 7;
     const TYPE_EVALUATE = 8;
+    const TYPE_UPSERT = 9;
     const TYPE_PING = 64;
     const TYPE_JOIN = 65;
     const TYPE_SUBSCRIBE = 66;
