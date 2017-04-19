@@ -7,7 +7,7 @@ use Tarantool\Client\Request\Request;
 interface Packer
 {
     /**
-     * @param Request  $request
+     * @param Request $request
      * @param int|null $sync
      *
      * @return string
@@ -18,6 +18,8 @@ interface Packer
      * @param string $data
      *
      * @return \Tarantool\Client\Response
+     *
+     * @throws \Tarantool\Client\Exception\Exception
      */
     public function unpack($data);
 }
