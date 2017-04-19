@@ -130,31 +130,24 @@ class SpaceTest extends \PHPUnit_Framework_TestCase
         $this->assertSame([[2, 'replaced']], $response->getData());
     }
 
-    public function testDelete()
+    public function testUpsert()
     {
         $space = self::$client->getSpace('space_misc');
-        $response = $space->delete([3]);
 
+        $key = 10;
+        $values = [$key, 'upserted'];
+        $operations = [[':', 1, 0, 1, 'U']];
+        $updatedValues = [$key, 'Upserted'];
+
+        $response = $space->upsert($values, $operations);
         $this->assertResponse($response);
-        $this->assertSame([[3, 'delete_me_1']], $response->getData());
-    }
+        $this->assertSame([], $response->getData());
+        $this->assertSame($values, $space->select([$key])->getData()[0]);
 
-    public function testDeleteWithIndexId()
-    {
-        $space = self::$client->getSpace('space_misc');
-        $response = $space->delete(['delete_me_2'], 1);
-
+        $response = $space->upsert($values, $operations);
         $this->assertResponse($response);
-        $this->assertSame([[4, 'delete_me_2']], $response->getData());
-    }
-
-    public function testDeleteWithIndexName()
-    {
-        $space = self::$client->getSpace('space_misc');
-        $response = $space->delete(['delete_me_3'], 'secondary');
-
-        $this->assertResponse($response);
-        $this->assertSame([[5, 'delete_me_3']], $response->getData());
+        $this->assertSame([], $response->getData());
+        $this->assertSame($updatedValues, $space->select([$key])->getData()[0]);
     }
 
     /**
@@ -231,6 +224,33 @@ class SpaceTest extends \PHPUnit_Framework_TestCase
         ];
 
         return $data;
+    }
+
+    public function testDelete()
+    {
+        $space = self::$client->getSpace('space_misc');
+        $response = $space->delete([3]);
+
+        $this->assertResponse($response);
+        $this->assertSame([[3, 'delete_me_1']], $response->getData());
+    }
+
+    public function testDeleteWithIndexId()
+    {
+        $space = self::$client->getSpace('space_misc');
+        $response = $space->delete(['delete_me_2'], 1);
+
+        $this->assertResponse($response);
+        $this->assertSame([[4, 'delete_me_2']], $response->getData());
+    }
+
+    public function testDeleteWithIndexName()
+    {
+        $space = self::$client->getSpace('space_misc');
+        $response = $space->delete(['delete_me_3'], 'secondary');
+
+        $this->assertResponse($response);
+        $this->assertSame([[5, 'delete_me_3']], $response->getData());
     }
 
     /**

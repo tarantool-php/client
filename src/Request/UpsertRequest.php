@@ -6,12 +6,11 @@ use Tarantool\Client\IProto;
 
 class UpsertRequest implements Request
 {
-
     private $spaceId;
     private $values;
     private $operations;
 
-    public function __construct($spaceId, $values, $operations)
+    public function __construct($spaceId, array $values, array $operations)
     {
         $this->spaceId = $spaceId;
         $this->values = $values;
@@ -31,5 +30,4 @@ class UpsertRequest implements Request
             IProto::OPERATIONS => $this->operations,
         ];
     }
-
 }
