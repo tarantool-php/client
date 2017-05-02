@@ -18,7 +18,6 @@
         <ini name="display_errors" value="On" />
         <ini name="display_startup_errors" value="On" />
         <ini name="error_reporting" value="E_ALL" />
-        <ini name="msgpack.php_only" value="0" />
 
         <env name="TNT_CLIENT" value="pure" />
         <env name="TNT_PACKER" value="pecl" />
