@@ -5,7 +5,6 @@ namespace Tarantool\Client\Tests\Integration;
 use Tarantool\Client\Client as TarantoolClient;
 use Tarantool\Client\Connection\Retryable;
 use Tarantool\Client\Connection\StreamConnection;
-use Tarantool\Client\Packer\PeclLitePacker;
 use Tarantool\Client\Packer\PeclPacker;
 use Tarantool\Client\Packer\PurePacker;
 use Tarantool\Client\Tests\Adapter\Tarantool;
@@ -17,7 +16,6 @@ class ClientBuilder
 
     const PACKER_PURE = 'pure';
     const PACKER_PECL = 'pecl';
-    const PACKER_PECL_LITE = 'pecl_lite';
 
     const DEFAULT_TCP_HOST = '127.0.0.1';
     const DEFAULT_TCP_PORT = 3301;
@@ -160,10 +158,6 @@ class ClientBuilder
 
         if (self::PACKER_PECL === $this->packer) {
             return new PeclPacker();
-        }
-
-        if (self::PACKER_PECL_LITE === $this->packer) {
-            return new PeclLitePacker();
         }
 
         throw new \UnexpectedValueException(sprintf('"%s" packer is not supported.', $this->packer));

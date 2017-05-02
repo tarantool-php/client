@@ -7,16 +7,13 @@ services:
 
 env:
   - IMAGE='php:5.6-cli' TNT_PACKER=pecl
-  - IMAGE='php:5.6-cli' TNT_PACKER=pecl_lite
   - IMAGE='php:5.6-cli' TNT_PACKER=pure
   - IMAGE='php:5.6-cli' TNT_CLIENT=pecl
 
   - IMAGE='php:7.0-cli' TNT_PACKER=pecl
-  - IMAGE='php:7.0-cli' TNT_PACKER=pecl_lite
   - IMAGE='php:7.0-cli' TNT_PACKER=pure
 
   - IMAGE='php:7.1-cli' TNT_PACKER=pecl
-  - IMAGE='php:7.1-cli' TNT_PACKER=pecl_lite
   - IMAGE='php:7.1-cli' TNT_PACKER=pure TNT_CONN_URI=/tmp/tarantool_client.sock
   - IMAGE='php:7.1-cli' TNT_PACKER=pure COVERAGE_FILE='coverage.clover'
 

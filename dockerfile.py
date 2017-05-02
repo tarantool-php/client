@@ -27,7 +27,7 @@ if image.startswith('php:'):
         phpunit_exclude_groups.append('pure_only')
         packer = ''
 
-    if packer.startswith('pecl'):
+    if 'pecl' == packer:
         if image.startswith('php:7'):
             msgpack_ext_version='master'
         else:
