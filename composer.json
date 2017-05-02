@@ -18,7 +18,7 @@
         "rybakit/msgpack": "@dev"
     },
     "suggest": {
-        "ext-msgpack": "For using Pecl- or PeclLitePacker.",
+        "ext-msgpack": "For using PeclPacker.",
         "rybakit/msgpack": "For using PurePacker."
     },
     "autoload": {

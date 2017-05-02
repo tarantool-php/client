@@ -33,7 +33,6 @@ $conn = new StreamConnection();
 $client = new Client($conn, new PurePacker());
 // or
 // $client = new Client($conn, new PeclPacker());
-// $client = new Client($conn, new PeclLitePacker());
 
 $space = $client->getSpace('my_space');
 $result = $space->select();
