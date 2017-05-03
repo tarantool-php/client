@@ -22,7 +22,7 @@ if image.startswith('php:'):
     if 'pecl' == client:
         run_cmds.append('git clone https://github.com/tarantool/tarantool-php.git /usr/src/php/ext/tarantool')
         run_cmds.append('echo tarantool >> /usr/src/php-available-exts && docker-php-ext-install tarantool')
-        composer_cmds.append('remove --dev rybakit/msgpack')
+        composer_cmds.append('remove --dev --ignore-platform-reqs rybakit/msgpack')
         phpunit_opts += ' --testsuite Integration'
         phpunit_exclude_groups.append('pure_only')
         packer = ''
@@ -34,11 +34,11 @@ if image.startswith('php:'):
             msgpack_ext_version='php5'
         run_cmds.append('git clone https://github.com/msgpack/msgpack-php.git {0} && git --git-dir={0}/.git --work-tree={0} checkout {1}'.format('/usr/src/php/ext/msgpack', msgpack_ext_version))
         run_cmds.append('echo msgpack >> /usr/src/php-available-exts && docker-php-ext-install msgpack')
-        composer_cmds.append('remove --dev rybakit/msgpack')
+        composer_cmds.append('remove --dev --ignore-platform-reqs rybakit/msgpack')
     else:
-        composer_cmds.append('remove --dev ext-msgpack')
+        composer_cmds.append('remove --dev --ignore-platform-reqs ext-msgpack')
 else:
-    composer_cmds.append('remove --dev ext-msgpack')
+    composer_cmds.append('remove --dev --ignore-platform-reqs ext-msgpack')
 
 
 if coverage_file:
