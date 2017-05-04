@@ -4,7 +4,7 @@ namespace Tarantool\Client\Tests\Adapter;
 
 use Tarantool\Client\Response;
 
-class Tarantool
+class PeclClient
 {
     private $tarantool;
 

@@ -21,6 +21,9 @@ if image.startswith('php:'):
 
     if 'pecl' == client:
         run_cmds.append('git clone https://github.com/tarantool/tarantool-php.git /usr/src/php/ext/tarantool')
+        if image.startswith('php:7'):
+            run_cmds.append('git --git-dir=/usr/src/php/ext/tarantool/.git --work-tree=/usr/src/php/ext/tarantool checkout php7-v2')
+
         run_cmds.append('echo tarantool >> /usr/src/php-available-exts && docker-php-ext-install tarantool')
         composer_cmds.append('remove --dev --ignore-platform-reqs rybakit/msgpack')
         phpunit_opts += ' --testsuite Integration'

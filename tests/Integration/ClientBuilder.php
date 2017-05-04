@@ -2,12 +2,12 @@
 
 namespace Tarantool\Client\Tests\Integration;
 
-use Tarantool\Client\Client as TarantoolClient;
+use Tarantool\Client\Client;
 use Tarantool\Client\Connection\Retryable;
 use Tarantool\Client\Connection\StreamConnection;
 use Tarantool\Client\Packer\PeclPacker;
 use Tarantool\Client\Packer\PurePacker;
-use Tarantool\Client\Tests\Adapter\Tarantool;
+use Tarantool\Client\Tests\Adapter\PeclClient;
 
 class ClientBuilder
 {
@@ -93,7 +93,7 @@ class ClientBuilder
             $connection = $this->createConnection();
             $packer = $this->createPacker();
 
-            return new TarantoolClient($connection, $packer);
+            return new Client($connection, $packer);
         }
 
         throw new \UnexpectedValueException(sprintf('"%s" client is not supported.', $this->client));
@@ -140,6 +140,8 @@ class ClientBuilder
             ? $this->connectionOptions['socket_timeout'] : 10
         );
 
+        // this setting breaks Tarantool connector
+        // @see https://github.com/tarantool/tarantool-php/issues/83
         ini_set('tarantool.retry_count', isset($this->connectionOptions['retries'])
             ? $this->connectionOptions['retries'] : 0
         );
@@ -147,7 +149,7 @@ class ClientBuilder
         $host = parse_url($this->uri, PHP_URL_HOST);
         $port = parse_url($this->uri, PHP_URL_PORT);
 
-        return new Tarantool($host ?: self::DEFAULT_TCP_HOST, $port ?: self::DEFAULT_TCP_PORT);
+        return new PeclClient($host ?: self::DEFAULT_TCP_HOST, $port ?: self::DEFAULT_TCP_PORT);
     }
 
     private function createPacker()

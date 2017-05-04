@@ -95,14 +95,15 @@ $ IMAGE='php:7.0-cli' ./dockerfile.py | docker build -t client -
 Then run Tarantool instance (needed for integration tests):
 
 ```sh
-$ docker run --name tarantool -p3301:3301 -d -v $(pwd):/client tarantool/tarantool:1.7 \
-    tarantool /client/tests/Integration/client.lua
+$ docker network create tarantool-php
+$ docker run -d --net=tarantool-php --name=tarantool -v `pwd`:/client \
+    tarantool/tarantool:1.7 tarantool /client/tests/Integration/client.lua
 ```
 
 And then run both unit and integration tests:
 
 ```sh
-$ docker run --rm --name client --link tarantool -v $(pwd):/client -w /client client
+$ docker run --rm --net=tarantool-php --name client -v $(pwd):/client -w /client client
 ```
 
 

@@ -2,12 +2,12 @@
 
 namespace Tarantool\Client\Tests\Integration;
 
-use Tarantool\Client\Client as TarantoolClient;
+use Tarantool\Client\Client as PureClient;
 
 trait Client
 {
     /**
-     * @var TarantoolClient
+     * @var PureClient
      */
     private static $client;
 
