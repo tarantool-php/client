@@ -2,7 +2,7 @@
 
 namespace Tarantool\Client\Tests\Integration;
 
-use Tarantool\Client\Client;
+use Tarantool\Client\Client as PureClient;
 use Tarantool\Client\Connection\Retryable;
 use Tarantool\Client\Connection\StreamConnection;
 use Tarantool\Client\Packer\PeclPacker;
@@ -93,7 +93,7 @@ class ClientBuilder
             $connection = $this->createConnection();
             $packer = $this->createPacker();
 
-            return new Client($connection, $packer);
+            return new PureClient($connection, $packer);
         }
 
         throw new \UnexpectedValueException(sprintf('"%s" client is not supported.', $this->client));
