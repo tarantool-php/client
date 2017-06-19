@@ -49,16 +49,20 @@ $space->insert($insertValues);
 
 // Upserting values
 $upsertValues = [
+    1,
     'first upsert val',
     'second upsert val',
 ];
+
 // Values do not exist, inserting them
 // '=' - operator string, see full list of operators on official docs page
 // 0, 1 - inserted tuple indecies
-$space->upsert($upsertValues, [['=', 0, $upsertValues[0]], ['=', 1, $upsertValues[1]]]);
+// Result tuple: { 1, 'first upsert val', 'second upsert val' }
+$space->upsert($upsertValues, [['=', 1, 'updated first upsert val'], ['=', 2, 'updated second upsert val']]);
 
 // Values already exist, updating them with new values
-$space->upsert($upsertValues, [['=', 0, 'updated first upsert val'], ['=', 1, 'updated second upsert val']]);
+// Result tuple: { 1, 'updated first upsert val', 'updated second upsert val' }
+$space->upsert($upsertValues, [['=', 1, 'updated first upsert val'], ['=', 2, 'updated second upsert val']]);
 
 $result = $client->evaluate('return ...', [42]);
 var_dump($result->getData());
