@@ -42,6 +42,7 @@ var_dump($result->getData());
 
 // Inserting data
 $insertValues = [
+    1,
     'first insert val',
     'second insert val',
 ];
