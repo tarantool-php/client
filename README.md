@@ -34,6 +34,9 @@ $client = new Client($conn, new PurePacker());
 // or
 // $client = new Client($conn, new PeclPacker());
 
+// If authentication credentials required
+// $client->authenticate('username', 'userpass');
+
 $space = $client->getSpace('my_space');
 
 // Selecting all data
