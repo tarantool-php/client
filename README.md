@@ -34,9 +34,23 @@ $client = new Client($conn, new PurePacker());
 // or
 // $client = new Client($conn, new PeclPacker());
 
+// If authentication credentials required
+// $client->authenticate('username', 'userpass');
+
 $space = $client->getSpace('my_space');
+
+// Selecting all data
 $result = $space->select();
 var_dump($result->getData());
+
+// Result: inserted tuple { 1, 'foo', 'bar' }
+$space->insert([1, 'foo', 'bar']);
+
+// Result: inserted tuple { 2, 'baz', 'qux'}
+$space->upsert([2, 'baz', 'qux'], [['=', 1, 'BAZ'], ['=', 2, 'QUX']]);
+
+// Result: updated tuple { 2, 'baz', 'qux'} with { 2, 'BAZ', 'QUX' }
+$space->upsert([2, 'baz', 'qux'], [['=', 1, 'BAZ'], ['=', 2, 'QUX']]);
 
 $result = $client->evaluate('return ...', [42]);
 var_dump($result->getData());
