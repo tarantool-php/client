@@ -40,30 +40,14 @@ $space = $client->getSpace('my_space');
 $result = $space->select();
 var_dump($result->getData());
 
-// Inserting data
-$insertValues = [
-    1,
-    'first insert val',
-    'second insert val',
-];
-$space->insert($insertValues);
+// Result: inserted tuple { 1, 'foo', 'bar' }
+$space->insert([1, 'foo', 'bar']);
 
-// Upserting values
-$upsertValues = [
-    1,
-    'first upsert val',
-    'second upsert val',
-];
+// Result: inserted tuple { 2, 'baz', 'qux'}
+$space->upsert([2, 'baz', 'qux'], [['=', 1, 'BAZ'], ['=', 2, 'QUX']]);
 
-// Values do not exist, inserting them
-// '=' - operator string, see full list of operators on official docs page
-// 0, 1 - inserted tuple indecies
-// Result tuple: { 1, 'first upsert val', 'second upsert val' }
-$space->upsert($upsertValues, [['=', 1, 'updated first upsert val'], ['=', 2, 'updated second upsert val']]);
-
-// Values already exist, updating them with new values
-// Result tuple: { 1, 'updated first upsert val', 'updated second upsert val' }
-$space->upsert($upsertValues, [['=', 1, 'updated first upsert val'], ['=', 2, 'updated second upsert val']]);
+// Result: updated tuple { 2, 'baz', 'qux'} with { 2, 'BAZ', 'QUX' }
+$space->upsert([2, 'baz', 'qux'], [['=', 1, 'BAZ'], ['=', 2, 'QUX']]);
 
 $result = $client->evaluate('return ...', [42]);
 var_dump($result->getData());
