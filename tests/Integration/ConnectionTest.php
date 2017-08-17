@@ -10,8 +10,9 @@ use Tarantool\Client\Tests\GreetingDataProvider;
 use Tarantool\Client\Tests\Integration\FakeServer\FakeServerBuilder;
 use Tarantool\Client\Tests\Integration\FakeServer\Handler\ChainHandler;
 use Tarantool\Client\Tests\Integration\FakeServer\Handler\NoopHandler;
-use Tarantool\Client\Tests\Integration\FakeServer\Handler\ResponseHandler;
+use Tarantool\Client\Tests\Integration\FakeServer\Handler\ReadHandler;
 use Tarantool\Client\Tests\Integration\FakeServer\Handler\SocketDelayHandler;
+use Tarantool\Client\Tests\Integration\FakeServer\Handler\WriteHandler;
 
 class ConnectionTest extends \PHPUnit_Framework_TestCase
 {
@@ -216,7 +217,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     {
         $clientBuilder = self::createClientBuilderForFakeServer();
 
-        (new FakeServerBuilder(new ResponseHandler($greeting)))
+        (new FakeServerBuilder(new WriteHandler($greeting)))
             ->setUri($clientBuilder->getUri())
             ->start();
 
@@ -246,7 +247,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     {
         $clientBuilder = self::createClientBuilderForFakeServer();
 
-        (new FakeServerBuilder(new ResponseHandler($greeting)))
+        (new FakeServerBuilder(new WriteHandler($greeting)))
             ->setUri($clientBuilder->getUri())
             ->start();
 
@@ -273,7 +274,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     /**
      * @group tcp_only
      */
-    public function testConnectTimeout()
+    public function testConnectTimedOut()
     {
         $connectTimeout = 2.0;
         $clientBuilder = ClientBuilder::createFromEnv();
@@ -300,7 +301,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
         $this->fail();
     }
 
-    public function testSocketTimeout()
+    public function testSocketReadTimedOut()
     {
         $socketTimeout = 2.0;
 
@@ -319,7 +320,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
             $client->ping();
         } catch (ConnectionException $e) {
             $time = microtime(true) - $start;
-            $this->assertSame('Unable to read greeting.', $e->getMessage());
+            $this->assertSame('Read timed out.', $e->getMessage());
             $this->assertGreaterThanOrEqual($socketTimeout, $time);
             $this->assertLessThanOrEqual($socketTimeout + 0.1, $time);
 
@@ -327,6 +328,97 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
         }
 
         $this->fail();
+    }
+
+    /**
+     * @expectedException \Tarantool\Client\Exception\ConnectionException
+     * @expectedExceptionMessage Unable to read response length.
+     */
+    public function testUnableToReadResponseLength()
+    {
+        $clientBuilder = self::createClientBuilderForFakeServer();
+
+        (new FakeServerBuilder(
+            new ChainHandler([
+                new WriteHandler(GreetingDataProvider::generateGreeting()),
+            ])
+        ))
+            ->setUri($clientBuilder->getUri())
+            ->start();
+
+        $client = $clientBuilder->build();
+        $client->ping();
+    }
+
+    /**
+     * @expectedException \Tarantool\Client\Exception\ConnectionException
+     * @expectedExceptionMessage Read timed out.
+     */
+    public function testReadResponseLengthTimedOut()
+    {
+        $clientBuilder = self::createClientBuilderForFakeServer();
+        $clientBuilder->setConnectionOptions(['socket_timeout' => 1]);
+
+        (new FakeServerBuilder(
+            new ChainHandler([
+                new WriteHandler(GreetingDataProvider::generateGreeting()),
+                new ReadHandler(1),
+                new SocketDelayHandler(2),
+            ])
+        ))
+            ->setUri($clientBuilder->getUri())
+            ->start();
+
+        $client = $clientBuilder->build();
+        $client->ping();
+    }
+
+    /**
+     * @expectedException \Tarantool\Client\Exception\ConnectionException
+     * @expectedExceptionMessage Unable to read response.
+     */
+    public function testUnableToReadResponse()
+    {
+        $clientBuilder = self::createClientBuilderForFakeServer();
+        $clientBuilder->setConnectionOptions(['socket_timeout' => 1]);
+
+        (new FakeServerBuilder(
+            new ChainHandler([
+                new WriteHandler(GreetingDataProvider::generateGreeting()),
+                new ReadHandler(1),
+                new WriteHandler(PackUtils::packLength(42)),
+            ])
+        ))
+            ->setUri($clientBuilder->getUri())
+            ->start();
+
+        $client = $clientBuilder->build();
+        $client->ping();
+    }
+
+    /**
+     * @expectedException \Tarantool\Client\Exception\ConnectionException
+     * @expectedExceptionMessage Read timed out.
+     */
+    public function testReadResponseTimedOut()
+    {
+        $clientBuilder = self::createClientBuilderForFakeServer();
+        $clientBuilder->setConnectionOptions(['socket_timeout' => 1]);
+
+        (new FakeServerBuilder(
+            new ChainHandler([
+                new WriteHandler(GreetingDataProvider::generateGreeting()),
+                new ReadHandler(1),
+                new WriteHandler(PackUtils::packLength(42)),
+                new ReadHandler(1),
+                new SocketDelayHandler(2),
+            ])
+        ))
+            ->setUri($clientBuilder->getUri())
+            ->start();
+
+        $client = $clientBuilder->build();
+        $client->ping();
     }
 
     /**
@@ -360,7 +452,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
         (new FakeServerBuilder(
             new ChainHandler([
                 new SocketDelayHandler(3, true),
-                new ResponseHandler(GreetingDataProvider::generateGreeting()),
+                new WriteHandler(GreetingDataProvider::generateGreeting()),
             ])
         ))
             ->setUri($clientBuilder->getUri())

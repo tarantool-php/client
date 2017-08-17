@@ -40,9 +40,7 @@ class StreamConnection implements Connection
         $this->stream = $stream;
         stream_set_timeout($this->stream, $this->options['socket_timeout']);
 
-        if (!$greeting = stream_get_contents($this->stream, IProto::GREETING_SIZE)) {
-            throw new ConnectionException('Unable to read greeting.');
-        }
+        $greeting = $this->read(IProto::GREETING_SIZE, 'Unable to read greeting.');
 
         return IProto::parseGreeting($greeting);
     }
@@ -66,16 +64,19 @@ class StreamConnection implements Connection
             throw new ConnectionException('Unable to write request.');
         }
 
-        if (!$length = stream_get_contents($this->stream, IProto::LENGTH_SIZE)) {
-            throw new ConnectionException('Unable to read response length.');
-        }
-
+        $length = $this->read(IProto::LENGTH_SIZE, 'Unable to read response length.');
         $length = PackUtils::unpackLength($length);
 
-        if (!$data = stream_get_contents($this->stream, $length)) {
-            throw new ConnectionException('Unable to read response.');
+        return $this->read($length, 'Unable to read response.');
+    }
+
+    private function read($length, $errorMessage)
+    {
+        if ($data = stream_get_contents($this->stream, $length)) {
+            return $data;
         }
 
-        return $data;
+        $meta = stream_get_meta_data($this->stream);
+        throw new ConnectionException($meta['timed_out'] ? 'Read timed out.' : $errorMessage);
     }
 }
