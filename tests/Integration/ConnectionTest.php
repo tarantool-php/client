@@ -341,6 +341,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
         (new FakeServerBuilder(
             new ChainHandler([
                 new WriteHandler(GreetingDataProvider::generateGreeting()),
+                new ReadHandler(1),
             ])
         ))
             ->setUri($clientBuilder->getUri())
