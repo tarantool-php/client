@@ -14,7 +14,9 @@ class ChainHandler implements Handler
     public function __invoke($conn, $sid)
     {
         foreach ($this->handlers as $handler) {
-            $handler($conn, $sid);
+            if (false === $handler($conn, $sid)) {
+                break;
+            }
         }
     }
 }
