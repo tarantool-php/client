@@ -380,7 +380,6 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     public function testUnableToReadResponse()
     {
         $clientBuilder = self::createClientBuilderForFakeServer();
-        $clientBuilder->setConnectionOptions(['socket_timeout' => 1]);
 
         (new FakeServerBuilder(
             new ChainHandler([
