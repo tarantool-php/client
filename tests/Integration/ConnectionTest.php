@@ -211,6 +211,50 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @requires extension sockets
+     *
+     * @group tcp_only
+     * @group pure_only
+     */
+    public function testTcpNoDelayEnabled()
+    {
+        $clientBuilder = ClientBuilder::createFromEnv();
+        $clientBuilder->setConnectionOptions(['tcp_nodelay' => true]);
+
+        $client = $clientBuilder->build();
+        $client->ping();
+
+        $conn = $client->getConnection();
+        $prop = (new \ReflectionObject($conn))->getProperty('stream');
+        $prop->setAccessible(true);
+
+        $socket = socket_import_stream($prop->getValue($conn));
+        $this->assertSame(1, socket_get_option($socket, SOL_TCP, TCP_NODELAY));
+    }
+
+    /**
+     * @requires extension sockets
+     *
+     * @group tcp_only
+     * @group pure_only
+     */
+    public function testTcpNoDelayDisabled()
+    {
+        $clientBuilder = ClientBuilder::createFromEnv();
+        $clientBuilder->setConnectionOptions(['tcp_nodelay' => false]);
+
+        $client = $clientBuilder->build();
+        $client->ping();
+
+        $conn = $client->getConnection();
+        $prop = (new \ReflectionObject($conn))->getProperty('stream');
+        $prop->setAccessible(true);
+
+        $socket = socket_import_stream($prop->getValue($conn));
+        $this->assertSame(0, socket_get_option($socket, SOL_TCP, TCP_NODELAY));
+    }
+
+    /**
      * @dataProvider \Tarantool\Client\Tests\GreetingDataProvider::provideGreetingsWithInvalidServerName
      */
     public function testParseGreetingWithInvalidServerName($greeting)
