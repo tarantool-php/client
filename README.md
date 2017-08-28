@@ -26,15 +26,19 @@ use Tarantool\Client\Packer\PurePacker;
 
 $conn = new StreamConnection();
 // or
-// $conn = new StreamConnection('tcp://127.0.0.1:3301');
-// $conn = new StreamConnection('tcp://127.0.0.1:3301', ['socket_timeout' => 5.0, 'connect_timeout' => 5.0]);
+// $conn = new StreamConnection('tcp://127.0.0.1:3301', [
+//     'socket_timeout' => 5.0, 
+//     'connect_timeout' => 5.0,
+//     'tcp_nodelay' => true,
+// ]);
+// or
 // $conn = new StreamConnection('unix:///tmp/tarantool_instance.sock');
 
 $client = new Client($conn, new PurePacker());
 // or
 // $client = new Client($conn, new PeclPacker());
 
-// If authentication credentials required
+// if authentication credentials are required
 // $client->authenticate('username', 'userpass');
 
 $space = $client->getSpace('my_space');

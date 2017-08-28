@@ -40,6 +40,15 @@ class StreamConnection implements Connection
         $this->stream = $stream;
         stream_set_timeout($this->stream, $this->options['socket_timeout']);
 
+        // TODO
+        // use stream_context_create() for php 7.1+
+        // https://github.com/php/php-src/blob/6053987bc27e8dede37f437193a5cad448f99bce/ext/standard/tests/streams/stream_context_tcp_nodelay.phpt
+
+        if (isset($this->options['tcp_nodelay']) && function_exists('socket_import_stream')) {
+            $socket = socket_import_stream($this->stream);
+            socket_set_option($socket, SOL_TCP, TCP_NODELAY, (int) $this->options['tcp_nodelay']);
+        }
+
         $greeting = $this->read(IProto::GREETING_SIZE, 'Unable to read greeting.');
 
         return IProto::parseGreeting($greeting);
