@@ -16,22 +16,19 @@ env:
   - IMAGE='php:7.1-cli' TNT_PACKER=pure TNT_CONN_URI=/tmp/tarantool_client.sock
   - IMAGE='php:7.1-cli' TNT_PACKER=pure COVERAGE_FILE='coverage.clover'
 
-  - IMAGE='php:7.1-cli' TNT_CLIENT=pecl
-  - IMAGE='php:5.6-cli' TNT_CLIENT=pecl
+  - IMAGE='php:7.2-cli' TNT_PACKER=pecl
+  - IMAGE='php:7.2-cli' TNT_PACKER=pure
 
-  - IMAGE='baptistedonaux/hhvm:3.9' TNT_PACKER=pure
-  - IMAGE='baptistedonaux/hhvm:3.12' TNT_PACKER=pure
-  - IMAGE='baptistedonaux/hhvm:latest' TNT_PACKER=pure
-  - IMAGE='baptistedonaux/hhvm:latest' TNT_PACKER=pure TNT_CONN_URI=/tmp/tarantool_client.sock
+  - IMAGE='php:7.2-cli' TNT_CLIENT=pecl
+
+  - IMAGE='hhvm/hhvm:latest' TNT_PACKER=pure
+  - IMAGE='hhvm/hhvm:latest' TNT_PACKER=pure TNT_CONN_URI=/tmp/tarantool_client.sock
 
 matrix:
   allow_failures:
-    - env: IMAGE='php:5.6-cli' TNT_CLIENT=pecl
-    - env: IMAGE='php:7.1-cli' TNT_CLIENT=pecl
-    - env: IMAGE='baptistedonaux/hhvm:3.9' TNT_PACKER=pure
-    - env: IMAGE='baptistedonaux/hhvm:3.12' TNT_PACKER=pure
-    - env: IMAGE='baptistedonaux/hhvm:latest' TNT_PACKER=pure
-    - env: IMAGE='baptistedonaux/hhvm:latest' TNT_PACKER=pure TNT_CONN_URI=/tmp/tarantool_client.sock
+    - env: IMAGE='php:7.2-cli' TNT_CLIENT=pecl
+    - env: IMAGE='hhvm/hhvm:latest' TNT_PACKER=pure
+    - env: IMAGE='hhvm/hhvm:latest' TNT_PACKER=pure TNT_CONN_URI=/tmp/tarantool_client.sock
   fast_finish: true
 
 install:
