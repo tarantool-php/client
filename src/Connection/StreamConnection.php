@@ -64,7 +64,7 @@ class StreamConnection implements Connection
 
     public function isClosed()
     {
-        return null === $this->stream;
+        return !\is_resource($this->stream);
     }
 
     public function send($data)
