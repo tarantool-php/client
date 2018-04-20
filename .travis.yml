@@ -36,11 +36,11 @@ install:
 
 script:
   - docker network create tarantool-php
-  - docker run -d --net=tarantool-php --name=tarantool -v /tmp:/tmp -v $(pwd):/client -e TNT_LISTEN_URI=$TNT_CONN_URI tarantool/tarantool:1.7 tarantool /client/tests/Integration/client.lua
+  - docker run -d --net=tarantool-php --name=tarantool -v /tmp:/tmp -v $(pwd):/client -e TNT_LISTEN_URI=$TNT_CONN_URI tarantool/tarantool:1 tarantool /client/tests/Integration/client.lua
   - docker run --rm --net=tarantool-php --name=client -v /tmp:/tmp -v $(pwd):/client -w /client client
 
 after_script:
   - if [[ -f "$COVERAGE_FILE" ]]; then
       curl -sSOL https://scrutinizer-ci.com/ocular.phar &&
-      php ocular.phar code-coverage:upload --format=php-clover "$COVERAGE_FILE";
+      docker run --rm -v $(pwd):/coverage -w /coverage client php ocular.phar code-coverage:upload --format=php-clover "$COVERAGE_FILE";
     fi

@@ -4,8 +4,7 @@
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/tarantool-php/client/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/tarantool-php/client/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/tarantool-php/client/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/tarantool-php/client/?branch=master)
 
-This version of client requires Tarantool 1.7.1 or above. 
-For older versions of Tarantool please use [v0.2.0](https://github.com/tarantool-php/client/releases/tag/v0.2.0).
+This version of client requires Tarantool 1.7.1 or above.
 
 
 ## Installation
@@ -67,8 +66,8 @@ var_dump($result->getData());
 >
 > Using packer classes provided by the library require to install additional dependencies,
 > which are not bundled with the library directly. Therefore, you have to install them manually.
-> For example, if you plan to use PurePacker, install the [rybakit/msgpack](https://github.com/rybakit/msgpack.php#installation) package.
-> See the "[suggest](composer.json#L21-L22)" section of composer.json for other alternatives.
+> For example, if you plan to use `PurePacker`, install the [rybakit/msgpack](https://github.com/rybakit/msgpack.php#installation) package.
+> See the "[suggest](composer.json#L20)" section of composer.json for other alternatives.
 
 
 ## Tests
@@ -115,7 +114,7 @@ Then run Tarantool instance (needed for integration tests):
 ```sh
 $ docker network create tarantool-php
 $ docker run -d --net=tarantool-php --name=tarantool -v `pwd`:/client \
-    tarantool/tarantool:1.7 tarantool /client/tests/Integration/client.lua
+    tarantool/tarantool:1 tarantool /client/tests/Integration/client.lua
 ```
 
 And then run both unit and integration tests:

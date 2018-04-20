@@ -3,29 +3,31 @@
 namespace Tarantool\Client\Packer;
 
 use MessagePack\BufferUnpacker;
-use MessagePack\Packer as MessagePackPacker;
+use MessagePack\Packer;
 use Tarantool\Client\Exception\Exception;
 use Tarantool\Client\IProto;
+use Tarantool\Client\Packer\Packer as ClientPacker;
 use Tarantool\Client\Request\Request;
 use Tarantool\Client\Response;
 
-class PurePacker implements Packer
+class PurePacker implements ClientPacker
 {
     private $packer;
-    private $bufferUnpacker;
+    private $unpacker;
 
-    public function __construct(MessagePackPacker $packer = null, BufferUnpacker $bufferUnpacker = null)
+    public function __construct(Packer $packer = null, BufferUnpacker $unpacker = null)
     {
-        $this->packer = $packer ?: new MessagePackPacker();
-        $this->bufferUnpacker = $bufferUnpacker ?: new BufferUnpacker();
+        $this->packer = $packer ?: new Packer();
+        $this->unpacker = $unpacker ?: new BufferUnpacker();
     }
 
     public function pack(Request $request, $sync = null)
     {
-        $content = $this->packer->packMap([
-            IProto::CODE => $request->getType(),
-            IProto::SYNC => (int) $sync,
-        ]);
+        $content = $this->packer->packMapHeader(2).
+            $this->packer->packInt(IProto::CODE).
+            $this->packer->packInt($request->getType()).
+            $this->packer->packInt(IProto::SYNC).
+            $this->packer->packInt($sync);
 
         if (null !== $body = $request->getBody()) {
             $content .= $this->packer->packMap($body);
@@ -36,13 +38,16 @@ class PurePacker implements Packer
 
     public function unpack($data)
     {
-        $message = $this->bufferUnpacker->reset($data)->tryUnpack();
+        $this->unpacker->reset($data);
 
-        if (2 !== count($message)) {
-            throw new Exception('Unable to unpack data.');
+        try {
+            $header = $this->unpacker->unpackMap();
+            $body = $this->unpacker->unpackMap();
+        } catch (\Exception $e) {
+            throw new Exception('Unable to unpack data.', 0, $e);
+        } catch (\Throwable $e) {
+            throw new Exception('Unable to unpack data.', 0, $e);
         }
-
-        list($header, $body) = $message;
 
         $code = $header[IProto::CODE];
 

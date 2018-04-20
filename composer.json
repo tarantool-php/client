@@ -19,7 +19,7 @@
     },
     "suggest": {
         "ext-msgpack": "For using PeclPacker.",
-        "rybakit/msgpack": "For using PurePacker."
+        "rybakit/msgpack": "For using PurePacker (version 0.3.0 and above is required)."
     },
     "autoload": {
         "psr-4": {
