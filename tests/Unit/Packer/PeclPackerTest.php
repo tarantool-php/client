@@ -6,7 +6,6 @@ use Tarantool\Client\Packer\PeclPacker;
 
 /**
  * @requires extension msgpack
- * @requires function MessagePackUnpacker::__construct
  */
 class PeclPackerTest extends PackerTest
 {
