@@ -15,7 +15,7 @@
     },
     "require-dev": {
         "ext-msgpack": "@dev",
-        "rybakit/msgpack": "@dev"
+        "rybakit/msgpack": "@stable"
     },
     "suggest": {
         "ext-msgpack": "For using PeclPacker.",
