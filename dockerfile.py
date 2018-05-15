@@ -45,7 +45,7 @@ else:
 
 
 if coverage_file:
-    phpunit_opts += ' --coverage-clover ' + coverage_file
+    phpunit_opts += ' --coverage-text --coverage-clover ' + coverage_file
     run_cmds.append('pecl install xdebug && docker-php-ext-enable xdebug')
 
 run_cmds = " && \\\n    ".join(run_cmds)
