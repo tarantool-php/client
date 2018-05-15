@@ -25,7 +25,7 @@ if image.startswith('php:'):
             run_cmds.append('git --git-dir=/usr/src/php/ext/tarantool/.git --work-tree=/usr/src/php/ext/tarantool checkout php7-v2')
 
         run_cmds.append('echo tarantool >> /usr/src/php-available-exts && docker-php-ext-install tarantool')
-        composer_cmds.append('remove --dev --ignore-platform-reqs rybakit/msgpack')
+        composer_cmds.append('remove --dev --no-update rybakit/msgpack')
         phpunit_opts += ' --testsuite Integration'
         phpunit_exclude_groups.append('pure_only')
         packer = ''
@@ -37,11 +37,11 @@ if image.startswith('php:'):
             msgpack_ext_version='php5'
         run_cmds.append('git clone https://github.com/msgpack/msgpack-php.git {0} && git --git-dir={0}/.git --work-tree={0} checkout {1}'.format('/usr/src/php/ext/msgpack', msgpack_ext_version))
         run_cmds.append('echo msgpack >> /usr/src/php-available-exts && docker-php-ext-install msgpack')
-        composer_cmds.append('remove --dev --ignore-platform-reqs rybakit/msgpack')
+        composer_cmds.append('remove --dev --no-update rybakit/msgpack')
     else:
-        composer_cmds.append('remove --dev --ignore-platform-reqs ext-msgpack')
+        composer_cmds.append('remove --dev --no-update ext-msgpack')
 else:
-    composer_cmds.append('remove --dev --ignore-platform-reqs ext-msgpack')
+    composer_cmds.append('remove --dev --no-update ext-msgpack')
 
 
 if coverage_file:
@@ -71,7 +71,7 @@ FROM {image}
 RUN apt-get update && apt-get install -y git curl
 {run_cmds}
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \\
-    composer global require 'phpunit/phpunit:^4.8|^5.0'
+    composer global require 'phpunit/phpunit:@stable'
 
 ENV PATH=~/.composer/vendor/bin:$PATH
 ENV TNT_CLIENT={client} TNT_PACKER={packer} TNT_CONN_URI={conn_uri}
