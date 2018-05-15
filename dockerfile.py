@@ -71,7 +71,7 @@ FROM {image}
 RUN apt-get update && apt-get install -y git curl
 {run_cmds}
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \\
-    composer global require 'phpunit/phpunit:@stable'
+    composer global require 'phpunit/phpunit:<7.0'
 
 ENV PATH=~/.composer/vendor/bin:$PATH
 ENV TNT_CLIENT={client} TNT_PACKER={packer} TNT_CONN_URI={conn_uri}
