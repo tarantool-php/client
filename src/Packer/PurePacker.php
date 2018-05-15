@@ -37,9 +37,8 @@ class PurePacker implements Packer
 
     public function unpack($data)
     {
-        $this->unpacker->reset($data);
-
         try {
+            $this->unpacker->reset($data);
             $header = $this->unpacker->unpackMap();
             $body = $this->unpacker->unpackMap();
         } catch (\Exception $e) {
