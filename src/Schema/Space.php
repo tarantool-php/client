@@ -36,7 +36,7 @@ class Space
         $key = null === $key ? [] : $key;
         $offset = null === $offset ? 0 : $offset;
         $limit = null === $limit ? PHP_INT_MAX & 0xffffffff : $limit;
-        $iteratorType = null === $iteratorType ? 0 : $iteratorType;
+        $iteratorType = null === $iteratorType ? Iterator::EQ : $iteratorType;
         $index = $this->normalizeIndex($index);
 
         $request = new SelectRequest($this->id, $index, $key, $offset, $limit, $iteratorType);
