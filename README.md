@@ -113,7 +113,7 @@ Then run Tarantool instance (needed for integration tests):
 
 ```sh
 $ docker network create tarantool-php
-$ docker run -d --net=tarantool-php --name=tarantool -v `pwd`:/client \
+$ docker run -d --net=tarantool-php -p 3301:3301 --name=tarantool -v `pwd`:/client \
     tarantool/tarantool:1 tarantool /client/tests/Integration/client.lua
 ```
 
