@@ -30,7 +30,6 @@ env:
 matrix:
   allow_failures:
     - env: IMAGE='php:7.2-cli' TNT_CLIENT=pecl
-    - env: IMAGE='php:7.3-cli' TNT_PACKER=pecl # https://github.com/msgpack/msgpack-php/pull/124
     - env: IMAGE='hhvm/hhvm:latest' TNT_PACKER=pure
     - env: IMAGE='hhvm/hhvm:latest' TNT_PACKER=pure TNT_CONN_URI=/tmp/tarantool_client.sock
   fast_finish: true
