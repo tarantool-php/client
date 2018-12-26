@@ -17,7 +17,7 @@ phpunit_opts = ''
 phpunit_exclude_groups = []
 
 if image.startswith('php:'):
-    run_cmds.append('apt-get install -y zlib1g-dev && docker-php-ext-install zip')
+    run_cmds.append('apt-get install -y libzip-dev && docker-php-ext-configure zip --with-libzip && docker-php-ext-install zip')
 
     if 'pecl' == client:
         run_cmds.append('git clone https://github.com/tarantool/tarantool-php.git /usr/src/php/ext/tarantool')
