@@ -1,5 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the Tarantool Client package.
+ *
+ * (c) Eugene Leonovich <gen.work@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tarantool\Client;
 
 use Tarantool\Client\Connection\Connection;
@@ -8,12 +19,17 @@ use Tarantool\Client\Packer\Packer;
 use Tarantool\Client\Request\AuthenticateRequest;
 use Tarantool\Client\Request\CallRequest;
 use Tarantool\Client\Request\EvaluateRequest;
+use Tarantool\Client\Request\ExecuteRequest;
 use Tarantool\Client\Request\PingRequest;
 use Tarantool\Client\Request\Request;
+use Tarantool\Client\Response\BinaryResponse;
+use Tarantool\Client\Response\RawResponse;
+use Tarantool\Client\Response\SqlQueryResponse;
+use Tarantool\Client\Response\SqlUpdateResponse;
 use Tarantool\Client\Schema\Index;
 use Tarantool\Client\Schema\Space;
 
-class Client
+final class Client
 {
     private $connection;
     private $packer;
@@ -22,27 +38,23 @@ class Client
     private $password;
     private $spaces = [];
 
-    /**
-     * @param Connection $connection
-     * @param Packer     $packer
-     */
     public function __construct(Connection $connection, Packer $packer)
     {
         $this->connection = $connection;
         $this->packer = $packer;
     }
 
-    public function getConnection()
+    public function getConnection() : Connection
     {
         return $this->connection;
     }
 
-    public function getPacker()
+    public function getPacker() : Packer
     {
         return $this->packer;
     }
 
-    public function connect()
+    public function connect() : void
     {
         $this->salt = $this->connection->open();
 
@@ -51,81 +63,95 @@ class Client
         }
     }
 
-    public function disconnect()
+    public function disconnect() : void
     {
         $this->connection->close();
         $this->salt = null;
     }
 
-    public function isDisconnected()
+    public function isDisconnected() : bool
     {
         return $this->connection->isClosed() || !$this->salt;
     }
 
-    public function authenticate($username, $password = null)
+    public function authenticate(string $username, string $password = '') : BinaryResponse
     {
         if ($this->isDisconnected()) {
             $this->salt = $this->connection->open();
         }
 
         $request = new AuthenticateRequest($this->salt, $username, $password);
-        $response = $this->sendRequest($request);
+        $rawResponse = $this->sendRequest($request);
 
         $this->username = $username;
         $this->password = $password;
 
         $this->flushSpaces();
 
-        return $response;
+        return BinaryResponse::createFromRaw($rawResponse);
     }
 
-    public function ping()
+    public function ping() : BinaryResponse
     {
         $request = new PingRequest();
 
-        return $this->sendRequest($request);
+        return BinaryResponse::createFromRaw($this->sendRequest($request));
     }
 
-    /**
-     * @param string|int $space
-     *
-     * @return Space
-     */
-    public function getSpace($space)
+    public function getSpace(string $spaceName) : Space
     {
-        if (isset($this->spaces[$space])) {
-            return $this->spaces[$space];
+        if (isset($this->spaces[$spaceName])) {
+            return $this->spaces[$spaceName];
         }
 
-        if (!is_string($space)) {
-            return $this->spaces[$space] = new Space($this, $space);
-        }
+        $spaceId = $this->getSpaceIdByName($spaceName);
 
-        $spaceId = $this->getSpaceIdByName($space);
-
-        return $this->spaces[$space] = $this->spaces[$spaceId] = new Space($this, $spaceId);
+        return $this->spaces[$spaceName] = $this->spaces[$spaceId] = new Space($this, $spaceId);
     }
 
-    public function call($funcName, array $args = [])
+    public function getSpaceById(int $spaceId) : Space
+    {
+        if (isset($this->spaces[$spaceId])) {
+            return $this->spaces[$spaceId];
+        }
+
+        return $this->spaces[$spaceId] = new Space($this, $spaceId);
+    }
+
+    public function call(string $funcName, array $args = []) : BinaryResponse
     {
         $request = new CallRequest($funcName, $args);
 
-        return $this->sendRequest($request);
+        return BinaryResponse::createFromRaw($this->sendRequest($request));
     }
 
-    public function evaluate($expr, array $args = [])
+    public function executeQuery(string $sql, array $params = []) : SqlQueryResponse
+    {
+        $request = new ExecuteRequest($sql, $params);
+
+        return SqlQueryResponse::createFromRaw($this->sendRequest($request));
+    }
+
+    public function executeUpdate(string $sql, array $params = []) : SqlUpdateResponse
+    {
+        $request = new ExecuteRequest($sql, $params);
+
+        return SqlUpdateResponse::createFromRaw($this->sendRequest($request));
+    }
+
+    public function evaluate(string $expr, array $args = []) : BinaryResponse
     {
         $request = new EvaluateRequest($expr, $args);
 
-        return $this->sendRequest($request);
+        return BinaryResponse::createFromRaw($this->sendRequest($request));
     }
 
-    public function flushSpaces()
+    public function flushSpaces() : void
     {
         $this->spaces = [];
     }
 
-    public function sendRequest(Request $request)
+    public function sendRequest(Request $request) : RawResponse
     {
         if ($this->connection->isClosed()) {
             $this->connect();
@@ -134,12 +160,20 @@ class Client
         $data = $this->packer->pack($request);
         $data = $this->connection->send($data);
 
-        return $this->packer->unpack($data);
+        $response = $this->packer->unpack($data);
+        if (!$response->isError()) {
+            return $response;
+        }
+
+        throw new Exception(
+            $response->getBodyField(IProto::ERROR),
+            $response->getHeaderField(IProto::CODE) & (RawResponse::TYPE_ERROR - 1)
+        );
     }
 
-    private function getSpaceIdByName($spaceName)
+    private function getSpaceIdByName(string $spaceName) : int
     {
-        $schema = $this->getSpace(Space::VSPACE);
+        $schema = $this->getSpaceById(Space::VSPACE);
         $response = $schema->select([$spaceName], Index::SPACE_NAME);
         $data = $response->getData();
 

@@ -1,18 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the Tarantool Client package.
+ *
+ * (c) Eugene Leonovich <gen.work@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tarantool\Client\Tests\Unit\Connection;
 
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Tarantool\Client\Connection\Connection;
 use Tarantool\Client\Connection\Retryable;
 use Tarantool\Client\Exception\ConnectionException;
-use Tarantool\Client\Tests\PhpUnitCompat;
 
-class RetryableTest extends \PHPUnit_Framework_TestCase
+final class RetryableTest extends TestCase
 {
-    use PhpUnitCompat;
-
     /**
-     * @var \Tarantool\Client\Connection\Connection|\PHPUnit_Framework_MockObject_MockObject
+     * @var Connection|MockObject
      */
     private $wrappedConnection;
 
@@ -21,50 +31,49 @@ class RetryableTest extends \PHPUnit_Framework_TestCase
      */
     private $connection;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->wrappedConnection = $this->createMock(Connection::class);
         $this->connection = new Retryable($this->wrappedConnection);
     }
 
-    public function testOpen()
+    public function testOpen() : void
     {
         $this->wrappedConnection->expects($this->once())->method('open')
-            ->will($this->returnValue('salt'));
+            ->willReturn('salt');
 
-        $this->assertSame('salt', $this->connection->open());
+        self::assertSame('salt', $this->connection->open());
     }
 
-    public function testClose()
+    public function testClose() : void
     {
         $this->wrappedConnection->expects($this->once())->method('close');
 
         $this->connection->close();
     }
 
-    public function testIsClosed()
+    public function testIsClosed() : void
     {
         $this->wrappedConnection->expects($this->exactly(2))->method('isClosed')
             ->will($this->onConsecutiveCalls(false, true));
 
-        $this->assertFalse($this->connection->isClosed());
-        $this->assertTrue($this->connection->isClosed());
+        self::assertFalse($this->connection->isClosed());
+        self::assertTrue($this->connection->isClosed());
     }
 
-    public function testSend()
+    public function testSend() : void
     {
         $this->wrappedConnection->expects($this->once())->method('send')
             ->with('request')
-            ->will($this->returnValue('response'));
+            ->willReturn('response');
 
-        $this->assertSame('response', $this->connection->send('request'));
+        self::assertSame('response', $this->connection->send('request'));
     }
 
-    public function testSuccessRetry()
+    public function testSuccessRetry() : void
     {
-        $exception = $this->getMockBuilder(ConnectionException::class)
-            ->setMethods(['getMessage'])
-            ->getMock();
+        /** @var ConnectionException $exception */
+        $exception = $this->createMock(ConnectionException::class);
 
         $this->wrappedConnection->expects($this->exactly(3))->method('open')
             ->will($this->onConsecutiveCalls(
@@ -74,30 +83,25 @@ class RetryableTest extends \PHPUnit_Framework_TestCase
             ));
 
         $connection = new Retryable($this->wrappedConnection, 3);
-        $this->assertSame('salt', $connection->open());
+
+        self::assertSame('salt', $connection->open());
     }
 
-    /**
-     * @expectedException \Tarantool\Client\Exception\ConnectionException
-     */
-    public function testThrowConnectionException()
+    public function testThrowConnectionException() : void
     {
-        $exception = $this->getMockBuilder(ConnectionException::class)
-            ->setMethods(['getMessage'])
-            ->getMock();
+        /** @var ConnectionException $exception */
+        $exception = $this->createMock(ConnectionException::class);
 
         $this->wrappedConnection->expects($this->exactly(4))->method('open')
             ->willThrowException($exception);
 
         $connection = new Retryable($this->wrappedConnection, 3);
+
+        $this->expectException(ConnectionException::class);
         $connection->open();
     }
 
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage foo
-     */
-    public function testThrowException()
+    public function testThrowException() : void
     {
         $exception = new \Exception('foo');
 
@@ -108,6 +112,9 @@ class RetryableTest extends \PHPUnit_Framework_TestCase
             ));
 
         $connection = new Retryable($this->wrappedConnection, 2);
+
+        $this->expectException(get_class($exception));
+        $this->expectExceptionMessage($exception->getMessage());
         $connection->open();
     }
 }

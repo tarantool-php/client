@@ -1,23 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the Tarantool Client package.
+ *
+ * (c) Eugene Leonovich <gen.work@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tarantool\Client\Connection;
 
 use Tarantool\Client\Exception\ConnectionException;
 
-class Retryable implements Connection
+final class Retryable implements Connection
 {
-    const DEFAULT_MAX_RETRIES = 3;
+    private const DEFAULT_MAX_RETRIES = 3;
 
     private $connection;
     private $maxRetries;
 
-    public function __construct(Connection $connection, $maxRetries = null)
+    public function __construct(Connection $connection, int $maxRetries = self::DEFAULT_MAX_RETRIES)
     {
         $this->connection = $connection;
-        $this->maxRetries = null === $maxRetries ? self::DEFAULT_MAX_RETRIES : $maxRetries;
+        $this->maxRetries = $maxRetries;
     }
 
-    public function open()
+    public function open() : string
     {
         $retry = 0;
 
@@ -32,17 +43,17 @@ class Retryable implements Connection
         throw $e;
     }
 
-    public function close()
+    public function close() : void
     {
         $this->connection->close();
     }
 
-    public function isClosed()
+    public function isClosed() : bool
     {
         return $this->connection->isClosed();
     }
 
-    public function send($data)
+    public function send(string $data) : string
     {
         return $this->connection->send($data);
     }

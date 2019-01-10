@@ -1,30 +1,42 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the Tarantool Client package.
+ *
+ * (c) Eugene Leonovich <gen.work@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tarantool\Client\Request;
 
 use Tarantool\Client\IProto;
+use Tarantool\Client\RequestTypes;
 
-class UpdateRequest implements Request
+final class UpdateRequest implements Request
 {
     private $spaceId;
     private $indexId;
     private $key;
     private $operations;
 
-    public function __construct($spaceId, $indexId, $key, array $operations)
+    public function __construct(int $spaceId, int $indexId, array $key, array $operations)
     {
         $this->spaceId = $spaceId;
         $this->indexId = $indexId;
-        $this->key = (array) $key;
+        $this->key = $key;
         $this->operations = $operations;
     }
 
-    public function getType()
+    public function getType() : int
     {
-        return self::TYPE_UPDATE;
+        return RequestTypes::UPDATE;
     }
 
-    public function getBody()
+    public function getBody() : array
     {
         return [
             IProto::SPACE_ID => $this->spaceId,

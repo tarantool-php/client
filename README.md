@@ -12,7 +12,7 @@ This version of client requires Tarantool 1.7.1 or above.
 The recommended way to install the library is through [Composer](http://getcomposer.org):
 
 ```sh
-$ composer require tarantool/client:@dev
+composer require tarantool/client:@dev
 ```
 
 
@@ -26,8 +26,8 @@ use Tarantool\Client\Packer\PurePacker;
 $conn = new StreamConnection();
 // or
 // $conn = new StreamConnection('tcp://127.0.0.1:3301', [
-//     'socket_timeout' => 5.0, 
-//     'connect_timeout' => 5.0,
+//     'socket_timeout' => 5,
+//     'connect_timeout' => 5,
 //     'tcp_nodelay' => true,
 // ]);
 // or
@@ -49,10 +49,10 @@ var_dump($result->getData());
 // Result: inserted tuple { 1, 'foo', 'bar' }
 $space->insert([1, 'foo', 'bar']);
 
-// Result: inserted tuple { 2, 'baz', 'qux'}
+// Result: inserted tuple { 2, 'baz', 'qux' }
 $space->upsert([2, 'baz', 'qux'], [['=', 1, 'BAZ'], ['=', 2, 'QUX']]);
 
-// Result: updated tuple { 2, 'baz', 'qux'} with { 2, 'BAZ', 'QUX' }
+// Result: updated tuple { 2, 'baz', 'qux' } with { 2, 'BAZ', 'QUX' }
 $space->upsert([2, 'baz', 'qux'], [['=', 1, 'BAZ'], ['=', 2, 'QUX']]);
 
 $result = $client->evaluate('return ...', [42]);
@@ -75,13 +75,13 @@ var_dump($result->getData());
 To run unit tests:
 
 ```sh
-$ phpunit --testsuite Unit
+phpunit --testsuite unit
 ```
 
 To run integration tests:
 
 ```sh
-$ phpunit --testsuite Integration
+phpunit --testsuite integration
 ```
 
 > Make sure to start [client.lua](tests/Integration/client.lua) first.
@@ -89,38 +89,38 @@ $ phpunit --testsuite Integration
 To run all tests:
 
 ```sh
-$ phpunit
+phpunit
 ```
 
 If you already have Docker installed, you can run the tests in a docker container.
 First, create a container:
 
 ```sh
-$ ./dockerfile.py | docker build -t client -
+./dockerfile.sh | docker build -t client -
 ```
 
-The command above will create a container named `client` with PHP 7.1 runtime.
+The command above will create a container named `client` with PHP 7.3 runtime.
 You may change the default runtime by defining the `IMAGE` environment variable:
 
 ```sh
-$ IMAGE='php:7.0-cli' ./dockerfile.py | docker build -t client -
+IMAGE='php:7.2-cli' ./dockerfile.py | docker build -t client -
 ```
 
-> See a list of various images [here](.travis.yml#L9-L26).
+> See a list of various images [here](.travis.yml#L8).
 
 
 Then run Tarantool instance (needed for integration tests):
 
 ```sh
-$ docker network create tarantool-php
-$ docker run -d --net=tarantool-php -p 3301:3301 --name=tarantool -v `pwd`:/client \
-    tarantool/tarantool:1 tarantool /client/tests/Integration/client.lua
+docker network create tarantool-php
+docker run -d --net=tarantool-php -p 3301:3301 --name=tarantool -v `pwd`:/client \
+    tarantool/tarantool:2 tarantool /client/tests/Integration/client.lua
 ```
 
 And then run both unit and integration tests:
 
 ```sh
-$ docker run --rm --net=tarantool-php --name client -v $(pwd):/client -w /client client
+docker run --rm --net=tarantool-php --name client -v $(pwd):/client -w /client client
 ```
 
 

@@ -12,6 +12,8 @@ box.cfg {
     slab_alloc_arena = .1,
 }
 
+box.schema.user.grant('guest', 'read,write,execute,create,drop,alter', 'universe')
+
 local function create_user(username, password)
     if box.schema.user.exists(username) then
         box.schema.user.drop(username)

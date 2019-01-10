@@ -11,15 +11,17 @@
         }
     ],
     "require": {
-        "php": "^5.6|^7.0"
+        "php": "^7.1"
     },
     "require-dev": {
-        "ext-msgpack": "@dev",
+        "ext-msgpack": "*",
+        "friendsofphp/php-cs-fixer": "^2.14",
+        "phpunit/phpunit": "^7.1",
         "rybakit/msgpack": "@dev"
     },
     "suggest": {
         "ext-msgpack": "For using PeclPacker",
-        "rybakit/msgpack": "For using PurePacker (version 0.3.0 and above is required)"
+        "rybakit/msgpack": "For using PurePacker (version 0.5.1 and above is required)"
     },
     "autoload": {
         "psr-4": {
@@ -30,5 +32,11 @@
         "psr-4": {
             "Tarantool\\Client\\Tests\\": "tests/"
         }
+    },
+    "config": {
+        "preferred-install": {
+            "*": "dist"
+        },
+        "sort-packages": true
     }
 }

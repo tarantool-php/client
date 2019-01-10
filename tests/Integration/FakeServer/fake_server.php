@@ -1,12 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the Tarantool Client package.
+ *
+ * (c) Eugene Leonovich <gen.work@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 use Tarantool\Client\Tests\Integration\FakeServer\Handler\NoopHandler;
 
 require __DIR__.'/../../../vendor/autoload.php';
 
 $options = getopt('', ['uri:', 'ttl:', 'handler:']) + [
     'uri' => 'tcp://0.0.0.0:8000',
-    'ttl' => 5,
+    'ttl' => 5.0,
 ];
 
 if (!$socket = stream_socket_server($options['uri'], $errorCode, $errorMessage)) {
@@ -21,7 +32,7 @@ $handler = empty($options['handler'])
     ? new NoopHandler()
     : unserialize(base64_decode($options['handler']));
 
-while ($conn = @stream_socket_accept($socket, $options['ttl'])) {
+while ($conn = @stream_socket_accept($socket, (float) $options['ttl'])) {
     $handler($conn, $sid);
     fclose($conn);
     echo "$sid:   Connection closed.\n";

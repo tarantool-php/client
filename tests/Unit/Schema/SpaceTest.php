@@ -1,38 +1,48 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the Tarantool Client package.
+ *
+ * (c) Eugene Leonovich <gen.work@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tarantool\Client\Tests\Unit;
 
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Tarantool\Client\Client;
 use Tarantool\Client\Schema\Space;
 
-class SpaceTest extends \PHPUnit_Framework_TestCase
+final class SpaceTest extends TestCase
 {
     /**
-     * @var \Tarantool\Client\Client|\PHPUnit_Framework_MockObject_MockObject|
+     * @var Client|MockObject
      */
     private $client;
 
     /**
      * @var int
      */
-    private $spaceId;
+    private $spaceId = 42;
 
     /**
      * @var Space
      */
     private $space;
 
-    protected function setUp()
+    protected function setUp() : void
     {
-        $this->client = $this->getMockBuilder(Client::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->client = $this->createMock(Client::class);
         $this->space = new Space($this->client, $this->spaceId);
     }
 
-    public function testGetId()
+    public function testGetId() : void
     {
-        $this->assertSame($this->spaceId, $this->space->getId());
+        self::assertSame($this->spaceId, $this->space->getId());
     }
 }

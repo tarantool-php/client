@@ -1,13 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the Tarantool Client package.
+ *
+ * (c) Eugene Leonovich <gen.work@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tarantool\Client\Packer;
 
-use Tarantool\Client\Exception\Exception;
+use Tarantool\Client\Exception\PackerException;
 use Tarantool\Client\IProto;
 use Tarantool\Client\Request\Request;
-use Tarantool\Client\Response;
+use Tarantool\Client\Response\RawResponse;
 
-class PeclPacker implements Packer
+final class PeclPacker implements Packer
 {
     private $packer;
     private $unpacker;
@@ -18,49 +29,36 @@ class PeclPacker implements Packer
         $this->unpacker = new \MessagePackUnpacker($phpOnly);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function pack(Request $request, $sync = null)
+    public function pack(Request $request, int $sync = null) : string
     {
         // @see https://github.com/msgpack/msgpack-php/issues/45
-        $content = pack('C*', 0x82, IProto::CODE, $request->getType(), IProto::SYNC);
-        $content .= $this->packer->pack((int) $sync);
+        $content = \pack('C*', 0x82, IProto::CODE, $request->getType(), IProto::SYNC).
+            $this->packer->pack($sync ?: 0).
+            $this->packer->pack($request->getBody());
 
-        if (null !== $body = $request->getBody()) {
-            $content .= $this->packer->pack($body);
-        }
-
-        return PackUtils::packLength(strlen($content)).$content;
+        return PackUtils::packLength(\strlen($content)).$content;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function unpack($data)
+    public function unpack(string $data) : RawResponse
     {
         $this->unpacker->feed($data);
 
         if (!$this->unpacker->execute()) {
-            throw new Exception('Unable to unpack data.');
+            throw new PackerException('Unable to unpack data.');
         }
 
         $header = $this->unpacker->data();
 
         if (!$this->unpacker->execute()) {
-            throw new Exception('Unable to unpack data.');
+            throw new PackerException('Unable to unpack data.');
         }
 
         $body = (array) $this->unpacker->data();
-        $code = $header[IProto::CODE];
 
-        if ($code >= Response::TYPE_ERROR) {
-            throw new Exception($body[IProto::ERROR], $code & (Response::TYPE_ERROR - 1));
+        try {
+            return new RawResponse($header, $body);
+        } catch (\TypeError $e) {
+            throw new PackerException('Unable to unpack data.', 0, $e);
         }
-
-        return new Response(
-            $header[IProto::SYNC],
-            isset($body[IProto::DATA]) ? $body[IProto::DATA] : null
-        );
     }
 }

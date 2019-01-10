@@ -1,26 +1,38 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the Tarantool Client package.
+ *
+ * (c) Eugene Leonovich <gen.work@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tarantool\Client\Request;
 
 use Tarantool\Client\IProto;
+use Tarantool\Client\RequestTypes;
 
-class EvaluateRequest implements Request
+final class EvaluateRequest implements Request
 {
     private $expr;
     private $args;
 
-    public function __construct($expr, array $args = [])
+    public function __construct(string $expr, array $args = [])
     {
         $this->expr = $expr;
         $this->args = $args;
     }
 
-    public function getType()
+    public function getType() : int
     {
-        return self::TYPE_EVALUATE;
+        return RequestTypes::EVALUATE;
     }
 
-    public function getBody()
+    public function getBody() : array
     {
         return [
             IProto::EXPR => $this->expr,

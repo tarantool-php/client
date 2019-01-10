@@ -1,15 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the Tarantool Client package.
+ *
+ * (c) Eugene Leonovich <gen.work@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tarantool\Client\Packer;
 
 use MessagePack\BufferUnpacker;
 use MessagePack\Packer as MsgPacker;
-use Tarantool\Client\Exception\Exception;
+use Tarantool\Client\Exception\PackerException;
 use Tarantool\Client\IProto;
 use Tarantool\Client\Request\Request;
-use Tarantool\Client\Response;
+use Tarantool\Client\Response\RawResponse;
 
-class PurePacker implements Packer
+final class PurePacker implements Packer
 {
     private $packer;
     private $unpacker;
@@ -20,39 +31,29 @@ class PurePacker implements Packer
         $this->unpacker = $unpacker ?: new BufferUnpacker();
     }
 
-    public function pack(Request $request, $sync = null)
+    public function pack(Request $request, int $sync = null) : string
     {
         $content = $this->packer->packMapHeader(2).
             $this->packer->packInt(IProto::CODE).
             $this->packer->packInt($request->getType()).
             $this->packer->packInt(IProto::SYNC).
-            $this->packer->packInt($sync);
+            $this->packer->packInt($sync ?: 0).
+            $this->packer->packMap($request->getBody());
 
-        if (null !== $body = $request->getBody()) {
-            $content .= $this->packer->packMap($body);
-        }
-
-        return PackUtils::packLength(strlen($content)).$content;
+        return PackUtils::packLength(\strlen($content)).$content;
     }
 
-    public function unpack($data)
+    public function unpack(string $data) : RawResponse
     {
         try {
             $this->unpacker->reset($data);
-            $header = $this->unpacker->unpackMap();
-            $body = $this->unpacker->unpackMap();
-        } catch (\Exception $e) {
-            throw new Exception('Unable to unpack data.', 0, $e);
+
+            return new RawResponse(
+                $this->unpacker->unpackMap(),
+                $this->unpacker->unpackMap()
+            );
         } catch (\Throwable $e) {
-            throw new Exception('Unable to unpack data.', 0, $e);
+            throw new PackerException('Unable to unpack data.', 0, $e);
         }
-
-        $code = $header[IProto::CODE];
-
-        if ($code >= Response::TYPE_ERROR) {
-            throw new Exception($body[IProto::ERROR], $code & (Response::TYPE_ERROR - 1));
-        }
-
-        return new Response($header[IProto::SYNC], $body ? $body[IProto::DATA] : null);
     }
 }
