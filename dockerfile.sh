@@ -19,6 +19,10 @@ else
     COMPOSER_REMOVE='ext-msgpack'
 fi
 
+if [[ ! -z "$COVERAGE_FILE" ]]; then
+    RUN_CMDS="$RUN_CMDS && \\\\\n    pecl install xdebug && docker-php-ext-enable xdebug"
+fi
+
 if [[ "1" != "$CHECK_CS" ]]; then
     COMPOSER_REMOVE="$COMPOSER_REMOVE friendsofphp/php-cs-fixer"
 fi
