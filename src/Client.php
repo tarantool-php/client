@@ -118,7 +118,7 @@ final class Client
         return $this->spaces[$spaceId] = new Space($this, $spaceId);
     }
 
-    public function call(string $funcName, array $args = []) : BinaryResponse
+    public function call(string $funcName, ...$args) : BinaryResponse
     {
         $request = new CallRequest($funcName, $args);
 
