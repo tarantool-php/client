@@ -13,15 +13,16 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Unit;
 
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Tarantool\Client\Client;
+use Tarantool\Client\Connection\Connection;
+use Tarantool\Client\Packer\Packer;
 use Tarantool\Client\Schema\Space;
 
 final class SpaceTest extends TestCase
 {
     /**
-     * @var Client|MockObject
+     * @var Client
      */
     private $client;
 
@@ -37,7 +38,7 @@ final class SpaceTest extends TestCase
 
     protected function setUp() : void
     {
-        $this->client = $this->createMock(Client::class);
+        $this->client = new Client($this->createMock(Connection::class), $this->createMock(Packer::class));
         $this->space = new Space($this->client, $this->spaceId);
     }
 
