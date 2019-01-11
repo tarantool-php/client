@@ -20,7 +20,7 @@ final class ExecuteTest extends TestCase
     /**
      * @beforeClass
      */
-    public static function ensureSqlSupport(): void
+    public static function ensureSqlSupport() : void
     {
         if (self::matchTarantoolVersion('<2.0.0', $currentVersion)) {
             self::markTestSkipped(sprintf('This version of Tarantool (%s) does not support sql.', $currentVersion));
