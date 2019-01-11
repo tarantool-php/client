@@ -36,6 +36,7 @@ abstract class TestCase extends BaseTestCase
         $this->client = ClientBuilder::createFromEnv()->build();
 
         $annotations = $this->getAnnotations();
+
         self::enableCustomAnnotations($annotations['method']);
     }
 
@@ -51,7 +52,7 @@ abstract class TestCase extends BaseTestCase
         }
     }
 
-    protected function getTotalSelectCalls() : int
+    protected static function getTotalSelectCalls() : int
     {
         $client = ClientBuilder::createFromEnv()->build();
         $response = $client->evaluate('return box.stat().SELECT.total');
@@ -59,11 +60,20 @@ abstract class TestCase extends BaseTestCase
         return $response->getData()[0];
     }
 
-    protected function getTarantoolVersion() : string
+    protected static function getTarantoolVersion() : string
     {
         $client = ClientBuilder::createFromEnv()->build();
         $response = $client->evaluate('return box.info().version');
 
         return $response->getData()[0];
+    }
+
+    protected static function matchTarantoolVersion(string $expr, &$ver) : bool
+    {
+        if (!preg_match('/(?P<op><|lt|<=|le|>|gt|>=|ge|==|=|eq|!=|<>|ne)?(?P<ver>\d.*)/', $expr, $matches)) {
+            throw new \InvalidArgumentException('Invalid version expression.');
+        }
+
+        return version_compare($ver = self::getTarantoolVersion(), $matches['ver'], $matches['op'] ?? '=');
     }
 }

@@ -19,25 +19,25 @@ final class ClientSpaceCachingTest extends TestCase
 {
     public function testCacheSpace() : void
     {
-        $total = $this->getTotalSelectCalls();
+        $total = self::getTotalSelectCalls();
 
         $this->client->flushSpaces();
         $this->client->getSpace('space_conn')->select();
         $this->client->getSpace('space_conn')->select();
 
-        self::assertSame(3, $this->getTotalSelectCalls() - $total);
+        self::assertSame(3, self::getTotalSelectCalls() - $total);
     }
 
     public function testFlushSpaces() : void
     {
-        $total = $this->getTotalSelectCalls();
+        $total = self::getTotalSelectCalls();
 
         $this->client->flushSpaces();
         $this->client->getSpace('space_conn')->select();
         $this->client->flushSpaces();
         $this->client->getSpace('space_conn')->select();
 
-        self::assertSame(4, $this->getTotalSelectCalls() - $total);
+        self::assertSame(4, self::getTotalSelectCalls() - $total);
     }
 
     public function testSpacesAreFlushedAfterSuccessfulAuthentication() : void
@@ -62,7 +62,7 @@ final class ClientSpaceCachingTest extends TestCase
     public function testSpacesAreNotFlushedAfterFailedAuthentication() : void
     {
         $this->client->getSpace('space_conn')->select();
-        $total = $this->getTotalSelectCalls();
+        $total = self::getTotalSelectCalls();
 
         try {
             $this->client->authenticate('user_foo', 'incorrect_password');
@@ -72,6 +72,6 @@ final class ClientSpaceCachingTest extends TestCase
 
         $this->client->getSpace('space_conn')->select();
 
-        self::assertSame(1, $this->getTotalSelectCalls() - $total);
+        self::assertSame(1, self::getTotalSelectCalls() - $total);
     }
 }

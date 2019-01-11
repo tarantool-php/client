@@ -18,14 +18,20 @@ use Tarantool\Client\Tests\Integration\TestCase;
 final class ExecuteTest extends TestCase
 {
     /**
+     * @beforeClass
+     */
+    public static function ensureSqlSupport(): void
+    {
+        if (self::matchTarantoolVersion('<2.0.0', $currentVersion)) {
+            self::markTestSkipped(sprintf('This version of Tarantool (%s) does not support sql.', $currentVersion));
+        }
+    }
+
+    /**
      * @dataProvider provideExecuteUpdateData
      */
     public function testExecuteUpdate(string $sql, array $params, $result) : void
     {
-        if (version_compare($ver = $this->getTarantoolVersion(), '2.0.0', '<')) {
-            self::markTestSkipped(sprintf('This version of Tarantool (%s) does not support sql.', $ver));
-        }
-
         $response = $this->client->executeUpdate($sql, $params);
 
         is_array($result)
@@ -51,10 +57,6 @@ final class ExecuteTest extends TestCase
      */
     public function testExecuteQuery(string $sql, array $params, $result) : void
     {
-        if (version_compare($ver = $this->getTarantoolVersion(), '2.0.0', '<')) {
-            self::markTestSkipped(sprintf('This version of Tarantool (%s) does not support sql.', $ver));
-        }
-
         $response = $this->client->executeQuery($sql, $params);
 
         self::assertSame($result, $response->getData());
