@@ -22,12 +22,12 @@ install:
   - ./dockerfile.sh | tee /dev/tty | docker build -t client -
 
 script:
-  - if [[ -n "$CHECK_CS" ]]; then
-      docker run --rm -v $(pwd):/client -w /client client php vendor/bin/php-cs-fixer fix --dry-run --diff --verbose .;
-    fi
   - docker network create tarantool-php
   - docker run -d --net=tarantool-php --name=tarantool -v /tmp:/tmp -v $(pwd):/client -e TNT_LISTEN_URI=$TNT_CONN_URI tarantool/tarantool:2 tarantool /client/tests/Integration/client.lua
   - docker run --rm --net=tarantool-php --name=client -v /tmp:/tmp -v $(pwd):/client -w /client client
+  - if [[ -n "$CHECK_CS" ]]; then
+      docker run --rm -v $(pwd):/client -w /client client php vendor/bin/php-cs-fixer fix --dry-run --diff --verbose .;
+    fi
 
 after_script:
   - if [[ -f "$COVERAGE_FILE" ]]; then
