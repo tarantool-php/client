@@ -27,7 +27,7 @@ echo -e "
 FROM $IMAGE
 
 RUN apt-get update && \\
-    apt-get install -y git curl libzip-dev && \\
+    apt-get install -y git curl unzip libzip-dev && \\
     docker-php-ext-configure zip --with-libzip && \\
     docker-php-ext-install zip${RUN_CMDS}
 
