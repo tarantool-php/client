@@ -9,7 +9,7 @@ if [[ -z "$TNT_PACKER" ]]; then
 fi
 
 if [[ -z "$TNT_CONN_URI" ]]; then
-    TNT_CONN_URI='tcp://127.0.0.1:3301'
+    TNT_CONN_URI='tcp://tarantool:3301'
 fi
 
 if [[ $TNT_PACKER == pecl ]]; then
