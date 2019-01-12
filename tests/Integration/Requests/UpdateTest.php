@@ -54,8 +54,29 @@ final class UpdateTest extends TestCase
             [
                 [[':', 2, 2, 1, 'uup']],
                 [1, 18, 'tuuuple_1', 88, 0x01011],
-            ],
+            ]
         ];
+    }
+
+    public function testUpdateWithIndexName() : void
+    {
+        $space = $this->client->getSpace('space_data');
+
+        self::assertSame([2, 4, 'tuple_2'], $space->select([2])->getData()[0]);
+
+        $response = $space->update([2], [[':', 2, 0, 1, 'T']], 'primary');
+
+        self::assertSame([[2, 4, 'Tuple_2']], $response->getData());
+    }
+
+    public function testUpdateWithNonExistingIndexName() : void
+    {
+        $space = $this->client->getSpace('space_data');
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage("No index 'non_existing_index' is defined in space #".$space->getId());
+
+        $space->update([2], [[':', 2, 0, 1, 'T']], 'non_existing_index');
     }
 
     public function testUpdateByNonExistingKey() : void
