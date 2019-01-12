@@ -43,10 +43,10 @@ final class ExecuteTest extends TestCase
     public function provideExecuteUpdateData() : iterable
     {
         return [
-            ['DROP TABLE IF EXISTS table1', [], [0, 1]],
-            ['CREATE TABLE table1 (column1 INTEGER PRIMARY KEY, column2 VARCHAR(100))', [], 1],
-            ['INSERT INTO table1 VALUES (1, :val1), (2, :val2)', [[':val1' => 'A'], [':val2' => 'B']], 2],
-            ['UPDATE table1 SET column2 = ? WHERE column1 = 2', ['BB'], 1],
+            ['DROP TABLE IF EXISTS table_exec', [], [0, 1]],
+            ['CREATE TABLE table_exec (column1 INTEGER PRIMARY KEY, column2 VARCHAR(100))', [], 1],
+            ['INSERT INTO table_exec VALUES (1, :val1), (2, :val2)', [[':val1' => 'A'], [':val2' => 'B']], 2],
+            ['UPDATE table_exec SET column2 = ? WHERE column1 = 2', ['BB'], 1],
         ];
     }
 
@@ -65,10 +65,10 @@ final class ExecuteTest extends TestCase
     public function provideExecuteQueryData() : iterable
     {
         return [
-            ['SELECT * FROM table1 WHERE column1 = 1', [], [[1, 'A']]],
-            ['SELECT column2 FROM table1 WHERE column1 = 1', [], [['A']]],
-            ['SELECT * FROM table1 WHERE column1 = 2', [], [[2, 'BB']]],
-            ['SELECT * FROM table1 WHERE column1 = 3', [], []],
+            ['SELECT * FROM table_exec WHERE column1 = 1', [], [[1, 'A']]],
+            ['SELECT column2 FROM table_exec WHERE column1 = 1', [], [['A']]],
+            ['SELECT * FROM table_exec WHERE column1 = 2', [], [[2, 'BB']]],
+            ['SELECT * FROM table_exec WHERE column1 = 3', [], []],
         ];
     }
 }

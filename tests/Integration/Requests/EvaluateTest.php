@@ -39,4 +39,31 @@ final class EvaluateTest extends TestCase
             [['return func_arg(...)', [[42]]], [[42]]],
         ];
     }
+
+    /**
+     * @dataProvider provideEvaluateSqlData
+     */
+    public function testEvaluateSql(string $expr, array $expectedData) : void
+    {
+        if (self::matchTarantoolVersion('<2.0.0', $currentVersion)) {
+            self::markTestSkipped(sprintf('This version of Tarantool (%s) does not support sql.', $currentVersion));
+        }
+
+        $response = $this->client->evaluate($expr);
+
+        self::assertSame($expectedData, $response->getData());
+    }
+
+    public function provideEvaluateSqlData() : iterable
+    {
+        return [
+            ['return box.sql.execute([[DROP TABLE IF EXISTS table_eval]])', []],
+            ['return box.sql.execute([[CREATE TABLE table_eval (column1 INTEGER PRIMARY KEY, column2 VARCHAR(100))]])', []],
+            ["return box.sql.execute([[INSERT INTO table_eval VALUES (1, 'foo'), (2, 'bar')]])", []],
+            ['return box.sql.execute([[SELECT * FROM table_eval]])', [[
+                [1, 'foo'],
+                [2, 'bar'],
+            ]]],
+        ];
+    }
 }
