@@ -123,7 +123,7 @@ final class ConnectionTest extends TestCase
         $builder = ClientBuilder::createFromEnv();
 
         // http://stackoverflow.com/q/100841/1160901
-        $builder->setHost('10.255.255.1');
+        $builder->setHost($host = '10.255.255.1');
         $builder->setConnectionOptions(['connect_timeout' => $connectTimeout]);
 
         if (!$builder->isTcpConnection()) {
@@ -137,6 +137,10 @@ final class ConnectionTest extends TestCase
         try {
             $client->ping();
         } catch (ConnectionException $e) {
+            if (false !== strpos($e->getMessage(), 'No route to host')) {
+                self::markTestSkipped(sprintf('Unable to route to host %s.', $host));
+            }
+
             $time = microtime(true) - $start;
             self::assertRegExp('/Unable to connect to .+?: (Connection|Operation) timed out\./', $e->getMessage());
             self::assertGreaterThanOrEqual($connectTimeout, $time);
