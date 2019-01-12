@@ -34,11 +34,11 @@ final class ExecuteRequest implements Request
 
     public function getBody() : array
     {
-        return $this->params ? [
+        return empty($this->params) ? [
             IProto::SQL_TEXT => $this->sql,
-            IProto::SQL_BIND => $this->params,
         ] : [
             IProto::SQL_TEXT => $this->sql,
+            IProto::SQL_BIND => $this->params,
         ];
     }
 }
