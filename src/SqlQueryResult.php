@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client;
 
-final class SqlQueryResult
+final class SqlQueryResult implements \IteratorAggregate
 {
     private $data;
     private $metadata;
@@ -32,5 +32,14 @@ final class SqlQueryResult
     public function getMetadata() : array
     {
         return $this->metadata;
+    }
+
+    public function getIterator() : \Generator
+    {
+        $keys = \array_column($this->metadata, 0);
+
+        foreach ($this->data as $item) {
+            yield \array_combine($keys, $item);
+        }
     }
 }

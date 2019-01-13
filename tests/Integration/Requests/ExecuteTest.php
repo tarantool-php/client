@@ -57,9 +57,9 @@ final class ExecuteTest extends TestCase
      */
     public function testExecuteQuery(string $sql, array $params, $expectedResult) : void
     {
-        $response = $this->client->executeQuery($sql, $params);
+        $result = $this->client->executeQuery($sql, $params);
 
-        self::assertSame($expectedResult, $response->getData());
+        self::assertSame($expectedResult, $result->getData());
     }
 
     public function provideExecuteQueryData() : iterable
