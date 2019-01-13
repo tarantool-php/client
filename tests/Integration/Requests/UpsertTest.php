@@ -29,14 +29,10 @@ final class UpsertTest extends TestCase
         $operations = [[':', 1, 0, 1, 'U']];
         $updatedValues = [$key, 'Upserted'];
 
-        $response = $space->upsert($values, $operations);
+        self::assertSame([], $space->upsert($values, $operations));
+        self::assertSame([$values], $space->select([$key]));
 
-        self::assertSame([], $response->getData());
-        self::assertSame($values, $space->select([$key])->getData()[0]);
-
-        $response = $space->upsert($values, $operations);
-
-        self::assertSame([], $response->getData());
-        self::assertSame($updatedValues, $space->select([$key])->getData()[0]);
+        self::assertSame([], $space->upsert($values, $operations));
+        self::assertSame([$updatedValues], $space->select([$key]));
     }
 }

@@ -44,7 +44,7 @@ $space = $client->getSpace('my_space');
 
 // Selecting all data
 $result = $space->select();
-var_dump($result->getData());
+var_dump($result);
 
 // Result: inserted tuple { 1, 'foo', 'bar' }
 $space->insert([1, 'foo', 'bar']);
@@ -56,10 +56,10 @@ $space->upsert([2, 'baz', 'qux'], [['=', 1, 'BAZ'], ['=', 2, 'QUX']]);
 $space->upsert([2, 'baz', 'qux'], [['=', 1, 'BAZ'], ['=', 2, 'QUX']]);
 
 $result = $client->evaluate('return ...', [42]);
-var_dump($result->getData());
+var_dump($result);
 
 $result = $client->call('box.stat');
-var_dump($result->getData());
+var_dump($result);
 ```
 
 > *Note*

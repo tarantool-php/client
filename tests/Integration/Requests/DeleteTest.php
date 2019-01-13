@@ -23,24 +23,24 @@ final class DeleteTest extends TestCase
     public function testDelete() : void
     {
         $space = $this->client->getSpace('space_misc');
-        $response = $space->delete([3]);
+        $result = $space->delete([3]);
 
-        self::assertSame([[3, 'delete_me_1']], $response->getData());
+        self::assertSame([[3, 'delete_me_1']], $result);
     }
 
     public function testDeleteWithIndexId() : void
     {
         $space = $this->client->getSpace('space_misc');
-        $response = $space->delete(['delete_me_2'], 1);
+        $result = $space->delete(['delete_me_2'], 1);
 
-        self::assertSame([[4, 'delete_me_2']], $response->getData());
+        self::assertSame([[4, 'delete_me_2']], $result);
     }
 
     public function testDeleteWithIndexName() : void
     {
         $space = $this->client->getSpace('space_misc');
-        $response = $space->delete(['delete_me_3'], 'secondary');
+        $result = $space->delete(['delete_me_3'], 'secondary');
 
-        self::assertSame([[5, 'delete_me_3']], $response->getData());
+        self::assertSame([[5, 'delete_me_3']], $result);
     }
 }

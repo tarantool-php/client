@@ -30,10 +30,10 @@ final class ReadTest extends TestCase
 {
     public function testReadLargeResponse() : void
     {
-        $data = str_repeat('x', 1024 * 1024);
-        $result = $this->client->evaluate('return ...', [$data]);
+        $str = str_repeat('x', 1024 * 1024);
+        $result = $this->client->evaluate('return ...', [$str]);
 
-        self::assertSame($data, $result->getData()[0]);
+        self::assertSame([$str], $result);
     }
 
     public function testReadEmptyGreeting() : void

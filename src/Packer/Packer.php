@@ -14,11 +14,11 @@ declare(strict_types=1);
 namespace Tarantool\Client\Packer;
 
 use Tarantool\Client\Request\Request;
-use Tarantool\Client\Response\RawResponse;
+use Tarantool\Client\Response;
 
 interface Packer
 {
     public function pack(Request $request, int $sync = null) : string;
 
-    public function unpack(string $data) : RawResponse;
+    public function unpack(string $data) : Response;
 }

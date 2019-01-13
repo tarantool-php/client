@@ -24,12 +24,12 @@ final class UpdateTest extends TestCase
     /**
      * @dataProvider provideUpdateData
      */
-    public function testUpdate(array $operations, array $result) : void
+    public function testUpdate(array $operations, array $expectedResult) : void
     {
         $space = $this->client->getSpace('space_data');
-        $response = $space->update([1], $operations);
+        $result = $space->update([1], $operations);
 
-        self::assertSame([$result], $response->getData());
+        self::assertSame($expectedResult, $result);
     }
 
     public function provideUpdateData() : iterable
@@ -37,23 +37,23 @@ final class UpdateTest extends TestCase
         return [
             [
                 [['+', 1, 16], ['=', 3, 98], ['=', 4, 0x11111]],
-                [1, 18, 'tuple_1', 98, 0x11111],
+                [[1, 18, 'tuple_1', 98, 0x11111]],
             ],
             [
                 [['-', 3, 10], ['&', 4, 0x10101]],
-                [1, 18, 'tuple_1', 88, 0x10101],
+                [[1, 18, 'tuple_1', 88, 0x10101]],
             ],
             [
                 [['^', 4, 0x11100]],
-                [1, 18, 'tuple_1', 88, 0x01001],
+                [[1, 18, 'tuple_1', 88, 0x01001]],
             ],
             [
                 [['^', 4, 0x00010]],
-                [1, 18, 'tuple_1', 88, 0x01011],
+                [[1, 18, 'tuple_1', 88, 0x01011]],
             ],
             [
                 [[':', 2, 2, 1, 'uup']],
-                [1, 18, 'tuuuple_1', 88, 0x01011],
+                [[1, 18, 'tuuuple_1', 88, 0x01011]],
             ],
         ];
     }
@@ -62,11 +62,11 @@ final class UpdateTest extends TestCase
     {
         $space = $this->client->getSpace('space_data');
 
-        self::assertSame([2, 4, 'tuple_2'], $space->select([2])->getData()[0]);
+        self::assertSame([2, 4, 'tuple_2'], $space->select([2])[0]);
 
-        $response = $space->update([2], [[':', 2, 0, 1, 'T']], 'primary');
+        $result = $space->update([2], [[':', 2, 0, 1, 'T']], 'primary');
 
-        self::assertSame([[2, 4, 'Tuple_2']], $response->getData());
+        self::assertSame([[2, 4, 'Tuple_2']], $result);
     }
 
     public function testUpdateWithNonExistingIndexName() : void
@@ -82,9 +82,9 @@ final class UpdateTest extends TestCase
     public function testUpdateByNonExistingKey() : void
     {
         $space = $this->client->getSpace('space_misc');
-        $response = $space->update([42], [['=', 2, 'qux']]);
+        $result = $space->update([42], [['=', 2, 'qux']]);
 
-        self::assertSame([], $response->getData());
+        self::assertSame([], $result);
     }
 
     /**

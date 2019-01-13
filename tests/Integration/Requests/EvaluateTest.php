@@ -23,11 +23,9 @@ final class EvaluateTest extends TestCase
     /**
      * @dataProvider provideEvaluateData
      */
-    public function testEvaluate(array $args, $result) : void
+    public function testEvaluate(array $args, $expectedResult) : void
     {
-        $response = $this->client->evaluate(...$args);
-
-        self::assertSame($result, $response->getData());
+        self::assertSame($expectedResult, $this->client->evaluate(...$args));
     }
 
     public function provideEvaluateData() : iterable
@@ -43,15 +41,13 @@ final class EvaluateTest extends TestCase
     /**
      * @dataProvider provideEvaluateSqlData
      */
-    public function testEvaluateSql(string $expr, array $expectedData) : void
+    public function testEvaluateSql(string $expr, array $expectedResult) : void
     {
         if (self::matchTarantoolVersion('<2.0.0', $currentVersion)) {
             self::markTestSkipped(sprintf('This version of Tarantool (%s) does not support sql.', $currentVersion));
         }
 
-        $response = $this->client->evaluate($expr);
-
-        self::assertSame($expectedData, $response->getData());
+        self::assertSame($expectedResult, $this->client->evaluate($expr));
     }
 
     public function provideEvaluateSqlData() : iterable

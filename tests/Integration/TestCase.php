@@ -55,17 +55,17 @@ abstract class TestCase extends BaseTestCase
     protected static function getTotalSelectCalls() : int
     {
         $client = ClientBuilder::createFromEnv()->build();
-        $response = $client->evaluate('return box.stat().SELECT.total');
+        $result = $client->evaluate('return box.stat().SELECT.total');
 
-        return $response->getData()[0];
+        return $result[0];
     }
 
     protected static function getTarantoolVersion() : string
     {
         $client = ClientBuilder::createFromEnv()->build();
-        $response = $client->evaluate('return box.info().version');
+        $result = $client->evaluate('return box.info().version');
 
-        return $response->getData()[0];
+        return $result[0];
     }
 
     protected static function matchTarantoolVersion(string $expr, &$ver) : bool

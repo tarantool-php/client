@@ -28,9 +28,9 @@ final class SelectTest extends TestCase
     public function testSelect(int $expectedCount, array $args) : void
     {
         $space = $this->client->getSpace('space_data');
-        $response = $space->select(...$args);
+        $result = $space->select(...$args);
 
-        self::assertCount($expectedCount, $response->getData());
+        self::assertCount($expectedCount, $result);
     }
 
     public function provideSelectData() : iterable
@@ -55,9 +55,9 @@ final class SelectTest extends TestCase
 
     public function testSelectEmpty() : void
     {
-        $response = $this->client->getSpace('space_empty')->select();
+        $space = $this->client->getSpace('space_empty');
 
-        self::assertEmpty($response->getData());
+        self::assertEmpty($space->select());
     }
 
     public function testSelectWithNonExistingName() : void

@@ -22,10 +22,6 @@ use Tarantool\Client\Request\EvaluateRequest;
 use Tarantool\Client\Request\ExecuteRequest;
 use Tarantool\Client\Request\PingRequest;
 use Tarantool\Client\Request\Request;
-use Tarantool\Client\Response\BinaryResponse;
-use Tarantool\Client\Response\RawResponse;
-use Tarantool\Client\Response\SqlQueryResponse;
-use Tarantool\Client\Response\SqlUpdateResponse;
 use Tarantool\Client\Schema\Index;
 use Tarantool\Client\Schema\Space;
 
@@ -74,28 +70,26 @@ final class Client
         return $this->connection->isClosed() || !$this->salt;
     }
 
-    public function authenticate(string $username, string $password = '') : BinaryResponse
+    public function authenticate(string $username, string $password = '') : void
     {
         if ($this->isDisconnected()) {
             $this->salt = $this->connection->open();
         }
 
         $request = new AuthenticateRequest($this->salt, $username, $password);
-        $rawResponse = $this->sendRequest($request);
+        $this->sendRequest($request);
 
         $this->username = $username;
         $this->password = $password;
 
         $this->flushSpaces();
-
-        return BinaryResponse::createFromRaw($rawResponse);
     }
 
-    public function ping() : BinaryResponse
+    public function ping() : void
     {
         $request = new PingRequest();
 
-        return BinaryResponse::createFromRaw($this->sendRequest($request));
+        $this->sendRequest($request);
     }
 
     public function getSpace(string $spaceName) : Space
@@ -118,32 +112,36 @@ final class Client
         return $this->spaces[$spaceId] = new Space($this, $spaceId);
     }
 
-    public function call(string $funcName, ...$args) : BinaryResponse
+    public function call(string $funcName, ...$args) : array
     {
         $request = new CallRequest($funcName, $args);
 
-        return BinaryResponse::createFromRaw($this->sendRequest($request));
+        return $this->sendRequest($request)->getBodyField(IProto::DATA);
     }
 
-    public function executeQuery(string $sql, array $params = []) : SqlQueryResponse
+    public function executeQuery(string $sql, array $params = []) : SqlQueryResult
+    {
+        $request = new ExecuteRequest($sql, $params);
+        $response = $this->sendRequest($request);
+
+        return new SqlQueryResult(
+            $response->getBodyField(IProto::DATA),
+            $response->getBodyField(IProto::METADATA)
+        );
+    }
+
+    public function executeUpdate(string $sql, array $params = []) : int
     {
         $request = new ExecuteRequest($sql, $params);
 
-        return SqlQueryResponse::createFromRaw($this->sendRequest($request));
+        return $this->sendRequest($request)->getBodyField(IProto::SQL_INFO)[0];
     }
 
-    public function executeUpdate(string $sql, array $params = []) : SqlUpdateResponse
-    {
-        $request = new ExecuteRequest($sql, $params);
-
-        return SqlUpdateResponse::createFromRaw($this->sendRequest($request));
-    }
-
-    public function evaluate(string $expr, array $args = []) : BinaryResponse
+    public function evaluate(string $expr, array $args = []) : array
     {
         $request = new EvaluateRequest($expr, $args);
 
-        return BinaryResponse::createFromRaw($this->sendRequest($request));
+        return $this->sendRequest($request)->getBodyField(IProto::DATA);
     }
 
     public function flushSpaces() : void
@@ -151,7 +149,7 @@ final class Client
         $this->spaces = [];
     }
 
-    public function sendRequest(Request $request) : RawResponse
+    public function sendRequest(Request $request) : Response
     {
         if ($this->connection->isClosed()) {
             $this->connect();
@@ -167,15 +165,14 @@ final class Client
 
         throw new Exception(
             $response->getBodyField(IProto::ERROR),
-            $response->getHeaderField(IProto::CODE) & (RawResponse::TYPE_ERROR - 1)
+            $response->getHeaderField(IProto::CODE) & (Response::TYPE_ERROR - 1)
         );
     }
 
     private function getSpaceIdByName(string $spaceName) : int
     {
         $schema = $this->getSpaceById(Space::VSPACE);
-        $response = $schema->select([$spaceName], Index::SPACE_NAME);
-        $data = $response->getData();
+        $data = $schema->select([$spaceName], Index::SPACE_NAME);
 
         if (empty($data)) {
             throw new Exception("Space '$spaceName' does not exist");

@@ -28,9 +28,9 @@ final class MessagePackTest extends TestCase
      */
     public function testPackUnpack($data) : void
     {
-        $response = $this->client->evaluate('return func_arg(...)', [$data]);
+        $result = $this->client->evaluate('return func_arg(...)', [$data]);
 
-        self::assertSame([$data], $response->getData());
+        self::assertSame([$data], $result);
     }
 
     public function providePackUnpackData() : iterable
@@ -70,9 +70,9 @@ final class MessagePackTest extends TestCase
             true,
         ];
 
-        $response = $this->client->evaluate('return func_arg(...)', [$array]);
+        $result = $this->client->evaluate('return func_arg(...)', [$array]);
 
-        self::assertEquals([$array], $response->getData(), '', 0.0, 5, true);
+        self::assertEquals([$array], $result, '', 0.0, 5, true);
     }
 
     public function testPackUnpackObject() : void
@@ -93,8 +93,8 @@ final class MessagePackTest extends TestCase
         // PECL: bin2hex($this->packer->pack($body)) = 8227b472657475726e2066756e635f617267282e2e2e29219182c0a8737464436c617373a3666f6fa3626172
 
         $obj = (object) ['foo' => 'bar'];
-        $response = $client->evaluate('return func_arg(...)', [$obj]);
+        $result = $client->evaluate('return func_arg(...)', [$obj]);
 
-        self::assertEquals([$obj], $response->getData());
+        self::assertEquals([$obj], $result);
     }
 }

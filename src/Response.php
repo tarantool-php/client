@@ -11,11 +11,9 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Tarantool\Client\Response;
+namespace Tarantool\Client;
 
-use Tarantool\Client\IProto;
-
-final class RawResponse
+final class Response
 {
     public const TYPE_ERROR = 0x8000;
 

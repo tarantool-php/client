@@ -24,10 +24,7 @@ final class ReplaceTest extends TestCase
     {
         $space = $this->client->getSpace('space_misc');
 
-        self::assertSame([[2, 'replace_me']], $space->select([2])->getData());
-
-        $response = $space->replace([2, 'replaced']);
-
-        self::assertSame([[2, 'replaced']], $response->getData());
+        self::assertSame([[2, 'replace_me']], $space->select([2]));
+        self::assertSame([[2, 'replaced']], $space->replace([2, 'replaced']));
     }
 }

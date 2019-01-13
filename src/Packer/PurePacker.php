@@ -18,7 +18,7 @@ use MessagePack\Packer as MsgPacker;
 use Tarantool\Client\Exception\PackerException;
 use Tarantool\Client\IProto;
 use Tarantool\Client\Request\Request;
-use Tarantool\Client\Response\RawResponse;
+use Tarantool\Client\Response;
 
 final class PurePacker implements Packer
 {
@@ -43,12 +43,12 @@ final class PurePacker implements Packer
         return PackUtils::packLength(\strlen($content)).$content;
     }
 
-    public function unpack(string $data) : RawResponse
+    public function unpack(string $data) : Response
     {
         try {
             $this->unpacker->reset($data);
 
-            return new RawResponse(
+            return new Response(
                 $this->unpacker->unpackMap(),
                 $this->unpacker->unpackMap()
             );

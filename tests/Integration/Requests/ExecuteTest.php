@@ -30,13 +30,13 @@ final class ExecuteTest extends TestCase
     /**
      * @dataProvider provideExecuteUpdateData
      */
-    public function testExecuteUpdate(string $sql, array $params, $result) : void
+    public function testExecuteUpdate(string $sql, array $params, $expectedResult) : void
     {
-        $response = $this->client->executeUpdate($sql, $params);
+        $result = $this->client->executeUpdate($sql, $params);
 
-        is_array($result)
-            ? self::assertContains($response->getRowCount(), $result)
-            : self::assertSame($result, $response->getRowCount())
+        is_array($expectedResult)
+            ? self::assertContains($result, $expectedResult)
+            : self::assertSame($expectedResult, $result)
         ;
     }
 
@@ -55,11 +55,11 @@ final class ExecuteTest extends TestCase
      *
      * @depends testExecuteUpdate
      */
-    public function testExecuteQuery(string $sql, array $params, $result) : void
+    public function testExecuteQuery(string $sql, array $params, $expectedResult) : void
     {
         $response = $this->client->executeQuery($sql, $params);
 
-        self::assertSame($result, $response->getData());
+        self::assertSame($expectedResult, $response->getData());
     }
 
     public function provideExecuteQueryData() : iterable

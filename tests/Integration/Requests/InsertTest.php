@@ -27,9 +27,9 @@ final class InsertTest extends TestCase
     public function testInsert(string $spaceName, array $values) : void
     {
         $space = $this->client->getSpace($spaceName);
-        $response = $space->insert($values);
+        $data = $space->insert($values);
 
-        self::assertSame([$values], $response->getData());
+        self::assertSame([$values], $data);
     }
 
     public function provideInsertData() : iterable

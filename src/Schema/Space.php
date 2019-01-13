@@ -15,6 +15,7 @@ namespace Tarantool\Client\Schema;
 
 use Tarantool\Client\Client;
 use Tarantool\Client\Exception\Exception;
+use Tarantool\Client\IProto;
 use Tarantool\Client\Request\DeleteRequest;
 use Tarantool\Client\Request\InsertRequest;
 use Tarantool\Client\Request\ReplaceRequest;
@@ -43,7 +44,7 @@ final class Space
         return $this->id;
     }
 
-    public function select(array $key = [], $index = 0, int $limit = \PHP_INT_MAX &0xffffffff, int $offset = 0, int $iteratorType = IteratorTypes::EQ) : BinaryResponse
+    public function select(array $key = [], $index = 0, int $limit = \PHP_INT_MAX &0xffffffff, int $offset = 0, int $iteratorType = IteratorTypes::EQ) : array
     {
         if (\is_string($index)) {
             $index = $this->getIndexIdByName($index);
@@ -51,24 +52,24 @@ final class Space
 
         $request = new SelectRequest($this->id, $index, $key, $offset, $limit, $iteratorType);
 
-        return BinaryResponse::createFromRaw($this->client->sendRequest($request));
+        return $this->client->sendRequest($request)->getBodyField(IProto::DATA);
     }
 
-    public function insert(array $values) : BinaryResponse
+    public function insert(array $values) : array
     {
         $request = new InsertRequest($this->id, $values);
 
-        return BinaryResponse::createFromRaw($this->client->sendRequest($request));
+        return $this->client->sendRequest($request)->getBodyField(IProto::DATA);
     }
 
-    public function replace(array $values) : BinaryResponse
+    public function replace(array $values) : array
     {
         $request = new ReplaceRequest($this->id, $values);
 
-        return BinaryResponse::createFromRaw($this->client->sendRequest($request));
+        return $this->client->sendRequest($request)->getBodyField(IProto::DATA);
     }
 
-    public function update(array $key, array $operations, $index = 0) : BinaryResponse
+    public function update(array $key, array $operations, $index = 0) : array
     {
         if (\is_string($index)) {
             $index = $this->getIndexIdByName($index);
@@ -76,17 +77,17 @@ final class Space
 
         $request = new UpdateRequest($this->id, $index, $key, $operations);
 
-        return BinaryResponse::createFromRaw($this->client->sendRequest($request));
+        return $this->client->sendRequest($request)->getBodyField(IProto::DATA);
     }
 
-    public function upsert(array $values, array $operations) : BinaryResponse
+    public function upsert(array $values, array $operations) : array
     {
         $request = new UpsertRequest($this->id, $values, $operations);
 
-        return BinaryResponse::createFromRaw($this->client->sendRequest($request));
+        return $this->client->sendRequest($request)->getBodyField(IProto::DATA);
     }
 
-    public function delete(array $key, $index = 0) : BinaryResponse
+    public function delete(array $key, $index = 0) : array
     {
         if (\is_string($index)) {
             $index = $this->getIndexIdByName($index);
@@ -94,7 +95,7 @@ final class Space
 
         $request = new DeleteRequest($this->id, $index, $key);
 
-        return BinaryResponse::createFromRaw($this->client->sendRequest($request));
+        return $this->client->sendRequest($request)->getBodyField(IProto::DATA);
     }
 
     public function flushIndexes() : void
@@ -109,13 +110,12 @@ final class Space
         }
 
         $schema = $this->client->getSpaceById(self::VINDEX);
-        $response = $schema->select([$this->id, $indexName], Index::INDEX_NAME);
-        $data = $response->getData();
+        $data = $schema->select([$this->id, $indexName], Index::INDEX_NAME);
 
         if (empty($data)) {
             throw new Exception("No index '$indexName' is defined in space #{$this->id}");
         }
 
-        return $this->indexes[$indexName] = $response->getData()[0][1];
+        return $this->indexes[$indexName] = $data[0][1];
     }
 }

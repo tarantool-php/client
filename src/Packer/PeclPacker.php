@@ -16,7 +16,7 @@ namespace Tarantool\Client\Packer;
 use Tarantool\Client\Exception\PackerException;
 use Tarantool\Client\IProto;
 use Tarantool\Client\Request\Request;
-use Tarantool\Client\Response\RawResponse;
+use Tarantool\Client\Response;
 
 final class PeclPacker implements Packer
 {
@@ -39,7 +39,7 @@ final class PeclPacker implements Packer
         return PackUtils::packLength(\strlen($content)).$content;
     }
 
-    public function unpack(string $data) : RawResponse
+    public function unpack(string $data) : Response
     {
         $this->unpacker->feed($data);
 
@@ -56,7 +56,7 @@ final class PeclPacker implements Packer
         $body = (array) $this->unpacker->data();
 
         try {
-            return new RawResponse($header, $body);
+            return new Response($header, $body);
         } catch (\TypeError $e) {
             throw new PackerException('Unable to unpack data.', 0, $e);
         }

@@ -25,9 +25,7 @@ final class CallTest extends TestCase
      */
     public function testCall(string $funcName, array $args, $return) : void
     {
-        $response = $this->client->call($funcName, ...$args);
-
-        self::assertSame($return, $response->getData()[0]);
+        self::assertSame([$return], $this->client->call($funcName, ...$args));
     }
 
     public function provideCallData() : iterable
