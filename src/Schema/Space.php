@@ -22,7 +22,6 @@ use Tarantool\Client\Request\ReplaceRequest;
 use Tarantool\Client\Request\SelectRequest;
 use Tarantool\Client\Request\UpdateRequest;
 use Tarantool\Client\Request\UpsertRequest;
-use Tarantool\Client\Response\BinaryResponse;
 
 final class Space
 {
