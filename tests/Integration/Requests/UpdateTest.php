@@ -54,7 +54,7 @@ final class UpdateTest extends TestCase
             [
                 [[':', 2, 2, 1, 'uup']],
                 [1, 18, 'tuuuple_1', 88, 0x01011],
-            ]
+            ],
         ];
     }
 

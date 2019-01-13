@@ -162,7 +162,7 @@ final class ClientBuilder
         throw new \UnexpectedValueException(sprintf('"%s" packer is not supported.', $this->packer));
     }
 
-    private static function findOpenTcpPort(int $min): int
+    private static function findOpenTcpPort(int $min) : int
     {
         $maxTries = 10;
         $try = 0;
