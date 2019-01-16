@@ -14,21 +14,22 @@ declare(strict_types=1);
 namespace Tarantool\Client\Packer;
 
 use MessagePack\BufferUnpacker;
-use MessagePack\Exception\UnpackingFailedException as PureUnpackingFailedException;
-use MessagePack\Packer as MsgPacker;
+use MessagePack\Exception\UnpackingFailedException;
+use MessagePack\Packer;
 use Tarantool\Client\Exception\UnpackingFailed;
 use Tarantool\Client\IProto;
+use Tarantool\Client\Packer\Packer as ClientPacker;
 use Tarantool\Client\Request\Request;
 use Tarantool\Client\Response;
 
-final class Pure implements Packer
+final class Pure implements ClientPacker
 {
     private $packer;
     private $unpacker;
 
-    public function __construct(MsgPacker $packer = null, BufferUnpacker $unpacker = null)
+    public function __construct(Packer $packer = null, BufferUnpacker $unpacker = null)
     {
-        $this->packer = $packer ?: new MsgPacker();
+        $this->packer = $packer ?: new Packer();
         $this->unpacker = $unpacker ?: new BufferUnpacker();
     }
 
@@ -53,7 +54,7 @@ final class Pure implements Packer
                 $this->unpacker->unpackMap(),
                 $this->unpacker->unpackMap()
             );
-        } catch (PureUnpackingFailedException $e) {
+        } catch (UnpackingFailedException $e) {
             throw new UnpackingFailed('Unable to unpack response.', 0, $e);
         }
     }
