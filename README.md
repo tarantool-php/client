@@ -55,7 +55,7 @@ $space->upsert([2, 'baz', 'qux'], [['=', 1, 'BAZ'], ['=', 2, 'QUX']]);
 // Result: updated tuple { 2, 'baz', 'qux' } with { 2, 'BAZ', 'QUX' }
 $space->upsert([2, 'baz', 'qux'], [['=', 1, 'BAZ'], ['=', 2, 'QUX']]);
 
-$result = $client->evaluate('return ...', [42]);
+$result = $client->evaluate('return ...', 42);
 var_dump($result);
 
 $result = $client->call('box.stat');

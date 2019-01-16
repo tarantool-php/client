@@ -25,16 +25,18 @@ final class EvaluateTest extends TestCase
      */
     public function testEvaluate(array $args, $expectedResult) : void
     {
-        self::assertSame($expectedResult, $this->client->evaluate(...$args));
+        $expr = array_shift($args);
+
+        self::assertSame($expectedResult, $this->client->evaluate($expr, ...$args));
     }
 
     public function provideEvaluateData() : iterable
     {
         return [
             [['return func_foo()'], [['foo' => 'foo', 'bar' => 42]]],
-            [['return func_sum(...)', [42, -24]], [18]],
-            [['return func_arg(...)', [[[42]]]], [[[42]]]],
-            [['return func_arg(...)', [[42]]], [[42]]],
+            [['return func_sum(...)', 42, -24], [18]],
+            [['return func_arg(...)', [[42]]], [[[42]]]],
+            [['return func_arg(...)', [42]], [[42]]],
         ];
     }
 

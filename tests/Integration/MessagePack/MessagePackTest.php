@@ -28,11 +28,11 @@ final class MessagePackTest extends TestCase
     /**
      * @dataProvider providePackUnpackData
      */
-    public function testPackUnpack($data) : void
+    public function testPackUnpack($arg) : void
     {
-        $result = $this->client->evaluate('return func_arg(...)', [$data]);
+        $result = $this->client->evaluate('return func_arg(...)', $arg);
 
-        self::assertSame([$data], $result);
+        self::assertSame([$arg], $result);
     }
 
     public function providePackUnpackData() : iterable
@@ -76,7 +76,7 @@ final class MessagePackTest extends TestCase
             true,
         ];
 
-        $result = $this->client->evaluate('return func_arg(...)', [$array]);
+        $result = $this->client->evaluate('return func_arg(...)', $array);
 
         self::assertEquals([$array], $result, '', 0.0, 5, true);
     }

@@ -137,7 +137,7 @@ final class Client
         return $this->sendRequest($request)->getBodyField(IProto::SQL_INFO)[0];
     }
 
-    public function evaluate(string $expr, array $args = []) : array
+    public function evaluate(string $expr, ...$args) : array
     {
         $request = new Evaluate($expr, $args);
 

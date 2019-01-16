@@ -30,7 +30,7 @@ final class ReadTest extends TestCase
     public function testReadLargeResponse() : void
     {
         $str = str_repeat('x', 1024 * 1024);
-        $result = $this->client->evaluate('return ...', [$str]);
+        $result = $this->client->evaluate('return ...', $str);
 
         self::assertSame([$str], $result);
     }
