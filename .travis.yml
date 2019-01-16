@@ -6,15 +6,15 @@ services:
   - docker
 
 env:
-  - IMAGE='php:7.1-cli'
+  - IMAGE='php:7.1-cli' TNT_PACKER=pure
   - IMAGE='php:7.1-cli' TNT_PACKER=pecl
   - IMAGE='php:7.1-cli' TNT_CONN_URI=/tmp/tarantool_client.sock
 
-  - IMAGE='php:7.2-cli' COVERAGE_FILE='coverage.clover'
-  - IMAGE='php:7.2-cli' TNT_PACKER=pecl
+  - IMAGE='php:7.2-cli' TNT_PACKER=pure COVERAGE_FILE='coverage.clover'
+  - IMAGE='php:7.2-cli' TNT_PACKER=pecl COVERAGE_FILE='coverage.clover'
   - IMAGE='php:7.2-cli' TNT_CONN_URI=/tmp/tarantool_client.sock
 
-  - IMAGE='php:7.3-cli' CHECK_CS=1
+  - IMAGE='php:7.3-cli' TNT_PACKER=pure CHECK_CS=1
   - IMAGE='php:7.3-cli' TNT_PACKER=pecl
   - IMAGE='php:7.3-cli' TNT_CONN_URI=/tmp/tarantool_client.sock
 
