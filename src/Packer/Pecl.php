@@ -23,10 +23,10 @@ final class Pecl implements Packer
     private $packer;
     private $unpacker;
 
-    public function __construct($phpOnly = true)
+    public function __construct()
     {
-        $this->packer = new \MessagePack($phpOnly);
-        $this->unpacker = new \MessagePackUnpacker($phpOnly);
+        $this->packer = new \MessagePack(false);
+        $this->unpacker = new \MessagePackUnpacker(false);
     }
 
     public function pack(Request $request, int $sync = null) : string

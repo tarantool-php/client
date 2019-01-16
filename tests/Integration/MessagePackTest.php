@@ -13,11 +13,6 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration;
 
-use MessagePack\BufferUnpacker;
-use MessagePack\Packer;
-use Tarantool\Client\Packer\Pure;
-use Tarantool\Client\Tests\Integration\MessagePack\StdClassTransformer;
-
 /**
  * @eval create_fixtures()
  */
@@ -47,6 +42,7 @@ final class MessagePackTest extends TestCase
             [[1, 2]],
             [[[[1, 2]]]],
             [['foo' => 'bar']],
+            // Object serialization is not yet supported: https://github.com/tarantool/tarantool/issues/465
         ];
     }
 
@@ -73,28 +69,5 @@ final class MessagePackTest extends TestCase
         $result = $this->client->evaluate('return func_arg(...)', [$array]);
 
         self::assertEquals([$array], $result, '', 0.0, 5, true);
-    }
-
-    public function testPackUnpackObject() : void
-    {
-        $client = ClientBuilder::createFromEnv()
-            ->setPackerPureFactory(function () {
-                return new Pure(
-                    (new Packer())->registerTransformer(new StdClassTransformer(42)),
-                    (new BufferUnpacker())->registerTransformer(new StdClassTransformer(42))
-                );
-            })
-            ->build();
-
-        if ($client->getPacker() instanceof Pure) {
-            self::markTestSkipped('Object serialization is not yet supported for the Pure (see https://github.com/tarantool/tarantool/issues/465)');
-        }
-
-        // PECL: bin2hex($this->packer->pack($body)) = 8227b472657475726e2066756e635f617267282e2e2e29219182c0a8737464436c617373a3666f6fa3626172
-
-        $obj = (object) ['foo' => 'bar'];
-        $result = $client->evaluate('return func_arg(...)', [$obj]);
-
-        self::assertEquals([$obj], $result);
     }
 }
