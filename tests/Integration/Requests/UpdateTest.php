@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\Requests;
 
-use Tarantool\Client\Exception\Exception;
+use Tarantool\Client\Exception\RequestFailed;
 use Tarantool\Client\Tests\Integration\TestCase;
 
 /**
@@ -73,7 +73,7 @@ final class UpdateTest extends TestCase
     {
         $space = $this->client->getSpace('space_data');
 
-        $this->expectException(Exception::class);
+        $this->expectException(RequestFailed::class);
         $this->expectExceptionMessage("No index 'non_existing_index' is defined in space #".$space->getId());
 
         $space->update([2], [[':', 2, 0, 1, 'T']], 'non_existing_index');
@@ -97,7 +97,7 @@ final class UpdateTest extends TestCase
         try {
             $space->update([1], [$operation]);
             $this->fail();
-        } catch (Exception $e) {
+        } catch (RequestFailed $e) {
             self::assertSame($errorMessage, $e->getMessage());
             self::assertSame($errorCode, $e->getCode());
         }

@@ -20,22 +20,22 @@ composer require tarantool/client:@dev
 
 ```php
 use Tarantool\Client\Client;
-use Tarantool\Client\Connection\StreamConnection;
-use Tarantool\Client\Packer\PurePacker;
+use Tarantool\Client\Connection\Stream;
+use Tarantool\Client\Packer\Pure;
 
-$conn = new StreamConnection();
+$conn = new Stream();
 // or
-// $conn = new StreamConnection('tcp://127.0.0.1:3301', [
+// $conn = new Stream('tcp://127.0.0.1:3301', [
 //     'socket_timeout' => 5,
 //     'connect_timeout' => 5,
 //     'tcp_nodelay' => true,
 // ]);
 // or
-// $conn = new StreamConnection('unix:///tmp/tarantool_instance.sock');
+// $conn = new Stream('unix:///tmp/tarantool_instance.sock');
 
-$client = new Client($conn, new PurePacker());
+$client = new Client($conn, new Pure());
 // or
-// $client = new Client($conn, new PeclPacker());
+// $client = new Client($conn, new Pecl());
 
 // if authentication credentials are required
 // $client->authenticate('username', 'userpass');
@@ -66,7 +66,7 @@ var_dump($result);
 >
 > Using packer classes provided by the library require to install additional dependencies,
 > which are not bundled with the library directly. Therefore, you have to install them manually.
-> For example, if you plan to use `PurePacker`, install the [rybakit/msgpack](https://github.com/rybakit/msgpack.php#installation) package.
+> For example, if you plan to use `Packer\Pure`, install the [rybakit/msgpack](https://github.com/rybakit/msgpack.php#installation) package.
 > See the "[suggest](composer.json#L20)" section of composer.json for other alternatives.
 
 

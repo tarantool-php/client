@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration;
 
-use Tarantool\Client\Exception\Exception;
+use Tarantool\Client\Exception\RequestFailed;
 
 final class ClientSpaceCachingTest extends TestCase
 {
@@ -47,7 +47,7 @@ final class ClientSpaceCachingTest extends TestCase
 
         try {
             $this->client->getSpace('space_conn')->select();
-        } catch (Exception $e) {
+        } catch (RequestFailed $e) {
             // this error means that the client tried to select 'space_conn'
             // from '_vspace' to get the space id instead of getting it directly
             // from the cache (otherwise it will be 'Read access denied' error)
@@ -66,7 +66,7 @@ final class ClientSpaceCachingTest extends TestCase
 
         try {
             $this->client->authenticate('user_foo', 'incorrect_password');
-        } catch (Exception $e) {
+        } catch (RequestFailed $e) {
             self::assertSame("Incorrect password supplied for user 'user_foo'", $e->getMessage());
         }
 

@@ -15,7 +15,7 @@ namespace Tarantool\Client\Tests\Integration;
 
 use MessagePack\BufferUnpacker;
 use MessagePack\Packer;
-use Tarantool\Client\Packer\PurePacker;
+use Tarantool\Client\Packer\Pure;
 use Tarantool\Client\Tests\Integration\MessagePack\StdClassTransformer;
 
 /**
@@ -79,15 +79,15 @@ final class MessagePackTest extends TestCase
     {
         $client = ClientBuilder::createFromEnv()
             ->setPackerPureFactory(function () {
-                return new PurePacker(
+                return new Pure(
                     (new Packer())->registerTransformer(new StdClassTransformer(42)),
                     (new BufferUnpacker())->registerTransformer(new StdClassTransformer(42))
                 );
             })
             ->build();
 
-        if ($client->getPacker() instanceof PurePacker) {
-            self::markTestSkipped('Object serialization is not yet supported for the PurePacker (see https://github.com/tarantool/tarantool/issues/465)');
+        if ($client->getPacker() instanceof Pure) {
+            self::markTestSkipped('Object serialization is not yet supported for the Pure (see https://github.com/tarantool/tarantool/issues/465)');
         }
 
         // PECL: bin2hex($this->packer->pack($body)) = 8227b472657475726e2066756e635f617267282e2e2e29219182c0a8737464436c617373a3666f6fa3626172

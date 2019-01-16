@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client;
 
-use Tarantool\Client\Exception\Exception;
+use Tarantool\Client\Exception\InvalidGreeting;
 
 final class IProto
 {
@@ -50,11 +50,11 @@ final class IProto
     public static function parseGreeting(string $greeting) : string
     {
         if (0 !== \strpos($greeting, 'Tarantool')) {
-            throw new Exception('Invalid greeting: unable to recognize Tarantool server.');
+            throw InvalidGreeting::invalidServerName();
         }
 
         if (false === $salt = \base64_decode(\substr($greeting, 64, 44), true)) {
-            throw new Exception('Invalid greeting: unable to parse salt.');
+            throw InvalidGreeting::invalidSalt();
         }
 
         $salt = \substr($salt, 0, 20);
@@ -63,6 +63,6 @@ final class IProto
             return $salt;
         }
 
-        throw new Exception('Invalid greeting: unable to parse salt.');
+        throw InvalidGreeting::invalidSalt();
     }
 }

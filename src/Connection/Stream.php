@@ -13,11 +13,12 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Connection;
 
-use Tarantool\Client\Exception\ConnectionException;
+use Tarantool\Client\Exception\CommunicationFailed;
+use Tarantool\Client\Exception\ConnectionFailed;
 use Tarantool\Client\IProto;
 use Tarantool\Client\Packer\PackUtils;
 
-final class StreamConnection implements Connection
+final class Stream implements Connection
 {
     private const DEFAULT_URI = 'tcp://127.0.0.1:3301';
 
@@ -54,7 +55,7 @@ final class StreamConnection implements Connection
         );
 
         if (false === $stream) {
-            throw new ConnectionException(\sprintf('Unable to connect to %s: %s.', $this->uri, $errorMessage));
+            throw ConnectionFailed::fromUriAndReason($this->uri, $errorMessage);
         }
 
         $this->stream = $stream;
@@ -81,7 +82,7 @@ final class StreamConnection implements Connection
     public function send(string $data) : string
     {
         if (!\fwrite($this->stream, $data)) {
-            throw new ConnectionException('Unable to write request.');
+            throw new CommunicationFailed('Unable to write request.');
         }
 
         $length = $this->read(IProto::LENGTH_SIZE, 'Unable to read response length.');
@@ -97,6 +98,6 @@ final class StreamConnection implements Connection
         }
 
         $meta = \stream_get_meta_data($this->stream);
-        throw new ConnectionException($meta['timed_out'] ? 'Read timed out.' : $errorMessage);
+        throw new CommunicationFailed($meta['timed_out'] ? 'Read timed out.' : $errorMessage);
     }
 }

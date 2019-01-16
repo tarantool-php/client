@@ -16,7 +16,7 @@ namespace Tarantool\Client\Request;
 use Tarantool\Client\IProto;
 use Tarantool\Client\RequestTypes;
 
-final class CallRequest implements Request
+final class Call implements Request
 {
     private $funcName;
     private $args;

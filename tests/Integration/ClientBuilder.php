@@ -16,10 +16,10 @@ namespace Tarantool\Client\Tests\Integration;
 use Tarantool\Client\Client;
 use Tarantool\Client\Connection\Connection;
 use Tarantool\Client\Connection\Retryable;
-use Tarantool\Client\Connection\StreamConnection;
+use Tarantool\Client\Connection\Stream;
 use Tarantool\Client\Packer\Packer;
-use Tarantool\Client\Packer\PeclPacker;
-use Tarantool\Client\Packer\PurePacker;
+use Tarantool\Client\Packer\Pecl;
+use Tarantool\Client\Packer\Pure;
 
 final class ClientBuilder
 {
@@ -141,22 +141,22 @@ final class ClientBuilder
             $retries = $options['retries'];
             unset($options['retries']);
 
-            $conn = new StreamConnection($this->uri, $options);
+            $conn = new Stream($this->uri, $options);
 
             return new Retryable($conn, $retries);
         }
 
-        return new StreamConnection($this->uri, $options);
+        return new Stream($this->uri, $options);
     }
 
     private function createPacker() : Packer
     {
         if (self::PACKER_PURE === $this->packer) {
-            return $this->packerPureFactory ? ($this->packerPureFactory)() : new PurePacker();
+            return $this->packerPureFactory ? ($this->packerPureFactory)() : new Pure();
         }
 
         if (self::PACKER_PECL === $this->packer) {
-            return $this->packerPeclFactory ? ($this->packerPeclFactory)() : new PeclPacker();
+            return $this->packerPeclFactory ? ($this->packerPeclFactory)() : new Pecl();
         }
 
         throw new \UnexpectedValueException(sprintf('"%s" packer is not supported.', $this->packer));

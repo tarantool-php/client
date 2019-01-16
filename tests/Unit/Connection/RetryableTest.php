@@ -17,7 +17,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Tarantool\Client\Connection\Connection;
 use Tarantool\Client\Connection\Retryable;
-use Tarantool\Client\Exception\ConnectionException;
+use Tarantool\Client\Exception\ConnectionFailed;
 
 final class RetryableTest extends TestCase
 {
@@ -72,8 +72,7 @@ final class RetryableTest extends TestCase
 
     public function testSuccessRetry() : void
     {
-        /** @var ConnectionException $exception */
-        $exception = $this->createMock(ConnectionException::class);
+        $exception = new ConnectionFailed();
 
         $this->wrappedConnection->expects($this->exactly(3))->method('open')
             ->will($this->onConsecutiveCalls(
@@ -89,15 +88,14 @@ final class RetryableTest extends TestCase
 
     public function testThrowConnectionException() : void
     {
-        /** @var ConnectionException $exception */
-        $exception = $this->createMock(ConnectionException::class);
+        $exception = new ConnectionFailed();
 
         $this->wrappedConnection->expects($this->exactly(4))->method('open')
             ->willThrowException($exception);
 
         $connection = new Retryable($this->wrappedConnection, 3);
 
-        $this->expectException(ConnectionException::class);
+        $this->expectException(ConnectionFailed::class);
         $connection->open();
     }
 

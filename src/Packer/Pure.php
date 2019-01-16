@@ -14,13 +14,14 @@ declare(strict_types=1);
 namespace Tarantool\Client\Packer;
 
 use MessagePack\BufferUnpacker;
+use MessagePack\Exception\UnpackingFailedException as PureUnpackingFailedException;
 use MessagePack\Packer as MsgPacker;
-use Tarantool\Client\Exception\PackerException;
+use Tarantool\Client\Exception\UnpackingFailed;
 use Tarantool\Client\IProto;
 use Tarantool\Client\Request\Request;
 use Tarantool\Client\Response;
 
-final class PurePacker implements Packer
+final class Pure implements Packer
 {
     private $packer;
     private $unpacker;
@@ -52,8 +53,8 @@ final class PurePacker implements Packer
                 $this->unpacker->unpackMap(),
                 $this->unpacker->unpackMap()
             );
-        } catch (\Throwable $e) {
-            throw new PackerException('Unable to unpack data.', 0, $e);
+        } catch (PureUnpackingFailedException $e) {
+            throw new UnpackingFailed('Unable to unpack response.', 0, $e);
         }
     }
 }

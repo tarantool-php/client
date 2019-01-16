@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\Requests;
 
-use Tarantool\Client\Exception\Exception;
+use Tarantool\Client\Exception\RequestFailed;
 use Tarantool\Client\Schema\IteratorTypes;
 use Tarantool\Client\Tests\Integration\TestCase;
 
@@ -64,7 +64,7 @@ final class SelectTest extends TestCase
     {
         $space = $this->client->getSpace('space_misc');
 
-        $this->expectException(Exception::class);
+        $this->expectException(RequestFailed::class);
         $this->expectExceptionMessage("No index 'non_existing_index' is defined in space #".$space->getId());
 
         $space->select([1], 'non_existing_index');
@@ -74,7 +74,7 @@ final class SelectTest extends TestCase
     {
         $space = $this->client->getSpace('space_misc');
 
-        $this->expectException(Exception::class);
+        $this->expectException(RequestFailed::class);
         $this->expectExceptionMessage("No index #123456 is defined in space 'space_misc'");
 
         $space->select([1], 123456);

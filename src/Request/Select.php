@@ -16,7 +16,7 @@ namespace Tarantool\Client\Request;
 use Tarantool\Client\IProto;
 use Tarantool\Client\RequestTypes;
 
-final class SelectRequest implements Request
+final class Select implements Request
 {
     private $spaceId;
     private $indexId;

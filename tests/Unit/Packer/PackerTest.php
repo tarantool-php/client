@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Tarantool\Client\Tests\Unit\Packer;
 
 use PHPUnit\Framework\TestCase;
-use Tarantool\Client\Exception\PackerException;
+use Tarantool\Client\Exception\UnpackingFailed;
 use Tarantool\Client\Packer\Packer;
 
 abstract class PackerTest extends TestCase
@@ -34,8 +34,8 @@ abstract class PackerTest extends TestCase
      */
     public function testThrowExceptionOnBadUnpackData(string $data) : void
     {
-        $this->expectException(PackerException::class);
-        $this->expectExceptionMessage('Unable to unpack data.');
+        $this->expectException(UnpackingFailed::class);
+        $this->expectExceptionMessage('Unable to unpack response.');
 
         $this->packer->unpack($data);
     }

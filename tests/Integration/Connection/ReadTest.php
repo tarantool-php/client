@@ -13,8 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\Connection;
 
-use Tarantool\Client\Exception\ConnectionException;
-use Tarantool\Client\Exception\Exception;
+use Tarantool\Client\Exception\CommunicationFailed;
 use Tarantool\Client\Packer\PackUtils;
 use Tarantool\Client\Tests\GreetingDataProvider;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
@@ -46,7 +45,7 @@ final class ReadTest extends TestCase
 
         $client = $clientBuilder->build();
 
-        $this->expectException(Exception::class);
+        $this->expectException(CommunicationFailed::class);
         $this->expectExceptionMessage('Unable to read greeting.');
 
         $client->connect();
@@ -69,7 +68,7 @@ final class ReadTest extends TestCase
 
         try {
             $client->ping();
-        } catch (ConnectionException $e) {
+        } catch (CommunicationFailed $e) {
             $time = microtime(true) - $start;
             self::assertSame('Read timed out.', $e->getMessage());
             self::assertGreaterThanOrEqual($socketTimeout, $time);
@@ -96,7 +95,7 @@ final class ReadTest extends TestCase
 
         $client = $clientBuilder->build();
 
-        $this->expectException(ConnectionException::class);
+        $this->expectException(CommunicationFailed::class);
         $this->expectExceptionMessage('Unable to read response length.');
 
         $client->ping();
@@ -119,7 +118,7 @@ final class ReadTest extends TestCase
 
         $client = $clientBuilder->build();
 
-        $this->expectException(ConnectionException::class);
+        $this->expectException(CommunicationFailed::class);
         $this->expectExceptionMessage('Read timed out.');
 
         $client->ping();
@@ -141,7 +140,7 @@ final class ReadTest extends TestCase
 
         $client = $clientBuilder->build();
 
-        $this->expectException(ConnectionException::class);
+        $this->expectException(CommunicationFailed::class);
         $this->expectExceptionMessage('Unable to read response.');
 
         $client->ping();
@@ -166,7 +165,7 @@ final class ReadTest extends TestCase
 
         $client = $clientBuilder->build();
 
-        $this->expectException(ConnectionException::class);
+        $this->expectException(CommunicationFailed::class);
         $this->expectExceptionMessage('Read timed out.');
 
         $client->ping();

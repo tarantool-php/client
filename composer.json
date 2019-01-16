@@ -20,8 +20,8 @@
         "rybakit/msgpack": "@dev"
     },
     "suggest": {
-        "ext-msgpack": "For using PeclPacker",
-        "rybakit/msgpack": "For using PurePacker (version 0.5.1 and above is required)"
+        "ext-msgpack": "For using Pecl packer",
+        "rybakit/msgpack": "For using Pure packer (version 0.5.1 and above is required)"
     },
     "autoload": {
         "psr-4": {

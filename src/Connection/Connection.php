@@ -13,15 +13,15 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Connection;
 
-use Tarantool\Client\Exception\ConnectionException;
-use Tarantool\Client\Exception\Exception;
+use Tarantool\Client\Exception\CommunicationFailed;
+use Tarantool\Client\Exception\ConnectionFailed;
 
 interface Connection
 {
     /**
      * Opens a new connection.
      *
-     * @throws ConnectionException|Exception
+     * @throws ConnectionFailed
      *
      * @return string A session salt
      */
@@ -40,9 +40,11 @@ interface Connection
     public function isClosed() : bool;
 
     /**
-     * Sends a msgpack request and gets a msgpack response back.
+     * Sends a MessagePack request and gets a MessagePack response back.
      *
      * @param string $data
+     *
+     * @throws CommunicationFailed
      *
      * @return string
      */

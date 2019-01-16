@@ -13,7 +13,8 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Connection;
 
-use Tarantool\Client\Exception\ConnectionException;
+use Tarantool\Client\Exception\CommunicationFailed;
+use Tarantool\Client\Exception\ConnectionFailed;
 
 final class Retryable implements Connection
 {
@@ -35,7 +36,7 @@ final class Retryable implements Connection
         do {
             try {
                 return $this->connection->open();
-            } catch (ConnectionException $e) {
+            } catch (ConnectionFailed | CommunicationFailed $e) {
             }
             ++$retry;
         } while ($retry <= $this->maxRetries);

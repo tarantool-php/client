@@ -13,12 +13,12 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Packer;
 
-use Tarantool\Client\Exception\PackerException;
+use Tarantool\Client\Exception\UnpackingFailed;
 use Tarantool\Client\IProto;
 use Tarantool\Client\Request\Request;
 use Tarantool\Client\Response;
 
-final class PeclPacker implements Packer
+final class Pecl implements Packer
 {
     private $packer;
     private $unpacker;
@@ -44,21 +44,23 @@ final class PeclPacker implements Packer
         $this->unpacker->feed($data);
 
         if (!$this->unpacker->execute()) {
-            throw new PackerException('Unable to unpack data.');
+            throw UnpackingFailed::invalidResponse();
         }
 
         $header = $this->unpacker->data();
+        if (!\is_array($header)) {
+            throw UnpackingFailed::invalidResponse();
+        }
 
         if (!$this->unpacker->execute()) {
-            throw new PackerException('Unable to unpack data.');
+            throw UnpackingFailed::invalidResponse();
         }
 
-        $body = (array) $this->unpacker->data();
-
-        try {
-            return new Response($header, $body);
-        } catch (\TypeError $e) {
-            throw new PackerException('Unable to unpack data.', 0, $e);
+        $body = $this->unpacker->data();
+        if (!\is_array($body)) {
+            throw UnpackingFailed::invalidResponse();
         }
+
+        return new Response($header, $body);
     }
 }

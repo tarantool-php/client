@@ -13,7 +13,8 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\Connection;
 
-use Tarantool\Client\Exception\Exception;
+use Tarantool\Client\Exception\CommunicationFailed;
+use Tarantool\Client\Exception\InvalidGreeting;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\FakeServer\FakeServerBuilder;
 use Tarantool\Client\Tests\Integration\FakeServer\Handler\WriteHandler;
@@ -36,11 +37,12 @@ final class ParseGreetingTest extends TestCase
 
         try {
             $client->connect();
-        } catch (Exception $e) {
-            self::assertSame(
-                '' === $greeting ? 'Unable to read greeting.' : 'Invalid greeting: unable to recognize Tarantool server.',
-                $e->getMessage()
-            );
+        } catch (CommunicationFailed $e) {
+            self::assertSame('Unable to read greeting.', $e->getMessage());
+
+            return;
+        } catch (InvalidGreeting $e) {
+            self::assertSame('Invalid greeting: unable to recognize Tarantool server.', $e->getMessage());
 
             return;
         }
@@ -61,7 +63,7 @@ final class ParseGreetingTest extends TestCase
 
         $client = $clientBuilder->build();
 
-        $this->expectException(Exception::class);
+        $this->expectException(InvalidGreeting::class);
         $this->expectExceptionMessage('Invalid greeting: unable to parse salt.');
 
         $client->connect();

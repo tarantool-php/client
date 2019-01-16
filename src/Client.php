@@ -14,13 +14,13 @@ declare(strict_types=1);
 namespace Tarantool\Client;
 
 use Tarantool\Client\Connection\Connection;
-use Tarantool\Client\Exception\Exception;
+use Tarantool\Client\Exception\RequestFailed;
 use Tarantool\Client\Packer\Packer;
-use Tarantool\Client\Request\AuthenticateRequest;
-use Tarantool\Client\Request\CallRequest;
-use Tarantool\Client\Request\EvaluateRequest;
-use Tarantool\Client\Request\ExecuteRequest;
-use Tarantool\Client\Request\PingRequest;
+use Tarantool\Client\Request\Authenticate;
+use Tarantool\Client\Request\Call;
+use Tarantool\Client\Request\Evaluate;
+use Tarantool\Client\Request\Execute;
+use Tarantool\Client\Request\Ping;
 use Tarantool\Client\Request\Request;
 use Tarantool\Client\Schema\Index;
 use Tarantool\Client\Schema\Space;
@@ -76,7 +76,7 @@ final class Client
             $this->salt = $this->connection->open();
         }
 
-        $request = new AuthenticateRequest($this->salt, $username, $password);
+        $request = new Authenticate($this->salt, $username, $password);
         $this->sendRequest($request);
 
         $this->username = $username;
@@ -87,7 +87,7 @@ final class Client
 
     public function ping() : void
     {
-        $request = new PingRequest();
+        $request = new Ping();
 
         $this->sendRequest($request);
     }
@@ -114,14 +114,14 @@ final class Client
 
     public function call(string $funcName, ...$args) : array
     {
-        $request = new CallRequest($funcName, $args);
+        $request = new Call($funcName, $args);
 
         return $this->sendRequest($request)->getBodyField(IProto::DATA);
     }
 
     public function executeQuery(string $sql, array $params = []) : SqlQueryResult
     {
-        $request = new ExecuteRequest($sql, $params);
+        $request = new Execute($sql, $params);
         $response = $this->sendRequest($request);
 
         return new SqlQueryResult(
@@ -132,14 +132,14 @@ final class Client
 
     public function executeUpdate(string $sql, array $params = []) : int
     {
-        $request = new ExecuteRequest($sql, $params);
+        $request = new Execute($sql, $params);
 
         return $this->sendRequest($request)->getBodyField(IProto::SQL_INFO)[0];
     }
 
     public function evaluate(string $expr, array $args = []) : array
     {
-        $request = new EvaluateRequest($expr, $args);
+        $request = new Evaluate($expr, $args);
 
         return $this->sendRequest($request)->getBodyField(IProto::DATA);
     }
@@ -163,10 +163,7 @@ final class Client
             return $response;
         }
 
-        throw new Exception(
-            $response->getBodyField(IProto::ERROR),
-            $response->getHeaderField(IProto::CODE) & (Response::TYPE_ERROR - 1)
-        );
+        throw RequestFailed::fromErrorResponse($response);
     }
 
     private function getSpaceIdByName(string $spaceName) : int
@@ -175,7 +172,7 @@ final class Client
         $data = $schema->select([$spaceName], Index::SPACE_NAME);
 
         if (empty($data)) {
-            throw new Exception("Space '$spaceName' does not exist");
+            throw RequestFailed::unknownSpace($spaceName);
         }
 
         return $data[0][0];

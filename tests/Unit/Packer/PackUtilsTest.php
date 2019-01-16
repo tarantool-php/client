@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Tarantool\Client\Tests\Unit\Packer;
 
 use PHPUnit\Framework\TestCase;
-use Tarantool\Client\Exception\PackerException;
+use Tarantool\Client\Exception\UnpackingFailed;
 use Tarantool\Client\Packer\PackUtils;
 
 final class PackUtilsTest extends TestCase
@@ -29,7 +29,7 @@ final class PackUtilsTest extends TestCase
 
     public function testUnpackLengthFromMalformedData() : void
     {
-        $this->expectException(PackerException::class);
+        $this->expectException(UnpackingFailed::class);
         $this->expectExceptionMessage('Unable to unpack length value.');
 
         PackUtils::unpackLength('foo');

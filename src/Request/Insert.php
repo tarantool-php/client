@@ -16,7 +16,7 @@ namespace Tarantool\Client\Request;
 use Tarantool\Client\IProto;
 use Tarantool\Client\RequestTypes;
 
-final class ReplaceRequest implements Request
+final class Insert implements Request
 {
     private $spaceId;
     private $values;
@@ -29,7 +29,7 @@ final class ReplaceRequest implements Request
 
     public function getType() : int
     {
-        return RequestTypes::REPLACE;
+        return RequestTypes::INSERT;
     }
 
     public function getBody() : array

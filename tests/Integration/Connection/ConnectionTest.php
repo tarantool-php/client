@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\Connection;
 
-use Tarantool\Client\Exception\ConnectionException;
+use Tarantool\Client\Exception\ConnectionFailed;
 use Tarantool\Client\Tests\GreetingDataProvider;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\FakeServer\FakeServerBuilder;
@@ -98,7 +98,7 @@ final class ConnectionTest extends TestCase
 
         $client = $builder->build();
 
-        $this->expectException(ConnectionException::class);
+        $this->expectException(ConnectionFailed::class);
         $client->connect();
     }
 
@@ -113,7 +113,7 @@ final class ConnectionTest extends TestCase
 
         $client = $builder->build();
 
-        $this->expectException(ConnectionException::class);
+        $this->expectException(ConnectionFailed::class);
         $client->connect();
     }
 
@@ -136,7 +136,7 @@ final class ConnectionTest extends TestCase
 
         try {
             $client->ping();
-        } catch (ConnectionException $e) {
+        } catch (ConnectionFailed $e) {
             if (false !== strpos($e->getMessage(), 'No route to host')) {
                 self::markTestSkipped(sprintf('Unable to route to host %s.', $host));
             }

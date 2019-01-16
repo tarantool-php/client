@@ -16,29 +16,27 @@ namespace Tarantool\Client\Request;
 use Tarantool\Client\IProto;
 use Tarantool\Client\RequestTypes;
 
-final class ExecuteRequest implements Request
+final class Replace implements Request
 {
-    private $sql;
-    private $params;
+    private $spaceId;
+    private $values;
 
-    public function __construct(string $sql, array $params = [])
+    public function __construct(int $spaceId, array $values)
     {
-        $this->sql = $sql;
-        $this->params = $params;
+        $this->spaceId = $spaceId;
+        $this->values = $values;
     }
 
     public function getType() : int
     {
-        return RequestTypes::EXECUTE;
+        return RequestTypes::REPLACE;
     }
 
     public function getBody() : array
     {
-        return empty($this->params) ? [
-            IProto::SQL_TEXT => $this->sql,
-        ] : [
-            IProto::SQL_TEXT => $this->sql,
-            IProto::SQL_BIND => $this->params,
+        return [
+            IProto::SPACE_ID => $this->spaceId,
+            IProto::TUPLE => $this->values,
         ];
     }
 }

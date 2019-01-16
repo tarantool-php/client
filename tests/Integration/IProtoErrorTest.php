@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration;
 
-use Tarantool\Client\Exception\Exception;
+use Tarantool\Client\Exception\RequestFailed;
 
 final class IProtoErrorTest extends TestCase
 {
     public function testExceptionIsThrownOnError() : void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(RequestFailed::class);
         $this->expectExceptionMessage('Foobar.');
         $this->expectExceptionCode(42);
 

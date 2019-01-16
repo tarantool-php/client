@@ -14,15 +14,15 @@ declare(strict_types=1);
 namespace Tarantool\Client\Tests\Unit\Packer;
 
 use Tarantool\Client\Packer\Packer;
-use Tarantool\Client\Packer\PurePacker;
+use Tarantool\Client\Packer\Pure;
 
 /**
  * @requires function MessagePack\Packer::pack
  */
-final class PurePackerTest extends PackerTest
+final class PureTest extends PackerTest
 {
     protected function createPacker() : Packer
     {
-        return new PurePacker();
+        return new Pure();
     }
 }

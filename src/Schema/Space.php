@@ -14,14 +14,14 @@ declare(strict_types=1);
 namespace Tarantool\Client\Schema;
 
 use Tarantool\Client\Client;
-use Tarantool\Client\Exception\Exception;
+use Tarantool\Client\Exception\RequestFailed;
 use Tarantool\Client\IProto;
-use Tarantool\Client\Request\DeleteRequest;
-use Tarantool\Client\Request\InsertRequest;
-use Tarantool\Client\Request\ReplaceRequest;
-use Tarantool\Client\Request\SelectRequest;
-use Tarantool\Client\Request\UpdateRequest;
-use Tarantool\Client\Request\UpsertRequest;
+use Tarantool\Client\Request\Delete;
+use Tarantool\Client\Request\Insert;
+use Tarantool\Client\Request\Replace;
+use Tarantool\Client\Request\Select;
+use Tarantool\Client\Request\Update;
+use Tarantool\Client\Request\Upsert;
 
 final class Space
 {
@@ -49,21 +49,21 @@ final class Space
             $index = $this->getIndexIdByName($index);
         }
 
-        $request = new SelectRequest($this->id, $index, $key, $offset, $limit, $iteratorType);
+        $request = new Select($this->id, $index, $key, $offset, $limit, $iteratorType);
 
         return $this->client->sendRequest($request)->getBodyField(IProto::DATA);
     }
 
     public function insert(array $values) : array
     {
-        $request = new InsertRequest($this->id, $values);
+        $request = new Insert($this->id, $values);
 
         return $this->client->sendRequest($request)->getBodyField(IProto::DATA);
     }
 
     public function replace(array $values) : array
     {
-        $request = new ReplaceRequest($this->id, $values);
+        $request = new Replace($this->id, $values);
 
         return $this->client->sendRequest($request)->getBodyField(IProto::DATA);
     }
@@ -74,14 +74,14 @@ final class Space
             $index = $this->getIndexIdByName($index);
         }
 
-        $request = new UpdateRequest($this->id, $index, $key, $operations);
+        $request = new Update($this->id, $index, $key, $operations);
 
         return $this->client->sendRequest($request)->getBodyField(IProto::DATA);
     }
 
     public function upsert(array $values, array $operations) : array
     {
-        $request = new UpsertRequest($this->id, $values, $operations);
+        $request = new Upsert($this->id, $values, $operations);
 
         return $this->client->sendRequest($request)->getBodyField(IProto::DATA);
     }
@@ -92,7 +92,7 @@ final class Space
             $index = $this->getIndexIdByName($index);
         }
 
-        $request = new DeleteRequest($this->id, $index, $key);
+        $request = new Delete($this->id, $index, $key);
 
         return $this->client->sendRequest($request)->getBodyField(IProto::DATA);
     }
@@ -112,7 +112,7 @@ final class Space
         $data = $schema->select([$this->id, $indexName], Index::INDEX_NAME);
 
         if (empty($data)) {
-            throw new Exception("No index '$indexName' is defined in space #{$this->id}");
+            throw RequestFailed::unknownIndex($indexName, $this->id);
         }
 
         return $this->indexes[$indexName] = $data[0][1];

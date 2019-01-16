@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\Requests;
 
-use Tarantool\Client\Exception\Exception;
+use Tarantool\Client\Exception\RequestFailed;
 use Tarantool\Client\Tests\Integration\TestCase;
 
 final class AuthenticateTest extends TestCase
@@ -45,7 +45,7 @@ final class AuthenticateTest extends TestCase
         try {
             $this->client->authenticate($username, $password);
             $this->fail();
-        } catch (Exception $e) {
+        } catch (RequestFailed $e) {
             self::assertSame($errorMessage, $e->getMessage());
             self::assertSame($errorCode, $e->getCode());
         }
@@ -66,7 +66,7 @@ final class AuthenticateTest extends TestCase
 
         try {
             $this->client->authenticate('user_foo', 'incorrect_password');
-        } catch (Exception $e) {
+        } catch (RequestFailed $e) {
             self::assertSame("Incorrect password supplied for user 'user_foo'", $e->getMessage());
             $this->client->disconnect();
             $this->client->getSpace('space_conn')->select();
@@ -82,7 +82,7 @@ final class AuthenticateTest extends TestCase
         $this->client->authenticate('user_foo', 'foo');
         $this->client->disconnect();
 
-        $this->expectException(Exception::class);
+        $this->expectException(RequestFailed::class);
         $this->expectExceptionMessage("Space 'space_conn' does not exist");
 
         $this->client->getSpace('space_conn');

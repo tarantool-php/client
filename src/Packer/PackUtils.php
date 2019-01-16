@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Packer;
 
-use Tarantool\Client\Exception\PackerException;
+use Tarantool\Client\Exception\UnpackingFailed;
 
 final class PackUtils
 {
@@ -29,7 +29,7 @@ final class PackUtils
     public static function unpackLength(string $data) : int
     {
         if (false === $data = @\unpack('C_/Nlength', $data)) {
-            throw new PackerException('Unable to unpack length value.');
+            throw new UnpackingFailed('Unable to unpack length value.');
         }
 
         return $data['length'];

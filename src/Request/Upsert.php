@@ -16,27 +16,30 @@ namespace Tarantool\Client\Request;
 use Tarantool\Client\IProto;
 use Tarantool\Client\RequestTypes;
 
-final class EvaluateRequest implements Request
+final class Upsert implements Request
 {
-    private $expr;
-    private $args;
+    private $spaceId;
+    private $values;
+    private $operations;
 
-    public function __construct(string $expr, array $args = [])
+    public function __construct(int $spaceId, array $values, array $operations)
     {
-        $this->expr = $expr;
-        $this->args = $args;
+        $this->spaceId = $spaceId;
+        $this->values = $values;
+        $this->operations = $operations;
     }
 
     public function getType() : int
     {
-        return RequestTypes::EVALUATE;
+        return RequestTypes::UPSERT;
     }
 
     public function getBody() : array
     {
         return [
-            IProto::EXPR => $this->expr,
-            IProto::TUPLE => $this->args,
+            IProto::SPACE_ID => $this->spaceId,
+            IProto::TUPLE => $this->values,
+            IProto::OPERATIONS => $this->operations,
         ];
     }
 }

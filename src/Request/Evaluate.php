@@ -13,17 +13,30 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Request;
 
+use Tarantool\Client\IProto;
 use Tarantool\Client\RequestTypes;
 
-final class PingRequest implements Request
+final class Evaluate implements Request
 {
+    private $expr;
+    private $args;
+
+    public function __construct(string $expr, array $args = [])
+    {
+        $this->expr = $expr;
+        $this->args = $args;
+    }
+
     public function getType() : int
     {
-        return RequestTypes::PING;
+        return RequestTypes::EVALUATE;
     }
 
     public function getBody() : array
     {
-        return [];
+        return [
+            IProto::EXPR => $this->expr,
+            IProto::TUPLE => $this->args,
+        ];
     }
 }

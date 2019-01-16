@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\Requests;
 
-use Tarantool\Client\Exception\Exception;
+use Tarantool\Client\Exception\RequestFailed;
 use Tarantool\Client\Tests\Integration\TestCase;
 
 /**
@@ -52,7 +52,7 @@ final class InsertTest extends TestCase
     {
         $space = $this->client->getSpace($spaceName);
 
-        $this->expectException(Exception::class);
+        $this->expectException(RequestFailed::class);
         $this->expectExceptionMessageRegExp('/Tuple field 1 type does not match one required by operation: expected .+/');
         $this->expectExceptionCode(23);
 
@@ -76,7 +76,7 @@ final class InsertTest extends TestCase
     {
         $space = $this->client->getSpace('space_misc');
 
-        $this->expectException(Exception::class);
+        $this->expectException(RequestFailed::class);
         $this->expectExceptionMessage("Duplicate key exists in unique index 'primary' in space 'space_misc'");
         $this->expectExceptionCode(3);
 
