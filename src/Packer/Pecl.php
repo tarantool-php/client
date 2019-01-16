@@ -23,10 +23,10 @@ final class Pecl implements Packer
     private $packer;
     private $unpacker;
 
-    public function __construct()
+    public function __construct(bool $phpOnly = true)
     {
-        $this->packer = new \MessagePack(false);
-        $this->unpacker = new \MessagePackUnpacker(false);
+        $this->packer = new \MessagePack($phpOnly);
+        $this->unpacker = new \MessagePackUnpacker($phpOnly);
     }
 
     public function pack(Request $request, int $sync = null) : string
@@ -57,10 +57,13 @@ final class Pecl implements Packer
         }
 
         $body = $this->unpacker->data();
-        if (!\is_array($body)) {
-            throw UnpackingFailed::invalidResponse();
+        if (\is_array($body)) {
+            return new Response($header, $body);
+        }
+        if ($body instanceof \stdClass) {
+            return new Response($header, (array) $body);
         }
 
-        return new Response($header, $body);
+        throw UnpackingFailed::invalidResponse();
     }
 }

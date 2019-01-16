@@ -11,7 +11,14 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Tarantool\Client\Tests\Integration;
+namespace Tarantool\Client\Tests\Integration\MessagePack;
+
+use MessagePack\BufferUnpacker;
+use MessagePack\Packer;
+use Tarantool\Client\Packer\Pecl;
+use Tarantool\Client\Packer\Pure;
+use Tarantool\Client\Tests\Integration\ClientBuilder;
+use Tarantool\Client\Tests\Integration\TestCase;
 
 /**
  * @eval create_fixtures()
@@ -31,6 +38,7 @@ final class MessagePackTest extends TestCase
     public function providePackUnpackData() : iterable
     {
         return [
+            [[]],
             [42],
             [-42],
             [4.2],
@@ -42,7 +50,9 @@ final class MessagePackTest extends TestCase
             [[1, 2]],
             [[[[1, 2]]]],
             [['foo' => 'bar']],
-            // Object serialization is not yet supported: https://github.com/tarantool/tarantool/issues/465
+            // User defined types (MessagePack extensions) are not yet supported:
+            // https://github.com/tarantool/tarantool/issues/465
+            // [[(object) ['foo' => 'bar']]],
         ];
     }
 
@@ -69,5 +79,27 @@ final class MessagePackTest extends TestCase
         $result = $this->client->evaluate('return func_arg(...)', [$array]);
 
         self::assertEquals([$array], $result, '', 0.0, 5, true);
+    }
+
+    public function testStoringCustomTypeInTuple() : void
+    {
+        $client = ClientBuilder::createFromEnv()
+            ->setPackerPureFactory(function () {
+                return new Pure(
+                    (new Packer())->registerTransformer($t = new DateTimeTransformer(42)),
+                    (new BufferUnpacker())->registerTransformer($t)
+                );
+            })
+            ->setPackerPeclFactory(function () {
+                return new Pecl(true);
+            })
+            ->build();
+
+        $date = new \DateTimeImmutable();
+        $space = $client->getSpace('space_misc');
+        $result = $space->insert([100, 'now', $date]);
+
+        self::assertEquals($date, $result[0][2]);
+        self::assertEquals($date, $space->select([100])[0][2]);
     }
 }
