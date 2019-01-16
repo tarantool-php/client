@@ -25,8 +25,8 @@ use Tarantool\Client\Request\Upsert;
 
 final class Space
 {
-    public const VSPACE = 281;
-    public const VINDEX = 289;
+    public const VSPACE_ID = 281;
+    public const VINDEX_ID = 289;
 
     private $client;
     private $id;
@@ -108,7 +108,7 @@ final class Space
             return $this->indexes[$indexName];
         }
 
-        $schema = $this->client->getSpaceById(self::VINDEX);
+        $schema = $this->client->getSpaceById(self::VINDEX_ID);
         $data = $schema->select([$this->id, $indexName], Index::INDEX_NAME);
 
         if (empty($data)) {

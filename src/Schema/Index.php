@@ -15,9 +15,7 @@ namespace Tarantool\Client\Schema;
 
 final class Index
 {
-    public const SPACE_PRIMARY = 0;
     public const SPACE_NAME = 2;
-    public const INDEX_PRIMARY = 0;
     public const INDEX_NAME = 2;
 
     private function __construct()

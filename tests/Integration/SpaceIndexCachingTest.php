@@ -19,7 +19,7 @@ final class SpaceIndexCachingTest extends TestCase
 {
     public function testCacheIndex() : void
     {
-        $space = $this->client->getSpaceById(Space::VINDEX);
+        $space = $this->client->getSpaceById(Space::VINDEX_ID);
         $total = self::getTotalSelectCalls();
 
         $space->flushIndexes();
@@ -31,7 +31,7 @@ final class SpaceIndexCachingTest extends TestCase
 
     public function testFlushIndexes() : void
     {
-        $space = $this->client->getSpaceById(Space::VINDEX);
+        $space = $this->client->getSpaceById(Space::VINDEX_ID);
         $total = self::getTotalSelectCalls();
 
         $space->flushIndexes();

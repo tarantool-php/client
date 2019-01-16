@@ -168,7 +168,7 @@ final class Client
 
     private function getSpaceIdByName(string $spaceName) : int
     {
-        $schema = $this->getSpaceById(Space::VSPACE);
+        $schema = $this->getSpaceById(Space::VSPACE_ID);
         $data = $schema->select([$spaceName], Index::SPACE_NAME);
 
         if (empty($data)) {

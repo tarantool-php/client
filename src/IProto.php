@@ -28,9 +28,6 @@ final class IProto
     public const TUPLE = 0x21;
     public const FUNCTION_NAME = 0x22;
     public const USER_NAME = 0x23;
-    public const SERVER_UUID = 0x24;
-    public const CLUSTER_UUID = 0x25;
-    public const VCLOCK = 0x26;
     public const EXPR = 0x27;
     public const OPERATIONS = 0x28;
     public const DATA = 0x30;
