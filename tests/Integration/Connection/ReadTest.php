@@ -18,9 +18,6 @@ use Tarantool\Client\Packer\PackUtils;
 use Tarantool\Client\Tests\GreetingDataProvider;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\FakeServer\FakeServerBuilder;
-use Tarantool\Client\Tests\Integration\FakeServer\Handler\ChainHandler;
-use Tarantool\Client\Tests\Integration\FakeServer\Handler\NoopHandler;
-use Tarantool\Client\Tests\Integration\FakeServer\Handler\ReadHandler;
 use Tarantool\Client\Tests\Integration\FakeServer\Handler\SocketDelayHandler;
 use Tarantool\Client\Tests\Integration\FakeServer\Handler\WriteHandler;
 use Tarantool\Client\Tests\Integration\TestCase;
@@ -39,7 +36,7 @@ final class ReadTest extends TestCase
     {
         $clientBuilder = ClientBuilder::createFromEnvForTheFakeServer();
 
-        FakeServerBuilder::create(new NoopHandler())
+        FakeServerBuilder::create()
             ->setUri($clientBuilder->getUri())
             ->start();
 
@@ -48,36 +45,7 @@ final class ReadTest extends TestCase
         $this->expectException(CommunicationFailed::class);
         $this->expectExceptionMessage('Unable to read greeting.');
 
-        $client->connect();
-    }
-
-    public function testSocketReadTimedOut() : void
-    {
-        $socketTimeout = 2;
-
-        $clientBuilder = ClientBuilder::createFromEnvForTheFakeServer();
-        $clientBuilder->setConnectionOptions(['socket_timeout' => $socketTimeout]);
-
-        FakeServerBuilder::create(new SocketDelayHandler($socketTimeout + 2))
-            ->setUri($clientBuilder->getUri())
-            ->start();
-
-        $client = $clientBuilder->build();
-
-        $start = microtime(true);
-
-        try {
-            $client->ping();
-        } catch (CommunicationFailed $e) {
-            $time = microtime(true) - $start;
-            self::assertSame('Read timed out.', $e->getMessage());
-            self::assertGreaterThanOrEqual($socketTimeout, $time);
-            self::assertLessThanOrEqual($socketTimeout + 0.1, $time);
-
-            return;
-        }
-
-        $this->fail();
+        $client->ping();
     }
 
     public function testUnableToReadResponseLength() : void
@@ -85,10 +53,7 @@ final class ReadTest extends TestCase
         $clientBuilder = ClientBuilder::createFromEnvForTheFakeServer();
 
         FakeServerBuilder::create(
-            new ChainHandler([
-                new WriteHandler(GreetingDataProvider::generateGreeting()),
-                new ReadHandler(1),
-            ])
+            new WriteHandler(GreetingDataProvider::generateGreeting())
         )
             ->setUri($clientBuilder->getUri())
             ->start();
@@ -107,11 +72,8 @@ final class ReadTest extends TestCase
         $clientBuilder->setConnectionOptions(['socket_timeout' => 1]);
 
         FakeServerBuilder::create(
-            new ChainHandler([
-                new WriteHandler(GreetingDataProvider::generateGreeting()),
-                new ReadHandler(1),
-                new SocketDelayHandler(2),
-            ])
+            new WriteHandler(GreetingDataProvider::generateGreeting()),
+            new SocketDelayHandler(2)
         )
             ->setUri($clientBuilder->getUri())
             ->start();
@@ -129,11 +91,8 @@ final class ReadTest extends TestCase
         $clientBuilder = ClientBuilder::createFromEnvForTheFakeServer();
 
         FakeServerBuilder::create(
-            new ChainHandler([
-                new WriteHandler(GreetingDataProvider::generateGreeting()),
-                new ReadHandler(1),
-                new WriteHandler(PackUtils::packLength(42)),
-            ])
+            new WriteHandler(GreetingDataProvider::generateGreeting()),
+            new WriteHandler(PackUtils::packLength(42))
         )
             ->setUri($clientBuilder->getUri())
             ->start();
@@ -146,28 +105,27 @@ final class ReadTest extends TestCase
         $client->ping();
     }
 
-    public function testReadResponseTimedOut() : void
+    public function testSocketReadTimedOut() : void
     {
-        $clientBuilder = ClientBuilder::createFromEnvForTheFakeServer();
-        $clientBuilder->setConnectionOptions(['socket_timeout' => 1]);
+        $socketTimeout = 1;
 
-        FakeServerBuilder::create(
-            new ChainHandler([
-                new WriteHandler(GreetingDataProvider::generateGreeting()),
-                new ReadHandler(1),
-                new WriteHandler(PackUtils::packLength(42)),
-                new ReadHandler(1),
-                new SocketDelayHandler(2),
-            ])
-        )
-            ->setUri($clientBuilder->getUri())
-            ->start();
+        $client = ClientBuilder::createFromEnv()
+            ->setConnectionOptions(['socket_timeout' => $socketTimeout])
+            ->build();
 
-        $client = $clientBuilder->build();
+        $start = microtime(true);
 
-        $this->expectException(CommunicationFailed::class);
-        $this->expectExceptionMessage('Read timed out.');
+        try {
+            $client->evaluate('require("fiber").sleep(2)');
+        } catch (CommunicationFailed $e) {
+            $time = microtime(true) - $start;
+            self::assertSame('Read timed out.', $e->getMessage());
+            self::assertGreaterThanOrEqual($socketTimeout, $time);
+            self::assertLessThanOrEqual($socketTimeout + 0.1, $time);
 
-        $client->ping();
+            return;
+        }
+
+        self::fail();
     }
 }

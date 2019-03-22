@@ -18,7 +18,7 @@ use Tarantool\Client\IProto;
 use Tarantool\Client\Request\Request;
 use Tarantool\Client\Response;
 
-final class Pecl implements Packer
+final class PeclPacker implements Packer
 {
     private $packer;
     private $unpacker;
@@ -29,7 +29,7 @@ final class Pecl implements Packer
         $this->unpacker = new \MessagePackUnpacker($phpOnly);
     }
 
-    public function pack(Request $request, int $sync = null) : string
+    public function pack(Request $request, ?int $sync = null) : string
     {
         // @see https://github.com/msgpack/msgpack-php/issues/45
         $content = \pack('C*', 0x82, IProto::CODE, $request->getType(), IProto::SYNC).

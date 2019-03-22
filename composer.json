@@ -15,13 +15,16 @@
     },
     "require-dev": {
         "ext-msgpack": "*",
+        "ext-socket": "*",
         "friendsofphp/php-cs-fixer": "^2.14",
         "phpunit/phpunit": "^7.1",
-        "rybakit/msgpack": "@dev"
+        "psr/log": "^1.1",
+        "rybakit/msgpack": "^0.5.4"
     },
     "suggest": {
         "ext-msgpack": "For using Pecl packer",
-        "rybakit/msgpack": "For using Pure packer (version 0.5.1 and above is required)"
+        "rybakit/msgpack": "For using Pure packer (version 0.5.1 and above is required)",
+        "psr/log": "For using LoggingMiddleware"
     },
     "autoload": {
         "psr-4": {

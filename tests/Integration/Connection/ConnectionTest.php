@@ -13,34 +13,21 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\Connection;
 
+use Tarantool\Client\Exception\CommunicationFailed;
 use Tarantool\Client\Exception\ConnectionFailed;
-use Tarantool\Client\Tests\GreetingDataProvider;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
-use Tarantool\Client\Tests\Integration\FakeServer\FakeServerBuilder;
-use Tarantool\Client\Tests\Integration\FakeServer\Handler\ChainHandler;
-use Tarantool\Client\Tests\Integration\FakeServer\Handler\SocketDelayHandler;
-use Tarantool\Client\Tests\Integration\FakeServer\Handler\WriteHandler;
 use Tarantool\Client\Tests\Integration\TestCase;
 
 final class ConnectionTest extends TestCase
 {
     /**
-     * @doesNotPerformAssertions
-     */
-    public function testConnect() : void
-    {
-        $this->client->connect();
-        $this->client->ping();
-    }
-
-    /**
      * @dataProvider provideAutoConnectData
      * @doesNotPerformAssertions
      */
-    public function testAutoConnect(string $methodName, array $methodArgs, string $space = null) : void
+    public function testAutoConnect(string $methodName, array $methodArgs, ?string $space = null) : void
     {
         $object = $space ? $this->client->getSpace($space) : $this->client;
-        $this->client->disconnect();
+        $this->client->getHandler()->getConnection()->close();
 
         $object->$methodName(...$methodArgs);
     }
@@ -60,31 +47,41 @@ final class ConnectionTest extends TestCase
         ];
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testCreateManyConnections() : void
-    {
-        $clientBuilder = ClientBuilder::createFromEnv();
-
-        for ($i = 10; $i; --$i) {
-            $clientBuilder->build()->connect();
-        }
-    }
-
-    /**
-     * @doesNotPerformAssertions
-     */
     public function testMultipleConnect() : void
     {
-        $this->client->connect();
-        $this->client->connect();
+        $conn = $this->client->getHandler()->getConnection();
+
+        self::assertTrue($conn->isClosed());
+
+        $conn->open();
+        self::assertFalse($conn->isClosed());
+
+        $conn->open();
+        self::assertFalse($conn->isClosed());
     }
 
     public function tesMultipleDisconnect() : void
     {
-        $this->client->disconnect();
-        $this->client->disconnect();
+        $conn = $this->client->getHandler()->getConnection();
+
+        $conn->open();
+        self::assertFalse($conn->isClosed());
+
+        $conn->close();
+        self::assertTrue($conn->isClosed());
+
+        $conn->close();
+        self::assertTrue($conn->isClosed());
+    }
+
+    public function testRegenerateSalt() : void
+    {
+        $conn = $this->client->getHandler()->getConnection();
+
+        $salt1 = $conn->open();
+        $salt2 = $conn->open();
+
+        self::assertNotSame($salt1, $salt2);
     }
 
     public function testConnectInvalidHost() : void
@@ -99,7 +96,7 @@ final class ConnectionTest extends TestCase
         $client = $builder->build();
 
         $this->expectException(ConnectionFailed::class);
-        $client->connect();
+        $client->ping();
     }
 
     public function testConnectInvalidPort() : void
@@ -114,7 +111,7 @@ final class ConnectionTest extends TestCase
         $client = $builder->build();
 
         $this->expectException(ConnectionFailed::class);
-        $client->connect();
+        $client->ping();
     }
 
     public function testConnectTimedOut() : void
@@ -149,30 +146,20 @@ final class ConnectionTest extends TestCase
             return;
         }
 
-        $this->fail();
+        self::fail();
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
     public function testConnectionRetry() : void
     {
-        $clientBuilder = ClientBuilder::createFromEnvForTheFakeServer();
-        $clientBuilder->setConnectionOptions([
-            'socket_timeout' => 2,
-            'retries' => 1,
-        ]);
+        $clientBuilder = ClientBuilder::createFromEnv();
+        $clientBuilder->setConnectionOptions(['socket_timeout' => 1]);
+
         $client = $clientBuilder->build();
+        $retryableClient = $clientBuilder->setOptions(['max_retries' => 1])->build();
 
-        FakeServerBuilder::create(
-            new ChainHandler([
-                new SocketDelayHandler(3, true),
-                new WriteHandler(GreetingDataProvider::generateGreeting()),
-            ])
-        )
-            ->setUri($clientBuilder->getUri())
-            ->start();
+        $retryableClient->evaluate('require("fiber").sleep(2)');
 
-        $client->connect();
+        $this->expectException(CommunicationFailed::class);
+        $client->evaluate('require("fiber").sleep(2)');
     }
 }

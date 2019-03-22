@@ -21,7 +21,8 @@ final class WriteTest extends TestCase
 {
     public function testSendMalformedRequest() : void
     {
-        $conn = $this->client->getConnection();
+        $handler = $this->client->getHandler();
+        $conn = $handler->getConnection();
 
         $data = 'malformed';
         $data = PackUtils::packLength(strlen($data)).$data;
@@ -29,9 +30,9 @@ final class WriteTest extends TestCase
         $conn->open();
         $data = $conn->send($data);
 
-        $rawResponse = $this->client->getPacker()->unpack($data);
+        $response = $handler->getPacker()->unpack($data);
 
-        self::assertTrue($rawResponse->isError());
-        self::assertSame('Invalid MsgPack - packet header', $rawResponse->getBodyField(IProto::ERROR));
+        self::assertTrue($response->isError());
+        self::assertSame('Invalid MsgPack - packet header', $response->getBodyField(IProto::ERROR));
     }
 }

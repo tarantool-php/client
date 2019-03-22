@@ -18,19 +18,17 @@ use Tarantool\Client\Exception\ConnectionFailed;
 use Tarantool\Client\IProto;
 use Tarantool\Client\Packer\PackUtils;
 
-final class Stream implements Connection
+final class StreamConnection implements Connection
 {
-    private const DEFAULT_URI = 'tcp://127.0.0.1:3301';
+    public const DEFAULT_URI = 'tcp://127.0.0.1:3301';
 
+    private $stream;
     private $uri;
-
     private $options = [
         'connect_timeout' => 5,
         'socket_timeout' => 5,
         'tcp_nodelay' => true,
     ];
-
-    private $stream;
 
     public function __construct(string $uri = self::DEFAULT_URI, array $options = [])
     {

@@ -19,10 +19,10 @@ class SocketDelayHandler implements Handler
     private $once;
     private $disabled = false;
 
-    public function __construct($socketDelay, $once = null)
+    public function __construct(int $socketDelay, bool $once = false)
     {
         $this->socketDelay = $socketDelay;
-        $this->once = (bool) $once;
+        $this->once = $once;
     }
 
     public function __invoke($conn, string $sid) : ?bool

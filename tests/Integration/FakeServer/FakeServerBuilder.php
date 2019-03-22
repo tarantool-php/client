@@ -13,18 +13,21 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\FakeServer;
 
+use Tarantool\Client\Tests\Integration\FakeServer\Handler\ChainHandler;
 use Tarantool\Client\Tests\Integration\FakeServer\Handler\Handler;
+use Tarantool\Client\Tests\Integration\FakeServer\Handler\NoopHandler;
 
 final class FakeServerBuilder
 {
     private $handler;
     private $uri = 'tcp://0.0.0.0:8000';
     private $ttl = 5;
-    private $logFile = '/tmp/fake_server.log';
+    private $logFile;
 
     public function __construct(Handler $handler)
     {
         $this->handler = $handler;
+        $this->logFile = sys_get_temp_dir().'/tarantool_php_client_fake_server.log';
     }
 
     public function setUri(string $uri) : self
@@ -73,7 +76,9 @@ final class FakeServerBuilder
 
         $stopTime = time() + 5;
         while (time() < $stopTime) {
-            if (@stream_socket_client($this->uri)) {
+            if ($stream = @stream_socket_client($this->uri.'/is_alive')) {
+                fclose($stream);
+
                 return;
             }
             usleep(100);
@@ -82,8 +87,14 @@ final class FakeServerBuilder
         throw new \RuntimeException("Unable to connect to the fake server ($this->uri).");
     }
 
-    public static function create(Handler $handler) : self
+    public static function create(Handler ...$handlers) : self
     {
-        return new self($handler);
+        if (!$handlers) {
+            return new self(new NoopHandler());
+        }
+
+        return count($handlers) > 1
+            ? new self(new ChainHandler($handlers))
+            : new self($handlers[0]);
     }
 }

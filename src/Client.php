@@ -13,83 +13,110 @@ declare(strict_types=1);
 
 namespace Tarantool\Client;
 
-use Tarantool\Client\Connection\Connection;
+use Tarantool\Client\Connection\StreamConnection;
 use Tarantool\Client\Exception\RequestFailed;
-use Tarantool\Client\Packer\Packer;
-use Tarantool\Client\Request\Authenticate;
+use Tarantool\Client\Handler\DefaultHandler;
+use Tarantool\Client\Handler\Handler;
+use Tarantool\Client\Handler\MiddlewareHandler;
+use Tarantool\Client\Middleware\AuthMiddleware;
+use Tarantool\Client\Middleware\Middleware;
+use Tarantool\Client\Middleware\RetryMiddleware;
+use Tarantool\Client\Packer\PurePacker;
 use Tarantool\Client\Request\Call;
 use Tarantool\Client\Request\Evaluate;
 use Tarantool\Client\Request\Execute;
 use Tarantool\Client\Request\Ping;
-use Tarantool\Client\Request\Request;
 use Tarantool\Client\Schema\Index;
 use Tarantool\Client\Schema\Space;
 
 final class Client
 {
-    private $connection;
-    private $packer;
-    private $salt;
-    private $username;
-    private $password;
+    private $handler;
     private $spaces = [];
 
-    public function __construct(Connection $connection, Packer $packer)
+    public function __construct(Handler $handler)
     {
-        $this->connection = $connection;
-        $this->packer = $packer;
+        $this->handler = $handler;
     }
 
-    public function getConnection() : Connection
+    public static function fromDefaults() : self
     {
-        return $this->connection;
+        return new self(new DefaultHandler(
+            new StreamConnection(),
+            new PurePacker()
+        ));
     }
 
-    public function getPacker() : Packer
+    public static function fromOptions(array $options) : self
     {
-        return $this->packer;
-    }
+        $connectionOptions = [];
 
-    public function connect() : void
-    {
-        $this->salt = $this->connection->open();
-
-        if ($this->username) {
-            $this->authenticate($this->username, $this->password);
+        if (isset($options['connect_timeout'])) {
+            $connectionOptions['connect_timeout'] = $options['connect_timeout'];
         }
-    }
-
-    public function disconnect() : void
-    {
-        $this->connection->close();
-        $this->salt = null;
-    }
-
-    public function isDisconnected() : bool
-    {
-        return $this->connection->isClosed() || !$this->salt;
-    }
-
-    public function authenticate(string $username, string $password = '') : void
-    {
-        if ($this->isDisconnected()) {
-            $this->salt = $this->connection->open();
+        if (isset($options['socket_timeout'])) {
+            $connectionOptions['socket_timeout'] = $options['socket_timeout'];
+        }
+        if (isset($options['tcp_nodelay'])) {
+            $connectionOptions['tcp_nodelay'] = $options['tcp_nodelay'];
         }
 
-        $request = new Authenticate($this->salt, $username, $password);
-        $this->sendRequest($request);
+        $handler = new DefaultHandler(
+            new StreamConnection($options['uri'] ?? StreamConnection::DEFAULT_URI, $connectionOptions),
+            new PurePacker()
+        );
 
-        $this->username = $username;
-        $this->password = $password;
+        if (isset($options['username'])) {
+            $handler = new MiddlewareHandler(
+                new AuthMiddleware($options['username'], $options['password'] ?? ''),
+                $handler
+            );
+        }
+        if (isset($options['max_retries'])) {
+            $handler = new MiddlewareHandler(
+                RetryMiddleware::linear($options['max_retries']),
+                $handler
+            );
+        }
 
-        $this->flushSpaces();
+        return new self($handler);
+    }
+
+    public static function fromDsn(string $dsn) : self
+    {
+        $dsn = Dsn::parse($dsn);
+
+        return self::fromOptions([
+            'uri' => $dsn->getConnectionUri(),
+            'connect_timeout' => $dsn->getInt('connect_timeout'),
+            'socket_timeout' => $dsn->getInt('socket_timeout'),
+            'tcp_nodelay' => $dsn->getBool('tcp_nodelay'),
+            'username' => $dsn->getUsername(),
+            'password' => $dsn->getPassword(),
+            'max_retries' => $dsn->getInt('max_retries'),
+        ]);
+    }
+
+    public function withMiddleware(Middleware $middleware, Middleware ...$middlewares) : self
+    {
+        $new = clone $this;
+        $new->handler = new MiddlewareHandler($middleware, $this->handler);
+
+        if ($middlewares) {
+            $new->handler = MiddlewareHandler::create($new->handler, $middlewares);
+        }
+
+        return $new;
+    }
+
+    public function getHandler() : Handler
+    {
+        return $this->handler;
     }
 
     public function ping() : void
     {
-        $request = new Ping();
-
-        $this->sendRequest($request);
+        $this->handler->handle(new Ping());
     }
 
     public function getSpace(string $spaceName) : Space
@@ -100,7 +127,7 @@ final class Client
 
         $spaceId = $this->getSpaceIdByName($spaceName);
 
-        return $this->spaces[$spaceName] = $this->spaces[$spaceId] = new Space($this, $spaceId);
+        return $this->spaces[$spaceName] = $this->spaces[$spaceId] = new Space($this->handler, $spaceId);
     }
 
     public function getSpaceById(int $spaceId) : Space
@@ -109,20 +136,20 @@ final class Client
             return $this->spaces[$spaceId];
         }
 
-        return $this->spaces[$spaceId] = new Space($this, $spaceId);
+        return $this->spaces[$spaceId] = new Space($this->handler, $spaceId);
     }
 
     public function call(string $funcName, ...$args) : array
     {
         $request = new Call($funcName, $args);
 
-        return $this->sendRequest($request)->getBodyField(IProto::DATA);
+        return $this->handler->handle($request)->getBodyField(IProto::DATA);
     }
 
     public function executeQuery(string $sql, array $params = []) : SqlQueryResult
     {
         $request = new Execute($sql, $params);
-        $response = $this->sendRequest($request);
+        $response = $this->handler->handle($request);
 
         return new SqlQueryResult(
             $response->getBodyField(IProto::DATA),
@@ -134,36 +161,19 @@ final class Client
     {
         $request = new Execute($sql, $params);
 
-        return $this->sendRequest($request)->getBodyField(IProto::SQL_INFO)[0];
+        return $this->handler->handle($request)->getBodyField(IProto::SQL_INFO)[0];
     }
 
     public function evaluate(string $expr, ...$args) : array
     {
         $request = new Evaluate($expr, $args);
 
-        return $this->sendRequest($request)->getBodyField(IProto::DATA);
+        return $this->handler->handle($request)->getBodyField(IProto::DATA);
     }
 
     public function flushSpaces() : void
     {
         $this->spaces = [];
-    }
-
-    public function sendRequest(Request $request) : Response
-    {
-        if ($this->connection->isClosed()) {
-            $this->connect();
-        }
-
-        $data = $this->packer->pack($request);
-        $data = $this->connection->send($data);
-
-        $response = $this->packer->unpack($data);
-        if (!$response->isError()) {
-            return $response;
-        }
-
-        throw RequestFailed::fromErrorResponse($response);
     }
 
     private function getSpaceIdByName(string $spaceName) : int

@@ -33,7 +33,7 @@ final class TcpNoDelayTest extends TestCase
         $client = $builder->build();
         $client->ping();
 
-        $conn = $client->getConnection();
+        $conn = $client->getHandler()->getConnection();
         $prop = (new \ReflectionObject($conn))->getProperty('stream');
         $prop->setAccessible(true);
 
@@ -53,7 +53,7 @@ final class TcpNoDelayTest extends TestCase
         $client = $builder->build();
         $client->ping();
 
-        $conn = $client->getConnection();
+        $conn = $client->getHandler()->getConnection();
         $prop = (new \ReflectionObject($conn))->getProperty('stream');
         $prop->setAccessible(true);
 

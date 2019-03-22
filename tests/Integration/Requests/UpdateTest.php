@@ -96,7 +96,7 @@ final class UpdateTest extends TestCase
 
         try {
             $space->update([1], [$operation]);
-            $this->fail();
+            self::fail();
         } catch (RequestFailed $e) {
             self::assertSame($errorMessage, $e->getMessage());
             self::assertSame($errorCode, $e->getCode());

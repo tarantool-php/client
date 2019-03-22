@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Schema;
 
-use Tarantool\Client\Client;
 use Tarantool\Client\Exception\RequestFailed;
+use Tarantool\Client\Handler\Handler;
 use Tarantool\Client\IProto;
 use Tarantool\Client\Request\Delete;
 use Tarantool\Client\Request\Insert;
@@ -28,13 +28,13 @@ final class Space
     public const VSPACE_ID = 281;
     public const VINDEX_ID = 289;
 
-    private $client;
+    private $handler;
     private $id;
     private $indexes = [];
 
-    public function __construct(Client $client, int $id)
+    public function __construct(Handler $handler, int $id)
     {
-        $this->client = $client;
+        $this->handler = $handler;
         $this->id = $id;
     }
 
@@ -51,21 +51,21 @@ final class Space
 
         $request = new Select($this->id, $index, $key, $offset, $limit, $iteratorType);
 
-        return $this->client->sendRequest($request)->getBodyField(IProto::DATA);
+        return $this->handler->handle($request)->getBodyField(IProto::DATA);
     }
 
     public function insert(array $values) : array
     {
         $request = new Insert($this->id, $values);
 
-        return $this->client->sendRequest($request)->getBodyField(IProto::DATA);
+        return $this->handler->handle($request)->getBodyField(IProto::DATA);
     }
 
     public function replace(array $values) : array
     {
         $request = new Replace($this->id, $values);
 
-        return $this->client->sendRequest($request)->getBodyField(IProto::DATA);
+        return $this->handler->handle($request)->getBodyField(IProto::DATA);
     }
 
     public function update(array $key, array $operations, $index = 0) : array
@@ -76,14 +76,14 @@ final class Space
 
         $request = new Update($this->id, $index, $key, $operations);
 
-        return $this->client->sendRequest($request)->getBodyField(IProto::DATA);
+        return $this->handler->handle($request)->getBodyField(IProto::DATA);
     }
 
     public function upsert(array $values, array $operations) : array
     {
         $request = new Upsert($this->id, $values, $operations);
 
-        return $this->client->sendRequest($request)->getBodyField(IProto::DATA);
+        return $this->handler->handle($request)->getBodyField(IProto::DATA);
     }
 
     public function delete(array $key, $index = 0) : array
@@ -94,7 +94,7 @@ final class Space
 
         $request = new Delete($this->id, $index, $key);
 
-        return $this->client->sendRequest($request)->getBodyField(IProto::DATA);
+        return $this->handler->handle($request)->getBodyField(IProto::DATA);
     }
 
     public function flushIndexes() : void
@@ -108,7 +108,7 @@ final class Space
             return $this->indexes[$indexName];
         }
 
-        $schema = $this->client->getSpaceById(self::VINDEX_ID);
+        $schema = new self($this->handler, self::VINDEX_ID);
         $data = $schema->select([$this->id, $indexName], Index::INDEX_NAME);
 
         if (empty($data)) {

@@ -17,7 +17,7 @@ class WriteHandler implements Handler
 {
     private $data;
 
-    public function __construct($data)
+    public function __construct(string $data)
     {
         $this->data = $data;
     }

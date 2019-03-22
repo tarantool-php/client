@@ -11,9 +11,13 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Tarantool\Client\Tests\Integration\FakeServer\Handler;
+namespace Tarantool\Client\Middleware;
 
-interface Handler
+use Tarantool\Client\Handler\Handler;
+use Tarantool\Client\Request\Request;
+use Tarantool\Client\Response;
+
+interface Middleware
 {
-    public function __invoke($conn, string $sid) : ?bool;
+    public function process(Request $request, Handler $handler) : Response;
 }

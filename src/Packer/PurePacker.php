@@ -22,18 +22,18 @@ use Tarantool\Client\Packer\Packer as ClientPacker;
 use Tarantool\Client\Request\Request;
 use Tarantool\Client\Response;
 
-final class Pure implements ClientPacker
+final class PurePacker implements ClientPacker
 {
     private $packer;
     private $unpacker;
 
-    public function __construct(Packer $packer = null, BufferUnpacker $unpacker = null)
+    public function __construct(?Packer $packer = null, ?BufferUnpacker $unpacker = null)
     {
         $this->packer = $packer ?: new Packer();
         $this->unpacker = $unpacker ?: new BufferUnpacker();
     }
 
-    public function pack(Request $request, int $sync = null) : string
+    public function pack(Request $request, ?int $sync = null) : string
     {
         $content = $this->packer->packMapHeader(2).
             $this->packer->packInt(IProto::CODE).

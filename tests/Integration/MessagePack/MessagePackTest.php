@@ -15,8 +15,8 @@ namespace Tarantool\Client\Tests\Integration\MessagePack;
 
 use MessagePack\BufferUnpacker;
 use MessagePack\Packer;
-use Tarantool\Client\Packer\Pecl;
-use Tarantool\Client\Packer\Pure;
+use Tarantool\Client\Packer\PeclPacker;
+use Tarantool\Client\Packer\PurePacker;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\TestCase;
 
@@ -85,13 +85,13 @@ final class MessagePackTest extends TestCase
     {
         $client = ClientBuilder::createFromEnv()
             ->setPackerPureFactory(function () {
-                return new Pure(
+                return new PurePacker(
                     (new Packer())->registerTransformer($t = new DateTimeTransformer(42)),
                     (new BufferUnpacker())->registerTransformer($t)
                 );
             })
             ->setPackerPeclFactory(function () {
-                return new Pecl(true);
+                return new PeclPacker(true);
             })
             ->build();
 

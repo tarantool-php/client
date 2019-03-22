@@ -14,15 +14,15 @@ declare(strict_types=1);
 namespace Tarantool\Client\Tests\Unit\Packer;
 
 use Tarantool\Client\Packer\Packer;
-use Tarantool\Client\Packer\Pecl;
+use Tarantool\Client\Packer\PeclPacker;
 
 /**
  * @requires extension msgpack
  */
-final class PeclTest extends PackerTest
+final class PeclPackerTest extends PackerTest
 {
     protected function createPacker() : Packer
     {
-        return new Pecl();
+        return new PeclPacker();
     }
 }

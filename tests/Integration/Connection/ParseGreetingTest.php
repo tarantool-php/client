@@ -36,7 +36,7 @@ final class ParseGreetingTest extends TestCase
         $client = $clientBuilder->build();
 
         try {
-            $client->connect();
+            $client->ping();
         } catch (CommunicationFailed $e) {
             self::assertSame('Unable to read greeting.', $e->getMessage());
 
@@ -47,7 +47,7 @@ final class ParseGreetingTest extends TestCase
             return;
         }
 
-        $this->fail();
+        self::fail();
     }
 
     /**
@@ -66,6 +66,6 @@ final class ParseGreetingTest extends TestCase
         $this->expectException(InvalidGreeting::class);
         $this->expectExceptionMessage('Invalid greeting: unable to parse salt.');
 
-        $client->connect();
+        $client->ping();
     }
 }

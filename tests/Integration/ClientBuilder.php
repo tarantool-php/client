@@ -15,11 +15,14 @@ namespace Tarantool\Client\Tests\Integration;
 
 use Tarantool\Client\Client;
 use Tarantool\Client\Connection\Connection;
-use Tarantool\Client\Connection\Retryable;
-use Tarantool\Client\Connection\Stream;
+use Tarantool\Client\Connection\StreamConnection;
+use Tarantool\Client\Handler\DefaultHandler;
+use Tarantool\Client\Handler\MiddlewareHandler;
+use Tarantool\Client\Middleware\AuthMiddleware;
+use Tarantool\Client\Middleware\RetryMiddleware;
 use Tarantool\Client\Packer\Packer;
-use Tarantool\Client\Packer\Pecl;
-use Tarantool\Client\Packer\Pure;
+use Tarantool\Client\Packer\PeclPacker;
+use Tarantool\Client\Packer\PurePacker;
 
 final class ClientBuilder
 {
@@ -33,6 +36,7 @@ final class ClientBuilder
     private $packerPureFactory;
     private $packerPeclFactory;
     private $uri;
+    private $options = [];
     private $connectionOptions = [];
 
     public function setPacker(string $packer) : self
@@ -52,6 +56,13 @@ final class ClientBuilder
     public function setPackerPeclFactory(\Closure $factory) : self
     {
         $this->packerPeclFactory = $factory;
+
+        return $this;
+    }
+
+    public function setOptions(array $options) : self
+    {
+        $this->options = $options;
 
         return $this;
     }
@@ -104,8 +115,18 @@ final class ClientBuilder
     {
         $connection = $this->createConnection();
         $packer = $this->createPacker();
+        $handler = new DefaultHandler($connection, $packer);
 
-        return new Client($connection, $packer);
+        $middlewares = [];
+        if (isset($this->options['username'])) {
+            $middlewares[] = new AuthMiddleware($this->options['username'], $this->options['password'] ?? '');
+        }
+
+        if (isset($this->options['max_retries'])) {
+            $middlewares[] = RetryMiddleware::linear($this->options['max_retries']);
+        }
+
+        return new Client(MiddlewareHandler::create($handler, $middlewares));
     }
 
     public static function createFromEnv() : self
@@ -135,28 +156,17 @@ final class ClientBuilder
             throw new \LogicException('Connection URI is not set.');
         }
 
-        $options = $this->connectionOptions;
-
-        if (isset($options['retries'])) {
-            $retries = $options['retries'];
-            unset($options['retries']);
-
-            $conn = new Stream($this->uri, $options);
-
-            return new Retryable($conn, $retries);
-        }
-
-        return new Stream($this->uri, $options);
+        return new StreamConnection($this->uri, $this->connectionOptions);
     }
 
     private function createPacker() : Packer
     {
         if (self::PACKER_PURE === $this->packer) {
-            return $this->packerPureFactory ? ($this->packerPureFactory)() : new Pure();
+            return $this->packerPureFactory ? ($this->packerPureFactory)() : new PurePacker();
         }
 
         if (self::PACKER_PECL === $this->packer) {
-            return $this->packerPeclFactory ? ($this->packerPeclFactory)() : new Pecl();
+            return $this->packerPeclFactory ? ($this->packerPeclFactory)() : new PeclPacker();
         }
 
         throw new \UnexpectedValueException(sprintf('"%s" packer is not supported.', $this->packer));

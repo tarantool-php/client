@@ -50,7 +50,7 @@ final class GreetingDataProvider
         ];
     }
 
-    public static function generateGreeting(string $salt = null) : string
+    public static function generateGreeting(?string $salt = null) : string
     {
         $salt = $salt ?: substr(md5(uniqid()), 0, 20);
 

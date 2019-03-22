@@ -14,96 +14,62 @@ declare(strict_types=1);
 namespace Tarantool\Client\Tests\Integration\Requests;
 
 use Tarantool\Client\Exception\RequestFailed;
+use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\TestCase;
 
 final class AuthenticateTest extends TestCase
 {
     /**
-     * @dataProvider provideValidCredentials
      * @doesNotPerformAssertions
+     * @testWith
+     * ["guest", ""]
+     * ["user_foo", "foo"]
+     * ["user_empty", ""]
+     * ["user_big", "123456789012345678901234567890123456789012345678901234567890"]
      */
-    public function testAuthenticateWithValidCredentials(string $username, ?string $password) : void
+    public function testAuthenticateWithValidCredentials(string $username, string $password) : void
     {
-        $this->client->authenticate($username, $password);
-    }
+        $client = ClientBuilder::createFromEnv()->setOptions([
+            'username' => $username,
+            'password' => $password,
+        ])->build();
 
-    public function provideValidCredentials() : iterable
-    {
-        return [
-            ['guest', ''],
-            ['user_foo', 'foo'],
-            ['user_empty', ''],
-            ['user_big', '123456789012345678901234567890123456789012345678901234567890'],
-        ];
+        $client->ping();
     }
 
     /**
-     * @dataProvider provideInvalidCredentials
+     * @testWith
+     * ["User 'non_existing_user' is not found", 45, "non_existing_user", "password"]
+     * ["Incorrect password supplied for user 'guest'", 47, "guest", "password"]
      */
     public function testAuthenticateWithInvalidCredentials(string $errorMessage, int $errorCode, $username, $password) : void
     {
+        $client = ClientBuilder::createFromEnv()->setOptions([
+            'username' => $username,
+            'password' => $password,
+        ])->build();
+
         try {
-            $this->client->authenticate($username, $password);
-            $this->fail();
+            $client->ping();
+            self::fail(sprintf('Client must throw an exception on authenticating "%s" with the password "%s".', $username, $password));
         } catch (RequestFailed $e) {
             self::assertSame($errorMessage, $e->getMessage());
             self::assertSame($errorCode, $e->getCode());
         }
     }
 
-    public function provideInvalidCredentials() : iterable
-    {
-        return [
-            ["User 'non_existing_user' is not found", 45, 'non_existing_user', 'password'],
-            ["Incorrect password supplied for user 'guest'", 47, 'guest', 'password'],
-        ];
-    }
-
-    public function testAuthenticateDoesntSetInvalidCredentials() : void
-    {
-        $this->client->authenticate('user_conn', 'conn');
-        $this->client->getSpace('space_conn')->select();
-
-        try {
-            $this->client->authenticate('user_foo', 'incorrect_password');
-        } catch (RequestFailed $e) {
-            self::assertSame("Incorrect password supplied for user 'user_foo'", $e->getMessage());
-            $this->client->disconnect();
-            $this->client->getSpace('space_conn')->select();
-
-            return;
-        }
-
-        $this->fail();
-    }
-
     public function testUseCredentialsAfterReconnect() : void
     {
-        $this->client->authenticate('user_foo', 'foo');
-        $this->client->disconnect();
+        $client = ClientBuilder::createFromEnv()->setOptions([
+            'username' => 'user_foo',
+            'password' => 'foo',
+        ])->build();
+
+        $client->getHandler()->getConnection()->close();
 
         $this->expectException(RequestFailed::class);
         $this->expectExceptionMessage("Space 'space_conn' does not exist");
 
-        $this->client->getSpace('space_conn');
-    }
-
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testRegenerateSalt() : void
-    {
-        $this->client->connect();
-        $this->client->disconnect();
-        $this->client->authenticate('user_foo', 'foo');
-    }
-
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testReconnectOnEmptySalt() : void
-    {
-        $this->client->getConnection()->open();
-        $this->client->authenticate('user_foo', 'foo');
+        $client->getSpace('space_conn');
     }
 }
