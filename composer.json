@@ -15,7 +15,7 @@
     },
     "require-dev": {
         "ext-msgpack": "*",
-        "ext-socket": "*",
+        "ext-sockets": "*",
         "friendsofphp/php-cs-fixer": "^2.14",
         "phpunit/phpunit": "^7.1",
         "psr/log": "^1.1",
