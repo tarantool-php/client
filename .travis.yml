@@ -6,25 +6,31 @@ services:
   - docker
 
 env:
-  - IMAGE='php:7.1-cli' TNT_PACKER=pure
-  - IMAGE='php:7.1-cli' TNT_PACKER=pecl
-  - IMAGE='php:7.1-cli' TNT_CONN_URI=/tmp/tarantool_client.sock
+  global:
+    TNT_IMAGE='tarantool/tarantool:2'
 
-  - IMAGE='php:7.2-cli' TNT_PACKER=pure COVERAGE_FILE='coverage.clover'
-  - IMAGE='php:7.2-cli' TNT_PACKER=pecl COVERAGE_FILE='coverage.clover'
-  - IMAGE='php:7.2-cli' TNT_CONN_URI=/tmp/tarantool_client.sock
+  matrix:
+    - PHP_IMAGE='php:7.1-cli'
+    - PHP_IMAGE='php:7.1-cli' TNT_PACKER=pecl
+    - PHP_IMAGE='php:7.1-cli' TNT_CONN_URI=/tmp/tarantool_client.sock
 
-  - IMAGE='php:7.3-cli' TNT_PACKER=pure CHECK_CS=1
-  - IMAGE='php:7.3-cli' TNT_PACKER=pecl
-  - IMAGE='php:7.3-cli' TNT_CONN_URI=/tmp/tarantool_client.sock
+    - PHP_IMAGE='php:7.2-cli' COVERAGE_FILE='coverage.clover'
+    - PHP_IMAGE='php:7.2-cli' TNT_PACKER=pecl COVERAGE_FILE='coverage.clover'
+    - PHP_IMAGE='php:7.2-cli' TNT_CONN_URI=/tmp/tarantool_client.sock
+
+    - PHP_IMAGE='php:7.3-cli' CHECK_CS=1
+    - PHP_IMAGE='php:7.3-cli' TNT_PACKER=pecl
+    - PHP_IMAGE='php:7.3-cli' TNT_CONN_URI=/tmp/tarantool_client.sock
+
+    - PHP_IMAGE='php:7.3-cli' TNT_IMAGE='tarantool/tarantool:1'
 
 install:
   - ./dockerfile.sh | tee /dev/tty | docker build -t client -
 
 script:
-  - docker network create tarantool-php
-  - docker run -d --net=tarantool-php --name=tarantool -v /tmp:/tmp -v $(pwd):/client -e TNT_LISTEN_URI=$TNT_CONN_URI tarantool/tarantool:2 tarantool /client/tests/Integration/client.lua
-  - docker run --rm --net=tarantool-php --name=client -v /tmp:/tmp -v $(pwd):/client -w /client client
+  - docker run --rm --name=tarantool ${TNT_IMAGE} /usr/local/bin/tarantool --version
+  - docker run -d --name=tarantool -v /tmp:/tmp -v $(pwd):/client -e TNT_LISTEN_URI=$TNT_CONN_URI ${TNT_IMAGE} tarantool /client/tests/Integration/client.lua
+  - docker run --rm --name=client -v /tmp:/tmp -v $(pwd):/client -w /client client
   - if [[ -n "$CHECK_CS" ]]; then
       docker run --rm -v $(pwd):/client -w /client client php vendor/bin/php-cs-fixer fix --dry-run --diff --verbose .;
     fi
