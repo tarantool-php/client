@@ -30,7 +30,7 @@ install:
 script:
   - docker run --rm --name=tarantool ${TNT_IMAGE} /usr/local/bin/tarantool --version
   - docker run -d --name=tarantool -v /tmp:/tmp -v $(pwd):/client -e TNT_LISTEN_URI=$TNT_CONN_URI ${TNT_IMAGE} tarantool /client/tests/Integration/client.lua
-  - timeout 30 bash -c 'until docker ps | grep healthy; do sleep 1; done' || exit 1
+  - timeout 40 bash -c 'until docker ps | grep healthy; do sleep 1; done' || exit 1
   - docker run --rm --name=client -v /tmp:/tmp -v $(pwd):/client -w /client client
   - if [[ -n "$CHECK_CS" ]]; then
       docker run --rm -v $(pwd):/client -w /client client php vendor/bin/php-cs-fixer fix --dry-run --diff --verbose .;
