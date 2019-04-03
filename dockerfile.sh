@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-if [[ -z "$IMAGE" ]]; then
-    IMAGE='php:7.3-cli'
+if [[ -z "$PHP_IMAGE" ]]; then
+    PHP_IMAGE='php:7.3-cli'
 fi
 
 if [[ -z "$TNT_PACKER" ]]; then
@@ -28,7 +28,7 @@ if [[ "1" != "$CHECK_CS" ]]; then
 fi
 
 echo -e "
-FROM $IMAGE
+FROM $PHP_IMAGE
 
 RUN apt-get update && \\
     apt-get install -y git curl unzip libzip-dev && \\
