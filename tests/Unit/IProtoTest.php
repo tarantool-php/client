@@ -33,7 +33,7 @@ final class IProtoTest extends TestCase
     public function testParseGreetingThrowsExceptionOnInvalidServer(string $greeting) : void
     {
         $this->expectException(InvalidGreeting::class);
-        $this->expectExceptionMessage('Invalid greeting: unable to recognize Tarantool server.');
+        $this->expectExceptionMessage('Unable to recognize Tarantool server.');
 
         IProto::parseGreeting($greeting);
     }
@@ -44,7 +44,7 @@ final class IProtoTest extends TestCase
     public function testParseGreetingThrowsExceptionOnInvalidSalt(string $greeting) : void
     {
         $this->expectException(InvalidGreeting::class);
-        $this->expectExceptionMessage('Invalid greeting: unable to parse salt.');
+        $this->expectExceptionMessage('Unable to parse salt.');
 
         IProto::parseGreeting($greeting);
     }

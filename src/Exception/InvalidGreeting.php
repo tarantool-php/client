@@ -17,11 +17,11 @@ final class InvalidGreeting extends \RuntimeException implements ClientException
 {
     public static function invalidServerName() : self
     {
-        return new self('Invalid greeting: unable to recognize Tarantool server.');
+        return new self('Unable to recognize Tarantool server.');
     }
 
     public static function invalidSalt() : self
     {
-        return new self('Invalid greeting: unable to parse salt.');
+        return new self('Unable to parse salt.');
     }
 }

@@ -18,7 +18,7 @@ use Tarantool\Client\Packer\PackUtils;
 use Tarantool\Client\Tests\GreetingDataProvider;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\FakeServer\FakeServerBuilder;
-use Tarantool\Client\Tests\Integration\FakeServer\Handler\SocketDelayHandler;
+use Tarantool\Client\Tests\Integration\FakeServer\Handler\SleepHandler;
 use Tarantool\Client\Tests\Integration\FakeServer\Handler\WriteHandler;
 use Tarantool\Client\Tests\Integration\TestCase;
 
@@ -53,7 +53,8 @@ final class ReadTest extends TestCase
         $clientBuilder = ClientBuilder::createFromEnvForTheFakeServer();
 
         FakeServerBuilder::create(
-            new WriteHandler(GreetingDataProvider::generateGreeting())
+            new WriteHandler(GreetingDataProvider::generateGreeting()),
+            new SleepHandler(1)
         )
             ->setUri($clientBuilder->getUri())
             ->start();
@@ -73,7 +74,7 @@ final class ReadTest extends TestCase
 
         FakeServerBuilder::create(
             new WriteHandler(GreetingDataProvider::generateGreeting()),
-            new SocketDelayHandler(2)
+            new SleepHandler(2)
         )
             ->setUri($clientBuilder->getUri())
             ->start();
@@ -92,7 +93,8 @@ final class ReadTest extends TestCase
 
         FakeServerBuilder::create(
             new WriteHandler(GreetingDataProvider::generateGreeting()),
-            new WriteHandler(PackUtils::packLength(42))
+            new WriteHandler(PackUtils::packLength(42)),
+            new SleepHandler(1)
         )
             ->setUri($clientBuilder->getUri())
             ->start();

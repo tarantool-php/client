@@ -13,15 +13,15 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\FakeServer\Handler;
 
-class SocketDelayHandler implements Handler
+class SleepHandler implements Handler
 {
-    private $socketDelay;
+    private $seconds;
     private $once;
     private $disabled = false;
 
-    public function __construct(int $socketDelay, bool $once = false)
+    public function __construct(int $seconds, bool $once = false)
     {
-        $this->socketDelay = $socketDelay;
+        $this->seconds = $seconds;
         $this->once = $once;
     }
 
@@ -31,8 +31,8 @@ class SocketDelayHandler implements Handler
             return null;
         }
 
-        printf("$sid:   Sleep %d sec.\n", $this->socketDelay);
-        sleep($this->socketDelay);
+        printf("$sid:   Sleep %d sec.\n", $this->seconds);
+        sleep($this->seconds);
 
         if ($this->once) {
             $this->disabled = true;

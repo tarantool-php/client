@@ -76,7 +76,7 @@ final class FakeServerBuilder
 
         $stopTime = time() + 5;
         while (time() < $stopTime) {
-            if ($stream = @stream_socket_client($this->uri.'/is_alive')) {
+            if ($stream = @stream_socket_client($this->uri)) {
                 fclose($stream);
 
                 return;

@@ -42,7 +42,7 @@ final class ParseGreetingTest extends TestCase
 
             return;
         } catch (InvalidGreeting $e) {
-            self::assertSame('Invalid greeting: unable to recognize Tarantool server.', $e->getMessage());
+            self::assertSame('Unable to recognize Tarantool server.', $e->getMessage());
 
             return;
         }
@@ -64,7 +64,7 @@ final class ParseGreetingTest extends TestCase
         $client = $clientBuilder->build();
 
         $this->expectException(InvalidGreeting::class);
-        $this->expectExceptionMessage('Invalid greeting: unable to parse salt.');
+        $this->expectExceptionMessage('Unable to parse salt.');
 
         $client->ping();
     }
