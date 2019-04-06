@@ -51,8 +51,8 @@ final class Dsn
         $self->isTcp = true;
 
         if (isset($parsed['user'])) {
-            $self->username = rawurldecode($parsed['user']);
-            $self->password = isset($parsed['pass']) ? rawurldecode($parsed['pass']) : '';
+            $self->username = \rawurldecode($parsed['user']);
+            $self->password = isset($parsed['pass']) ? \rawurldecode($parsed['pass']) : '';
         }
 
         if (isset($parsed['query'])) {
@@ -64,10 +64,10 @@ final class Dsn
 
     private static function parseUds(string $dsn) : self
     {
-        $parts = explode('@', substr($dsn, 7), 2);
+        $parts = \explode('@', \substr($dsn, 7), 2);
         if (isset($parts[1])) {
             $parsed = \parse_url($parts[1]);
-            $authority = explode(':', $parts[0]);
+            $authority = \explode(':', $parts[0]);
         } else {
             $parsed = \parse_url($parts[0]);
         }
@@ -80,11 +80,11 @@ final class Dsn
         }
 
         $self = new self('unix://'.$parsed['path']);
-        $self->path = rawurldecode($parsed['path']);
+        $self->path = \rawurldecode($parsed['path']);
 
         if (isset($authority)) {
-            $self->username = rawurldecode($authority[0]);
-            $self->password = isset($authority[1]) ? rawurldecode($authority[1]) : '';
+            $self->username = \rawurldecode($authority[0]);
+            $self->password = isset($authority[1]) ? \rawurldecode($authority[1]) : '';
         }
         if (isset($parsed['query'])) {
             \parse_str($parsed['query'], $self->options);
@@ -140,7 +140,7 @@ final class Dsn
         }
 
         if (null === $value = \filter_var($this->options[$name], \FILTER_VALIDATE_BOOLEAN, \FILTER_NULL_ON_FAILURE)) {
-            throw new \TypeError(sprintf('DSN option "%s" must be of the type bool.', $name));
+            throw new \TypeError(\sprintf('DSN option "%s" must be of the type bool.', $name));
         }
 
         return $value;
@@ -153,7 +153,7 @@ final class Dsn
         }
 
         if (null === $value = \filter_var($this->options[$name], \FILTER_VALIDATE_INT, \FILTER_NULL_ON_FAILURE)) {
-            throw new \TypeError(sprintf('DSN option "%s" must be of the type int.', $name));
+            throw new \TypeError(\sprintf('DSN option "%s" must be of the type int.', $name));
         }
 
         return $value;
