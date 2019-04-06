@@ -15,48 +15,79 @@ namespace Tarantool\Client;
 
 final class Dsn
 {
-    private const DEFAULT_TCP_PORT = '3301';
-
+    private $host;
+    private $port;
+    private $path;
     private $connectionUri;
     private $username;
     private $password;
+    private $isTcp = false;
     private $options;
+
+    private function __construct(string $connectionUri)
+    {
+        $this->connectionUri = $connectionUri;
+    }
 
     public static function parse(string $dsn) : self
     {
-        $isSocket = 0 === \strpos($dsn, 'unix://');
-
-        if ($isSocket && $pos = \strpos($dsn, '/', 7)) {
-            $dsn = \substr_replace($dsn, '.', $pos, 0);
+        if (0 === \strpos($dsn, 'unix://') && isset($dsn[7])) {
+            return self::parseUds($dsn);
         }
 
-        if (false === $parts = \parse_url($dsn)) {
-            throw new \InvalidArgumentException(\sprintf('Malformed DSN "%s".', $dsn));
+        if (false === $parsed = \parse_url($dsn)) {
+            self::throwParseError($dsn);
+        }
+        if (!isset($parsed['scheme'], $parsed['host']) || 'tcp' !== $parsed['scheme']) {
+            self::throwParseError($dsn);
+        }
+        if (isset($parsed['path']) && '/' !== $parsed['path']) {
+            self::throwParseError($dsn);
         }
 
-        $self = new self();
+        $self = new self('tcp://'.$parsed['host'].':'.($parsed['port'] ?? '3301'));
+        $self->host = $parsed['host'];
+        $self->port = $parsed['port'] ?? 3301;
+        $self->isTcp = true;
 
-        if ($isSocket) {
-            if ('' === \trim($parts['path'], '/')) {
-                throw new \InvalidArgumentException(\sprintf('Malformed DSN "%s".', $dsn));
-            }
-            $self->connectionUri = 'unix://'.$parts['path'];
+        if (isset($parsed['user'])) {
+            $self->username = rawurldecode($parsed['user']);
+            $self->password = isset($parsed['pass']) ? rawurldecode($parsed['pass']) : '';
+        }
+
+        if (isset($parsed['query'])) {
+            \parse_str($parsed['query'], $self->options);
+        }
+
+        return $self;
+    }
+
+    private static function parseUds(string $dsn) : self
+    {
+        $parts = explode('@', substr($dsn, 7), 2);
+        if (isset($parts[1])) {
+            $parsed = \parse_url($parts[1]);
+            $authority = explode(':', $parts[0]);
         } else {
-            if (!isset($parts['scheme'], $parts['host'])) {
-                throw new \InvalidArgumentException(\sprintf('Malformed DSN "%s".', $dsn));
-            }
-            $self->connectionUri = $parts['scheme'].'://'.$parts['host'].':'.($parts['port'] ?? self::DEFAULT_TCP_PORT);
+            $parsed = \parse_url($parts[0]);
         }
 
-        if (isset($parts['user'])) {
-            $self->username  = $parts['user'];
-            $self->password = $parts['pass'] ?? '';
+        if (false === $parsed) {
+            self::throwParseError($dsn);
+        }
+        if (isset($parsed['host'])) {
+            self::throwParseError($dsn);
         }
 
-        if (isset($parts['query'])) {
-            \parse_str($parts['query'], $self->options);
-        } else {
-            $self->options = [];
+        $self = new self('unix://'.$parsed['path']);
+        $self->path = rawurldecode($parsed['path']);
+
+        if (isset($authority)) {
+            $self->username = rawurldecode($authority[0]);
+            $self->password = isset($authority[1]) ? rawurldecode($authority[1]) : '';
+        }
+        if (isset($parsed['query'])) {
+            \parse_str($parsed['query'], $self->options);
         }
 
         return $self;
@@ -67,6 +98,21 @@ final class Dsn
         return $this->connectionUri;
     }
 
+    public function getHost() : ?string
+    {
+        return $this->host;
+    }
+
+    public function getPort() : ?int
+    {
+        return $this->port;
+    }
+
+    public function getPath() : ?string
+    {
+        return $this->path;
+    }
+
     public function getUsername() : ?string
     {
         return $this->username;
@@ -75,6 +121,11 @@ final class Dsn
     public function getPassword() : ?string
     {
         return $this->password;
+    }
+
+    public function isTcp() : bool
+    {
+        return $this->isTcp;
     }
 
     public function getString(string $name, ?string $default = null) : ?string
@@ -89,7 +140,7 @@ final class Dsn
         }
 
         if (null === $value = \filter_var($this->options[$name], \FILTER_VALIDATE_BOOLEAN, \FILTER_NULL_ON_FAILURE)) {
-            throw new \InvalidArgumentException($name);
+            throw new \TypeError(sprintf('DSN option "%s" must be of the type bool.', $name));
         }
 
         return $value;
@@ -102,9 +153,14 @@ final class Dsn
         }
 
         if (null === $value = \filter_var($this->options[$name], \FILTER_VALIDATE_INT, \FILTER_NULL_ON_FAILURE)) {
-            throw new \InvalidArgumentException($name);
+            throw new \TypeError(sprintf('DSN option "%s" must be of the type int.', $name));
         }
 
         return $value;
+    }
+
+    private static function throwParseError(string $dsn) : void
+    {
+        throw new \InvalidArgumentException(\sprintf('Unable to parse DSN "%s".', $dsn));
     }
 }

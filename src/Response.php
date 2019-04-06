@@ -36,7 +36,7 @@ final class Response
     public function getHeaderField(int $code)
     {
         if (!isset($this->header[$code])) {
-            throw new \InvalidArgumentException(\sprintf('Invalid header code 0x%x.', $code));
+            throw new \OutOfBoundsException(\sprintf('Invalid header code 0x%x.', $code));
         }
 
         return $this->header[$code];
@@ -45,7 +45,7 @@ final class Response
     public function getBodyField(int $code)
     {
         if (!isset($this->body[$code])) {
-            throw new \InvalidArgumentException(\sprintf('Invalid body code 0x%x.', $code));
+            throw new \OutOfBoundsException(\sprintf('Invalid body code 0x%x.', $code));
         }
 
         return $this->body[$code];

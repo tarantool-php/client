@@ -22,34 +22,62 @@ final class StreamConnection implements Connection
 {
     public const DEFAULT_URI = 'tcp://127.0.0.1:3301';
 
-    private $stream;
-    private $uri;
-    private $options = [
+    private const DEFAULT_OPTIONS = [
         'connect_timeout' => 5,
         'socket_timeout' => 5,
         'tcp_nodelay' => true,
     ];
 
-    public function __construct(string $uri = self::DEFAULT_URI, array $options = [])
+    private $stream;
+    private $streamContext;
+    private $uri;
+    private $options;
+
+    private function __construct(string $uri, array $options)
     {
         $this->uri = $uri;
+        $this->options = $options + self::DEFAULT_OPTIONS;
+    }
 
-        if ($options) {
-            $this->options = $options + $this->options;
+    public static function createTcp(string $uri = self::DEFAULT_URI, array $options = []) : self
+    {
+        $self = new self($uri, $options);
+
+        if ($self->options['tcp_nodelay'] ?? false) {
+            $self->streamContext = \stream_context_create(['socket' => ['tcp_nodelay' => true]]);
         }
+
+        return $self;
+    }
+
+    public static function createUds(string $uri, array $options = []) : self
+    {
+        return new self($uri, $options);
+    }
+
+    public static function create(string $uri, array $options = []) : self
+    {
+        return 0 === \strpos($uri, 'unix://')
+            ? self::createUds($uri, $options)
+            : self::createTcp($uri, $options);
     }
 
     public function open() : string
     {
         $this->close();
 
-        $stream = @\stream_socket_client(
+        $stream = $this->streamContext ? @\stream_socket_client(
             $this->uri,
             $errorCode,
             $errorMessage,
             (float) $this->options['connect_timeout'],
             \STREAM_CLIENT_CONNECT,
-            \stream_context_create(['socket' => ['tcp_nodelay' => (bool) $this->options['tcp_nodelay']]])
+            $this->streamContext
+        ) : @\stream_socket_client(
+            $this->uri,
+            $errorCode,
+            $errorMessage,
+            (float) $this->options['connect_timeout']
         );
 
         if (false === $stream) {

@@ -42,7 +42,7 @@ final class Client
     public static function fromDefaults() : self
     {
         return new self(new DefaultHandler(
-            new StreamConnection(),
+            StreamConnection::createTcp(),
             new PurePacker()
         ));
     }
@@ -50,7 +50,6 @@ final class Client
     public static function fromOptions(array $options) : self
     {
         $connectionOptions = [];
-
         if (isset($options['connect_timeout'])) {
             $connectionOptions['connect_timeout'] = $options['connect_timeout'];
         }
@@ -61,10 +60,8 @@ final class Client
             $connectionOptions['tcp_nodelay'] = $options['tcp_nodelay'];
         }
 
-        $handler = new DefaultHandler(
-            new StreamConnection($options['uri'] ?? StreamConnection::DEFAULT_URI, $connectionOptions),
-            new PurePacker()
-        );
+        $connection = StreamConnection::create($options['uri'] ?? StreamConnection::DEFAULT_URI, $connectionOptions);
+        $handler = new DefaultHandler($connection, new PurePacker());
 
         if (isset($options['username'])) {
             $handler = new MiddlewareHandler(
@@ -86,15 +83,37 @@ final class Client
     {
         $dsn = Dsn::parse($dsn);
 
-        return self::fromOptions([
-            'uri' => $dsn->getConnectionUri(),
-            'connect_timeout' => $dsn->getInt('connect_timeout'),
-            'socket_timeout' => $dsn->getInt('socket_timeout'),
-            'tcp_nodelay' => $dsn->getBool('tcp_nodelay'),
-            'username' => $dsn->getUsername(),
-            'password' => $dsn->getPassword(),
-            'max_retries' => $dsn->getInt('max_retries'),
-        ]);
+        $connectionOptions = [];
+        if (null !== $timeout = $dsn->getInt('connect_timeout')) {
+            $connectionOptions['connect_timeout'] = $timeout;
+        }
+        if (null !== $timeout = $dsn->getInt('socket_timeout')) {
+            $connectionOptions['socket_timeout'] = $timeout;
+        }
+        if (null !== $tcpNoDelay = $dsn->getBool('socket_timeout')) {
+            $connectionOptions['tcp_nodelay'] = $tcpNoDelay;
+        }
+
+        $connection = $dsn->isTcp()
+            ? StreamConnection::createTcp($dsn->getConnectionUri(), $connectionOptions)
+            : StreamConnection::createUds($dsn->getConnectionUri(), $connectionOptions);
+
+        $handler = new DefaultHandler($connection, new PurePacker());
+
+        if ($username = $dsn->getUsername()) {
+            $handler = new MiddlewareHandler(
+                new AuthMiddleware($username, $dsn->getPassword() ?? ''),
+                $handler
+            );
+        }
+        if ($maxRetries = $username = $dsn->getInt('max_retries')) {
+            $handler = new MiddlewareHandler(
+                RetryMiddleware::linear($maxRetries),
+                $handler
+            );
+        }
+
+        return new self($handler);
     }
 
     public function withMiddleware(Middleware $middleware, Middleware ...$middlewares) : self

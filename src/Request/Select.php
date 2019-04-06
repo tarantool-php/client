@@ -23,16 +23,16 @@ final class Select implements Request
     private $key;
     private $offset;
     private $limit;
-    private $iterator;
+    private $iteratorType;
 
-    public function __construct(int $spaceId, int $indexId, array $key, int $offset, int $limit, int $iterator)
+    public function __construct(int $spaceId, int $indexId, array $key, int $offset, int $limit, int $iteratorType)
     {
         $this->spaceId = $spaceId;
         $this->indexId = $indexId;
         $this->key = $key;
         $this->offset = $offset;
         $this->limit = $limit;
-        $this->iterator = $iterator;
+        $this->iteratorType = $iteratorType;
     }
 
     public function getType() : int
@@ -48,7 +48,7 @@ final class Select implements Request
             IProto::INDEX_ID => $this->indexId,
             IProto::LIMIT => $this->limit,
             IProto::OFFSET => $this->offset,
-            IProto::ITERATOR => $this->iterator,
+            IProto::ITERATOR => $this->iteratorType,
         ];
     }
 }

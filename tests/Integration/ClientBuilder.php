@@ -156,7 +156,7 @@ final class ClientBuilder
             throw new \LogicException('Connection URI is not set.');
         }
 
-        return new StreamConnection($this->uri, $this->connectionOptions);
+        return StreamConnection::create($this->uri, $this->connectionOptions);
     }
 
     private function createPacker() : Packer
