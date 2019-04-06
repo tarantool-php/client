@@ -106,7 +106,7 @@ final class Client
                 $handler
             );
         }
-        if ($maxRetries = $username = $dsn->getInt('max_retries')) {
+        if ($maxRetries = $dsn->getInt('max_retries')) {
             $handler = new MiddlewareHandler(
                 RetryMiddleware::linear($maxRetries),
                 $handler
