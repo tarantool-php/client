@@ -30,23 +30,26 @@ final class ExecuteTest extends TestCase
     /**
      * @dataProvider provideExecuteUpdateData
      */
-    public function testExecuteUpdate(string $sql, array $params, $expectedResult) : void
+    public function testExecuteUpdate(string $sql, array $params, $expectedCount, ?array $expectedAutoincrementIds) : void
     {
         $result = $this->client->executeUpdate($sql, ...$params);
 
-        is_array($expectedResult)
-            ? self::assertContains($result, $expectedResult)
-            : self::assertSame($expectedResult, $result)
+        is_array($expectedCount)
+            ? self::assertContains($result->count(), $expectedCount)
+            : self::assertSame($expectedCount, $result->count())
         ;
+
+        self::assertSame($expectedAutoincrementIds, $result->getAutoincrementIds());
     }
 
     public function provideExecuteUpdateData() : iterable
     {
         return [
-            ['DROP TABLE IF EXISTS table_exec', [], [0, 1]],
-            ['CREATE TABLE table_exec (column1 INTEGER PRIMARY KEY, column2 VARCHAR(100))', [], 1],
-            ['INSERT INTO table_exec VALUES (1, :val1), (2, :val2)', [[':val1' => 'A'], [':val2' => 'B']], 2],
-            ['UPDATE table_exec SET column2 = ? WHERE column1 = 2', ['BB'], 1],
+            ['DROP TABLE IF EXISTS table_exec', [], [0, 1], null],
+            ['CREATE TABLE table_exec (column1 INTEGER PRIMARY KEY AUTOINCREMENT, column2 VARCHAR(100))', [], 1, null],
+            ['INSERT INTO table_exec VALUES (1, :val1), (2, :val2)', [[':val1' => 'A'], [':val2' => 'B']], 2, null],
+            ['UPDATE table_exec SET column2 = ? WHERE column1 = 2', ['BB'], 1, null],
+            ["INSERT INTO table_exec VALUES (100, 'a'), (null, 'b'), (120, 'c'), (null, 'd')", [], 4, [101, 121]],
         ];
     }
 
@@ -55,11 +58,11 @@ final class ExecuteTest extends TestCase
      *
      * @depends testExecuteUpdate
      */
-    public function testExecuteQuery(string $sql, array $params, $expectedResult) : void
+    public function testExecuteQuery(string $sql, array $params, array $expectedData) : void
     {
         $result = $this->client->executeQuery($sql, ...$params);
 
-        self::assertSame($expectedResult, $result->getData());
+        self::assertSame($expectedData, $result->getData());
     }
 
     public function provideExecuteQueryData() : iterable

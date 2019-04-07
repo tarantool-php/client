@@ -176,11 +176,13 @@ final class Client
         );
     }
 
-    public function executeUpdate(string $sql, ...$params) : int
+    public function executeUpdate(string $sql, ...$params) : SqlUpdateResult
     {
         $request = new Execute($sql, $params);
 
-        return $this->handler->handle($request)->getBodyField(IProto::SQL_INFO)[0];
+        return new SqlUpdateResult(
+            $this->handler->handle($request)->getBodyField(IProto::SQL_INFO)
+        );
     }
 
     public function evaluate(string $expr, ...$args) : array
