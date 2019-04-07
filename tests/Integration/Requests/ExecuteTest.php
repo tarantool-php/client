@@ -32,7 +32,7 @@ final class ExecuteTest extends TestCase
      */
     public function testExecuteUpdate(string $sql, array $params, $expectedResult) : void
     {
-        $result = $this->client->executeUpdate($sql, $params);
+        $result = $this->client->executeUpdate($sql, ...$params);
 
         is_array($expectedResult)
             ? self::assertContains($result, $expectedResult)
@@ -57,7 +57,7 @@ final class ExecuteTest extends TestCase
      */
     public function testExecuteQuery(string $sql, array $params, $expectedResult) : void
     {
-        $result = $this->client->executeQuery($sql, $params);
+        $result = $this->client->executeQuery($sql, ...$params);
 
         self::assertSame($expectedResult, $result->getData());
     }

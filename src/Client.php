@@ -165,7 +165,7 @@ final class Client
         return $this->handler->handle($request)->getBodyField(IProto::DATA);
     }
 
-    public function executeQuery(string $sql, array $params = []) : SqlQueryResult
+    public function executeQuery(string $sql, ...$params) : SqlQueryResult
     {
         $request = new Execute($sql, $params);
         $response = $this->handler->handle($request);
@@ -176,7 +176,7 @@ final class Client
         );
     }
 
-    public function executeUpdate(string $sql, array $params = []) : int
+    public function executeUpdate(string $sql, ...$params) : int
     {
         $request = new Execute($sql, $params);
 
