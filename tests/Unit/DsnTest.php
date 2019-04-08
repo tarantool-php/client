@@ -81,12 +81,13 @@ final class DsnTest extends TestCase
      * ["tcp:/host"]
      * ["tcp://"]
      * ["tcp://host/path"]
+     * ["tcp:////"]
      * ["unix:"]
      * ["unix:/"]
+     * ["unix:/path"]
      * ["unix://"]
      * ["unix://foo.bar:3030/path"]
-     * //['unix:///"]
-     * ["unix://foo.bar.baz"]
+     * ["unix:////"]
      */
     public function testParseInvalidDsn(string $nonDsn) : void
     {
