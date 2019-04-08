@@ -55,10 +55,10 @@ final class EvaluateTest extends TestCase
     public function provideEvaluateSqlData() : iterable
     {
         return [
-            ['return box.execute([[DROP TABLE IF EXISTS table_eval]])', []],
-            ['return box.execute([[CREATE TABLE table_eval (column1 INTEGER PRIMARY KEY, column2 VARCHAR(100))]])', []],
-            ["return box.execute([[INSERT INTO table_eval VALUES (1, 'foo'), (2, 'bar')]])", []],
-            ['return box.execute([[SELECT * FROM table_eval]])', [[
+            ['return (box.execute or box.sql.execute)([[DROP TABLE IF EXISTS table_eval]])', []],
+            ['return (box.execute or box.sql.execute)([[CREATE TABLE table_eval (column1 INTEGER PRIMARY KEY, column2 VARCHAR(100))]])', []],
+            ["return (box.execute or box.sql.execute)([[INSERT INTO table_eval VALUES (1, 'foo'), (2, 'bar')]])", []],
+            ['return (box.execute or box.sql.execute)([[SELECT * FROM table_eval]])', [[
                 [1, 'foo'],
                 [2, 'bar'],
             ]]],
