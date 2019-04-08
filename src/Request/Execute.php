@@ -34,7 +34,7 @@ final class Execute implements Request
 
     public function getBody() : array
     {
-        return empty($this->params) ? [
+        return [] === $this->params ? [
             IProto::SQL_TEXT => $this->sql,
         ] : [
             IProto::SQL_TEXT => $this->sql,

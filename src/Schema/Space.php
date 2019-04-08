@@ -111,7 +111,7 @@ final class Space
         $schema = new self($this->handler, self::VINDEX_ID);
         $data = $schema->select([$this->id, $indexName], Index::INDEX_NAME);
 
-        if (empty($data)) {
+        if ([] === $data) {
             throw RequestFailed::unknownIndex($indexName, $this->id);
         }
 

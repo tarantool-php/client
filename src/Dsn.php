@@ -86,6 +86,7 @@ final class Dsn
             $self->username = \rawurldecode($authority[0]);
             $self->password = isset($authority[1]) ? \rawurldecode($authority[1]) : '';
         }
+
         if (isset($parsed['query'])) {
             \parse_str($parsed['query'], $self->options);
         }

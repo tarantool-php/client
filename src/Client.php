@@ -202,7 +202,7 @@ final class Client
         $schema = $this->getSpaceById(Space::VSPACE_ID);
         $data = $schema->select([$spaceName], Index::SPACE_NAME);
 
-        if (empty($data)) {
+        if ([] === $data) {
             throw RequestFailed::unknownSpace($spaceName);
         }
 

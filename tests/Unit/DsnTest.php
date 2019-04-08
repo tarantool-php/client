@@ -39,6 +39,7 @@ final class DsnTest extends TestCase
         self::assertSame($expected['host'], $dsn->getHost());
         self::assertSame($expected['port'], $dsn->getPort());
         self::assertNull($dsn->getPath());
+        self::assertTrue($dsn->isTcp());
 
         if (isset($expected['username'])) {
             self::assertSame($expected['username'], $dsn->getUsername());
@@ -62,6 +63,7 @@ final class DsnTest extends TestCase
         self::assertNull($dsn->getHost());
         self::assertNull($dsn->getPort());
         self::assertSame($expected['path'], $dsn->getPath());
+        self::assertFalse($dsn->isTcp());
 
         if (isset($expected['username'])) {
             self::assertSame($expected['username'], $dsn->getUsername());
@@ -78,6 +80,7 @@ final class DsnTest extends TestCase
      * ["tcp:/"]
      * ["tcp:/host"]
      * ["tcp://"]
+     * ["tcp://host/path"]
      * ["unix:"]
      * ["unix:/"]
      * ["unix://"]
