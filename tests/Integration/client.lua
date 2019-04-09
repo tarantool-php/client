@@ -78,31 +78,3 @@ function create_fixtures()
     space:insert{2016, 10, 1}
     space:insert{2016, 11, 0}
 end
-
-function func_foo()
-    return {foo='foo', bar=42}
-end
-
-function func_sum(x, y)
-    return x + y
-end
-
-function func_arg(arg)
-    return arg
-end
-
-function func_mixed()
-    return true, {
-        c = {
-            ['106'] = {1, 1428578535},
-            ['2'] = {1, 1428578535}
-        },
-        pc = {
-            ['106'] = {1, 1428578535, 9243},
-            ['2'] = {1, 1428578535, 9243}
-        },
-        s = {1, 1428578535},
-        u = 1428578535,
-        v = {}
-    }, true
-end

@@ -15,49 +15,15 @@ namespace Tarantool\Client\Tests\Integration\Requests;
 
 use Tarantool\Client\Tests\Integration\TestCase;
 
-/**
- * @eval create_fixtures()
- */
 final class CallTest extends TestCase
 {
-    /**
-     * @dataProvider provideCallData
-     */
-    public function testCall(string $funcName, array $args, $return) : void
+    public function testCall() : void
     {
-        self::assertSame([$return], $this->client->call($funcName, ...$args));
+        self::assertArrayHasKey('version', $this->client->call('box.info')[0]);
     }
 
-    public function provideCallData() : iterable
+    public function testCallWithArgs() : void
     {
-        yield [
-            'func' => 'func_foo',
-            'args' => [],
-            'ret' => ['foo' => 'foo', 'bar' => 42],
-        ];
-
-        yield [
-            'func' => 'func_sum',
-            'args' => [42, -24],
-            'ret' => 18,
-        ];
-
-        yield [
-            'func' => 'func_arg',
-            'args' => [[42]],
-            'ret' => [42],
-        ];
-
-        yield [
-            'func' => 'func_arg',
-            'args' => [[[42]]],
-            'ret' => [[42]],
-        ];
-
-        yield [
-            'func' => 'func_arg',
-            'args' => [null],
-            'ret' => null,
-        ];
+        self::assertSame([1], $this->client->call('math.min', 3, 1, 5));
     }
 }
