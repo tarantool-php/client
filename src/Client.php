@@ -69,7 +69,7 @@ final class Client
                 $handler
             );
         }
-        if (isset($options['max_retries'])) {
+        if (isset($options['max_retries']) && 0 !== $options['max_retries']) {
             $handler = new MiddlewareHandler(
                 RetryMiddleware::linear($options['max_retries']),
                 $handler
