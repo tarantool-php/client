@@ -21,7 +21,7 @@ interface Connection
     /**
      * Opens a new connection.
      *
-     * @throws ConnectionFailed
+     * @throws ConnectionFailed|CommunicationFailed
      *
      * @return string A session salt
      */
