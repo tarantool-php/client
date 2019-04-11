@@ -15,6 +15,7 @@ namespace Tarantool\Client\Tests\Integration\Connection;
 
 use Tarantool\Client\Exception\CommunicationFailed;
 use Tarantool\Client\Exception\ConnectionFailed;
+use Tarantool\Client\Schema\Operations;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\TestCase;
 
@@ -42,7 +43,7 @@ final class ConnectionTest extends TestCase
             ['select', [[42]], 'space_conn'],
             ['insert', [[time()]], 'space_conn'],
             ['replace', [[1, 2]], 'space_conn'],
-            ['update', [[1], [['+', 1, 2]]], 'space_conn'],
+            ['update', [[1], Operations::add(1, 2)], 'space_conn'],
             ['delete', [[1]], 'space_conn'],
         ];
     }

@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration;
 
+use Tarantool\Client\Schema\Operations;
+
 /**
  * @eval create_fixtures()
  */
@@ -30,7 +32,7 @@ final class CompositeKeyTest extends TestCase
     {
         $space = $this->client->getSpace('space_composite');
 
-        $space->update([2016, 10], [['=', 2, 0]]);
+        $space->update([2016, 10], Operations::set(2, 0));
 
         self::assertSame(0, $space->select([2016, 10])[0][2]);
     }
