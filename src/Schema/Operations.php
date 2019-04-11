@@ -27,7 +27,7 @@ final class Operations
         return new self(['+', $fieldNumber, $value]);
     }
 
-    public function withAdd(int $fieldNumber, int $value) : self
+    public function andAdd(int $fieldNumber, int $value) : self
     {
         $self = clone $this;
         $self->operations[] = ['+', $fieldNumber, $value];
@@ -40,7 +40,7 @@ final class Operations
         return new self(['-', $fieldNumber, $value]);
     }
 
-    public function withSubtract(int $fieldNumber, int $value) : self
+    public function andSubtract(int $fieldNumber, int $value) : self
     {
         $self = clone $this;
         $self->operations[] = ['-', $fieldNumber, $value];
@@ -53,7 +53,7 @@ final class Operations
         return new self(['&', $fieldNumber, $value]);
     }
 
-    public function withBitAnd(int $fieldNumber, int $value) : self
+    public function andBitAnd(int $fieldNumber, int $value) : self
     {
         $self = clone $this;
         $self->operations[] = ['&', $fieldNumber, $value];
@@ -66,7 +66,7 @@ final class Operations
         return new self(['|', $fieldNumber, $value]);
     }
 
-    public function withBitOr(int $fieldNumber, int $value) : self
+    public function andBitOr(int $fieldNumber, int $value) : self
     {
         $self = clone $this;
         $self->operations[] = ['|', $fieldNumber, $value];
@@ -79,7 +79,7 @@ final class Operations
         return new self(['^', $fieldNumber, $value]);
     }
 
-    public function withBitXor(int $fieldNumber, int $value) : self
+    public function andBitXor(int $fieldNumber, int $value) : self
     {
         $self = clone $this;
         $self->operations[] = ['^', $fieldNumber, $value];
@@ -92,7 +92,7 @@ final class Operations
         return new self([':', $fieldNumber, $offset, $length, $replacement]);
     }
 
-    public function withSplice(int $fieldNumber, int $offset, int $length, string $replacement) : self
+    public function andSplice(int $fieldNumber, int $offset, int $length, string $replacement) : self
     {
         $self = clone $this;
         $self->operations[] = [':', $fieldNumber, $offset, $length, $replacement];
@@ -105,7 +105,7 @@ final class Operations
         return new self(['!', $fieldNumber, $value]);
     }
 
-    public function withInsert(int $fieldNumber, int $value) : self
+    public function andInsert(int $fieldNumber, int $value) : self
     {
         $self = clone $this;
         $self->operations[] = ['!', $fieldNumber, $value];
@@ -118,7 +118,7 @@ final class Operations
         return new self(['#', $fieldNumber, $value]);
     }
 
-    public function withDelete(int $fieldNumber, int $value) : self
+    public function andDelete(int $fieldNumber, int $value) : self
     {
         $self = clone $this;
         $self->operations[] = ['#', $fieldNumber, $value];
@@ -131,7 +131,7 @@ final class Operations
         return new self(['=', $fieldNumber, $value]);
     }
 
-    public function withSet(int $fieldNumber, $value) : self
+    public function andSet(int $fieldNumber, $value) : self
     {
         $self = clone $this;
         $self->operations[] = ['=', $fieldNumber, $value];

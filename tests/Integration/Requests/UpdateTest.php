@@ -37,11 +37,11 @@ final class UpdateTest extends TestCase
     {
         return [
             [
-                Operations::add(1, 16)->withSet(3, 98)->withSet(4, 0x11111),
+                Operations::add(1, 16)->andSet(3, 98)->andSet(4, 0x11111),
                 [[1, 18, 'tuple_1', 98, 0x11111]],
             ],
             [
-                Operations::subtract(3, 10)->withBitAnd(4, 0x10101),
+                Operations::subtract(3, 10)->andBitAnd(4, 0x10101),
                 [[1, 18, 'tuple_1', 88, 0x10101]],
             ],
             [
