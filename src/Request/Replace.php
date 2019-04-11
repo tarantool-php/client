@@ -19,12 +19,12 @@ use Tarantool\Client\RequestTypes;
 final class Replace implements Request
 {
     private $spaceId;
-    private $values;
+    private $tuple;
 
-    public function __construct(int $spaceId, array $values)
+    public function __construct(int $spaceId, array $tuple)
     {
         $this->spaceId = $spaceId;
-        $this->values = $values;
+        $this->tuple = $tuple;
     }
 
     public function getType() : int
@@ -36,7 +36,7 @@ final class Replace implements Request
     {
         return [
             IProto::SPACE_ID => $this->spaceId,
-            IProto::TUPLE => $this->values,
+            IProto::TUPLE => $this->tuple,
         ];
     }
 }

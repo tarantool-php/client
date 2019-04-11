@@ -54,16 +54,16 @@ final class Space
         return $this->handler->handle($request)->getBodyField(IProto::DATA);
     }
 
-    public function insert(array $values) : array
+    public function insert(array $tuple) : array
     {
-        $request = new Insert($this->id, $values);
+        $request = new Insert($this->id, $tuple);
 
         return $this->handler->handle($request)->getBodyField(IProto::DATA);
     }
 
-    public function replace(array $values) : array
+    public function replace(array $tuple) : array
     {
-        $request = new Replace($this->id, $values);
+        $request = new Replace($this->id, $tuple);
 
         return $this->handler->handle($request)->getBodyField(IProto::DATA);
     }
@@ -79,9 +79,9 @@ final class Space
         return $this->handler->handle($request)->getBodyField(IProto::DATA);
     }
 
-    public function upsert(array $values, array $operations) : array
+    public function upsert(array $tuple, array $operations) : array
     {
-        $request = new Upsert($this->id, $values, $operations);
+        $request = new Upsert($this->id, $tuple, $operations);
 
         return $this->handler->handle($request)->getBodyField(IProto::DATA);
     }

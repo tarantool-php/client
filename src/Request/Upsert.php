@@ -19,13 +19,13 @@ use Tarantool\Client\RequestTypes;
 final class Upsert implements Request
 {
     private $spaceId;
-    private $values;
+    private $tuple;
     private $operations;
 
-    public function __construct(int $spaceId, array $values, array $operations)
+    public function __construct(int $spaceId, array $tuple, array $operations)
     {
         $this->spaceId = $spaceId;
-        $this->values = $values;
+        $this->tuple = $tuple;
         $this->operations = $operations;
     }
 
@@ -38,7 +38,7 @@ final class Upsert implements Request
     {
         return [
             IProto::SPACE_ID => $this->spaceId,
-            IProto::TUPLE => $this->values,
+            IProto::TUPLE => $this->tuple,
             IProto::OPERATIONS => $this->operations,
         ];
     }
