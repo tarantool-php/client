@@ -68,20 +68,20 @@ final class Space
         return $this->handler->handle($request)->getBodyField(IProto::DATA);
     }
 
-    public function update(array $key, array $operations, $index = 0) : array
+    public function update(array $key, Operations $operations, $index = 0) : array
     {
         if (\is_string($index)) {
             $index = $this->getIndexIdByName($index);
         }
 
-        $request = new Update($this->id, $index, $key, $operations);
+        $request = new Update($this->id, $index, $key, $operations->toArray());
 
         return $this->handler->handle($request)->getBodyField(IProto::DATA);
     }
 
-    public function upsert(array $tuple, array $operations) : array
+    public function upsert(array $tuple, Operations $operations) : array
     {
-        $request = new Upsert($this->id, $tuple, $operations);
+        $request = new Upsert($this->id, $tuple, $operations->toArray());
 
         return $this->handler->handle($request)->getBodyField(IProto::DATA);
     }

@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\Requests;
 
+use Tarantool\Client\Schema\Operations;
 use Tarantool\Client\Tests\Integration\TestCase;
 
 /**
@@ -26,7 +27,7 @@ final class UpsertTest extends TestCase
 
         $key = 10;
         $values = [$key, 'upserted'];
-        $operations = [[':', 1, 0, 1, 'U']];
+        $operations = Operations::splice(1, 0, 1, 'U');
         $updatedValues = [$key, 'Upserted'];
 
         self::assertSame([], $space->upsert($values, $operations));
