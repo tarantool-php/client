@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\Requests;
 
+use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Schema\Operations;
 use Tarantool\Client\Tests\Integration\TestCase;
 
@@ -31,9 +32,9 @@ final class UpsertTest extends TestCase
         $updatedValues = [$key, 'Upserted'];
 
         self::assertSame([], $space->upsert($values, $operations));
-        self::assertSame([$values], $space->select([$key]));
+        self::assertSame([$values], $space->select(Criteria::key([$key])));
 
         self::assertSame([], $space->upsert($values, $operations));
-        self::assertSame([$updatedValues], $space->select([$key]));
+        self::assertSame([$updatedValues], $space->select(Criteria::key([$key])));
     }
 }

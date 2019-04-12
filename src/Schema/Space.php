@@ -43,13 +43,22 @@ final class Space
         return $this->id;
     }
 
-    public function select(array $key = [], $index = 0, int $limit = \PHP_INT_MAX &0xffffffff, int $offset = 0, int $iteratorType = IteratorTypes::EQ) : array
+    public function select(Criteria $criteria) : array
     {
+        $index = $criteria->getIndex();
+
         if (\is_string($index)) {
             $index = $this->getIndexIdByName($index);
         }
 
-        $request = new Select($this->id, $index, $key, $offset, $limit, $iteratorType);
+        $request = new Select(
+            $this->id,
+            $index,
+            $criteria->getKey(),
+            $criteria->getOffset(),
+            $criteria->getLimit(),
+            $criteria->getIteratorType()
+        );
 
         return $this->handler->handle($request)->getBodyField(IProto::DATA);
     }
@@ -109,7 +118,7 @@ final class Space
         }
 
         $schema = new self($this->handler, self::VINDEX_ID);
-        $data = $schema->select([$this->id, $indexName], Index::INDEX_NAME);
+        $data = $schema->select(Criteria::key([$this->id, $indexName])->andIndex(Index::INDEX_NAME));
 
         if ([] === $data) {
             throw RequestFailed::unknownIndex($indexName, $this->id);

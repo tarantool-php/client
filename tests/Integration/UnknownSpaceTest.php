@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Tarantool\Client\Tests\Integration;
 
 use Tarantool\Client\Exception\RequestFailed;
+use Tarantool\Client\Schema\Criteria;
 
 /**
  * @eval create_fixtures()
@@ -35,6 +36,6 @@ final class UnknownSpaceTest extends TestCase
         $this->expectException(RequestFailed::class);
         $this->expectExceptionMessage("Space '123456' does not exist");
 
-        $space->select();
+        $space->select(Criteria::key([]));
     }
 }

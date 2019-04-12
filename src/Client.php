@@ -26,6 +26,7 @@ use Tarantool\Client\Request\Call;
 use Tarantool\Client\Request\Evaluate;
 use Tarantool\Client\Request\Execute;
 use Tarantool\Client\Request\Ping;
+use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Schema\Index;
 use Tarantool\Client\Schema\Space;
 
@@ -200,7 +201,7 @@ final class Client
     private function getSpaceIdByName(string $spaceName) : int
     {
         $schema = $this->getSpaceById(Space::VSPACE_ID);
-        $data = $schema->select([$spaceName], Index::SPACE_NAME);
+        $data = $schema->select(Criteria::key([$spaceName])->andIndex(Index::SPACE_NAME));
 
         if ([] === $data) {
             throw RequestFailed::unknownSpace($spaceName);

@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration;
 
+use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Schema\Operations;
 
 /**
@@ -24,8 +25,8 @@ final class CompositeKeyTest extends TestCase
     {
         $space = $this->client->getSpace('space_composite');
 
-        self::assertSame(1, $space->select([2016, 10])[0][2]);
-        self::assertSame(0, $space->select([2016, 11])[0][2]);
+        self::assertSame(1, $space->select(Criteria::key([2016, 10]))[0][2]);
+        self::assertSame(0, $space->select(Criteria::key([2016, 11]))[0][2]);
     }
 
     public function testUpdateByCompositeKey() : void
@@ -34,7 +35,7 @@ final class CompositeKeyTest extends TestCase
 
         $space->update([2016, 10], Operations::set(2, 0));
 
-        self::assertSame(0, $space->select([2016, 10])[0][2]);
+        self::assertSame(0, $space->select(Criteria::key([2016, 10]))[0][2]);
     }
 
     public function testDeleteByCompositeKey() : void
@@ -43,7 +44,7 @@ final class CompositeKeyTest extends TestCase
 
         $space->delete([2016, 11]);
 
-        self::assertCount(0, $space->select([2016, 11]));
-        self::assertCount(1, $space->select([2016]));
+        self::assertCount(0, $space->select(Criteria::key([2016, 11])));
+        self::assertCount(1, $space->select(Criteria::key([2016])));
     }
 }

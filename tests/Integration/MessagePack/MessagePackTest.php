@@ -17,6 +17,7 @@ use MessagePack\BufferUnpacker;
 use MessagePack\Packer;
 use Tarantool\Client\Packer\PeclPacker;
 use Tarantool\Client\Packer\PurePacker;
+use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\TestCase;
 
@@ -98,6 +99,6 @@ final class MessagePackTest extends TestCase
         $result = $space->insert([100, 'now', $date]);
 
         self::assertEquals($date, $result[0][2]);
-        self::assertEquals($date, $space->select([100])[0][2]);
+        self::assertEquals($date, $space->select(Criteria::key([100]))[0][2]);
     }
 }

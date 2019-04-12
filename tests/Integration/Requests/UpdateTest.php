@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Tarantool\Client\Tests\Integration\Requests;
 
 use Tarantool\Client\Exception\RequestFailed;
+use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Schema\Operations;
 use Tarantool\Client\Tests\Integration\TestCase;
 
@@ -63,7 +64,7 @@ final class UpdateTest extends TestCase
     {
         $space = $this->client->getSpace('space_data');
 
-        self::assertSame([2, 4, 'tuple_2'], $space->select([2])[0]);
+        self::assertSame([2, 4, 'tuple_2'], $space->select(Criteria::key([2]))[0]);
 
         $result = $space->update([2], Operations::splice(2, 0, 1, 'T'), 'primary');
 

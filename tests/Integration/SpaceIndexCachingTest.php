@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration;
 
+use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Schema\Space;
 
 final class SpaceIndexCachingTest extends TestCase
@@ -23,8 +24,8 @@ final class SpaceIndexCachingTest extends TestCase
         $total = self::getTotalSelectCalls();
 
         $space->flushIndexes();
-        $space->select([], 'name');
-        $space->select([], 'name');
+        $space->select(Criteria::index('name'));
+        $space->select(Criteria::index('name'));
 
         self::assertSame(3, self::getTotalSelectCalls() - $total);
     }
@@ -35,9 +36,9 @@ final class SpaceIndexCachingTest extends TestCase
         $total = self::getTotalSelectCalls();
 
         $space->flushIndexes();
-        $space->select([], 'name');
+        $space->select(Criteria::index('name'));
         $space->flushIndexes();
-        $space->select([], 'name');
+        $space->select(Criteria::index('name'));
 
         self::assertSame(4, self::getTotalSelectCalls() - $total);
     }

@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Tarantool\Client\Tests\Integration\Requests;
 
 use Tarantool\Client\Exception\RequestFailed;
-use Tarantool\Client\Schema\IteratorTypes;
+use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Tests\Integration\TestCase;
 
 /**
@@ -25,10 +25,10 @@ final class SelectTest extends TestCase
     /**
      * @dataProvider provideSelectData
      */
-    public function testSelect(int $expectedCount, array $args) : void
+    public function testSelect(int $expectedCount, Criteria $criteria) : void
     {
         $space = $this->client->getSpace('space_data');
-        $result = $space->select(...$args);
+        $result = $space->select($criteria);
 
         self::assertCount($expectedCount, $result);
     }
@@ -36,20 +36,20 @@ final class SelectTest extends TestCase
     public function provideSelectData() : iterable
     {
         return [
-            [100, []],
-            [20, [[1], 'secondary']],
-            [20, [[2], 'secondary']],
-            [20, [[3], 'secondary']],
-            [20, [[4], 'secondary']],
-            [20, [[0], 'secondary']],
-            [0, [[3, 'tuple_95'], 'secondary']],
-            [1, [[3, 'tuple_94'], 'secondary']],
-            [1, [[1]]],
-            [10, [[1], 'secondary', 10]],
-            [10, [[1], 'secondary', 11, 10]],
-            [9, [[1], 'secondary', 9, 10]],
-            [10, [[1], 'secondary', 10, 10]],
-            [20, [[1], 'secondary', 100500, 0, IteratorTypes::REQ]],
+            [100, Criteria::key([])],
+            [20, Criteria::key([1])->andIndex('secondary')],
+            [20, Criteria::key([2])->andIndex('secondary')],
+            [20, Criteria::key([3])->andIndex('secondary')],
+            [20, Criteria::key([4])->andIndex('secondary')],
+            [20, Criteria::key([0])->andIndex('secondary')],
+            [0, Criteria::key([3, 'tuple_95'])->andIndex('secondary')],
+            [1, Criteria::key([3, 'tuple_94'])->andIndex('secondary')],
+            [1, Criteria::key([1])],
+            [10, Criteria::key([1])->andIndex('secondary')->andLimit(10)],
+            [10, Criteria::key([1])->andIndex('secondary')->andLimit(11)->andOffset(10)],
+            [9, Criteria::key([1])->andIndex('secondary')->andLimit(9)->andOffset(10)],
+            [10, Criteria::key([1])->andIndex('secondary')->andLimit(10)->andOffset(10)],
+            [20, Criteria::key([1])->andIndex('secondary')->andLimit(100500)->andReqIterator()],
         ];
     }
 
@@ -57,26 +57,26 @@ final class SelectTest extends TestCase
     {
         $space = $this->client->getSpace('space_empty');
 
-        self::assertEmpty($space->select());
+        self::assertEmpty($space->select(Criteria::key([])));
     }
 
-    public function testSelectWithNonExistingName() : void
+    public function testSelectWithNonExistingIndexName() : void
     {
         $space = $this->client->getSpace('space_misc');
 
         $this->expectException(RequestFailed::class);
         $this->expectExceptionMessage("No index 'non_existing_index' is defined in space #".$space->getId());
 
-        $space->select([1], 'non_existing_index');
+        $space->select(Criteria::key([1])->andIndex('non_existing_index'));
     }
 
-    public function testSelectWithNonExistingId() : void
+    public function testSelectWithNonExistingIndexId() : void
     {
         $space = $this->client->getSpace('space_misc');
 
         $this->expectException(RequestFailed::class);
         $this->expectExceptionMessage("No index #123456 is defined in space 'space_misc'");
 
-        $space->select([1], 123456);
+        $space->select(Criteria::key([1])->andIndex(123456));
     }
 }
