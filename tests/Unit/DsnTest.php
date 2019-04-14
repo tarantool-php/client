@@ -104,11 +104,15 @@ final class DsnTest extends TestCase
      * ["tcp://host/?foo=b%40r", "foo", "b@r"]
      * ["tcp://host/?foo=", "foo", ""]
      * ["tcp://host/?foo=42", "foo", "42"]
+     * ["tcp://host/?foo=%25", "foo", "%"]
+     * ["tcp://host/?foo=%2525", "foo", "%25"]
      * ["tcp://host", "foo", null]
      * ["unix:///socket.sock/?foo=bar", "foo", "bar"]
      * ["unix:///socket.sock/?foo=b%40r", "foo", "b@r"]
      * ["unix:///socket.sock/?foo=", "foo", ""]
      * ["unix:///socket.sock/?foo=42", "foo", "42"]
+     * ["unix:///socket.sock/?foo=%25", "foo", "%"]
+     * ["unix:///socket.sock/?foo=%2525", "foo", "%25"]
      * ["unix:///socket.sock", "foo", null]
      */
     public function testGetString(string $dsn, string $option, ?string $expectedValue) : void
