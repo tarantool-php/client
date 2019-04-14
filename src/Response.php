@@ -33,7 +33,7 @@ final class Response
         return $code >= self::TYPE_ERROR;
     }
 
-    public function getHeaderCode() : int
+    public function getCode() : int
     {
         return $this->header[IProto::CODE];
     }

@@ -22,7 +22,7 @@ final class RequestFailed extends \RuntimeException implements ClientException
     {
         return new self(
             $response->getBodyField(IProto::ERROR),
-            $response->getHeaderCode() & (Response::TYPE_ERROR - 1)
+            $response->getCode() & (Response::TYPE_ERROR - 1)
         );
     }
 
