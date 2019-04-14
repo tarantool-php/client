@@ -48,7 +48,7 @@ final class Space
         $index = $criteria->getIndex();
 
         if (\is_string($index)) {
-            $index = $this->getIndexIdByName($index);
+            $index = $this->getIndexNumberByName($index);
         }
 
         $request = new Select(
@@ -80,7 +80,7 @@ final class Space
     public function update(array $key, Operations $operations, $index = 0) : array
     {
         if (\is_string($index)) {
-            $index = $this->getIndexIdByName($index);
+            $index = $this->getIndexNumberByName($index);
         }
 
         $request = new Update($this->id, $index, $key, $operations->toArray());
@@ -98,7 +98,7 @@ final class Space
     public function delete(array $key, $index = 0) : array
     {
         if (\is_string($index)) {
-            $index = $this->getIndexIdByName($index);
+            $index = $this->getIndexNumberByName($index);
         }
 
         $request = new Delete($this->id, $index, $key);
@@ -111,7 +111,7 @@ final class Space
         $this->indexes = [];
     }
 
-    private function getIndexIdByName(string $indexName) : int
+    private function getIndexNumberByName(string $indexName) : int
     {
         if (isset($this->indexes[$indexName])) {
             return $this->indexes[$indexName];
