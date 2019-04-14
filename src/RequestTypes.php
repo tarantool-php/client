@@ -27,8 +27,6 @@ final class RequestTypes
     public const CALL = 10;
     public const EXECUTE = 11;
     public const PING = 64;
-    public const JOIN = 65;
-    public const SUBSCRIBE = 66;
 
     private function __construct()
     {

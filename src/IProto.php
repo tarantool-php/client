@@ -15,10 +15,14 @@ namespace Tarantool\Client;
 
 use Tarantool\Client\Exception\InvalidGreeting;
 
+/**
+ * @see https://www.tarantool.io/en/doc/2.1/dev_guide/internals/box_protocol/
+ */
 final class IProto
 {
     public const CODE = 0x00;
     public const SYNC = 0x01;
+    public const SCHEMA_ID = 0x05;
     public const SPACE_ID = 0x10;
     public const INDEX_ID = 0x11;
     public const LIMIT = 0x12;

@@ -33,13 +33,19 @@ final class Response
         return $code >= self::TYPE_ERROR;
     }
 
-    public function getHeaderField(int $code)
+    public function getHeaderCode() : int
     {
-        if (!isset($this->header[$code])) {
-            throw new \OutOfBoundsException(\sprintf('Invalid header code 0x%x.', $code));
-        }
+        return $this->header[IProto::CODE];
+    }
 
-        return $this->header[$code];
+    public function getSync() : int
+    {
+        return $this->header[IProto::SYNC];
+    }
+
+    public function getSchemaId() : int
+    {
+        return $this->header[IProto::SCHEMA_ID];
     }
 
     public function getBodyField(int $code)
