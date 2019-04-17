@@ -13,8 +13,6 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration;
 
-use PHPUnit\Framework\TestCase;
-
 final class ExamplesTest extends TestCase
 {
     /**
@@ -22,6 +20,10 @@ final class ExamplesTest extends TestCase
      */
     public function testExample(string $filename) : void
     {
+        if (strpos($filename, '/sql/') && self::matchTarantoolVersion('<2.0.0', $currentVersion)) {
+            self::markTestSkipped(sprintf('This version of Tarantool (%s) does not support sql.', $currentVersion));
+        }
+
         $uri = ClientBuilder::createFromEnv()->getUri();
 
         exec("php $filename $uri", $output, $exitCode);
