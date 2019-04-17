@@ -11,6 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
+use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Schema\Operations;
 
 require __DIR__.'/../bootstrap.php';
@@ -30,7 +31,9 @@ $space = $client->getSpace($spaceName);
 $space->upsert([1, 'foo', 'bar'], Operations::set(1, 'baz'));
 $space->upsert([1, 'foo', 'bar'], Operations::set(2, 'qux'));
 
+$result = $space->select(Criteria::key([]));
+printf("Result: %s\n", json_encode($result));
+
 /* OUTPUT
-Result 1: [42]
-Result 2: [3]
+Result: [[1,"foo","qux"]]
 */
