@@ -11,6 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
+use MessagePack\Packer;
 use Tarantool\Client\Client;
 use Tarantool\Client\Connection\StreamConnection;
 use Tarantool\Client\Handler\DefaultHandler;
@@ -25,7 +26,7 @@ function create_client() : Client
         ? StreamConnection::create($_SERVER['argv'][1])
         : StreamConnection::createTcp();
 
-    $packer = class_exists(PurePacker::class)
+    $packer = class_exists(Packer::class)
         ? new PurePacker()
         : new PeclPacker();
 
