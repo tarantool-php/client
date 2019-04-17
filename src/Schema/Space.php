@@ -92,7 +92,7 @@ final class Space
     {
         $request = new Upsert($this->id, $tuple, $operations->toArray());
 
-        $this->handler->handle($request)->getBodyField(IProto::DATA);
+        $this->handler->handle($request);
     }
 
     public function delete(array $key, $index = 0) : array
