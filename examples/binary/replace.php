@@ -18,7 +18,7 @@ $spaceName = 'example';
 
 $client->evaluate(
 <<<LUA
-    box.space[...]:drop()
+    if box.space[...] then box.space[...]:drop() end
     space = box.schema.space.create(...)
     space:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
     space:insert({1, 'foo'})

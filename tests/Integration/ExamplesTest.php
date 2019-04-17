@@ -26,7 +26,7 @@ final class ExamplesTest extends TestCase
 
         exec("php $filename $uri", $output, $exitCode);
 
-        self::assertSame(0, $exitCode);
+        self::assertSame(0, $exitCode, implode("\n", $output));
 
         if ($output) {
             self::assertOutput($filename, implode("\n", $output));
