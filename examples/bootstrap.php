@@ -17,5 +17,8 @@ require __DIR__.'/../vendor/autoload.php';
 
 function create_client() : Client
 {
-    return Client::fromDsn($argv[1] ?? 'tcp://127.0.0.1:3301');
+    return isset($_SERVER['argv'][1])
+        ? Client::fromDsn($_SERVER['argv'][1])
+        : Client::fromDefaults()
+    ;
 }
