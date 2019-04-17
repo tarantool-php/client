@@ -31,10 +31,10 @@ final class UpsertTest extends TestCase
         $operations = Operations::splice(1, 0, 1, 'U');
         $updatedValues = [$key, 'Upserted'];
 
-        self::assertSame([], $space->upsert($values, $operations));
+        $space->upsert($values, $operations);
         self::assertSame([$values], $space->select(Criteria::key([$key])));
 
-        self::assertSame([], $space->upsert($values, $operations));
+        $space->upsert($values, $operations);
         self::assertSame([$updatedValues], $space->select(Criteria::key([$key])));
     }
 }
