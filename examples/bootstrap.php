@@ -12,13 +12,22 @@ declare(strict_types=1);
  */
 
 use Tarantool\Client\Client;
+use Tarantool\Client\Connection\StreamConnection;
+use Tarantool\Client\Handler\DefaultHandler;
+use Tarantool\Client\Packer\PeclPacker;
+use Tarantool\Client\Packer\PurePacker;
 
 require __DIR__.'/../vendor/autoload.php';
 
 function create_client() : Client
 {
-    return isset($_SERVER['argv'][1])
-        ? Client::fromDsn($_SERVER['argv'][1])
-        : Client::fromDefaults()
-    ;
+    $connection = isset($_SERVER['argv'][1])
+        ? StreamConnection::create($_SERVER['argv'][1])
+        : StreamConnection::createTcp();
+
+    $packer = class_exists(PurePacker::class)
+        ? new PurePacker()
+        : new PeclPacker();
+
+    return new Client(new DefaultHandler($connection, $packer));
 }
