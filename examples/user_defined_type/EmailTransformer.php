@@ -11,6 +11,8 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
+namespace App;
+
 use MessagePack\BufferUnpacker;
 use MessagePack\Packer;
 use MessagePack\TypeTransformer\Packable;
@@ -32,9 +34,11 @@ final class EmailTransformer implements Packable, Unpackable
 
     public function pack(Packer $packer, $value) : ?string
     {
-        return $value instanceof Email
-            ? $packer->packStr($value->toString())
-            : null;
+        if (!$value instanceof Email) {
+            return null;
+        }
+
+        return $packer->packExt($this->type, $packer->packStr($value->toString()));
     }
 
     public function unpack(BufferUnpacker $unpacker, int $extLength) : Email

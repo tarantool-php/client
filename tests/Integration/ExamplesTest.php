@@ -39,9 +39,15 @@ final class ExamplesTest extends TestCase
     {
         $dir = dirname(__DIR__, 2).'/examples';
         foreach (glob("$dir/{**/*,*}.php", GLOB_BRACE) as $filename) {
-            if (strpos($filename, 'bootstrap.php')) {
+            $basename = basename($filename, '.php');
+            if ('bootstrap' === $basename) {
                 continue;
             }
+            // ignore classes
+            if (strtolower($basename[0]) !== $basename[0]) {
+                continue;
+            }
+
             yield [$filename];
         }
     }

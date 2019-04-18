@@ -11,6 +11,8 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
+use App\Email;
+use App\EmailTransformer;
 use MessagePack\BufferUnpacker;
 use MessagePack\Packer;
 use Tarantool\Client\Client;
@@ -20,22 +22,21 @@ use Tarantool\Client\Packer\PeclPacker;
 use Tarantool\Client\Packer\PurePacker;
 use Tarantool\Client\Schema\Criteria;
 
-require __DIR__.'/../bootstrap.php';
-require __DIR__.'/Email.php';
-require __DIR__.'/EmailTransformer.php';
+$loader = require __DIR__.'/../../vendor/autoload.php';
+$loader->addPsr4('App\\', __DIR__);
 
 $connection = isset($_SERVER['argv'][1])
     ? StreamConnection::create($_SERVER['argv'][1])
     : StreamConnection::createTcp();
 
-if (extension_loaded('msgpack')) {
-    $packer = new PeclPacker();
-} else {
+if (class_exists(BufferUnpacker::class)) {
     $transformer = new EmailTransformer(42);
     $packer = new PurePacker(
         (new Packer())->registerTransformer($transformer),
         (new BufferUnpacker())->registerTransformer($transformer)
     );
+} else {
+    $packer = new PeclPacker();
 }
 
 $client = new Client(new DefaultHandler($connection, $packer));
@@ -61,9 +62,9 @@ printf("Result 2: %s\n", var_export($result2, true));
 Result 1: array (
   0 =>
   array (
-    0 => 1,
+    0 => 3,
     1 =>
-    Email::__set_state(array(
+    App\Email::__set_state(array(
        'value' => 'foo@bar.com',
     )),
   ),
@@ -71,9 +72,9 @@ Result 1: array (
 Result 2: array (
   0 =>
   array (
-    0 => 1,
+    0 => 3,
     1 =>
-    Email::__set_state(array(
+    App\Email::__set_state(array(
        'value' => 'foo@bar.com',
     )),
   ),
