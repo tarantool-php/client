@@ -22,6 +22,7 @@ env:
     - PHP_IMAGE='php:7.3-cli' TNT_PACKER=pecl
     - PHP_IMAGE='php:7.3-cli' TNT_CONN_URI=/tmp/tarantool_client.sock
 
+    - PHP_IMAGE='php:7.3-cli' TNT_IMAGE='tarantool/tarantool:1.7'
     - PHP_IMAGE='php:7.3-cli' TNT_IMAGE='tarantool/tarantool:1.9'
     - PHP_IMAGE='php:7.3-cli' TNT_IMAGE='tarantool/tarantool:1'
     - PHP_IMAGE='php:7.3-cli' TNT_IMAGE='tarantool/tarantool:2.1'
