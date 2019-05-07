@@ -21,10 +21,6 @@ use Tarantool\Client\Response;
 
 interface Handler
 {
-    public function getConnection() : Connection;
-
-    public function getPacker() : Packer;
-
     /**
      * @param Request $request
      *
@@ -33,4 +29,8 @@ interface Handler
      * @return Response
      */
     public function handle(Request $request) : Response;
+
+    public function getConnection() : Connection;
+
+    public function getPacker() : Packer;
 }

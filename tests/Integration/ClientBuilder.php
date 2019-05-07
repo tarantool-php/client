@@ -117,16 +117,14 @@ final class ClientBuilder
         $packer = $this->createPacker();
         $handler = new DefaultHandler($connection, $packer);
 
-        $middlewares = [];
         if (isset($this->options['username'])) {
-            $middlewares[] = new AuthMiddleware($this->options['username'], $this->options['password'] ?? '');
+            $handler = MiddlewareHandler::create($handler, new AuthMiddleware($this->options['username'], $this->options['password'] ?? ''));
         }
-
         if (isset($this->options['max_retries'])) {
-            $middlewares[] = RetryMiddleware::linear($this->options['max_retries']);
+            $handler = MiddlewareHandler::create($handler, RetryMiddleware::linear($this->options['max_retries']));
         }
 
-        return new Client(MiddlewareHandler::create($handler, $middlewares));
+        return new Client($handler);
     }
 
     public static function createFromEnv() : self

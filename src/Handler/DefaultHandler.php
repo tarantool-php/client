@@ -30,16 +30,6 @@ final class DefaultHandler implements Handler
         $this->packer = $packer;
     }
 
-    public function getConnection() : Connection
-    {
-        return $this->connection;
-    }
-
-    public function getPacker() : Packer
-    {
-        return $this->packer;
-    }
-
     public function handle(Request $request) : Response
     {
         if ($this->connection->isClosed()) {
@@ -55,5 +45,15 @@ final class DefaultHandler implements Handler
         }
 
         throw RequestFailed::fromErrorResponse($response);
+    }
+
+    public function getConnection() : Connection
+    {
+        return $this->connection;
+    }
+
+    public function getPacker() : Packer
+    {
+        return $this->packer;
     }
 }

@@ -21,45 +21,49 @@ use Tarantool\Client\Response;
 
 final class MiddlewareHandler implements Handler
 {
-    private $middleware;
     private $handler;
-    private $connection;
-    private $packer;
+    private $middlewares;
 
-    public function __construct(Middleware $middleware, Handler $handler)
+    private function __construct(Handler $handler, array $middlewares)
     {
-        $this->middleware = $middleware;
         $this->handler = $handler;
+        $this->middlewares = $middlewares;
     }
 
-    public static function create(Handler $handler, array $middlewares) : Handler
+    public static function create(Handler $handler, Middleware $middleware, Middleware ...$middlewares) : Handler
     {
-        if (!$middlewares) {
-            return $handler;
+        if (!$handler instanceof self) {
+            return $middlewares
+                ? new self($handler, \array_merge([$middleware], $middlewares))
+                : new self($handler, [$middleware]);
         }
 
-        $middleware = \end($middlewares);
-
-        while ($middleware) {
-            $handler = new self($middleware, $handler);
-            $middleware = \prev($middlewares);
+        $handler->middlewares[] = $middleware;
+        if ($middlewares) {
+            $handler->middlewares = \array_merge($handler->middlewares, $middlewares);
         }
 
         return $handler;
     }
 
+    public function handle(Request $request) : Response
+    {
+        if ([] === $this->middlewares) {
+            return $this->handler->handle($request);
+        }
+
+        $middleware = \array_pop($this->middlewares);
+
+        return $middleware->process($request, $this);
+    }
+
     public function getConnection() : Connection
     {
-        return $this->connection ?: $this->connection = $this->handler->getConnection();
+        return $this->handler->getConnection();
     }
 
     public function getPacker() : Packer
     {
-        return $this->packer ?: $this->packer = $this->handler->getPacker();
-    }
-
-    public function handle(Request $request) : Response
-    {
-        return $this->middleware->process($request, $this->handler);
+        return $this->handler->getPacker();
     }
 }

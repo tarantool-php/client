@@ -65,16 +65,10 @@ final class Client
         $handler = new DefaultHandler($connection, new PurePacker());
 
         if (isset($options['username'])) {
-            $handler = new MiddlewareHandler(
-                new AuthMiddleware($options['username'], $options['password'] ?? ''),
-                $handler
-            );
+            $handler = MiddlewareHandler::create($handler, new AuthMiddleware($options['username'], $options['password'] ?? ''));
         }
         if (isset($options['max_retries']) && 0 !== $options['max_retries']) {
-            $handler = new MiddlewareHandler(
-                RetryMiddleware::linear($options['max_retries']),
-                $handler
-            );
+            $handler = MiddlewareHandler::create($handler, RetryMiddleware::linear($options['max_retries']));
         }
 
         return new self($handler);
@@ -102,16 +96,10 @@ final class Client
         $handler = new DefaultHandler($connection, new PurePacker());
 
         if ($username = $dsn->getUsername()) {
-            $handler = new MiddlewareHandler(
-                new AuthMiddleware($username, $dsn->getPassword() ?? ''),
-                $handler
-            );
+            $handler = MiddlewareHandler::create($handler, new AuthMiddleware($username, $dsn->getPassword() ?? ''));
         }
         if ($maxRetries = $dsn->getInt('max_retries')) {
-            $handler = new MiddlewareHandler(
-                RetryMiddleware::linear($maxRetries),
-                $handler
-            );
+            $handler = MiddlewareHandler::create($handler, RetryMiddleware::linear($maxRetries));
         }
 
         return new self($handler);
@@ -120,11 +108,7 @@ final class Client
     public function withMiddleware(Middleware $middleware, Middleware ...$middlewares) : self
     {
         $new = clone $this;
-        $new->handler = new MiddlewareHandler($middleware, $this->handler);
-
-        if ($middlewares) {
-            $new->handler = MiddlewareHandler::create($new->handler, $middlewares);
-        }
+        $new->handler = MiddlewareHandler::create($new->handler, $middleware, ...$middlewares);
 
         return $new;
     }
