@@ -499,15 +499,6 @@ Result 3: [3]
 </details>
 
 
-<details>
-<summary><strong>Ping</strong></summary><br />
-
-```php
-$client->ping();
-```
-</details>
-
-
 ### SQL protocol
 
 Below is an example of the SQL execute request. For more detailed information and examples please see 
