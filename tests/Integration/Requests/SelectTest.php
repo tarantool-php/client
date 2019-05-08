@@ -17,17 +17,19 @@ use Tarantool\Client\Exception\RequestFailed;
 use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Tests\Integration\TestCase;
 
-/**
- * @eval create_fixtures()
- */
 final class SelectTest extends TestCase
 {
     /**
      * @dataProvider provideSelectData
+     *
+     * @eval space = create_space('request_select')
+     * @eval space:create_index('primary', {type = 'tree', unique = true, parts = {1, 'unsigned'}})
+     * @eval space:create_index('secondary', {type = 'tree', unique = false, parts = {2, 'unsigned', 3, 'str'}})
+     * @eval for i = 1, 100 do space:replace{i, i * 2 % 5, 'tuple_' .. i} end
      */
     public function testSelect(int $expectedCount, Criteria $criteria) : void
     {
-        $space = $this->client->getSpace('space_data');
+        $space = $this->client->getSpace('request_select');
         $result = $space->select($criteria);
 
         self::assertCount($expectedCount, $result);
@@ -53,16 +55,22 @@ final class SelectTest extends TestCase
         ];
     }
 
+    /**
+     * @eval create_space('request_select'):create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
+     */
     public function testSelectEmpty() : void
     {
-        $space = $this->client->getSpace('space_empty');
+        $space = $this->client->getSpace('request_select');
 
         self::assertEmpty($space->select(Criteria::key([])));
     }
 
+    /**
+     * @eval create_space('request_select'):create_index('primary', {type = 'hash', parts = {1, 'unsigned'}})
+     */
     public function testSelectWithNonExistingIndexName() : void
     {
-        $space = $this->client->getSpace('space_misc');
+        $space = $this->client->getSpace('request_select');
 
         $this->expectException(RequestFailed::class);
         $this->expectExceptionMessage("No index 'non_existing_index' is defined in space #".$space->getId());
@@ -70,12 +78,15 @@ final class SelectTest extends TestCase
         $space->select(Criteria::key([1])->andIndex('non_existing_index'));
     }
 
+    /**
+     * @eval create_space('request_select'):create_index('primary', {type = 'hash', parts = {1, 'unsigned'}})
+     */
     public function testSelectWithNonExistingIndexId() : void
     {
-        $space = $this->client->getSpace('space_misc');
+        $space = $this->client->getSpace('request_select');
 
         $this->expectException(RequestFailed::class);
-        $this->expectExceptionMessage("No index #123456 is defined in space 'space_misc'");
+        $this->expectExceptionMessage("No index #123456 is defined in space 'request_select'");
 
         $space->select(Criteria::key([1])->andIndex(123456));
     }

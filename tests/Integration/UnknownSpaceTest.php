@@ -16,9 +16,6 @@ namespace Tarantool\Client\Tests\Integration;
 use Tarantool\Client\Exception\RequestFailed;
 use Tarantool\Client\Schema\Criteria;
 
-/**
- * @eval create_fixtures()
- */
 final class UnknownSpaceTest extends TestCase
 {
     public function testGetByName() : void

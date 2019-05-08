@@ -15,6 +15,9 @@ namespace Tarantool\Client\Tests\Integration;
 
 use Tarantool\Client\Schema\Criteria;
 
+/**
+ * @eval create_space('test_space_caching'):create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
+ */
 final class ClientSpaceCachingTest extends TestCase
 {
     public function testCacheSpace() : void
@@ -22,8 +25,8 @@ final class ClientSpaceCachingTest extends TestCase
         $total = self::getTotalSelectCalls();
 
         $this->client->flushSpaces();
-        $this->client->getSpace('space_conn')->select(Criteria::key([]));
-        $this->client->getSpace('space_conn')->select(Criteria::key([]));
+        $this->client->getSpace('test_space_caching')->select(Criteria::key([]));
+        $this->client->getSpace('test_space_caching')->select(Criteria::key([]));
 
         self::assertSame(3, self::getTotalSelectCalls() - $total);
     }
@@ -33,9 +36,9 @@ final class ClientSpaceCachingTest extends TestCase
         $total = self::getTotalSelectCalls();
 
         $this->client->flushSpaces();
-        $this->client->getSpace('space_conn')->select(Criteria::key([]));
+        $this->client->getSpace('test_space_caching')->select(Criteria::key([]));
         $this->client->flushSpaces();
-        $this->client->getSpace('space_conn')->select(Criteria::key([]));
+        $this->client->getSpace('test_space_caching')->select(Criteria::key([]));
 
         self::assertSame(4, self::getTotalSelectCalls() - $total);
     }

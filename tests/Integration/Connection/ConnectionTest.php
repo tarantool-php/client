@@ -25,6 +25,8 @@ final class ConnectionTest extends TestCase
     /**
      * @dataProvider provideAutoConnectData
      * @doesNotPerformAssertions
+     *
+     * @eval create_space('test_auto_connect'):create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
      */
     public function testAutoConnect(string $methodName, array $methodArgs, ?string $space = null) : void
     {
@@ -41,11 +43,11 @@ final class ConnectionTest extends TestCase
             ['call', ['box.stat']],
             ['evaluate', ['return 1']],
 
-            ['select', [Criteria::key([42])], 'space_conn'],
-            ['insert', [[time()]], 'space_conn'],
-            ['replace', [[1, 2]], 'space_conn'],
-            ['update', [[1], Operations::add(1, 2)], 'space_conn'],
-            ['delete', [[1]], 'space_conn'],
+            ['select', [Criteria::key([42])], 'test_auto_connect'],
+            ['insert', [[time()]], 'test_auto_connect'],
+            ['replace', [[1, 2]], 'test_auto_connect'],
+            ['update', [[1], Operations::add(1, 2)], 'test_auto_connect'],
+            ['delete', [[1]], 'test_auto_connect'],
         ];
     }
 

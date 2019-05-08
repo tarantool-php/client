@@ -18,13 +18,14 @@ use Tarantool\Client\Schema\Operations;
 use Tarantool\Client\Tests\Integration\TestCase;
 
 /**
- * @eval create_fixtures()
+ * @eval space = create_space('request_upsert')
+ * @eval space:create_index('primary', {type = 'hash', parts = {1, 'unsigned'}})
  */
 final class UpsertTest extends TestCase
 {
     public function testUpsert() : void
     {
-        $space = $this->client->getSpace('space_misc');
+        $space = $this->client->getSpace('request_upsert');
 
         $key = 10;
         $values = [$key, 'upserted'];

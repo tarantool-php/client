@@ -26,6 +26,10 @@ final class AuthenticateTest extends TestCase
      * ["user_foo", "foo"]
      * ["user_empty", ""]
      * ["user_big", "123456789012345678901234567890123456789012345678901234567890"]
+     *
+     * @eval create_user('user_foo', 'foo')
+     * @eval create_user('user_empty', '')
+     * @eval create_user('user_big', '123456789012345678901234567890123456789012345678901234567890')
      */
     public function testAuthenticateWithValidCredentials(string $username, string $password) : void
     {
@@ -58,6 +62,10 @@ final class AuthenticateTest extends TestCase
         }
     }
 
+    /**
+     * @eval create_user('user_foo', 'foo')
+     * @eval create_space('test_auth_reconnect'):create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
+     */
     public function testUseCredentialsAfterReconnect() : void
     {
         $client = ClientBuilder::createFromEnv()->setOptions([
@@ -68,8 +76,8 @@ final class AuthenticateTest extends TestCase
         $client->getHandler()->getConnection()->close();
 
         $this->expectException(RequestFailed::class);
-        $this->expectExceptionMessage("Space 'space_conn' does not exist");
+        $this->expectExceptionMessage("Space 'test_auth_reconnect' does not exist");
 
-        $client->getSpace('space_conn');
+        $client->getSpace('test_auth_reconnect');
     }
 }

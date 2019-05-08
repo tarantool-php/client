@@ -16,13 +16,13 @@ namespace Tarantool\Client\Tests\Integration\Requests;
 use Tarantool\Client\Exception\RequestFailed;
 use Tarantool\Client\Tests\Integration\TestCase;
 
-/**
- * @eval create_fixtures()
- */
 final class InsertTest extends TestCase
 {
     /**
      * @dataProvider provideInsertData
+     *
+     * @eval create_space('request_insert_str'):create_index('primary', {type = 'hash', parts = {1, 'str'}})
+     * @eval create_space('request_insert_num'):create_index('primary', {type = 'hash', parts = {1, 'unsigned'}})
      */
     public function testInsert(string $spaceName, array $values) : void
     {
@@ -35,18 +35,21 @@ final class InsertTest extends TestCase
     public function provideInsertData() : iterable
     {
         return [
-            ['space_str', ['']],
-            ['space_str', ['foo']],
-            ['space_str', ['null', null, null]],
-            ['space_str', ['int', 42, -42]],
-            ['space_str', ['float', 4.2, -4.2]],
-            ['space_str', ['array', ['foo' => 'bar']]],
-            ['space_num', [42]],
+            ['request_insert_str', ['']],
+            ['request_insert_str', ['foo']],
+            ['request_insert_str', ['null', null, null]],
+            ['request_insert_str', ['int', 42, -42]],
+            ['request_insert_str', ['float', 4.2, -4.2]],
+            ['request_insert_str', ['array', ['foo' => 'bar']]],
+            ['request_insert_num', [42]],
         ];
     }
 
     /**
      * @dataProvider provideInsertDataWithMismatchedTypes
+     *
+     * @eval create_space('request_insert_str'):create_index('primary', {type = 'hash', parts = {1, 'str'}})
+     * @eval create_space('request_insert_num'):create_index('primary', {type = 'hash', parts = {1, 'unsigned'}})
      */
     public function testInsertTypeMismatchedValues(string $spaceName, array $values) : void
     {
@@ -62,22 +65,27 @@ final class InsertTest extends TestCase
     public function provideInsertDataWithMismatchedTypes() : iterable
     {
         return [
-            ['space_str', [null]],
-            ['space_str', [42]],
-            ['space_str', [[]]],
-            ['space_num', [null]],
-            ['space_num', [-42]],
-            ['space_num', [4.2]],
-            ['space_num', [[]]],
+            ['request_insert_str', [null]],
+            ['request_insert_str', [42]],
+            ['request_insert_str', [[]]],
+            ['request_insert_num', [null]],
+            ['request_insert_num', [-42]],
+            ['request_insert_num', [4.2]],
+            ['request_insert_num', [[]]],
         ];
     }
 
+    /**
+     * @eval space = create_space('request_insert')
+     * @eval space:create_index('primary', {type = 'hash', parts = {1, 'unsigned'}})
+     * @eval space:insert{1, 'foobar'}
+     */
     public function testInsertDuplicateKey() : void
     {
-        $space = $this->client->getSpace('space_misc');
+        $space = $this->client->getSpace('request_insert');
 
         $this->expectException(RequestFailed::class);
-        $this->expectExceptionMessage("Duplicate key exists in unique index 'primary' in space 'space_misc'");
+        $this->expectExceptionMessage("Duplicate key exists in unique index 'primary' in space 'request_insert'");
         $this->expectExceptionCode(3);
 
         $space->insert([1, 'bazqux']);

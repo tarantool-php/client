@@ -21,9 +21,6 @@ use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\TestCase;
 
-/**
- * @eval create_fixtures()
- */
 final class MessagePackTest extends TestCase
 {
     /**
@@ -80,6 +77,10 @@ final class MessagePackTest extends TestCase
         self::assertEquals([$array], $result, '', 0.0, 5, true);
     }
 
+    /**
+     * @eval space = create_space('msgpack')
+     * @eval space:create_index('primary', {type = 'hash', parts = {1, 'unsigned'}})
+     */
     public function testStoringCustomTypeInTuple() : void
     {
         $client = ClientBuilder::createFromEnv()
@@ -95,10 +96,10 @@ final class MessagePackTest extends TestCase
             ->build();
 
         $date = new \DateTimeImmutable();
-        $space = $client->getSpace('space_misc');
-        $result = $space->insert([100, 'now', $date]);
+        $space = $client->getSpace('msgpack');
+        $result = $space->insert([100, $date]);
 
-        self::assertEquals($date, $result[0][2]);
-        self::assertEquals($date, $space->select(Criteria::key([100]))[0][2]);
+        self::assertEquals($date, $result[0][1]);
+        self::assertEquals($date, $space->select(Criteria::key([100]))[0][1]);
     }
 }

@@ -16,13 +16,18 @@ namespace Tarantool\Client\Tests\Integration\Requests;
 use Tarantool\Client\Tests\Integration\TestCase;
 
 /**
- * @eval create_fixtures()
+ * @eval space = create_space('request_delete')
+ * @eval space:create_index('primary', {type = 'hash', parts = {1, 'unsigned'}})
+ * @eval space:create_index('secondary', {type = 'tree', parts = {2, 'str'}})
+ * @eval space:insert{3, 'delete_me_1'}
+ * @eval space:insert{4, 'delete_me_2'}
+ * @eval space:insert{5, 'delete_me_3'}
  */
 final class DeleteTest extends TestCase
 {
     public function testDelete() : void
     {
-        $space = $this->client->getSpace('space_misc');
+        $space = $this->client->getSpace('request_delete');
         $result = $space->delete([3]);
 
         self::assertSame([[3, 'delete_me_1']], $result);
@@ -30,7 +35,7 @@ final class DeleteTest extends TestCase
 
     public function testDeleteWithIndexId() : void
     {
-        $space = $this->client->getSpace('space_misc');
+        $space = $this->client->getSpace('request_delete');
         $result = $space->delete(['delete_me_2'], 1);
 
         self::assertSame([[4, 'delete_me_2']], $result);
@@ -38,7 +43,7 @@ final class DeleteTest extends TestCase
 
     public function testDeleteWithIndexName() : void
     {
-        $space = $this->client->getSpace('space_misc');
+        $space = $this->client->getSpace('request_delete');
         $result = $space->delete(['delete_me_3'], 'secondary');
 
         self::assertSame([[5, 'delete_me_3']], $result);

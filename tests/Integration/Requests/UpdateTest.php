@@ -19,7 +19,11 @@ use Tarantool\Client\Schema\Operations;
 use Tarantool\Client\Tests\Integration\TestCase;
 
 /**
- * @eval create_fixtures()
+ * @eval space = create_space('request_update')
+ * @eval space:create_index('primary', {type = 'tree', unique = true, parts = {1, 'unsigned'}})
+ * @eval space:create_index('secondary', {type = 'tree', unique = false, parts = {2, 'unsigned', 3, 'str'}})
+ * @eval space:replace{1, 2, 'tuple_1'}
+ * @eval space:replace{2, 4, 'tuple_2'}
  */
 final class UpdateTest extends TestCase
 {
@@ -28,7 +32,7 @@ final class UpdateTest extends TestCase
      */
     public function testUpdate(Operations $operations, array $expectedResult) : void
     {
-        $space = $this->client->getSpace('space_data');
+        $space = $this->client->getSpace('request_update');
         $result = $space->update([1], $operations);
 
         self::assertSame($expectedResult, $result);
@@ -50,19 +54,15 @@ final class UpdateTest extends TestCase
                 [[1, 18, 'tuple_1', 88, 0x01001]],
             ],
             [
-                Operations::bitXor(4, 0x00010),
-                [[1, 18, 'tuple_1', 88, 0x01011]],
-            ],
-            [
                 Operations::splice(2, 2, 1, 'uup'),
-                [[1, 18, 'tuuuple_1', 88, 0x01011]],
+                [[1, 18, 'tuuuple_1', 88, 0x01001]],
             ],
         ];
     }
 
     public function testUpdateWithIndexName() : void
     {
-        $space = $this->client->getSpace('space_data');
+        $space = $this->client->getSpace('request_update');
 
         self::assertSame([2, 4, 'tuple_2'], $space->select(Criteria::key([2]))[0]);
 
@@ -73,7 +73,7 @@ final class UpdateTest extends TestCase
 
     public function testUpdateWithNonExistingIndexName() : void
     {
-        $space = $this->client->getSpace('space_data');
+        $space = $this->client->getSpace('request_update');
 
         $this->expectException(RequestFailed::class);
         $this->expectExceptionMessage("No index 'non_existing_index' is defined in space #".$space->getId());
@@ -83,7 +83,7 @@ final class UpdateTest extends TestCase
 
     public function testUpdateByNonExistingKey() : void
     {
-        $space = $this->client->getSpace('space_misc');
+        $space = $this->client->getSpace('request_update');
         $result = $space->update([42], Operations::set(2, 'qux'));
 
         self::assertSame([], $result);

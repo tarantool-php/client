@@ -17,13 +17,16 @@ use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Tests\Integration\TestCase;
 
 /**
- * @eval create_fixtures()
+ * @eval space = create_space('request_replace')
+ * @eval space:create_index('primary', {type = 'hash', parts = {1, 'unsigned'}})
+ * @eval space:create_index('secondary', {type = 'tree', parts = {2, 'str'}})
+ * @eval space:insert{2, 'replace_me'}
  */
 final class ReplaceTest extends TestCase
 {
     public function testReplace() : void
     {
-        $space = $this->client->getSpace('space_misc');
+        $space = $this->client->getSpace('request_replace');
 
         self::assertSame([[2, 'replace_me']], $space->select(Criteria::key([2])));
         self::assertSame([[2, 'replaced']], $space->replace([2, 'replaced']));
