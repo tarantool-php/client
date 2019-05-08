@@ -161,7 +161,10 @@ you can make requests to Tarantool, for example:
 use Tarantool\Client\IProto;
 use Tarantool\Client\Request\Call;
 
-$response = $handler->handle(new Call('box.stat'));
+...
+
+$request = new Call('box.stat');
+$response = $handler->handle($request);
 $data = $response->getBodyField(IProto::DATA);
 ```
   
