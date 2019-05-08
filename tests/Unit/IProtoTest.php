@@ -1,38 +1,51 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the Tarantool Client package.
+ *
+ * (c) Eugene Leonovich <gen.work@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tarantool\Client\Tests\Unit;
 
+use PHPUnit\Framework\TestCase;
+use Tarantool\Client\Exception\InvalidGreeting;
 use Tarantool\Client\IProto;
 
-class IProtoTest extends \PHPUnit_Framework_TestCase
+final class IProtoTest extends TestCase
 {
     /**
      * @dataProvider \Tarantool\Client\Tests\GreetingDataProvider::provideValidGreetings
      */
-    public function testParseGreeting($greeting, $salt)
+    public function testParseGreeting(string $greeting, string $salt) : void
     {
-        $this->assertSame($salt, IProto::parseGreeting($greeting));
+        self::assertSame($salt, IProto::parseGreeting($greeting));
     }
 
     /**
      * @dataProvider \Tarantool\Client\Tests\GreetingDataProvider::provideGreetingsWithInvalidServerName
-     *
-     * @expectedException \Tarantool\Client\Exception\Exception
-     * @expectedExceptionMessage Invalid greeting: unable to recognize Tarantool server.
      */
-    public function testParseGreetingThrowsExceptionOnInvalidServer($greeting)
+    public function testParseGreetingThrowsExceptionOnInvalidServer(string $greeting) : void
     {
+        $this->expectException(InvalidGreeting::class);
+        $this->expectExceptionMessage('Unable to recognize Tarantool server.');
+
         IProto::parseGreeting($greeting);
     }
 
     /**
      * @dataProvider \Tarantool\Client\Tests\GreetingDataProvider::provideGreetingsWithInvalidSalt
-     *
-     * @expectedException \Tarantool\Client\Exception\Exception
-     * @expectedExceptionMessage Invalid greeting: unable to parse salt.
      */
-    public function testParseGreetingThrowsExceptionOnInvalidSalt($greeting)
+    public function testParseGreetingThrowsExceptionOnInvalidSalt(string $greeting) : void
     {
+        $this->expectException(InvalidGreeting::class);
+        $this->expectExceptionMessage('Unable to parse salt.');
+
         IProto::parseGreeting($greeting);
     }
 }

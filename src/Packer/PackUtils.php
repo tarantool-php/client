@@ -1,20 +1,35 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the Tarantool Client package.
+ *
+ * (c) Eugene Leonovich <gen.work@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tarantool\Client\Packer;
 
-use Tarantool\Client\Exception\Exception;
+use Tarantool\Client\Exception\UnpackingFailed;
 
-abstract class PackUtils
+final class PackUtils
 {
-    public static function packLength($length)
+    private function __construct()
     {
-        return pack('CN', 0xce, $length);
     }
 
-    public static function unpackLength($data)
+    public static function packLength(int $length) : string
     {
-        if (false === $data = @unpack('C_/Nlength', $data)) {
-            throw new Exception('Unable to unpack length value.');
+        return \pack('CN', 0xce, $length);
+    }
+
+    public static function unpackLength(string $data) : int
+    {
+        if (false === $data = @\unpack('C_/Nlength', $data)) {
+            throw new UnpackingFailed('Unable to unpack length value.');
         }
 
         return $data['length'];

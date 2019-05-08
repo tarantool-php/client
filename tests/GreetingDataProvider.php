@@ -1,10 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the Tarantool Client package.
+ *
+ * (c) Eugene Leonovich <gen.work@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tarantool\Client\Tests;
 
-class GreetingDataProvider
+final class GreetingDataProvider
 {
-    public static function provideGreetingsWithInvalidServerName()
+    public static function provideGreetingsWithInvalidServerName() : iterable
     {
         return [
             [''],
@@ -21,7 +32,7 @@ class GreetingDataProvider
         ];
     }
 
-    public static function provideGreetingsWithInvalidSalt()
+    public static function provideGreetingsWithInvalidSalt() : iterable
     {
         return [
             [str_pad('Tarantool', 63, '1')."\n"],
@@ -32,14 +43,14 @@ class GreetingDataProvider
         ];
     }
 
-    public static function provideValidGreetings()
+    public static function provideValidGreetings() : iterable
     {
         return [
             [self::generateGreeting('12345678901234567890'), '12345678901234567890'],
         ];
     }
 
-    public static function generateGreeting($salt = null)
+    public static function generateGreeting(?string $salt = null) : string
     {
         $salt = $salt ?: substr(md5(uniqid()), 0, 20);
 

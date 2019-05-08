@@ -1,11 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the Tarantool Client package.
+ *
+ * (c) Eugene Leonovich <gen.work@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tarantool\Client\Schema;
 
-abstract class Index
+final class Index
 {
-    const SPACE_PRIMARY = 0;
-    const SPACE_NAME = 2;
-    const INDEX_PRIMARY = 0;
-    const INDEX_NAME = 2;
+    public const SPACE_NAME = 2;
+    public const INDEX_NAME = 2;
+
+    private function __construct()
+    {
+    }
 }

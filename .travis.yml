@@ -1,49 +1,46 @@
 sudo: required
 
-language: python
+language: bash
 
 services:
   - docker
 
 env:
-  - IMAGE='php:5.6-cli' TNT_PACKER=pecl
-  - IMAGE='php:5.6-cli' TNT_PACKER=pure
+  global:
+    TNT_IMAGE='tarantool/tarantool:2'
 
-  - IMAGE='php:7.0-cli' TNT_PACKER=pecl
-  - IMAGE='php:7.0-cli' TNT_PACKER=pure
+  matrix:
+    - PHP_IMAGE='php:7.1-cli'
+    - PHP_IMAGE='php:7.1-cli' TNT_PACKER=pecl
+    - PHP_IMAGE='php:7.1-cli' TNT_CONN_URI=/tmp/tarantool_client.sock
 
-  - IMAGE='php:7.1-cli' TNT_PACKER=pecl
-  - IMAGE='php:7.1-cli' TNT_PACKER=pure TNT_CONN_URI=/tmp/tarantool_client.sock
-  - IMAGE='php:7.1-cli' TNT_PACKER=pure COVERAGE_FILE='coverage.clover'
+    - PHP_IMAGE='php:7.2-cli' COVERAGE_FILE='coverage.clover'
+    - PHP_IMAGE='php:7.2-cli' TNT_PACKER=pecl COVERAGE_FILE='coverage.clover'
+    - PHP_IMAGE='php:7.2-cli' TNT_CONN_URI=/tmp/tarantool_client.sock
 
-  - IMAGE='php:7.2-cli' TNT_PACKER=pecl
-  - IMAGE='php:7.2-cli' TNT_PACKER=pure
+    - PHP_IMAGE='php:7.3-cli' CHECK_CS=1
+    - PHP_IMAGE='php:7.3-cli' TNT_PACKER=pecl
+    - PHP_IMAGE='php:7.3-cli' TNT_CONN_URI=/tmp/tarantool_client.sock
 
-  - IMAGE='php:7.3-cli' TNT_PACKER=pecl
-  - IMAGE='php:7.3-cli' TNT_PACKER=pure
-
-  - IMAGE='php:7.2-cli' TNT_CLIENT=pecl
-
-  - IMAGE='hhvm/hhvm:latest' TNT_PACKER=pure
-  - IMAGE='hhvm/hhvm:latest' TNT_PACKER=pure TNT_CONN_URI=/tmp/tarantool_client.sock
-
-matrix:
-  allow_failures:
-    - env: IMAGE='php:7.2-cli' TNT_CLIENT=pecl
-    - env: IMAGE='hhvm/hhvm:latest' TNT_PACKER=pure
-    - env: IMAGE='hhvm/hhvm:latest' TNT_PACKER=pure TNT_CONN_URI=/tmp/tarantool_client.sock
-  fast_finish: true
+    - PHP_IMAGE='php:7.3-cli' TNT_IMAGE='tarantool/tarantool:1.7'
+    - PHP_IMAGE='php:7.3-cli' TNT_IMAGE='tarantool/tarantool:1.9'
+    - PHP_IMAGE='php:7.3-cli' TNT_IMAGE='tarantool/tarantool:1'
+    - PHP_IMAGE='php:7.3-cli' TNT_IMAGE='tarantool/tarantool:2.1'
 
 install:
-  - ./dockerfile.py | tee /dev/tty | docker build -t client -
+  - ./dockerfile.sh | tee /dev/tty | docker build -t client -
 
 script:
   - docker network create tarantool-php
-  - docker run -d --net=tarantool-php --name=tarantool -v /tmp:/tmp -v $(pwd):/client -e TNT_LISTEN_URI=$TNT_CONN_URI tarantool/tarantool:1 tarantool /client/tests/Integration/client.lua
-  - docker run --rm --net=tarantool-php --name=client -v /tmp:/tmp -v $(pwd):/client -w /client client
+  - docker run --net=tarantool-php --rm ${TNT_IMAGE} /usr/local/bin/tarantool --version
+  - docker run --net=tarantool-php -d --name=tarantool -v /tmp:/tmp -v $(pwd)/tests/Integration/client.lua:/client.lua -e TNT_LISTEN_URI=$TNT_CONN_URI ${TNT_IMAGE} tarantool /client.lua
+  - docker run --net=tarantool-php --rm -v /tmp:/tmp -v $(pwd):/client -w /client client
+  - if [[ -n "$CHECK_CS" ]]; then
+      docker run --net=tarantool-php --rm -v $(pwd):/client -w /client client php vendor/bin/php-cs-fixer fix --dry-run --diff --verbose .;
+    fi
 
 after_script:
   - if [[ -f "$COVERAGE_FILE" ]]; then
       curl -sSOL https://scrutinizer-ci.com/ocular.phar &&
-      docker run --rm -v $(pwd):/client -w /client client php ocular.phar code-coverage:upload --format=php-clover "$COVERAGE_FILE";
+      docker run --net=tarantool-php --rm -v $(pwd):/client -w /client client php ocular.phar code-coverage:upload --format=php-clover "$COVERAGE_FILE";
     fi
