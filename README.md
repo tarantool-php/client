@@ -540,11 +540,6 @@ Result 3: [{"ID":1,"EMAIL":"foobar@example.com"}]
 
 ### User defined types
 
-To store complex structures inside a tuple you may want to use objects.
-
-Клиент может работатать не только со скалярными типами PHP. Вы так же определить свои собственные типы, 
-и работать с ними как с остальными типами, например: 
-
 ```php
 $space->insert([42, Money::EUR(500)]);
 [[$id, $money]] = $space->select(Ctiteria::key([42]));
