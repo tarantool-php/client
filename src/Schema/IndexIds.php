@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Schema;
 
-final class Index
+final class IndexIds
 {
     public const SPACE_NAME = 2;
     public const INDEX_NAME = 2;

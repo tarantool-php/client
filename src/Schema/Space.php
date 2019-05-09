@@ -118,7 +118,7 @@ final class Space
         }
 
         $schema = new self($this->handler, self::VINDEX_ID);
-        $data = $schema->select(Criteria::key([$this->id, $indexName])->andIndex(Index::INDEX_NAME));
+        $data = $schema->select(Criteria::key([$this->id, $indexName])->andIndex(IndexIds::INDEX_NAME));
 
         if ([] === $data) {
             throw RequestFailed::unknownIndex($indexName, $this->id);

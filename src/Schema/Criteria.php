@@ -33,6 +33,9 @@ final class Criteria
         return $self;
     }
 
+    /**
+     * @param int|string $index
+     */
     public function andIndex($index) : self
     {
         $new = clone $this;
@@ -41,6 +44,9 @@ final class Criteria
         return $new;
     }
 
+    /**
+     * @return int|string
+     */
     public function getIndex()
     {
         return $this->index;
