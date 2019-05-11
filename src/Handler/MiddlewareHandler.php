@@ -23,6 +23,7 @@ final class MiddlewareHandler implements Handler
 {
     private $handler;
     private $middlewares;
+    private $index = 0;
 
     private function __construct(Handler $handler, array $middlewares)
     {
@@ -48,13 +49,14 @@ final class MiddlewareHandler implements Handler
 
     public function handle(Request $request) : Response
     {
-        if ([] === $this->middlewares) {
+        if (!isset($this->middlewares[$this->index])) {
             return $this->handler->handle($request);
         }
 
-        $middleware = \array_pop($this->middlewares);
+        $new = clone $this;
+        ++$new->index;
 
-        return $middleware->process($request, $this);
+        return $this->middlewares[$this->index]->process($request, $new);
     }
 
     public function getConnection() : Connection

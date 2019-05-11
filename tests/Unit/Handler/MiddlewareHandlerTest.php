@@ -68,7 +68,7 @@ final class MiddlewareHandlerTest extends TestCase
         $handler = MiddlewareHandler::create($this->handler, $middleware1, $middleware2);
         $handler->handle($this->request);
 
-        self::assertSame('2,1', implode(',', $trace->getArrayCopy()));
+        self::assertSame('1,2', implode(',', $trace->getArrayCopy()));
     }
 
     public function testCreateReusesHandler() : void
@@ -94,5 +94,22 @@ final class MiddlewareHandlerTest extends TestCase
         self::assertSame($handler1, $handler2);
 
         $handler2->handle($this->request);
+    }
+
+    public function testMiddlewareRemainsAfterExecution() : void
+    {
+        $middlewareCallback = static function (Request $request, Handler $handler) {
+            return $handler->handle($request);
+        };
+
+        /** @var Middleware $middleware */
+        $middleware = $this->createMock(Middleware::class);
+        $middleware->expects($this->exactly(2))->method('process')->willReturnCallback($middlewareCallback);
+
+        $this->handler->method('handle')->willReturn(new Response([], []));
+
+        $handler = MiddlewareHandler::create($this->handler, $middleware);
+        $handler->handle($this->request);
+        $handler->handle($this->request);
     }
 }
