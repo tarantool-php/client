@@ -189,7 +189,7 @@ $client = Client::fromDefaults()->withMiddleware(
 );
 ```
 
-You may also assign multiple middleware to a client (they will be executed in [FIFO](https://en.wikipedia.org/wiki/FIFO_(computing_and_electronics) order):
+You may also assign multiple middleware to a client (they will be executed in [FIFO](https://en.wikipedia.org/wiki/FIFO_(computing_and_electronics)) order):
 
 ```php
 use Tarantool\Client\Client;
