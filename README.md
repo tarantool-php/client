@@ -71,7 +71,7 @@ use Tarantool\Client\Client;
 $client = Client::fromDsn('tcp://127.0.0.1');
 $client = Client::fromDsn('tcp://[fe80::1]:3301');
 $client = Client::fromDsn('tcp://user:pass@example.com:3301');
-$client = Client::fromDsn('tcp://user:pass@example.com/?connect_timeout=5&max_retries=3');
+$client = Client::fromDsn('tcp://user@example.com/?connect_timeout=5&max_retries=3');
 $client = Client::fromDsn('unix:///var/run/tarantool/my_instance.sock');
 $client = Client::fromDsn('unix://user:pass@/var/run/tarantool/my_instance.sock?max_retries=3');
 ```
