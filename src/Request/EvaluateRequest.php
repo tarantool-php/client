@@ -16,29 +16,27 @@ namespace Tarantool\Client\Request;
 use Tarantool\Client\IProto;
 use Tarantool\Client\RequestTypes;
 
-final class Execute implements Request
+final class EvaluateRequest implements Request
 {
-    private $sql;
-    private $params;
+    private $expr;
+    private $args;
 
-    public function __construct(string $sql, array $params = [])
+    public function __construct(string $expr, array $args = [])
     {
-        $this->sql = $sql;
-        $this->params = $params;
+        $this->expr = $expr;
+        $this->args = $args;
     }
 
     public function getType() : int
     {
-        return RequestTypes::EXECUTE;
+        return RequestTypes::EVALUATE;
     }
 
     public function getBody() : array
     {
-        return [] === $this->params ? [
-            IProto::SQL_TEXT => $this->sql,
-        ] : [
-            IProto::SQL_TEXT => $this->sql,
-            IProto::SQL_BIND => $this->params,
+        return [
+            IProto::EXPR => $this->expr,
+            IProto::TUPLE => $this->args,
         ];
     }
 }

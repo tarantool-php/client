@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Tarantool\Client\Middleware;
 
 use Tarantool\Client\Handler\Handler;
-use Tarantool\Client\Request\Authenticate;
+use Tarantool\Client\Request\AuthenticateRequest;
 use Tarantool\Client\Request\Request;
 use Tarantool\Client\Response;
 
@@ -34,7 +34,7 @@ final class AuthMiddleware implements Middleware
         $connection = $handler->getConnection();
 
         if ($connection->isClosed()) {
-            $handler->handle(new Authenticate(
+            $handler->handle(new AuthenticateRequest(
                 $connection->open(),
                 $this->username,
                 $this->password

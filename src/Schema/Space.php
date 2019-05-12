@@ -16,12 +16,12 @@ namespace Tarantool\Client\Schema;
 use Tarantool\Client\Exception\RequestFailed;
 use Tarantool\Client\Handler\Handler;
 use Tarantool\Client\IProto;
-use Tarantool\Client\Request\Delete;
-use Tarantool\Client\Request\Insert;
-use Tarantool\Client\Request\Replace;
-use Tarantool\Client\Request\Select;
-use Tarantool\Client\Request\Update;
-use Tarantool\Client\Request\Upsert;
+use Tarantool\Client\Request\DeleteRequest;
+use Tarantool\Client\Request\InsertRequest;
+use Tarantool\Client\Request\ReplaceRequest;
+use Tarantool\Client\Request\SelectRequest;
+use Tarantool\Client\Request\UpdateRequest;
+use Tarantool\Client\Request\UpsertRequest;
 
 final class Space
 {
@@ -51,7 +51,7 @@ final class Space
             $index = $this->getIndexIdByName($index);
         }
 
-        $request = new Select(
+        $request = new SelectRequest(
             $this->id,
             $index,
             $criteria->getKey(),
@@ -65,14 +65,14 @@ final class Space
 
     public function insert(array $tuple) : array
     {
-        $request = new Insert($this->id, $tuple);
+        $request = new InsertRequest($this->id, $tuple);
 
         return $this->handler->handle($request)->getBodyField(IProto::DATA);
     }
 
     public function replace(array $tuple) : array
     {
-        $request = new Replace($this->id, $tuple);
+        $request = new ReplaceRequest($this->id, $tuple);
 
         return $this->handler->handle($request)->getBodyField(IProto::DATA);
     }
@@ -83,14 +83,14 @@ final class Space
             $index = $this->getIndexIdByName($index);
         }
 
-        $request = new Update($this->id, $index, $key, $operations->toArray());
+        $request = new UpdateRequest($this->id, $index, $key, $operations->toArray());
 
         return $this->handler->handle($request)->getBodyField(IProto::DATA);
     }
 
     public function upsert(array $tuple, Operations $operations) : void
     {
-        $request = new Upsert($this->id, $tuple, $operations->toArray());
+        $request = new UpsertRequest($this->id, $tuple, $operations->toArray());
 
         $this->handler->handle($request);
     }
@@ -101,7 +101,7 @@ final class Space
             $index = $this->getIndexIdByName($index);
         }
 
-        $request = new Delete($this->id, $index, $key);
+        $request = new DeleteRequest($this->id, $index, $key);
 
         return $this->handler->handle($request)->getBodyField(IProto::DATA);
     }

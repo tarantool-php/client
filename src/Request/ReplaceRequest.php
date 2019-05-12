@@ -16,7 +16,7 @@ namespace Tarantool\Client\Request;
 use Tarantool\Client\IProto;
 use Tarantool\Client\RequestTypes;
 
-final class Replace implements Request
+final class ReplaceRequest implements Request
 {
     private $spaceId;
     private $tuple;

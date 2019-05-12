@@ -16,7 +16,7 @@ namespace Tarantool\Client\Request;
 use Tarantool\Client\IProto;
 use Tarantool\Client\RequestTypes;
 
-final class Authenticate implements Request
+final class AuthenticateRequest implements Request
 {
     private $salt;
     private $username;

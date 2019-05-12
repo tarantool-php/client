@@ -22,10 +22,10 @@ use Tarantool\Client\Middleware\AuthMiddleware;
 use Tarantool\Client\Middleware\Middleware;
 use Tarantool\Client\Middleware\RetryMiddleware;
 use Tarantool\Client\Packer\PurePacker;
-use Tarantool\Client\Request\Call;
-use Tarantool\Client\Request\Evaluate;
-use Tarantool\Client\Request\Execute;
-use Tarantool\Client\Request\Ping;
+use Tarantool\Client\Request\CallRequest;
+use Tarantool\Client\Request\EvaluateRequest;
+use Tarantool\Client\Request\ExecuteRequest;
+use Tarantool\Client\Request\PingRequest;
 use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Schema\IndexIds;
 use Tarantool\Client\Schema\Space;
@@ -120,7 +120,7 @@ final class Client
 
     public function ping() : void
     {
-        $this->handler->handle(new Ping());
+        $this->handler->handle(new PingRequest());
     }
 
     public function getSpace(string $spaceName) : Space
@@ -145,14 +145,14 @@ final class Client
 
     public function call(string $funcName, ...$args) : array
     {
-        $request = new Call($funcName, $args);
+        $request = new CallRequest($funcName, $args);
 
         return $this->handler->handle($request)->getBodyField(IProto::DATA);
     }
 
     public function executeQuery(string $sql, ...$params) : SqlQueryResult
     {
-        $request = new Execute($sql, $params);
+        $request = new ExecuteRequest($sql, $params);
         $response = $this->handler->handle($request);
 
         return new SqlQueryResult(
@@ -163,7 +163,7 @@ final class Client
 
     public function executeUpdate(string $sql, ...$params) : SqlUpdateResult
     {
-        $request = new Execute($sql, $params);
+        $request = new ExecuteRequest($sql, $params);
 
         return new SqlUpdateResult(
             $this->handler->handle($request)->getBodyField(IProto::SQL_INFO)
@@ -172,7 +172,7 @@ final class Client
 
     public function evaluate(string $expr, ...$args) : array
     {
-        $request = new Evaluate($expr, $args);
+        $request = new EvaluateRequest($expr, $args);
 
         return $this->handler->handle($request)->getBodyField(IProto::DATA);
     }

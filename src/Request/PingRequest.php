@@ -15,7 +15,7 @@ namespace Tarantool\Client\Request;
 
 use Tarantool\Client\RequestTypes;
 
-final class Ping implements Request
+final class PingRequest implements Request
 {
     public function getType() : int
     {

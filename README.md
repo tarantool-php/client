@@ -159,11 +159,11 @@ you can make requests to Tarantool, for example:
 
 ```php
 use Tarantool\Client\IProto;
-use Tarantool\Client\Request\Call;
+use Tarantool\Client\Request\CallRequest;
 
 ...
 
-$request = new Call('box.stat');
+$request = new CallRequest('box.stat');
 $response = $handler->handle($request);
 $data = $response->getBodyField(IProto::DATA);
 ```
