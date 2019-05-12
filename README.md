@@ -505,7 +505,7 @@ Below is an example of the SQL execute request. For more detailed information an
 the [official documentation](https://www.tarantool.io/en/doc/2.1/tutorials/sql_tutorial).
 
 <details>
-<summary><strong>Exacute</strong></summary><br />
+<summary><strong>Execute</strong></summary><br />
 
 *Code*
 
