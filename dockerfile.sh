@@ -31,7 +31,7 @@ echo -e "
 FROM $PHP_IMAGE
 
 RUN apt-get update && \\
-    apt-get install -y git curl unzip libzip-dev && \\
+    apt-get install -y curl unzip libzip-dev && \\
     docker-php-ext-configure zip --with-libzip && \\
     docker-php-ext-install sockets zip${RUN_CMDS}
 
