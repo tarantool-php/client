@@ -14,6 +14,7 @@
         "php": "^7.1"
     },
     "require-dev": {
+        "ext-json": "*",
         "ext-msgpack": "*",
         "ext-sockets": "*",
         "friendsofphp/php-cs-fixer": "^2.14",
