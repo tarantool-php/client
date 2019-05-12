@@ -20,7 +20,7 @@ final class ExamplesTest extends TestCase
      */
     public function testExample(string $filename) : void
     {
-        if (strpos($filename, '/sql/') && self::matchTarantoolVersion('<2.0.0', $currentVersion)) {
+        if (strpos($filename, '/execute.php') && self::matchTarantoolVersion('<2.0.0', $currentVersion)) {
             self::markTestSkipped(sprintf('This version of Tarantool (%s) does not support sql.', $currentVersion));
         }
 
