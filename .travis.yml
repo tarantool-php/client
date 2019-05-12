@@ -22,10 +22,6 @@ env:
     - PHP_IMAGE='php:7.3-cli' TNT_PACKER=pecl
     - PHP_IMAGE='php:7.3-cli' TNT_CONN_URI=/tmp/tarantool_client.sock
 
-    - PHP_IMAGE='phpdaily/php:7.4.0-dev-cli-stretch'
-    - PHP_IMAGE='phpdaily/php:7.4.0-dev-cli-stretch' TNT_PACKER=pecl
-    - PHP_IMAGE='phpdaily/php:7.4.0-dev-cli-stretch' TNT_CONN_URI=/tmp/tarantool_client.sock
-
     - PHP_IMAGE='php:7.3-cli' TNT_IMAGE='tarantool/tarantool:1.7'
     - PHP_IMAGE='php:7.3-cli' TNT_IMAGE='tarantool/tarantool:1.9'
     - PHP_IMAGE='php:7.3-cli' TNT_IMAGE='tarantool/tarantool:1'
