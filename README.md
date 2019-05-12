@@ -604,7 +604,8 @@ Then run a Tarantool instance (needed for integration tests):
 
 ```bash
 docker network create tarantool-php
-docker run -d --net=tarantool-php -p 3301:3301 --name=tarantool -v $(pwd)/tests/Integration/client.lua:/client.lua \
+docker run -d --net=tarantool-php -p 3301:3301 --name=tarantool \
+    -v $(pwd)/tests/Integration/client.lua:/client.lua \
     tarantool/tarantool:2 tarantool /client.lua
 ```
 
