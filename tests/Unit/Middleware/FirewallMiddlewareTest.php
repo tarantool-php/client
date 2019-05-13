@@ -18,8 +18,12 @@ use PHPUnit\Framework\TestCase;
 use Tarantool\Client\Exception\RequestForbidden;
 use Tarantool\Client\Handler\Handler;
 use Tarantool\Client\Middleware\FirewallMiddleware;
+use Tarantool\Client\Request\AuthenticateRequest;
+use Tarantool\Client\Request\PingRequest;
 use Tarantool\Client\Request\Request;
+use Tarantool\Client\Request\SelectRequest;
 use Tarantool\Client\Response;
+use Tarantool\Client\Schema\IteratorTypes;
 
 final class FirewallMiddlewareTest extends TestCase
 {
@@ -83,7 +87,7 @@ final class FirewallMiddlewareTest extends TestCase
         $middleware->process(new BarRequest(), $this->handler);
     }
 
-    public function testChildRequestNotAllowed() : void
+    public function testChildRequestForbidden() : void
     {
         $middleware = FirewallMiddleware::whitelist(FooRequest::class);
 
@@ -91,6 +95,24 @@ final class FirewallMiddlewareTest extends TestCase
         $this->expectExceptionMessage(sprintf('Request "%s" is forbidden.', BarRequest::class));
 
         $middleware->process(new BarRequest(), $this->handler);
+    }
+
+    public function testReadOnly() : void
+    {
+        $this->handler->expects($this->exactly(3))->method('handle')
+            ->willReturn(new Response([], []));
+
+        FirewallMiddleware::readOnly()->process(new AuthenticateRequest('12345678901234567890', 'guest'), $this->handler);
+        FirewallMiddleware::readOnly()->process(new PingRequest(), $this->handler);
+        FirewallMiddleware::readOnly()->process(new SelectRequest(1, 1, [], 0, 1, IteratorTypes::ALL), $this->handler);
+    }
+
+    public function testReadOnlyForbidsRequest() : void
+    {
+        $this->expectException(RequestForbidden::class);
+        $this->expectExceptionMessage(sprintf('Request "%s" is forbidden.', FooRequest::class));
+
+        FirewallMiddleware::readOnly()->process(new FooRequest(), $this->handler);
     }
 
     public function testWhitelistThrowsTypeError() : void

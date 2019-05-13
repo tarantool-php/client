@@ -28,8 +28,8 @@ final class FirewallMiddleware implements Middleware
 
     public function __construct(array $whitelist, array $blacklist)
     {
-        $this->whitelist = self::add($whitelist);
-        $this->blacklist = self::add($blacklist);
+        $this->whitelist = $whitelist ? self::add($whitelist) : [];
+        $this->blacklist = $blacklist ? self::add($blacklist) : [];
     }
 
     public static function whitelist(string ...$requestClasses) : self
@@ -44,11 +44,14 @@ final class FirewallMiddleware implements Middleware
 
     public static function readOnly() : self
     {
-        return self::whitelist(
-            AuthenticateRequest::class,
-            PingRequest::class,
-            SelectRequest::class
-        );
+        $self = new self([], []);
+        $self->whitelist = [
+            AuthenticateRequest::class => true,
+            PingRequest::class => true,
+            SelectRequest::class => true,
+        ];
+
+        return $self;
     }
 
     public function withWhitelist(string ...$requestClasses) : self
