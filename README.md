@@ -193,11 +193,14 @@ You may also assign multiple middleware to a client (they will be executed in [F
 
 ```php
 use Tarantool\Client\Client;
+use Tarantool\Client\Middleware\FirewallMiddleware;
 use Tarantool\Client\Middleware\LoggingMiddleware;
 
+...
+
 $client = Client::fromDefaults()->withMiddleware(
-    new LoggingMiddleware(...),
-    new MyGuardMiddleware(...),
+    new LoggingMiddleware($logger),
+    FirewallMiddleware::readOnly(),
     new MyMetricsMiddleware(...)
 );
 ```
