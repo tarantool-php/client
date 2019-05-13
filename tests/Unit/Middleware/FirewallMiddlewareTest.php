@@ -87,7 +87,7 @@ final class FirewallMiddlewareTest extends TestCase
         $middleware->process(new BarRequest(), $this->handler);
     }
 
-    public function testChildRequestForbidden() : void
+    public function testChildRequestIsForbidden() : void
     {
         $middleware = FirewallMiddleware::whitelist(FooRequest::class);
 
