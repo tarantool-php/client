@@ -182,6 +182,11 @@ final class Client
         $this->spaces = [];
     }
 
+    public function __clone()
+    {
+        $this->spaces = [];
+    }
+
     private function getSpaceIdByName(string $spaceName) : int
     {
         $schema = $this->getSpaceById(Space::VSPACE_ID);
