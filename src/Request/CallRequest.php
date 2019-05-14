@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Request;
 
-use Tarantool\Client\IProto;
+use Tarantool\Client\Keys;
 use Tarantool\Client\RequestTypes;
 
 final class CallRequest implements Request
@@ -35,8 +35,8 @@ final class CallRequest implements Request
     public function getBody() : array
     {
         return [
-            IProto::FUNCTION_NAME => $this->funcName,
-            IProto::TUPLE => $this->args,
+            Keys::FUNCTION_NAME => $this->funcName,
+            Keys::TUPLE => $this->args,
         ];
     }
 }

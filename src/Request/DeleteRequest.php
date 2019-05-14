@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Request;
 
-use Tarantool\Client\IProto;
+use Tarantool\Client\Keys;
 use Tarantool\Client\RequestTypes;
 
 final class DeleteRequest implements Request
@@ -37,9 +37,9 @@ final class DeleteRequest implements Request
     public function getBody() : array
     {
         return [
-            IProto::SPACE_ID => $this->spaceId,
-            IProto::INDEX_ID => $this->indexId,
-            IProto::KEY => $this->key,
+            Keys::SPACE_ID => $this->spaceId,
+            Keys::INDEX_ID => $this->indexId,
+            Keys::KEY => $this->key,
         ];
     }
 }

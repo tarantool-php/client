@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Tarantool\Client\Packer;
 
 use Tarantool\Client\Exception\UnpackingFailed;
-use Tarantool\Client\IProto;
+use Tarantool\Client\Keys;
 use Tarantool\Client\Request\Request;
 use Tarantool\Client\Response;
 
@@ -32,7 +32,7 @@ final class PeclPacker implements Packer
     public function pack(Request $request, ?int $sync = null) : string
     {
         // @see https://github.com/msgpack/msgpack-php/issues/45
-        $content = \pack('C*', 0x82, IProto::CODE, $request->getType(), IProto::SYNC).
+        $content = \pack('C*', 0x82, Keys::CODE, $request->getType(), Keys::SYNC).
             $this->packer->pack($sync ?: 0).
             $this->packer->pack($request->getBody());
 

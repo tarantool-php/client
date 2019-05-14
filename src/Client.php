@@ -147,7 +147,7 @@ final class Client
     {
         $request = new CallRequest($funcName, $args);
 
-        return $this->handler->handle($request)->getBodyField(IProto::DATA);
+        return $this->handler->handle($request)->getBodyField(Keys::DATA);
     }
 
     public function executeQuery(string $sql, ...$params) : SqlQueryResult
@@ -156,8 +156,8 @@ final class Client
         $response = $this->handler->handle($request);
 
         return new SqlQueryResult(
-            $response->getBodyField(IProto::DATA),
-            $response->getBodyField(IProto::METADATA)
+            $response->getBodyField(Keys::DATA),
+            $response->getBodyField(Keys::METADATA)
         );
     }
 
@@ -166,7 +166,7 @@ final class Client
         $request = new ExecuteRequest($sql, $params);
 
         return new SqlUpdateResult(
-            $this->handler->handle($request)->getBodyField(IProto::SQL_INFO)
+            $this->handler->handle($request)->getBodyField(Keys::SQL_INFO)
         );
     }
 
@@ -174,7 +174,7 @@ final class Client
     {
         $request = new EvaluateRequest($expr, $args);
 
-        return $this->handler->handle($request)->getBodyField(IProto::DATA);
+        return $this->handler->handle($request)->getBodyField(Keys::DATA);
     }
 
     public function flushSpaces() : void

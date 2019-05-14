@@ -15,37 +15,38 @@ namespace Tarantool\Client\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use Tarantool\Client\Exception\InvalidGreeting;
-use Tarantool\Client\IProto;
+use Tarantool\Client\Greeting;
+use Tarantool\Client\Keys;
 
-final class IProtoTest extends TestCase
+final class GreetingTest extends TestCase
 {
     /**
      * @dataProvider \Tarantool\Client\Tests\GreetingDataProvider::provideValidGreetings
      */
-    public function testParseGreeting(string $greeting, string $salt) : void
+    public function testParse(string $greeting, string $salt) : void
     {
-        self::assertSame($salt, IProto::parseGreeting($greeting));
+        self::assertSame($salt, Greeting::parse($greeting));
     }
 
     /**
      * @dataProvider \Tarantool\Client\Tests\GreetingDataProvider::provideGreetingsWithInvalidServerName
      */
-    public function testParseGreetingThrowsExceptionOnInvalidServer(string $greeting) : void
+    public function testParseThrowsExceptionOnInvalidServer(string $greeting) : void
     {
         $this->expectException(InvalidGreeting::class);
         $this->expectExceptionMessage('Unable to recognize Tarantool server.');
 
-        IProto::parseGreeting($greeting);
+        Greeting::parse($greeting);
     }
 
     /**
      * @dataProvider \Tarantool\Client\Tests\GreetingDataProvider::provideGreetingsWithInvalidSalt
      */
-    public function testParseGreetingThrowsExceptionOnInvalidSalt(string $greeting) : void
+    public function testParseThrowsExceptionOnInvalidSalt(string $greeting) : void
     {
         $this->expectException(InvalidGreeting::class);
         $this->expectExceptionMessage('Unable to parse salt.');
 
-        IProto::parseGreeting($greeting);
+        Greeting::parse($greeting);
     }
 }

@@ -28,24 +28,24 @@ final class Response
 
     public function isError() : bool
     {
-        $code = $this->header[IProto::CODE];
+        $code = $this->header[Keys::CODE];
 
         return $code >= self::TYPE_ERROR;
     }
 
     public function getCode() : int
     {
-        return $this->header[IProto::CODE];
+        return $this->header[Keys::CODE];
     }
 
     public function getSync() : int
     {
-        return $this->header[IProto::SYNC];
+        return $this->header[Keys::SYNC];
     }
 
     public function getSchemaId() : int
     {
-        return $this->header[IProto::SCHEMA_ID];
+        return $this->header[Keys::SCHEMA_ID];
     }
 
     public function getBodyField(int $code)

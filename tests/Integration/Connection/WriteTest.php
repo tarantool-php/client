@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\Connection;
 
-use Tarantool\Client\IProto;
+use Tarantool\Client\Keys;
 use Tarantool\Client\Packer\PackUtils;
 use Tarantool\Client\Tests\Integration\TestCase;
 
@@ -33,6 +33,6 @@ final class WriteTest extends TestCase
         $response = $handler->getPacker()->unpack($data);
 
         self::assertTrue($response->isError());
-        self::assertSame('Invalid MsgPack - packet header', $response->getBodyField(IProto::ERROR));
+        self::assertSame('Invalid MsgPack - packet header', $response->getBodyField(Keys::ERROR));
     }
 }

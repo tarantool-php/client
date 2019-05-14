@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Request;
 
-use Tarantool\Client\IProto;
+use Tarantool\Client\Keys;
 use Tarantool\Client\RequestTypes;
 
 final class InsertRequest implements Request
@@ -35,8 +35,8 @@ final class InsertRequest implements Request
     public function getBody() : array
     {
         return [
-            IProto::SPACE_ID => $this->spaceId,
-            IProto::TUPLE => $this->tuple,
+            Keys::SPACE_ID => $this->spaceId,
+            Keys::TUPLE => $this->tuple,
         ];
     }
 }

@@ -158,14 +158,14 @@ A handler is a function which transforms a request into a response. Once you hav
 you can make requests to Tarantool, for example:
 
 ```php
-use Tarantool\Client\IProto;
+use Tarantool\Client\Keys;
 use Tarantool\Client\Request\CallRequest;
 
 ...
 
 $request = new CallRequest('box.stat');
 $response = $handler->handle($request);
-$data = $response->getBodyField(IProto::DATA);
+$data = $response->getBodyField(Keys::DATA);
 ```
   
 The library ships with two handlers:

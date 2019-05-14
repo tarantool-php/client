@@ -15,9 +15,9 @@ namespace Tarantool\Client\Tests\Integration;
 
 use Tarantool\Client\Exception\RequestFailed;
 
-final class IProtoErrorTest extends TestCase
+final class BoxErrorTest extends TestCase
 {
-    public function testExceptionIsThrownOnError() : void
+    public function testExceptionIsThrownOnBoxError() : void
     {
         $this->expectException(RequestFailed::class);
         $this->expectExceptionMessage('Foobar.');

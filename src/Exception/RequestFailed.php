@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Exception;
 
-use Tarantool\Client\IProto;
+use Tarantool\Client\Keys;
 use Tarantool\Client\Response;
 
 final class RequestFailed extends \RuntimeException implements ClientException
@@ -21,7 +21,7 @@ final class RequestFailed extends \RuntimeException implements ClientException
     public static function fromErrorResponse(Response $response) : self
     {
         return new self(
-            $response->getBodyField(IProto::ERROR),
+            $response->getBodyField(Keys::ERROR),
             $response->getCode() & (Response::TYPE_ERROR - 1)
         );
     }

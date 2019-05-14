@@ -13,12 +13,10 @@ declare(strict_types=1);
 
 namespace Tarantool\Client;
 
-use Tarantool\Client\Exception\InvalidGreeting;
-
 /**
  * @see https://www.tarantool.io/en/doc/2.1/dev_guide/internals/box_protocol/
  */
-final class IProto
+final class Keys
 {
     public const CODE = 0x00;
     public const SYNC = 0x01;
@@ -46,24 +44,5 @@ final class IProto
 
     private function __construct()
     {
-    }
-
-    public static function parseGreeting(string $greeting) : string
-    {
-        if (0 !== \strpos($greeting, 'Tarantool')) {
-            throw InvalidGreeting::invalidServerName();
-        }
-
-        if (false === $salt = \base64_decode(\substr($greeting, 64, 44), true)) {
-            throw InvalidGreeting::invalidSalt();
-        }
-
-        $salt = \substr($salt, 0, 20);
-
-        if (isset($salt[19])) {
-            return $salt;
-        }
-
-        throw InvalidGreeting::invalidSalt();
     }
 }

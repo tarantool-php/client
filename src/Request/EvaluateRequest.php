@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Request;
 
-use Tarantool\Client\IProto;
+use Tarantool\Client\Keys;
 use Tarantool\Client\RequestTypes;
 
 final class EvaluateRequest implements Request
@@ -35,8 +35,8 @@ final class EvaluateRequest implements Request
     public function getBody() : array
     {
         return [
-            IProto::EXPR => $this->expr,
-            IProto::TUPLE => $this->args,
+            Keys::EXPR => $this->expr,
+            Keys::TUPLE => $this->args,
         ];
     }
 }

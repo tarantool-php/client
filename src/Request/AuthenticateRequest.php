@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Request;
 
-use Tarantool\Client\IProto;
+use Tarantool\Client\Keys;
 use Tarantool\Client\RequestTypes;
 
 final class AuthenticateRequest implements Request
@@ -42,8 +42,8 @@ final class AuthenticateRequest implements Request
         $scramble = self::strxor($hash1, $scramble);
 
         return [
-            IProto::TUPLE => ['chap-sha1', $scramble],
-            IProto::USER_NAME => $this->username,
+            Keys::TUPLE => ['chap-sha1', $scramble],
+            Keys::USER_NAME => $this->username,
         ];
     }
 

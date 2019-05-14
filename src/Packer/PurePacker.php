@@ -17,7 +17,7 @@ use MessagePack\BufferUnpacker;
 use MessagePack\Exception\UnpackingFailedException;
 use MessagePack\Packer;
 use Tarantool\Client\Exception\UnpackingFailed;
-use Tarantool\Client\IProto;
+use Tarantool\Client\Keys;
 use Tarantool\Client\Packer\Packer as ClientPacker;
 use Tarantool\Client\Request\Request;
 use Tarantool\Client\Response;
@@ -36,9 +36,9 @@ final class PurePacker implements ClientPacker
     public function pack(Request $request, ?int $sync = null) : string
     {
         $content = $this->packer->packMapHeader(2).
-            $this->packer->packInt(IProto::CODE).
+            $this->packer->packInt(Keys::CODE).
             $this->packer->packInt($request->getType()).
-            $this->packer->packInt(IProto::SYNC).
+            $this->packer->packInt(Keys::SYNC).
             $this->packer->packInt($sync ?: 0).
             $this->packer->packMap($request->getBody());
 

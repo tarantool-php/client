@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Request;
 
-use Tarantool\Client\IProto;
+use Tarantool\Client\Keys;
 use Tarantool\Client\RequestTypes;
 
 final class SelectRequest implements Request
@@ -43,12 +43,12 @@ final class SelectRequest implements Request
     public function getBody() : array
     {
         return [
-            IProto::KEY => $this->key,
-            IProto::SPACE_ID => $this->spaceId,
-            IProto::INDEX_ID => $this->indexId,
-            IProto::LIMIT => $this->limit,
-            IProto::OFFSET => $this->offset,
-            IProto::ITERATOR => $this->iteratorType,
+            Keys::KEY => $this->key,
+            Keys::SPACE_ID => $this->spaceId,
+            Keys::INDEX_ID => $this->indexId,
+            Keys::LIMIT => $this->limit,
+            Keys::OFFSET => $this->offset,
+            Keys::ITERATOR => $this->iteratorType,
         ];
     }
 }

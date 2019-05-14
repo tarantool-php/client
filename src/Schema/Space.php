@@ -15,7 +15,7 @@ namespace Tarantool\Client\Schema;
 
 use Tarantool\Client\Exception\RequestFailed;
 use Tarantool\Client\Handler\Handler;
-use Tarantool\Client\IProto;
+use Tarantool\Client\Keys;
 use Tarantool\Client\Request\DeleteRequest;
 use Tarantool\Client\Request\InsertRequest;
 use Tarantool\Client\Request\ReplaceRequest;
@@ -60,21 +60,21 @@ final class Space
             $criteria->getIteratorType()
         );
 
-        return $this->handler->handle($request)->getBodyField(IProto::DATA);
+        return $this->handler->handle($request)->getBodyField(Keys::DATA);
     }
 
     public function insert(array $tuple) : array
     {
         $request = new InsertRequest($this->id, $tuple);
 
-        return $this->handler->handle($request)->getBodyField(IProto::DATA);
+        return $this->handler->handle($request)->getBodyField(Keys::DATA);
     }
 
     public function replace(array $tuple) : array
     {
         $request = new ReplaceRequest($this->id, $tuple);
 
-        return $this->handler->handle($request)->getBodyField(IProto::DATA);
+        return $this->handler->handle($request)->getBodyField(Keys::DATA);
     }
 
     public function update(array $key, Operations $operations, $index = 0) : array
@@ -85,7 +85,7 @@ final class Space
 
         $request = new UpdateRequest($this->id, $index, $key, $operations->toArray());
 
-        return $this->handler->handle($request)->getBodyField(IProto::DATA);
+        return $this->handler->handle($request)->getBodyField(Keys::DATA);
     }
 
     public function upsert(array $tuple, Operations $operations) : void
@@ -103,7 +103,7 @@ final class Space
 
         $request = new DeleteRequest($this->id, $index, $key);
 
-        return $this->handler->handle($request)->getBodyField(IProto::DATA);
+        return $this->handler->handle($request)->getBodyField(Keys::DATA);
     }
 
     public function flushIndexes() : void

@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Request;
 
-use Tarantool\Client\IProto;
+use Tarantool\Client\Keys;
 use Tarantool\Client\RequestTypes;
 
 final class ExecuteRequest implements Request
@@ -35,10 +35,10 @@ final class ExecuteRequest implements Request
     public function getBody() : array
     {
         return [] === $this->params ? [
-            IProto::SQL_TEXT => $this->sql,
+            Keys::SQL_TEXT => $this->sql,
         ] : [
-            IProto::SQL_TEXT => $this->sql,
-            IProto::SQL_BIND => $this->params,
+            Keys::SQL_TEXT => $this->sql,
+            Keys::SQL_BIND => $this->params,
         ];
     }
 }
