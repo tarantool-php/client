@@ -13,10 +13,12 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Exception;
 
-final class RequestForbidden extends \RuntimeException implements ClientException
+use Tarantool\Client\Request\Request;
+
+final class RequestDenied extends \RuntimeException implements ClientException
 {
-    public static function fromClass(string $class) : self
+    public static function fromObject(Request $request) : self
     {
-        return new self(\sprintf('Request "%s" is forbidden.', $class));
+        return new self(\sprintf('Request "%s" is denied.', \get_class($request)));
     }
 }

@@ -200,7 +200,7 @@ use Tarantool\Client\Middleware\LoggingMiddleware;
 
 $client = Client::fromDefaults()->withMiddleware(
     new LoggingMiddleware($logger),
-    FirewallMiddleware::readOnly(),
+    FirewallMiddleware::allowReadOnly(),
     new MyMetricsMiddleware(...)
 );
 ```

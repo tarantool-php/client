@@ -13,87 +13,97 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Middleware;
 
-use Tarantool\Client\Exception\RequestForbidden;
+use Tarantool\Client\Exception\RequestDenied;
 use Tarantool\Client\Handler\Handler;
-use Tarantool\Client\Request\AuthenticateRequest;
-use Tarantool\Client\Request\PingRequest;
 use Tarantool\Client\Request\Request;
-use Tarantool\Client\Request\SelectRequest;
+use Tarantool\Client\RequestTypes;
 use Tarantool\Client\Response;
 
 final class FirewallMiddleware implements Middleware
 {
-    private $whitelist;
-    private $blacklist;
+    private $allowed;
+    private $denied;
 
-    public function __construct(array $whitelist, array $blacklist)
+    private function __construct(array $allowed, array $denied)
     {
-        $this->whitelist = $whitelist ? self::add($whitelist) : [];
-        $this->blacklist = $blacklist ? self::add($blacklist) : [];
+        $this->allowed = $allowed ? \array_fill_keys($allowed, true) : [];
+        $this->denied = $denied ? \array_fill_keys($denied, true) : [];
     }
 
-    public static function whitelist(string ...$requestClasses) : self
+    public static function allow(int $requestType, int ...$requestTypes) : self
     {
-        return new self($requestClasses, []);
+        return new self([-1 => $requestType] + $requestTypes, []);
     }
 
-    public static function blacklist(string ...$requestClasses) : self
+    public static function deny(int $requestType, int ...$requestTypes) : self
     {
-        return new self([], $requestClasses);
+        return new self([], [-1 => $requestType] + $requestTypes);
     }
 
-    public static function readOnly() : self
+    public static function allowReadOnly() : self
     {
         $self = new self([], []);
-        $self->whitelist = [
-            AuthenticateRequest::class => true,
-            PingRequest::class => true,
-            SelectRequest::class => true,
+        $self->allowed = [
+            RequestTypes::AUTHENTICATE => true,
+            RequestTypes::PING => true,
+            RequestTypes::SELECT => true,
         ];
 
         return $self;
     }
 
-    public function withWhitelist(string ...$requestClasses) : self
+    public function andAllow(int $requestType, int ...$requestTypes) : self
     {
         $new = clone $this;
-        $new->whitelist = self::add($requestClasses, $new->whitelist);
+        $new->allowed += $requestTypes
+            ? \array_fill_keys([-1 => $requestType] + $requestTypes, true)
+            : [$requestType => true];
 
         return $new;
     }
 
-    public function withBlacklist(string ...$requestClasses) : self
+    public function andAllowOnly(int $requestType, int ...$requestTypes) : self
     {
         $new = clone $this;
-        $new->blacklist = self::add($requestClasses, $new->blacklist);
+        $new->allowed = $requestTypes
+            ? \array_fill_keys([-1 => $requestType] + $requestTypes, true)
+            : [$requestType => true];
+
+        return $new;
+    }
+
+    public function andDeny(int $requestType, int ...$requestTypes) : self
+    {
+        $new = clone $this;
+        $new->denied += $requestTypes
+            ? \array_fill_keys([-1 => $requestType] + $requestTypes, true)
+            : [$requestType => true];
+
+        return $new;
+    }
+
+    public function andDenyOnly(int $requestType, int ...$requestTypes) : self
+    {
+        $new = clone $this;
+        $new->denied = $requestTypes
+            ? \array_fill_keys([-1 => $requestType] + $requestTypes, true)
+            : [$requestType => true];
 
         return $new;
     }
 
     public function process(Request $request, Handler $handler) : Response
     {
-        $requestClass = \get_class($request);
+        $requestType = $request->getType();
 
-        if (isset($this->blacklist[$requestClass])) {
-            throw RequestForbidden::fromClass($requestClass);
+        if (isset($this->denied[$requestType])) {
+            throw RequestDenied::fromObject($request);
         }
 
-        if ([] !== $this->whitelist && !isset($this->whitelist[$requestClass])) {
-            throw RequestForbidden::fromClass($requestClass);
+        if ([] !== $this->allowed && !isset($this->allowed[$requestType])) {
+            throw RequestDenied::fromObject($request);
         }
 
         return $handler->handle($request);
-    }
-
-    private static function add(array $requestClasses, array $list = []) : array
-    {
-        foreach ($requestClasses as $requestClass) {
-            if (!\is_subclass_of($requestClass, Request::class)) {
-                throw new \TypeError(\sprintf('Class "%s" should implement %s.', $requestClass, Request::class));
-            }
-            $list[$requestClass] = true;
-        }
-
-        return $list;
     }
 }

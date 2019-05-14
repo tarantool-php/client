@@ -15,13 +15,16 @@ namespace Tarantool\Client\Tests\Unit\Middleware;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Tarantool\Client\Exception\RequestForbidden;
+use Tarantool\Client\Exception\RequestDenied;
 use Tarantool\Client\Handler\Handler;
 use Tarantool\Client\Middleware\FirewallMiddleware;
+use Tarantool\Client\Middleware\Middleware;
 use Tarantool\Client\Request\AuthenticateRequest;
+use Tarantool\Client\Request\CallRequest;
+use Tarantool\Client\Request\EvaluateRequest;
 use Tarantool\Client\Request\PingRequest;
-use Tarantool\Client\Request\Request;
 use Tarantool\Client\Request\SelectRequest;
+use Tarantool\Client\RequestTypes;
 use Tarantool\Client\Response;
 use Tarantool\Client\Schema\IteratorTypes;
 
@@ -37,130 +40,168 @@ final class FirewallMiddlewareTest extends TestCase
         $this->handler = $this->createMock(Handler::class);
     }
 
-    public function testAllowByDefault() : void
+    public function testEmptyAllowList() : void
     {
         $this->handler->expects($this->once())->method('handle')
             ->willReturn(new Response([], []));
 
-        $middleware = new FirewallMiddleware([], []);
-        $middleware->process(new FooRequest(), $this->handler);
+        $middleware = FirewallMiddleware::deny(RequestTypes::CALL);
+        $middleware->process(new PingRequest(), $this->handler);
     }
 
-    public function testWhitelist() : void
+    public function testAllow() : void
     {
         $this->handler->expects($this->once())->method('handle')
             ->willReturn(new Response([], []));
 
-        $middleware = FirewallMiddleware::whitelist(FooRequest::class);
-        $middleware->process(new FooRequest(), $this->handler);
+        $middleware = FirewallMiddleware::allow(RequestTypes::PING);
+        $middleware->process(new PingRequest(), $this->handler);
     }
 
-    public function testWithWhitelist() : void
+    public function testAllowForbids() : void
+    {
+        $middleware = FirewallMiddleware::allow(RequestTypes::PING);
+
+        $this->expectException(RequestDenied::class);
+        $this->expectExceptionMessage(sprintf('Request "%s" is denied.', CallRequest::class));
+
+        $middleware->process(new CallRequest('foo'), $this->handler);
+    }
+
+    public function testAndAllow() : void
     {
         $this->handler->expects($this->once())->method('handle')
             ->willReturn(new Response([], []));
 
-        $middleware = FirewallMiddleware::blacklist(BarRequest::class)
-            ->withWhitelist(FooRequest::class);
+        $middleware = FirewallMiddleware::deny(RequestTypes::CALL)->andAllow(RequestTypes::PING);
 
-        $middleware->process(new FooRequest(), $this->handler);
+        $middleware->process(new PingRequest(), $this->handler);
     }
 
-    public function testBlacklist() : void
+    public function testAndAllowForbids() : void
     {
-        $middleware = FirewallMiddleware::blacklist(FooRequest::class);
+        $middleware = FirewallMiddleware::deny(RequestTypes::CALL)->andAllow(RequestTypes::PING);
 
-        $this->expectException(RequestForbidden::class);
-        $this->expectExceptionMessage(sprintf('Request "%s" is forbidden.', FooRequest::class));
+        $this->expectException(RequestDenied::class);
+        $this->expectExceptionMessage(sprintf('Request "%s" is denied.', EvaluateRequest::class));
 
-        $middleware->process(new FooRequest(), $this->handler);
+        $middleware->process(new EvaluateRequest('return 42'), $this->handler);
     }
 
-    public function testWithBlacklist() : void
+    public function testAndAllowOnly() : void
     {
-        $middleware = FirewallMiddleware::whitelist(FooRequest::class)
-            ->withBlacklist(BarRequest::class);
+        $this->handler->expects($this->once())->method('handle')
+            ->willReturn(new Response([], []));
 
-        $this->expectException(RequestForbidden::class);
-        $this->expectExceptionMessage(sprintf('Request "%s" is forbidden.', BarRequest::class));
+        $middleware = FirewallMiddleware::allow(RequestTypes::CALL)->andAllowOnly(RequestTypes::PING);
 
-        $middleware->process(new BarRequest(), $this->handler);
+        $middleware->process(new PingRequest(), $this->handler);
     }
 
-    public function testChildRequestIsForbidden() : void
+    public function testAndAllowOnlyForbids() : void
     {
-        $middleware = FirewallMiddleware::whitelist(FooRequest::class);
+        $middleware = FirewallMiddleware::allow(RequestTypes::CALL)->andAllowOnly(RequestTypes::PING);
 
-        $this->expectException(RequestForbidden::class);
-        $this->expectExceptionMessage(sprintf('Request "%s" is forbidden.', BarRequest::class));
+        $this->expectException(RequestDenied::class);
+        $this->expectExceptionMessage(sprintf('Request "%s" is denied.', CallRequest::class));
 
-        $middleware->process(new BarRequest(), $this->handler);
+        $middleware->process(new CallRequest('foo'), $this->handler);
     }
 
-    public function testReadOnly() : void
+    public function testDeny() : void
+    {
+        $this->handler->expects($this->once())->method('handle')
+            ->willReturn(new Response([], []));
+
+        $middleware = FirewallMiddleware::deny(RequestTypes::PING);
+
+        $middleware->process(new CallRequest('foo'), $this->handler);
+    }
+
+    public function testDenyForbids() : void
+    {
+        $middleware = FirewallMiddleware::deny(RequestTypes::PING);
+
+        $this->expectException(RequestDenied::class);
+        $this->expectExceptionMessage(sprintf('Request "%s" is denied.', PingRequest::class));
+
+        $middleware->process(new PingRequest(), $this->handler);
+    }
+
+    public function testAndDeny() : void
+    {
+        $this->handler->expects($this->once())->method('handle')
+            ->willReturn(new Response([], []));
+
+        $middleware = FirewallMiddleware::allow(RequestTypes::PING)->andDeny(RequestTypes::CALL);
+
+        $middleware->process(new PingRequest(), $this->handler);
+    }
+
+    public function testAndDenyForbids() : void
+    {
+        $middleware = FirewallMiddleware::allow(RequestTypes::PING)->andDeny(RequestTypes::CALL);
+
+        $this->expectException(RequestDenied::class);
+        $this->expectExceptionMessage(sprintf('Request "%s" is denied.', CallRequest::class));
+
+        $middleware->process(new CallRequest('foo'), $this->handler);
+    }
+
+    public function testAndDenyOnly() : void
+    {
+        $this->handler->expects($this->once())->method('handle')
+            ->willReturn(new Response([], []));
+
+        $middleware = FirewallMiddleware::deny(RequestTypes::PING)->andDenyOnly(RequestTypes::CALL);
+
+        $middleware->process(new PingRequest(), $this->handler);
+    }
+
+    public function testAndDenyOnlyForbids() : void
+    {
+        $middleware = FirewallMiddleware::deny(RequestTypes::PING)->andDenyOnly(RequestTypes::CALL);
+
+        $this->expectException(RequestDenied::class);
+        $this->expectExceptionMessage(sprintf('Request "%s" is denied.', CallRequest::class));
+
+        $middleware->process(new CallRequest('foo'), $this->handler);
+    }
+
+    /**
+     * @dataProvider provideBlacklistPriorityData
+     */
+    public function testDenyHasPriority(Middleware $middleware) : void
+    {
+        $this->expectException(RequestDenied::class);
+        $this->expectExceptionMessage(sprintf('Request "%s" is denied.', PingRequest::class));
+
+        $middleware->process(new PingRequest(), $this->handler);
+    }
+
+    public function provideBlacklistPriorityData() : iterable
+    {
+        yield [FirewallMiddleware::allow(RequestTypes::PING)->andDeny(RequestTypes::PING)];
+        yield [FirewallMiddleware::deny(RequestTypes::PING)->andAllow(RequestTypes::PING)];
+    }
+
+    public function testAllowReadOnly() : void
     {
         $this->handler->expects($this->exactly(3))->method('handle')
             ->willReturn(new Response([], []));
 
-        FirewallMiddleware::readOnly()->process(new AuthenticateRequest('12345678901234567890', 'guest'), $this->handler);
-        FirewallMiddleware::readOnly()->process(new PingRequest(), $this->handler);
-        FirewallMiddleware::readOnly()->process(new SelectRequest(1, 1, [], 0, 1, IteratorTypes::ALL), $this->handler);
+        $middleware = FirewallMiddleware::allowReadOnly();
+
+        $middleware->process(new AuthenticateRequest('12345678901234567890', 'guest'), $this->handler);
+        $middleware->process(new PingRequest(), $this->handler);
+        $middleware->process(new SelectRequest(1, 1, [], 0, 1, IteratorTypes::ALL), $this->handler);
     }
 
-    public function testReadOnlyForbidsRequest() : void
+    public function testAllowReadOnlyForbids() : void
     {
-        $this->expectException(RequestForbidden::class);
-        $this->expectExceptionMessage(sprintf('Request "%s" is forbidden.', FooRequest::class));
+        $this->expectException(RequestDenied::class);
+        $this->expectExceptionMessage(sprintf('Request "%s" is denied.', EvaluateRequest::class));
 
-        FirewallMiddleware::readOnly()->process(new FooRequest(), $this->handler);
+        FirewallMiddleware::allowReadOnly()->process(new EvaluateRequest('return 42'), $this->handler);
     }
-
-    public function testWhitelistThrowsTypeError() : void
-    {
-        $this->expectException(\TypeError::class);
-        $this->expectExceptionMessage(sprintf('Class "stdClass" should implement %s.', Request::class));
-
-        FirewallMiddleware::whitelist(\stdClass::class);
-    }
-
-    public function testWithWhitelistThrowsTypeError() : void
-    {
-        $this->expectException(\TypeError::class);
-        $this->expectExceptionMessage(sprintf('Class "stdClass" should implement %s.', Request::class));
-
-        FirewallMiddleware::whitelist(FooRequest::class)->withWhitelist(\stdClass::class);
-    }
-
-    public function testBlacklistThrowsTypeError() : void
-    {
-        $this->expectException(\TypeError::class);
-        $this->expectExceptionMessage(sprintf('Class "stdClass" should implement %s.', Request::class));
-
-        FirewallMiddleware::blacklist(\stdClass::class);
-    }
-
-    public function testWithBlacklistThrowsTypeError() : void
-    {
-        $this->expectException(\TypeError::class);
-        $this->expectExceptionMessage(sprintf('Class "stdClass" should implement %s.', Request::class));
-
-        FirewallMiddleware::blacklist(FooRequest::class)->withBlacklist(\stdClass::class);
-    }
-}
-
-class FooRequest implements Request
-{
-    public function getType() : int
-    {
-        return 42;
-    }
-
-    public function getBody() : array
-    {
-        return [];
-    }
-}
-
-class BarRequest extends FooRequest
-{
 }
