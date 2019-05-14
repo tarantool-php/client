@@ -15,7 +15,6 @@ namespace Tarantool\Client;
 
 final class RequestTypes
 {
-    public const OK = 0;
     public const SELECT = 1;
     public const INSERT = 2;
     public const REPLACE = 3;
