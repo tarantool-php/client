@@ -16,8 +16,8 @@ namespace Tarantool\Client\Connection;
 use Tarantool\Client\Exception\CommunicationFailed;
 use Tarantool\Client\Exception\ConnectionFailed;
 use Tarantool\Client\Greeting;
-use Tarantool\Client\Keys;
 use Tarantool\Client\Packer\PackUtils;
+use Tarantool\Client\Response;
 
 final class StreamConnection implements Connection
 {
@@ -88,7 +88,7 @@ final class StreamConnection implements Connection
         $this->stream = $stream;
         \stream_set_timeout($this->stream, $this->options['socket_timeout']);
 
-        $greeting = $this->read(Keys::GREETING_SIZE, 'Unable to read greeting.');
+        $greeting = $this->read(Greeting::SIZE_BYTES, 'Unable to read greeting.');
 
         return Greeting::parse($greeting);
     }
@@ -112,7 +112,7 @@ final class StreamConnection implements Connection
             throw new CommunicationFailed('Unable to write request.');
         }
 
-        $length = $this->read(Keys::LENGTH_SIZE, 'Unable to read response length.');
+        $length = $this->read(Response::LENGTH_SIZE_BYTES, 'Unable to read response length.');
         $length = PackUtils::unpackLength($length);
 
         return $this->read($length, 'Unable to read response.');

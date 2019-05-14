@@ -16,7 +16,6 @@ namespace Tarantool\Client\Tests\Unit;
 use PHPUnit\Framework\TestCase;
 use Tarantool\Client\Exception\InvalidGreeting;
 use Tarantool\Client\Greeting;
-use Tarantool\Client\Keys;
 
 final class GreetingTest extends TestCase
 {

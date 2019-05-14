@@ -17,6 +17,8 @@ use Tarantool\Client\Exception\InvalidGreeting;
 
 final class Greeting
 {
+    public const SIZE_BYTES = 128;
+
     private function __construct()
     {
     }

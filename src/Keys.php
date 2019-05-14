@@ -39,9 +39,6 @@ final class Keys
     public const SQL_BIND = 0x41;
     public const SQL_INFO = 0x42;
 
-    public const GREETING_SIZE = 128;
-    public const LENGTH_SIZE = 5;
-
     private function __construct()
     {
     }
