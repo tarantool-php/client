@@ -39,6 +39,7 @@ final class MiddlewareHandler implements Handler
                 : new self($handler, [$middleware]);
         }
 
+        $handler = clone $handler;
         $handler->middlewares[] = $middleware;
         if ($middlewares) {
             $handler->middlewares = \array_merge($handler->middlewares, $middlewares);
