@@ -195,13 +195,14 @@ You may also assign multiple middleware to the client (they will be executed in 
 use Tarantool\Client\Client;
 use Tarantool\Client\Middleware\FirewallMiddleware;
 use Tarantool\Client\Middleware\LoggingMiddleware;
+use Tarantool\Client\Middleware\RetryMiddleware;
 
 ...
 
 $client = Client::fromDefaults()->withMiddleware(
     new LoggingMiddleware($logger),
     FirewallMiddleware::allowReadOnly(),
-    new MyMetricsMiddleware(...)
+    RetryMiddleware::linear(),
 );
 ```
 

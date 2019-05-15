@@ -18,7 +18,7 @@ use Tarantool\Client\Handler\DefaultHandler;
 use Tarantool\Client\Packer\PeclPacker;
 use Tarantool\Client\Packer\PurePacker;
 
-require __DIR__.'/../vendor/autoload.php';
+return require __DIR__.'/../vendor/autoload.php';
 
 function create_client() : Client
 {

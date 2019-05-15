@@ -27,6 +27,29 @@ final class RequestTypes
     public const EXECUTE = 11;
     public const PING = 64;
 
+    private const ALL = [
+        self::SELECT => 'select',
+        self::INSERT => 'insert',
+        self::REPLACE => 'replace',
+        self::UPDATE => 'update',
+        self::DELETE => 'delete',
+        self::AUTHENTICATE => 'authenticate',
+        self::EVALUATE => 'evaluate',
+        self::UPSERT => 'upsert',
+        self::CALL => 'call',
+        self::EXECUTE => 'execute',
+        self::PING => 'ping',
+    ];
+
+    public static function getName(int $type) : string
+    {
+        if (isset(self::ALL[$type])) {
+            return self::ALL[$type];
+        }
+
+        throw new \InvalidArgumentException("Unknown request type #$type.");
+    }
+
     private function __construct()
     {
     }

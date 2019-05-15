@@ -14,8 +14,10 @@ declare(strict_types=1);
 namespace Tarantool\Client\Middleware;
 
 use Psr\Log\LoggerInterface;
+use Tarantool\Client\Exception\ClientException;
 use Tarantool\Client\Handler\Handler;
 use Tarantool\Client\Request\Request;
+use Tarantool\Client\RequestTypes;
 use Tarantool\Client\Response;
 
 final class LoggingMiddleware implements Middleware
@@ -29,16 +31,29 @@ final class LoggingMiddleware implements Middleware
 
     public function process(Request $request, Handler $handler) : Response
     {
-        $this->logger->debug('Starting handling request "{class}"', [
+        $requestName = RequestTypes::getName($request->getType());
+
+        $this->logger->debug("Starting handling request \"$requestName\"", [
             'request' => $request,
-            'class' => $requestClass = \get_class($request),
         ]);
 
-        $response = $handler->handle($request);
+        $start = \microtime(true);
+        try {
+            $response = $handler->handle($request);
+        } catch (ClientException $e) {
+            $this->logger->error("Request \"$requestName\" failed.", [
+                'request' => $request,
+                'exception' => $e,
+                'duration_ms' => \round((\microtime(true) - $start) * 1000),
+            ]);
 
-        $this->logger->debug('Finished handling request "{class}"', [
+            throw $e;
+        }
+
+        $this->logger->debug("Finished handling request \"$requestName\"", [
+            'request' => $request,
             'response' => $response,
-            'class' => $requestClass,
+            'duration_ms' => \round((\microtime(true) - $start) * 1000),
         ]);
 
         return $response;
