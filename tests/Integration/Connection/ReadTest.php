@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Tarantool\Client\Tests\Integration\Connection;
 
 use Tarantool\Client\Exception\CommunicationFailed;
-use Tarantool\Client\Packer\PackUtils;
+use Tarantool\Client\Packer\PacketLength;
 use Tarantool\Client\Tests\GreetingDataProvider;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\FakeServer\FakeServerBuilder;
@@ -93,7 +93,7 @@ final class ReadTest extends TestCase
 
         FakeServerBuilder::create(
             new WriteHandler(GreetingDataProvider::generateGreeting()),
-            new WriteHandler(PackUtils::packLength(42)),
+            new WriteHandler(PacketLength::pack(42)),
             new SleepHandler(1)
         )
             ->setUri($clientBuilder->getUri())

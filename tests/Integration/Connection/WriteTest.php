@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Tarantool\Client\Tests\Integration\Connection;
 
 use Tarantool\Client\Keys;
-use Tarantool\Client\Packer\PackUtils;
+use Tarantool\Client\Packer\PacketLength;
 use Tarantool\Client\Tests\Integration\TestCase;
 
 final class WriteTest extends TestCase
@@ -25,7 +25,7 @@ final class WriteTest extends TestCase
         $conn = $handler->getConnection();
 
         $data = 'malformed';
-        $data = PackUtils::packLength(strlen($data)).$data;
+        $data = PacketLength::pack(strlen($data)).$data;
 
         $conn->open();
         $data = $conn->send($data);

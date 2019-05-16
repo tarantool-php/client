@@ -15,23 +15,25 @@ namespace Tarantool\Client\Packer;
 
 use Tarantool\Client\Exception\UnpackingFailed;
 
-final class PackUtils
+final class PacketLength
 {
+    public const SIZE_BYTES = 5;
+
     private function __construct()
     {
     }
 
-    public static function packLength(int $length) : string
+    public static function pack(int $length) : string
     {
         return \pack('CN', 0xce, $length);
     }
 
-    public static function unpackLength(string $data) : int
+    public static function unpack(string $data) : int
     {
-        if (false === $data = @\unpack('C_/Nlength', $data)) {
+        if (false === $data = @\unpack('C/N', $data)) {
             throw new UnpackingFailed('Unable to unpack length value.');
         }
 
-        return $data['length'];
+        return $data[1];
     }
 }

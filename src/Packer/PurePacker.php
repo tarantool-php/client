@@ -42,7 +42,7 @@ final class PurePacker implements ClientPacker
             $this->packer->packInt($sync ?: 0).
             $this->packer->packMap($request->getBody());
 
-        return PackUtils::packLength(\strlen($content)).$content;
+        return PacketLength::pack(\strlen($content)).$content;
     }
 
     public function unpack(string $data) : Response

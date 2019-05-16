@@ -15,7 +15,6 @@ namespace Tarantool\Client;
 
 final class Response
 {
-    public const LENGTH_SIZE_BYTES = 5;
     public const TYPE_ERROR = 0x8000;
 
     private $header;

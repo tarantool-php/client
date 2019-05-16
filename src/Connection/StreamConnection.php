@@ -16,8 +16,7 @@ namespace Tarantool\Client\Connection;
 use Tarantool\Client\Exception\CommunicationFailed;
 use Tarantool\Client\Exception\ConnectionFailed;
 use Tarantool\Client\Greeting;
-use Tarantool\Client\Packer\PackUtils;
-use Tarantool\Client\Response;
+use Tarantool\Client\Packer\PacketLength;
 
 final class StreamConnection implements Connection
 {
@@ -112,8 +111,8 @@ final class StreamConnection implements Connection
             throw new CommunicationFailed('Unable to write request.');
         }
 
-        $length = $this->read(Response::LENGTH_SIZE_BYTES, 'Unable to read response length.');
-        $length = PackUtils::unpackLength($length);
+        $length = $this->read(PacketLength::SIZE_BYTES, 'Unable to read response length.');
+        $length = PacketLength::unpack($length);
 
         return $this->read($length, 'Unable to read response.');
     }
