@@ -17,11 +17,13 @@ final class SqlQueryResult implements \IteratorAggregate
 {
     private $data;
     private $metadata;
+    private $columns;
 
     public function __construct(array $data, array $metadata)
     {
         $this->data = $data;
         $this->metadata = $metadata;
+        $this->columns = $this->getColumns()
     }
 
     public function getData() : array
@@ -41,5 +43,14 @@ final class SqlQueryResult implements \IteratorAggregate
         foreach ($this->data as $item) {
             yield \array_combine($keys, $item);
         }
+    }
+
+    public function getColumns() : array
+    {
+        $keys = \array_column($this->metadata, 0);
+        
+        $columns = array();
+        $columns = \array_combine($keys, $this->data[0]);
+        return $columns;
     }
 }
