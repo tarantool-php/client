@@ -55,6 +55,8 @@ final class ClientMiddlewareTest extends TestCase
     }
 
     /**
+     * @requires function MessagePack\MessagePack::pack
+     *
      * @doesNotPerformAssertions
      *
      * @eval fiber = require('fiber')
@@ -72,6 +74,9 @@ final class ClientMiddlewareTest extends TestCase
         $client->ping();
     }
 
+    /**
+     * @requires function MessagePack\MessagePack::pack
+     */
     public function testAuthRetryFails() : void
     {
         $client = Client::fromOptions([
