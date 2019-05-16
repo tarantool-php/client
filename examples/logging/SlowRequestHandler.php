@@ -22,6 +22,7 @@ final class SlowRequestHandler extends HandlerWrapper
 {
     private $thresholdMs;
     private $level;
+    private $levelName;
 
     public function __construct(HandlerInterface $handler, int $thresholdMs, int $level = Logger::WARNING)
     {
@@ -29,11 +30,12 @@ final class SlowRequestHandler extends HandlerWrapper
 
         $this->thresholdMs = $thresholdMs;
         $this->level = $level;
+        $this->levelName = Logger::getLevelName($this->level);
     }
 
     public function isHandling(array $record) : bool
     {
-        // capture all levels
+        // handle all levels
         return true;
     }
 
@@ -51,7 +53,7 @@ final class SlowRequestHandler extends HandlerWrapper
 
         return $this->handler->handle([
             'level' => $this->level,
-            'level_name' => Logger::getLevelName($this->level),
+            'level_name' => $this->levelName,
             'message' => sprintf('Slow %s request detected (%d ms)', RequestTypes::getName($request->getType()), $record['context']['duration_ms']),
             'context' => ['request_body' => $request->getBody()],
         ] + $record);
