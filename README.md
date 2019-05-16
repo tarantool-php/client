@@ -171,7 +171,7 @@ $data = $response->getBodyField(Keys::DATA);
 The library ships with two handlers:
 
  * `DefaultHandler` is used for handling low-level communication with a Tarantool server
- * `MiddlewareHandler` can be used as an extension point for an underlying handler via [middleware](#middleware)
+ * `MiddlewareHandler` is used as an extension point for an underlying handler via [middleware](#middleware)
 
 
 ## Middleware
