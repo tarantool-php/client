@@ -21,38 +21,38 @@ final class RetryMiddleware implements Middleware
 {
     public const DEFAULT_MAX_RETRIES = 3;
 
-    private $getDelay;
+    private $getDelayMs;
 
-    private function __construct(\Closure $getDelay)
+    private function __construct(\Closure $getDelayMs)
     {
-        $this->getDelay = $getDelay;
+        $this->getDelayMs = $getDelayMs;
     }
 
-    public static function constant(int $maxRetries = self::DEFAULT_MAX_RETRIES, int $uInterval = 1000) : self
+    public static function constant(int $maxRetries = self::DEFAULT_MAX_RETRIES, int $intervalMs = 100) : self
     {
-        return new self(static function (int $retries) use ($maxRetries, $uInterval) {
-            return $retries > $maxRetries ? null : $uInterval;
+        return new self(static function (int $retries) use ($maxRetries, $intervalMs) {
+            return $retries > $maxRetries ? null : $intervalMs;
         });
     }
 
-    public static function exponential(int $maxRetries = self::DEFAULT_MAX_RETRIES, int $uBase = 1000) : self
+    public static function exponential(int $maxRetries = self::DEFAULT_MAX_RETRIES, int $baseMs = 100) : self
     {
-        return new self(static function (int $retries) use ($maxRetries, $uBase) {
-            return $retries > $maxRetries ? null : $uBase ** $retries;
+        return new self(static function (int $retries) use ($maxRetries, $baseMs) {
+            return $retries > $maxRetries ? null : $baseMs ** $retries;
         });
     }
 
-    public static function linear(int $maxRetries = self::DEFAULT_MAX_RETRIES, int $uStep = 1000) : self
+    public static function linear(int $maxRetries = self::DEFAULT_MAX_RETRIES, int $differenceMs = 100) : self
     {
-        return new self(static function (int $retries) use ($maxRetries, $uStep) {
-            return $retries > $maxRetries ? null : $uStep * $retries;
+        return new self(static function (int $retries) use ($maxRetries, $differenceMs) {
+            return $retries > $maxRetries ? null : $differenceMs * $retries;
         });
     }
 
-    public static function custom(\Closure $getDelay) : self
+    public static function custom(\Closure $getDelayMs) : self
     {
-        return new self(static function (int $retries) use ($getDelay) : ?int {
-            return $getDelay($retries);
+        return new self(static function (int $retries) use ($getDelayMs) : ?int {
+            return $getDelayMs($retries);
         });
     }
 
@@ -64,10 +64,10 @@ final class RetryMiddleware implements Middleware
             try {
                 return $handler->handle($request);
             } catch (\Throwable $e) {
-                if (null === $delay = ($this->getDelay)(++$retries)) {
+                if (null === $delayMs = ($this->getDelayMs)(++$retries)) {
                     break;
                 }
-                \usleep($delay);
+                \usleep($delayMs * 1000);
             }
         } while (true);
 
