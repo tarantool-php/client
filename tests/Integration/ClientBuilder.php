@@ -117,11 +117,11 @@ final class ClientBuilder
         $packer = $this->createPacker();
         $handler = new DefaultHandler($connection, $packer);
 
-        if (isset($this->options['username'])) {
-            $handler = MiddlewareHandler::create($handler, new AuthMiddleware($this->options['username'], $this->options['password'] ?? ''));
-        }
         if (isset($this->options['max_retries'])) {
             $handler = MiddlewareHandler::create($handler, RetryMiddleware::linear($this->options['max_retries']));
+        }
+        if (isset($this->options['username'])) {
+            $handler = MiddlewareHandler::create($handler, new AuthMiddleware($this->options['username'], $this->options['password'] ?? ''));
         }
 
         return new Client($handler);

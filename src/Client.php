@@ -64,11 +64,11 @@ final class Client
         $connection = StreamConnection::create($options['uri'] ?? StreamConnection::DEFAULT_URI, $connectionOptions);
         $handler = new DefaultHandler($connection, new PurePacker());
 
-        if (isset($options['username'])) {
-            $handler = MiddlewareHandler::create($handler, new AuthMiddleware($options['username'], $options['password'] ?? ''));
-        }
         if (isset($options['max_retries']) && 0 !== $options['max_retries']) {
             $handler = MiddlewareHandler::create($handler, RetryMiddleware::linear($options['max_retries']));
+        }
+        if (isset($options['username'])) {
+            $handler = MiddlewareHandler::create($handler, new AuthMiddleware($options['username'], $options['password'] ?? ''));
         }
 
         return new self($handler);
@@ -95,11 +95,11 @@ final class Client
 
         $handler = new DefaultHandler($connection, new PurePacker());
 
-        if ($username = $dsn->getUsername()) {
-            $handler = MiddlewareHandler::create($handler, new AuthMiddleware($username, $dsn->getPassword() ?? ''));
-        }
         if ($maxRetries = $dsn->getInt('max_retries')) {
             $handler = MiddlewareHandler::create($handler, RetryMiddleware::linear($maxRetries));
+        }
+        if ($username = $dsn->getUsername()) {
+            $handler = MiddlewareHandler::create($handler, new AuthMiddleware($username, $dsn->getPassword() ?? ''));
         }
 
         return new self($handler);

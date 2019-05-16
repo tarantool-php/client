@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration;
 
+use Tarantool\Client\Client;
+use Tarantool\Client\Exception\RequestFailed;
 use Tarantool\Client\Handler\Handler;
 use Tarantool\Client\Middleware\Middleware;
 use Tarantool\Client\Request\Request;
@@ -50,5 +52,37 @@ final class ClientMiddlewareTest extends TestCase
 
         $spaceWithMiddleware->select(Criteria::key([]));
         self::assertSame(3, $middleware->counter);
+    }
+
+    /**
+     * @doesNotPerformAssertions
+     *
+     * @eval fiber = require('fiber')
+     * @eval function test() try_drop_user('foobar') fiber.sleep(.5) create_user('foobar', '') end
+     * @eval fiber.create(test)
+     */
+    public function testAuthRetrySucceeds() : void
+    {
+        $client = Client::fromOptions([
+            'uri' => ClientBuilder::createFromEnv()->getUri(),
+            'username' => 'foobar',
+            'max_retries' => 4, // 4 linear retries with a difference of 100 ms give 1 sec in total (> 0.5)
+        ]);
+
+        $client->ping();
+    }
+
+    public function testAuthRetryFails() : void
+    {
+        $client = Client::fromOptions([
+            'uri' => ClientBuilder::createFromEnv()->getUri(),
+            'username' => 'ghost',
+            'max_retries' => 2,
+        ]);
+
+        $this->expectException(RequestFailed::class);
+        $this->expectExceptionMessage("User 'ghost' is not found");
+
+        $client->ping();
     }
 }
