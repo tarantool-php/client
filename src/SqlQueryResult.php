@@ -51,6 +51,6 @@ final class SqlQueryResult implements \IteratorAggregate
         
         $columns = array();
         $columns = \array_combine($keys, $this->data[0]);
-        return $columns;
+        return $this->columns = $columns;
     }
 }
