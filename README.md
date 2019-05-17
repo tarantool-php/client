@@ -40,6 +40,10 @@ The recommended way to install the library is through [Composer](http://getcompo
 composer require tarantool/client
 ```
 
+In addition, you will need to install one of the supported msgpack packages (either 
+[rybakit/msgpack](https://github.com/rybakit/msgpack.php#installation) 
+or [ext-msgpack](https://pecl.php.net/package/msgpack)).
+
 
 ## Creating a client
 
@@ -52,7 +56,8 @@ $client = Client::fromDefaults();
 ```
 
 The client will be configured to connect to `127.0.0.1` on port `3301` with the default stream connection options.
-A custom configuration can be accomplished by one of several methods listed.
+Also, the best available msgpack package will be chosen automatically. A custom configuration can be accomplished 
+by one of several methods listed.
 
 #### DSN string
 
@@ -143,13 +148,6 @@ $handler = MiddlewareHandler::create($handler, [
 
 $client = new Client($handler);
 ```
-
-> *Note*
->
-> Using packer classes provided by the library require to install additional dependencies,
-> which are not bundled with the library directly. Therefore, you have to install them manually.
-> For example, if you plan to use the `PurePacker`, install the [rybakit/msgpack](https://github.com/rybakit/msgpack.php#installation) package.
-> See the "[suggest](composer.json#L24)" section of composer.json for other alternatives.
 
 
 ## Handlers
@@ -514,9 +512,9 @@ the [official documentation](https://www.tarantool.io/en/doc/2.1/tutorials/sql_t
 *Code*
 
 ```php
-$result1 = $client->executeUpdate('CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, email VARCHAR(255))');
+$result1 = $client->executeUpdate('CREATE TABLE users ("id" INTEGER PRIMARY KEY AUTOINCREMENT, "email" VARCHAR(255))');
 $result2 = $client->executeUpdate('INSERT INTO users VALUES (null, :email)', [':email' => 'foobar@example.com']);
-$result3 = $client->executeQuery('SELECT * FROM users WHERE email = ?', 'foobar@example.com');
+$result3 = $client->executeQuery('SELECT * FROM users WHERE "email" = ?', 'foobar@example.com');
 
 printf("Result 1: %s\n", json_encode([$result1->count(), $result1->getAutoincrementIds()]));
 printf("Result 2: %s\n", json_encode([$result2->count(), $result2->getAutoincrementIds()]));
@@ -528,7 +526,7 @@ printf("Result 3: %s\n", json_encode(iterator_to_array($result3)));
 ```
 Result 1: [1,null]
 Result 2: [1,[1]]
-Result 3: [{"ID":1,"EMAIL":"foobar@example.com"}]
+Result 3: [{"id":1,"email":"foobar@example.com"}]
 ```
 </details>
 
