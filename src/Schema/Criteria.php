@@ -25,6 +25,9 @@ final class Criteria
     {
     }
 
+    /**
+     * @param int|string $index
+     */
     public static function index($index) : self
     {
         $self = new self();
