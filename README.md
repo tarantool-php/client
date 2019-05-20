@@ -518,7 +518,7 @@ $result3 = $client->executeQuery('SELECT * FROM users WHERE "email" = ?', 'fooba
 
 printf("Result 1: %s\n", json_encode([$result1->count(), $result1->getAutoincrementIds()]));
 printf("Result 2: %s\n", json_encode([$result2->count(), $result2->getAutoincrementIds()]));
-printf("Result 3: %s\n", json_encode(iterator_to_array($result3)));
+printf("Result 3: %s\n", json_encode([$result3->count(), iterator_to_array($result3)]));
 ```
 
 *Output*
@@ -526,7 +526,7 @@ printf("Result 3: %s\n", json_encode(iterator_to_array($result3)));
 ```
 Result 1: [1,null]
 Result 2: [1,[1]]
-Result 3: [{"id":1,"email":"foobar@example.com"}]
+Result 3: [1,[{"id":1,"email":"foobar@example.com"}]]
 ```
 </details>
 

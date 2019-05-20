@@ -24,16 +24,65 @@ final class SqlQueryResultTest extends TestCase
     ];
 
     private const METADATA = [
-        ['COLUMN1', 'INTEGER'],
-        ['COLUMN2', 'TEXT'],
+        ['column1', 'integer'],
+        ['column2', 'string'],
     ];
 
-    public function testGetters() : void
+    public function testGetData() : void
     {
         $result = new SqlQueryResult(self::DATA, self::METADATA);
 
         self::assertSame(self::DATA, $result->getData());
         self::assertSame(self::METADATA, $result->getMetadata());
+    }
+
+    public function testGetMetadata() : void
+    {
+        $result = new SqlQueryResult(self::DATA, self::METADATA);
+
+        self::assertSame(self::METADATA, $result->getMetadata());
+    }
+
+    public function testIsEmptyReturnsTrue() : void
+    {
+        $result = new SqlQueryResult([], []);
+
+        self::assertTrue($result->isEmpty());
+    }
+
+    public function testIsEmptyReturnsFalse() : void
+    {
+        $result = new SqlQueryResult(self::DATA, self::METADATA);
+
+        self::assertFalse($result->isEmpty());
+    }
+
+    public function testGetFirst() : void
+    {
+        $result = new SqlQueryResult(self::DATA, self::METADATA);
+
+        self::assertSame(['column1' => 1, 'column2' => 'foo'], $result->getFirst());
+    }
+
+    public function testGetFirstReturnsNull() : void
+    {
+        $result = new SqlQueryResult([], []);
+
+        self::assertNull($result->getFirst());
+    }
+
+    public function testGetLast() : void
+    {
+        $result = new SqlQueryResult(self::DATA, self::METADATA);
+
+        self::assertSame(['column1' => 2, 'column2' => 'bar'], $result->getLast());
+    }
+
+    public function testGetLastReturnsNull() : void
+    {
+        $result = new SqlQueryResult([], []);
+
+        self::assertNull($result->getLast());
     }
 
     public function testIterable() : void
@@ -52,5 +101,12 @@ final class SqlQueryResultTest extends TestCase
         }
 
         self::assertSame(2, $count);
+    }
+
+    public function testCountable() : void
+    {
+        $result = new SqlQueryResult(self::DATA, self::METADATA);
+
+        self::assertSame(2, count($result));
     }
 }
