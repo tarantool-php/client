@@ -118,196 +118,140 @@ final class Criteria
         return $this->offset;
     }
 
-    public static function eqIterator() : self
+    public static function iteratorType(int $iteratorType) : self
     {
         $self = new self();
-        $self->iteratorType = IteratorTypes::EQ;
+        $self->iteratorType = $iteratorType;
 
         return $self;
+    }
+
+    public function andIteratorType(int $iteratorType) : self
+    {
+        $new = clone $this;
+        $new->iteratorType = $iteratorType;
+
+        return $new;
+    }
+
+    public static function eqIterator() : self
+    {
+        return self::iteratorType(IteratorTypes::EQ);
     }
 
     public function andEqIterator() : self
     {
-        $new = clone $this;
-        $new->iteratorType = IteratorTypes::EQ;
-
-        return $new;
+        return $this->andIteratorType(IteratorTypes::EQ);
     }
 
     public static function reqIterator() : self
     {
-        $self = new self();
-        $self->iteratorType = IteratorTypes::REQ;
-
-        return $self;
+        return self::iteratorType(IteratorTypes::REQ);
     }
 
     public function andReqIterator() : self
     {
-        $new = clone $this;
-        $new->iteratorType = IteratorTypes::REQ;
-
-        return $new;
+        return $this->andIteratorType(IteratorTypes::REQ);
     }
 
     public static function allIterator() : self
     {
-        $self = new self();
-        $self->iteratorType = IteratorTypes::ALL;
-
-        return $self;
+        return self::iteratorType(IteratorTypes::ALL);
     }
 
     public function andAllIterator() : self
     {
-        $new = clone $this;
-        $new->iteratorType = IteratorTypes::ALL;
-
-        return $new;
+        return $this->andIteratorType(IteratorTypes::ALL);
     }
 
     public static function ltIterator() : self
     {
-        $self = new self();
-        $self->iteratorType = IteratorTypes::LT;
-
-        return $self;
+        return self::iteratorType(IteratorTypes::LT);
     }
 
     public function andLtIterator() : self
     {
-        $new = clone $this;
-        $new->iteratorType = IteratorTypes::LT;
-
-        return $new;
+        return $this->andIteratorType(IteratorTypes::LT);
     }
 
     public static function leIterator() : self
     {
-        $self = new self();
-        $self->iteratorType = IteratorTypes::LE;
-
-        return $self;
+        return self::iteratorType(IteratorTypes::LE);
     }
 
     public function andLeIterator() : self
     {
-        $new = clone $this;
-        $new->iteratorType = IteratorTypes::LE;
-
-        return $new;
+        return $this->andIteratorType(IteratorTypes::LE);
     }
 
     public static function geIterator() : self
     {
-        $self = new self();
-        $self->iteratorType = IteratorTypes::GE;
-
-        return $self;
+        return self::iteratorType(IteratorTypes::GE);
     }
 
     public function andGeIterator() : self
     {
-        $new = clone $this;
-        $new->iteratorType = IteratorTypes::GE;
-
-        return $new;
+        return $this->andIteratorType(IteratorTypes::GE);
     }
 
     public static function gtIterator() : self
     {
-        $self = new self();
-        $self->iteratorType = IteratorTypes::GT;
-
-        return $self;
+        return self::iteratorType(IteratorTypes::GT);
     }
 
     public function andGtIterator() : self
     {
-        $new = clone $this;
-        $new->iteratorType = IteratorTypes::GT;
-
-        return $new;
+        return $this->andIteratorType(IteratorTypes::GT);
     }
 
     public static function bitsAllSetIterator() : self
     {
-        $self = new self();
-        $self->iteratorType = IteratorTypes::BITS_ALL_SET;
-
-        return $self;
+        return self::iteratorType(IteratorTypes::BITS_ALL_SET);
     }
 
     public function andBitsAllSetIterator() : self
     {
-        $new = clone $this;
-        $new->iteratorType = IteratorTypes::BITS_ALL_SET;
-
-        return $new;
+        return $this->andIteratorType(IteratorTypes::BITS_ALL_SET);
     }
 
     public static function bitsAnySetIterator() : self
     {
-        $self = new self();
-        $self->iteratorType = IteratorTypes::BITS_ANY_SET;
-
-        return $self;
+        return self::iteratorType(IteratorTypes::BITS_ANY_SET);
     }
 
     public function andBitsAnySetIterator() : self
     {
-        $new = clone $this;
-        $new->iteratorType = IteratorTypes::BITS_ANY_SET;
-
-        return $new;
+        return $this->andIteratorType(IteratorTypes::BITS_ANY_SET);
     }
 
     public static function bitsAllNotSetIterator() : self
     {
-        $self = new self();
-        $self->iteratorType = IteratorTypes::BITS_ALL_NOT_SET;
-
-        return $self;
+        return self::iteratorType(IteratorTypes::BITS_ALL_NOT_SET);
     }
 
     public function andBitsAllNotSetIterator() : self
     {
-        $new = clone $this;
-        $new->iteratorType = IteratorTypes::BITS_ALL_NOT_SET;
-
-        return $new;
+        return $this->andIteratorType(IteratorTypes::BITS_ALL_NOT_SET);
     }
 
     public static function overlapsIterator() : self
     {
-        $self = new self();
-        $self->iteratorType = IteratorTypes::OVERLAPS;
-
-        return $self;
+        return self::iteratorType(IteratorTypes::OVERLAPS);
     }
 
     public function andOverlapsIterator() : self
     {
-        $new = clone $this;
-        $new->iteratorType = IteratorTypes::OVERLAPS;
-
-        return $new;
+        return $this->andIteratorType(IteratorTypes::OVERLAPS);
     }
 
     public static function neighborIterator() : self
     {
-        $self = new self();
-        $self->iteratorType = IteratorTypes::NEIGHBOR;
-
-        return $self;
+        return self::iteratorType(IteratorTypes::NEIGHBOR);
     }
 
     public function andNeighborIterator() : self
     {
-        $new = clone $this;
-        $new->iteratorType = IteratorTypes::NEIGHBOR;
-
-        return $new;
+        return $this->andIteratorType(IteratorTypes::NEIGHBOR);
     }
 
     public function getIteratorType() : int
