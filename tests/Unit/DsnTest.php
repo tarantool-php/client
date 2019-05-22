@@ -56,7 +56,7 @@ final class DsnTest extends TestCase
      * ["unix://foo:bar@/path/to/socket.sock?opt=42", {"uri": "unix:///path/to/socket.sock", "path": "/path/to/socket.sock", "username": "foo", "password": "bar"}]
      * ["unix://f%40%40:b%40r@%2fsocket.sock", {"uri": "unix://%2fsocket.sock", "path": "/socket.sock", "username": "f@@", "password": "b@r"}]
      */
-    public function testParseValidUdpDsn(string $dsn, array $expected) : void
+    public function testParseValidUdsDsn(string $dsn, array $expected) : void
     {
         $dsn = Dsn::parse($dsn);
         self::assertSame($expected['uri'], $dsn->getConnectionUri());
