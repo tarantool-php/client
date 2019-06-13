@@ -18,7 +18,7 @@ use Tarantool\Client\Request\AuthenticateRequest;
 use Tarantool\Client\Request\Request;
 use Tarantool\Client\Response;
 
-final class AuthMiddleware implements Middleware
+final class AuthenticationMiddleware implements Middleware
 {
     private $username;
     private $password;

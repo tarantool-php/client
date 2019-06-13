@@ -18,7 +18,7 @@ use Tarantool\Client\Exception\RequestFailed;
 use Tarantool\Client\Handler\DefaultHandler;
 use Tarantool\Client\Handler\Handler;
 use Tarantool\Client\Handler\MiddlewareHandler;
-use Tarantool\Client\Middleware\AuthMiddleware;
+use Tarantool\Client\Middleware\AuthenticationMiddleware;
 use Tarantool\Client\Middleware\Middleware;
 use Tarantool\Client\Middleware\RetryMiddleware;
 use Tarantool\Client\Packer\PackerFactory;
@@ -71,7 +71,7 @@ final class Client
             $handler = MiddlewareHandler::create($handler, RetryMiddleware::linear($options['max_retries']));
         }
         if (isset($options['username'])) {
-            $handler = MiddlewareHandler::create($handler, new AuthMiddleware($options['username'], $options['password'] ?? ''));
+            $handler = MiddlewareHandler::create($handler, new AuthenticationMiddleware($options['username'], $options['password'] ?? ''));
         }
 
         return new self($handler);
@@ -105,7 +105,7 @@ final class Client
             $handler = MiddlewareHandler::create($handler, RetryMiddleware::linear($maxRetries));
         }
         if ($username = $dsn->getUsername()) {
-            $handler = MiddlewareHandler::create($handler, new AuthMiddleware($username, $dsn->getPassword() ?? ''));
+            $handler = MiddlewareHandler::create($handler, new AuthenticationMiddleware($username, $dsn->getPassword() ?? ''));
         }
 
         return new self($handler);

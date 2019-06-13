@@ -126,7 +126,7 @@ use Tarantool\Client\Client;
 use Tarantool\Client\Connection\StreamConnection;
 use Tarantool\Client\Handler\DefaultHandler;
 use Tarantool\Client\Handler\MiddlewareHandler;
-use Tarantool\Client\Middleware\AuthMiddleware;
+use Tarantool\Client\Middleware\AuthenticationMiddleware;
 use Tarantool\Client\Middleware\RetryMiddleware;
 use Tarantool\Client\Packer\PurePacker;
 
@@ -142,7 +142,7 @@ $packer = new PurePacker($pureMsgpackPacker, $pureMsgpackUnpacker);
 
 $handler = new DefaultHandler($connection, $packer);
 $handler = MiddlewareHandler::create($handler, [
-    new AuthMiddleware('<username>', '<password>'),
+    new AuthenticationMiddleware('<username>', '<password>'),
     RetryMiddleware::exponential(3),
     // ...
 ]);
@@ -181,10 +181,10 @@ The usage is straightforward:
 
 ```php
 use Tarantool\Client\Client;
-use Tarantool\Client\Middleware\AuthMiddleware;
+use Tarantool\Client\Middleware\AuthenticationMiddleware;
 
 $client = Client::fromDefaults()->withMiddleware(
-    new AuthMiddleware('<username>', '<password>')
+    new AuthenticationMiddleware('<username>', '<password>')
 );
 ```
 
