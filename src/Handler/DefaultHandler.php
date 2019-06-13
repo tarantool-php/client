@@ -32,11 +32,8 @@ final class DefaultHandler implements Handler
 
     public function handle(Request $request) : Response
     {
-        if ($this->connection->isClosed()) {
-            $this->connection->open();
-        }
-
         $data = $this->packer->pack($request);
+        $this->connection->open();
         $data = $this->connection->send($data);
 
         $response = $this->packer->unpack($data);
