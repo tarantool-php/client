@@ -61,7 +61,7 @@ final class ClientMiddlewareTest extends TestCase
      * @eval function test() try_drop_user('foobar') fiber.sleep(.5) create_user('foobar', '') end
      * @eval fiber.create(test)
      */
-    public function testAuthRetrySucceeds() : void
+    public function testAuthenticationRetrySucceeds() : void
     {
         $client = Client::fromOptions([
             'uri' => ClientBuilder::createFromEnv()->getUri(),
@@ -72,7 +72,7 @@ final class ClientMiddlewareTest extends TestCase
         $client->ping();
     }
 
-    public function testAuthRetryFails() : void
+    public function testAuthenticationRetryFails() : void
     {
         $client = Client::fromOptions([
             'uri' => ClientBuilder::createFromEnv()->getUri(),

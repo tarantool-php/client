@@ -20,14 +20,6 @@ use Tarantool\Client\Greeting;
 final class GreetingTest extends TestCase
 {
     /**
-     * @dataProvider \Tarantool\Client\Tests\GreetingDataProvider::provideValidGreetings
-     */
-    public function testParse(string $greeting, string $salt) : void
-    {
-        self::assertSame($salt, Greeting::parse($greeting));
-    }
-
-    /**
      * @dataProvider \Tarantool\Client\Tests\GreetingDataProvider::provideGreetingsWithInvalidServerName
      */
     public function testParseThrowsExceptionOnInvalidServer(string $greeting) : void
@@ -39,13 +31,21 @@ final class GreetingTest extends TestCase
     }
 
     /**
+     * @dataProvider \Tarantool\Client\Tests\GreetingDataProvider::provideValidGreetings
+     */
+    public function testGetSalt(string $greeting, string $salt) : void
+    {
+        self::assertSame($salt, Greeting::parse($greeting)->getSalt());
+    }
+
+    /**
      * @dataProvider \Tarantool\Client\Tests\GreetingDataProvider::provideGreetingsWithInvalidSalt
      */
-    public function testParseThrowsExceptionOnInvalidSalt(string $greeting) : void
+    public function testGetInvalidSalt(string $greeting) : void
     {
         $this->expectException(InvalidGreeting::class);
         $this->expectExceptionMessage('Unable to parse salt.');
 
-        Greeting::parse($greeting);
+        Greeting::parse($greeting)->getSalt();
     }
 }

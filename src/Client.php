@@ -60,6 +60,9 @@ final class Client
         if (isset($options['tcp_nodelay'])) {
             $connectionOptions['tcp_nodelay'] = $options['tcp_nodelay'];
         }
+        if (isset($options['persistent'])) {
+            $connectionOptions['persistent'] = $options['persistent'];
+        }
 
         $connection = StreamConnection::create($options['uri'] ?? StreamConnection::DEFAULT_URI, $connectionOptions);
         $handler = new DefaultHandler($connection, PackerFactory::create());
@@ -85,8 +88,11 @@ final class Client
         if (null !== $timeout = $dsn->getInt('socket_timeout')) {
             $connectionOptions['socket_timeout'] = $timeout;
         }
-        if (null !== $tcpNoDelay = $dsn->getBool('socket_timeout')) {
+        if (null !== $tcpNoDelay = $dsn->getBool('tcp_nodelay')) {
             $connectionOptions['tcp_nodelay'] = $tcpNoDelay;
+        }
+        if (null !== $persistent = $dsn->getBool('persistent')) {
+            $connectionOptions['persistent'] = $persistent;
         }
 
         $connection = $dsn->isTcp()

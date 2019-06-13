@@ -22,7 +22,7 @@ final class AuthMiddleware implements Middleware
 {
     private $username;
     private $password;
-    private $isSucceeded = false;
+    private $greeting;
 
     public function __construct(string $username, string $password = '')
     {
@@ -34,17 +34,14 @@ final class AuthMiddleware implements Middleware
     {
         $connection = $handler->getConnection();
 
-        if ($this->isSucceeded && $connection->isClosed()) {
-            $this->isSucceeded = false;
-        }
-
-        if (!$this->isSucceeded) {
+        if ($this->greeting !== $greeting = $connection->open()) {
             $handler->handle(new AuthenticateRequest(
-                $connection->open(),
+                $greeting->getSalt(),
                 $this->username,
                 $this->password
             ));
-            $this->isSucceeded = true;
+
+            $this->greeting = $greeting;
         }
 
         return $handler->handle($request);
