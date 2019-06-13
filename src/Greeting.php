@@ -21,31 +21,28 @@ final class Greeting
 
     private $greeting;
     private $salt;
+    private $serverVersion;
 
-    private function __construct()
+    private function __construct($greeting)
     {
-        unset($this->salt);
+        $this->greeting = $greeting;
     }
 
     public static function parse(string $greeting) : self
     {
-        if (0 !== \strpos($greeting, 'Tarantool')) {
-            throw InvalidGreeting::invalidServerName();
+        if (0 === \strpos($greeting, 'Tarantool')) {
+            return new self($greeting);
         }
 
-        $self = new self();
-        $self->greeting = $greeting;
-
-        return $self;
+        throw InvalidGreeting::invalidServerName();
     }
 
     public function getSalt() : string
     {
-        return $this->salt;
-    }
+        if (null !== $this->salt) {
+            return $this->salt;
+        }
 
-    public function __get($name) : string
-    {
         if (false === $salt = \base64_decode(\substr($this->greeting, 64, 44), true)) {
             throw InvalidGreeting::invalidSalt();
         }
@@ -57,5 +54,16 @@ final class Greeting
         }
 
         throw InvalidGreeting::invalidSalt();
+    }
+
+    public function getServerVersion() : int
+    {
+        if (null !== $this->serverVersion) {
+            return $this->serverVersion;
+        }
+
+        [$major, $minor, $patch] = \sscanf($this->greeting, 'Tarantool %d.%d.%d');
+
+        return $this->serverVersion = $major * 10000 + $minor * 100 + $patch;
     }
 }
