@@ -21,25 +21,25 @@ final class SpaceIndexCachingTest extends TestCase
     public function testCacheIndex() : void
     {
         $space = $this->client->getSpaceById(Space::VINDEX_ID);
-        $total = self::getTotalSelectCalls();
+        $total = self::getTotalCalls(self::STAT_REQUEST_SELECT);
 
         $space->flushIndexes();
         $space->select(Criteria::index('name'));
         $space->select(Criteria::index('name'));
 
-        self::assertSame(3, self::getTotalSelectCalls() - $total);
+        self::assertSame(3, self::getTotalCalls(self::STAT_REQUEST_SELECT) - $total);
     }
 
     public function testFlushIndexes() : void
     {
         $space = $this->client->getSpaceById(Space::VINDEX_ID);
-        $total = self::getTotalSelectCalls();
+        $total = self::getTotalCalls(self::STAT_REQUEST_SELECT);
 
         $space->flushIndexes();
         $space->select(Criteria::index('name'));
         $space->flushIndexes();
         $space->select(Criteria::index('name'));
 
-        self::assertSame(4, self::getTotalSelectCalls() - $total);
+        self::assertSame(4, self::getTotalCalls(self::STAT_REQUEST_SELECT) - $total);
     }
 }

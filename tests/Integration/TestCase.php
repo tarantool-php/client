@@ -19,6 +19,9 @@ use Tarantool\Client\Client;
 
 abstract class TestCase extends BaseTestCase
 {
+    protected const STAT_REQUEST_SELECT = 'SELECT';
+    protected const STAT_REQUEST_AUTH = 'AUTH';
+
     /**
      * @var Client
      */
@@ -52,12 +55,11 @@ abstract class TestCase extends BaseTestCase
         }
     }
 
-    final protected static function getTotalSelectCalls() : int
+    final protected static function getTotalCalls(string $request) : int
     {
         $client = ClientBuilder::createFromEnv()->build();
-        $result = $client->evaluate('return box.stat().SELECT.total');
 
-        return $result[0];
+        return $client->evaluate("return box.stat().$request.total")[0];
     }
 
     final protected static function getTarantoolVersion() : int
