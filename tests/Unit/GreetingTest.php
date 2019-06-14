@@ -14,22 +14,10 @@ declare(strict_types=1);
 namespace Tarantool\Client\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Tarantool\Client\Exception\InvalidGreeting;
 use Tarantool\Client\Greeting;
 
 final class GreetingTest extends TestCase
 {
-    /**
-     * @dataProvider \Tarantool\Client\Tests\GreetingDataProvider::provideGreetingsWithInvalidServerName
-     */
-    public function testParseThrowsExceptionOnInvalidServer(string $greeting) : void
-    {
-        $this->expectException(InvalidGreeting::class);
-        $this->expectExceptionMessage('Unable to recognize Tarantool server.');
-
-        Greeting::parse($greeting);
-    }
-
     /**
      * @dataProvider \Tarantool\Client\Tests\GreetingDataProvider::provideValidGreetings
      */
@@ -53,16 +41,5 @@ final class GreetingTest extends TestCase
     public function testGetServerVersion(string $greeting, int $expectedVersion) : void
     {
         self::assertSame($expectedVersion, Greeting::parse($greeting)->getServerVersion());
-    }
-
-    /**
-     * @dataProvider \Tarantool\Client\Tests\GreetingDataProvider::provideGreetingsWithInvalidSalt
-     */
-    public function testGetInvalidSalt(string $greeting) : void
-    {
-        $this->expectException(InvalidGreeting::class);
-        $this->expectExceptionMessage('Unable to parse salt.');
-
-        Greeting::parse($greeting)->getSalt();
     }
 }
