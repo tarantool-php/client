@@ -22,24 +22,24 @@ final class ClientSpaceCachingTest extends TestCase
 {
     public function testCacheSpace() : void
     {
-        $total = self::getTotalSelectCalls();
+        $total = self::getTotalCalls(self::STAT_REQUEST_SELECT);
 
         $this->client->flushSpaces();
         $this->client->getSpace('test_space_caching')->select(Criteria::key([]));
         $this->client->getSpace('test_space_caching')->select(Criteria::key([]));
 
-        self::assertSame(3, self::getTotalSelectCalls() - $total);
+        self::assertSame(3, self::getTotalCalls(self::STAT_REQUEST_SELECT) - $total);
     }
 
     public function testFlushSpaces() : void
     {
-        $total = self::getTotalSelectCalls();
+        $total = self::getTotalCalls(self::STAT_REQUEST_SELECT);
 
         $this->client->flushSpaces();
         $this->client->getSpace('test_space_caching')->select(Criteria::key([]));
         $this->client->flushSpaces();
         $this->client->getSpace('test_space_caching')->select(Criteria::key([]));
 
-        self::assertSame(4, self::getTotalSelectCalls() - $total);
+        self::assertSame(4, self::getTotalCalls(self::STAT_REQUEST_SELECT) - $total);
     }
 }

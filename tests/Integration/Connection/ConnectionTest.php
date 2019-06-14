@@ -78,14 +78,25 @@ final class ConnectionTest extends TestCase
         self::assertTrue($conn->isClosed());
     }
 
-    public function testRegenerateSalt() : void
+    public function testReturnSameGreeting() : void
     {
         $conn = $this->client->getHandler()->getConnection();
 
-        $salt1 = $conn->open();
-        $salt2 = $conn->open();
+        $greeting1 = $conn->open();
+        $greeting2 = $conn->open();
 
-        self::assertNotSame($salt1, $salt2);
+        self::assertSame($greeting1, $greeting2);
+    }
+
+    public function testReturnNewGreeting() : void
+    {
+        $conn = $this->client->getHandler()->getConnection();
+
+        $greeting1 = $conn->open();
+        $conn->close();
+        $greeting2 = $conn->open();
+
+        self::assertNotSame($greeting1, $greeting2);
     }
 
     public function testConnectInvalidHost() : void

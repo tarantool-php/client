@@ -80,4 +80,66 @@ final class AuthenticateTest extends TestCase
 
         $client->getSpace('test_auth_reconnect');
     }
+
+    public function testAuthenticateOnceOnOpenedPersistentConnection() : void
+    {
+        $total = self::getTotalCalls(self::STAT_REQUEST_AUTH);
+
+        $client = ClientBuilder::createFromEnv()
+            ->setConnectionOptions(['persistent' => true])
+            ->setOptions(['username' => 'guest'])
+            ->build();
+
+        // ensure that no persistent connections is opened
+        $connection = $client->getHandler()->getConnection();
+        $connection->open();
+        $connection->close();
+
+        $client->ping();
+        $client->ping();
+
+        $client = ClientBuilder::createFromEnv()
+            ->setConnectionOptions(['persistent' => true])
+            ->setOptions(['username' => 'guest'])
+            ->build();
+
+        $client->ping();
+        $client->ping();
+
+        $connection->close();
+
+        self::assertSame(1, self::getTotalCalls(self::STAT_REQUEST_AUTH) - $total);
+    }
+
+    public function testReauthenticateOnClosedPersistentConnection() : void
+    {
+        $total = self::getTotalCalls(self::STAT_REQUEST_AUTH);
+
+        $client = ClientBuilder::createFromEnv()
+            ->setConnectionOptions(['persistent' => true])
+            ->setOptions(['username' => 'guest'])
+            ->build();
+
+        // ensure that no persistent connections is opened
+        $connection = $client->getHandler()->getConnection();
+        $connection->open();
+        $connection->close();
+
+        $client->ping();
+        $client->ping();
+
+        $connection->close();
+
+        $client = ClientBuilder::createFromEnv()
+            ->setConnectionOptions(['persistent' => true])
+            ->setOptions(['username' => 'guest'])
+            ->build();
+
+        $client->ping();
+        $client->ping();
+
+        $connection->close();
+
+        self::assertSame(2, self::getTotalCalls(self::STAT_REQUEST_AUTH) - $total);
+    }
 }

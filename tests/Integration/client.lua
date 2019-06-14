@@ -6,8 +6,7 @@ box.cfg {
     listen = (listen == '' or listen == nil) and 3301 or listen,
     log_level = 6,
     wal_mode = 'none',
-    snap_dir = '/tmp',
-    slab_alloc_arena = .1,
+    snap_dir = '/tmp'
 }
 
 box.schema.user.grant('guest', 'read,write,execute,create,drop,alter', 'universe', nil, {if_not_exists = true})

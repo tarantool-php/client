@@ -15,17 +15,18 @@ namespace Tarantool\Client\Connection;
 
 use Tarantool\Client\Exception\CommunicationFailed;
 use Tarantool\Client\Exception\ConnectionFailed;
+use Tarantool\Client\Greeting;
 
 interface Connection
 {
     /**
-     * Opens a new connection.
+     * Opens a new connection or reuses an existing one.
      *
      * @throws ConnectionFailed|CommunicationFailed
      *
-     * @return string A session salt
+     * @return Greeting|null
      */
-    public function open() : string;
+    public function open() : ?Greeting;
 
     /**
      * Closes an opened connection.

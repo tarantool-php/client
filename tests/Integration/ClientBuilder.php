@@ -18,7 +18,7 @@ use Tarantool\Client\Connection\Connection;
 use Tarantool\Client\Connection\StreamConnection;
 use Tarantool\Client\Handler\DefaultHandler;
 use Tarantool\Client\Handler\MiddlewareHandler;
-use Tarantool\Client\Middleware\AuthMiddleware;
+use Tarantool\Client\Middleware\AuthenticationMiddleware;
 use Tarantool\Client\Middleware\RetryMiddleware;
 use Tarantool\Client\Packer\Packer;
 use Tarantool\Client\Packer\PeclPacker;
@@ -121,7 +121,7 @@ final class ClientBuilder
             $handler = MiddlewareHandler::create($handler, RetryMiddleware::linear($this->options['max_retries']));
         }
         if (isset($this->options['username'])) {
-            $handler = MiddlewareHandler::create($handler, new AuthMiddleware($this->options['username'], $this->options['password'] ?? ''));
+            $handler = MiddlewareHandler::create($handler, new AuthenticationMiddleware($this->options['username'], $this->options['password'] ?? ''));
         }
 
         return new Client($handler);
@@ -148,7 +148,7 @@ final class ClientBuilder
         return $builder;
     }
 
-    private function createConnection() : Connection
+    public function createConnection() : Connection
     {
         if (!$this->uri) {
             throw new \LogicException('Connection URI is not set.');
@@ -157,7 +157,7 @@ final class ClientBuilder
         return StreamConnection::create($this->uri, $this->connectionOptions);
     }
 
-    private function createPacker() : Packer
+    public function createPacker() : Packer
     {
         if (self::PACKER_PURE === $this->packer) {
             return $this->packerPureFactory ? ($this->packerPureFactory)() : new PurePacker();

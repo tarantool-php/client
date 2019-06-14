@@ -26,12 +26,14 @@ final class StreamConnection implements Connection
         'connect_timeout' => 5,
         'socket_timeout' => 5,
         'tcp_nodelay' => true,
+        'persistent' => false,
     ];
 
     private $stream;
     private $streamContext;
     private $uri;
     private $options;
+    private $greeting;
 
     private function __construct(string $uri, array $options)
     {
@@ -62,22 +64,29 @@ final class StreamConnection implements Connection
             : self::createTcp($uri, $options);
     }
 
-    public function open() : string
+    public function open() : ?Greeting
     {
-        $this->close();
+        if (\is_resource($this->stream)) {
+            return $this->greeting;
+        }
+
+        $flags = $this->options['persistent']
+            ? \STREAM_CLIENT_CONNECT | \STREAM_CLIENT_PERSISTENT
+            : \STREAM_CLIENT_CONNECT;
 
         $stream = $this->streamContext ? @\stream_socket_client(
             $this->uri,
             $errorCode,
             $errorMessage,
             (float) $this->options['connect_timeout'],
-            \STREAM_CLIENT_CONNECT,
+            $flags,
             $this->streamContext
         ) : @\stream_socket_client(
             $this->uri,
             $errorCode,
             $errorMessage,
-            (float) $this->options['connect_timeout']
+            (float) $this->options['connect_timeout'],
+            $flags
         );
 
         if (false === $stream) {
@@ -87,17 +96,23 @@ final class StreamConnection implements Connection
         $this->stream = $stream;
         \stream_set_timeout($this->stream, $this->options['socket_timeout']);
 
+        if ($this->options['persistent'] && \ftell($this->stream)) {
+            return $this->greeting;
+        }
+
         $greeting = $this->read(Greeting::SIZE_BYTES, 'Unable to read greeting.');
 
-        return Greeting::parse($greeting);
+        return $this->greeting = Greeting::parse($greeting);
     }
 
     public function close() : void
     {
-        if ($this->stream) {
+        if (\is_resource($this->stream)) {
             \fclose($this->stream);
-            $this->stream = null;
         }
+
+        $this->stream = null;
+        $this->greeting = null;
     }
 
     public function isClosed() : bool

@@ -109,6 +109,7 @@ Name | Type | Default | Description
 *connect_timeout* | integer | 5 | The number of seconds that the client waits for a connect to a Tarantool server before throwing a `ConnectionFailed` exception.
 *socket_timeout* | integer | 5 | The number of seconds that the client waits for a respond from a Tarantool server before throwing a `CommunicationFailed` exception.
 *tcp_nodelay* | boolean | true | Whether the Nagle algorithm is disabled on a TCP connection.
+*persistent* | boolean | false | Whether to use a persistent connection.
 *username* | string | | The username for the user being authenticated.
 *password* | string | '' | The password for the user being authenticated. If the username is not set, this option will be ignored.
 *max_retries* | integer | 0 | The number of times the client retries unsuccessful request. If set to 0, the client does not try to resend the request after the initial unsuccessful attempt.
@@ -125,7 +126,7 @@ use Tarantool\Client\Client;
 use Tarantool\Client\Connection\StreamConnection;
 use Tarantool\Client\Handler\DefaultHandler;
 use Tarantool\Client\Handler\MiddlewareHandler;
-use Tarantool\Client\Middleware\AuthMiddleware;
+use Tarantool\Client\Middleware\AuthenticationMiddleware;
 use Tarantool\Client\Middleware\RetryMiddleware;
 use Tarantool\Client\Packer\PurePacker;
 
@@ -141,7 +142,7 @@ $packer = new PurePacker($pureMsgpackPacker, $pureMsgpackUnpacker);
 
 $handler = new DefaultHandler($connection, $packer);
 $handler = MiddlewareHandler::create($handler, [
-    new AuthMiddleware('<username>', '<password>'),
+    new AuthenticationMiddleware('<username>', '<password>'),
     RetryMiddleware::exponential(3),
     // ...
 ]);
@@ -180,10 +181,10 @@ The usage is straightforward:
 
 ```php
 use Tarantool\Client\Client;
-use Tarantool\Client\Middleware\AuthMiddleware;
+use Tarantool\Client\Middleware\AuthenticationMiddleware;
 
 $client = Client::fromDefaults()->withMiddleware(
-    new AuthMiddleware('<username>', '<password>')
+    new AuthenticationMiddleware('<username>', '<password>')
 );
 ```
 

@@ -19,6 +19,9 @@ use Tarantool\Client\Client;
 
 abstract class TestCase extends BaseTestCase
 {
+    protected const STAT_REQUEST_SELECT = 'SELECT';
+    protected const STAT_REQUEST_AUTH = 'AUTH';
+
     /**
      * @var Client
      */
@@ -52,28 +55,17 @@ abstract class TestCase extends BaseTestCase
         }
     }
 
-    protected static function getTotalSelectCalls() : int
+    final protected static function getTotalCalls(string $request) : int
     {
         $client = ClientBuilder::createFromEnv()->build();
-        $result = $client->evaluate('return box.stat().SELECT.total');
 
-        return $result[0];
+        return $client->evaluate("return box.stat().$request.total")[0];
     }
 
-    protected static function getTarantoolVersion() : string
+    final protected static function getTarantoolVersion() : int
     {
-        $client = ClientBuilder::createFromEnv()->build();
-        $result = $client->evaluate('return box.info().version');
+        $connection = ClientBuilder::createFromEnv()->createConnection();
 
-        return $result[0];
-    }
-
-    protected static function matchTarantoolVersion(string $expr, &$ver) : bool
-    {
-        if (!preg_match('/(?P<op><|lt|<=|le|>|gt|>=|ge|==|=|eq|!=|<>|ne)?(?P<ver>\d.*)/', $expr, $matches)) {
-            throw new \InvalidArgumentException('Invalid version expression.');
-        }
-
-        return version_compare($ver = self::getTarantoolVersion(), $matches['ver'], $matches['op'] ?? '=');
+        return $connection->open()->getServerVersion();
     }
 }

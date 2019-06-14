@@ -61,7 +61,7 @@ final class ParseGreetingTest extends TestCase
             ->setUri($clientBuilder->getUri())
             ->start();
 
-        $client = $clientBuilder->build();
+        $client = $clientBuilder->setOptions(['username' => 'guest'])->build();
 
         $this->expectException(InvalidGreeting::class);
         $this->expectExceptionMessage('Unable to parse salt.');

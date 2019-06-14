@@ -52,9 +52,9 @@ final class GreetingDataProvider
 
     public static function generateGreeting(?string $salt = null) : string
     {
-        $salt = $salt ?: substr(md5(uniqid()), 0, 20);
+        $salt = null === $salt ? substr(md5(uniqid()), 0, 20) : $salt;
 
-        $greeting = str_pad('Tarantool', 63, ' ')."\n";
+        $greeting = str_pad('Tarantool 2.2.2 (Binary) 5e612e67-a9d2-4774-9709-31e44b40ffad', 63, ' ')."\n";
         $greeting .= str_pad(base64_encode($salt.str_repeat('_', 12)), 63, ' ')."\n";
 
         return $greeting;
