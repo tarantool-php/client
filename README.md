@@ -233,7 +233,7 @@ space:insert({5, 'baz'})
 *Code*
 
 ```php
-$space = $client->getSpace($spaceName);
+$space = $client->getSpace('example');
 $result1 = $space->select(Criteria::key([1]));
 $result2 = $space->select(Criteria::index('secondary')
     ->andKey(['bar'])
