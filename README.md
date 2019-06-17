@@ -41,7 +41,7 @@ composer require tarantool/client
 ```
 
 In addition, you will need to install one of the supported msgpack packages (either 
-[rybakit/msgpack](https://github.com/rybakit/msgpack.php#installation) 
+[rybakit/msgpack.php](https://github.com/rybakit/msgpack.php#installation) 
 or [msgpack/msgpack-php](https://github.com/msgpack/msgpack-php#install)).
 
 
