@@ -55,11 +55,11 @@ abstract class TestCase extends BaseTestCase
         }
     }
 
-    final protected static function getTotalCalls(string $request) : int
+    final protected static function getTotalCalls(string $requestName) : int
     {
         $client = ClientBuilder::createFromEnv()->build();
 
-        return $client->evaluate("return box.stat().$request.total")[0];
+        return $client->evaluate("return box.stat().$requestName.total")[0];
     }
 
     final protected static function getTarantoolVersion() : int
