@@ -50,7 +50,7 @@ final class RetryMiddlewareTest extends TestCase
                 $response
             ));
 
-        $middleware = RetryMiddleware::custom(function (int $retries) : ?int {
+        $middleware = RetryMiddleware::custom(static function (int $retries) : ?int {
             return 0;
         });
 
@@ -62,7 +62,7 @@ final class RetryMiddlewareTest extends TestCase
         $this->handler->expects($this->exactly(4))->method('handle')
             ->willThrowException(new ConnectionFailed());
 
-        $middleware = RetryMiddleware::custom(function (int $retries) : ?int {
+        $middleware = RetryMiddleware::custom(static function (int $retries) : ?int {
             return $retries <= 3 ? 0 : null;
         });
 
