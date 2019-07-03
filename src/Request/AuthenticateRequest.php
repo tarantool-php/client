@@ -21,6 +21,7 @@ final class AuthenticateRequest implements Request
     private $salt;
     private $username;
     private $password;
+    private $scramble;
 
     public function __construct(string $salt, string $username, string $password = '')
     {
@@ -36,25 +37,15 @@ final class AuthenticateRequest implements Request
 
     public function getBody() : array
     {
-        $hash1 = \sha1($this->password, true);
-        $hash2 = \sha1($hash1, true);
-        $scramble = \sha1($this->salt.$hash2, true);
-        $scramble = self::strxor($hash1, $scramble);
-
-        return [
-            Keys::TUPLE => ['chap-sha1', $scramble],
-            Keys::USER_NAME => $this->username,
-        ];
-    }
-
-    private static function strxor(string $rhs, string $lhs) : string
-    {
-        $result = '';
-
-        for ($i = 0; $i < 20; ++$i) {
-            $result .= $rhs[$i] ^ $lhs[$i];
+        if (null === $this->scramble) {
+            $hash1 = \sha1($this->password, true);
+            $hash2 = \sha1($hash1, true);
+            $this->scramble = $hash1 ^ \sha1($this->salt.$hash2, true);
         }
 
-        return $result;
+        return [
+            Keys::TUPLE => ['chap-sha1', $this->scramble],
+            Keys::USER_NAME => $this->username,
+        ];
     }
 }
