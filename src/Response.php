@@ -48,17 +48,17 @@ final class Response
         return $this->header[Keys::SCHEMA_ID];
     }
 
-    public function getBodyField(int $code)
+    public function getBodyField(int $key)
     {
-        if (!isset($this->body[$code])) {
-            throw new \OutOfBoundsException(\sprintf('Invalid body code 0x%x.', $code));
+        if (!isset($this->body[$key])) {
+            throw new \OutOfBoundsException(\sprintf('Invalid body key 0x%x.', $key));
         }
 
-        return $this->body[$code];
+        return $this->body[$key];
     }
 
-    public function tryGetBodyField(int $code, $default = null)
+    public function tryGetBodyField(int $key, $default = null)
     {
-        return $this->body[$code] ?? $default;
+        return $this->body[$key] ?? $default;
     }
 }
