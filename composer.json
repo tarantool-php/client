@@ -19,7 +19,7 @@
         "ext-sockets": "*",
         "friendsofphp/php-cs-fixer": "^2.14",
         "monolog/monolog": "^1.24",
-        "phpunit/phpunit": "^7.1",
+        "phpunit/phpunit": "^7.1|^8.2.5",
         "psr/log": "^1.1",
         "rybakit/msgpack": "^0.5.4"
     },
