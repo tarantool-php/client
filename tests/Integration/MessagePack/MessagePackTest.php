@@ -15,6 +15,7 @@ namespace Tarantool\Client\Tests\Integration\MessagePack;
 
 use MessagePack\BufferUnpacker;
 use MessagePack\Packer;
+use PHPUnit\Framework\Assert;
 use Tarantool\Client\Packer\PeclPacker;
 use Tarantool\Client\Packer\PurePacker;
 use Tarantool\Client\Schema\Criteria;
@@ -55,26 +56,19 @@ final class MessagePackTest extends TestCase
     public function testPackUnpackMultiDimensionalArray() : void
     {
         $array = [
-            true,
             [
-                's' => [1, 1428578535],
-                'u' => 1428578535,
-                'v' => [],
-                'c' => [
-                    2 => [1, 1428578535],
-                    106 => [1, 1428578535],
-                ],
-                'pc' => [
-                    2 => [1, 1428578535, 9243],
-                    106 => [1, 1428578535, 9243],
-                ],
+                'foo' => [42, 'a' => [null]],
+                'bar' => [],
+                10000 => -1,
             ],
-            true,
+            true
         ];
 
-        $result = $this->client->evaluate('return ...', $array);
+        [$result] = $this->client->evaluate('return ...', $array);
 
-        self::assertEquals([$array], $result, '', 0.0, 5, true);
+        method_exists(Assert::class, 'assertEqualsCanonicalizing')
+            ? self::assertEqualsCanonicalizing($array, $result)
+            : self::assertEquals($array, $result, '', 0.0, 10, true);
     }
 
     /**
