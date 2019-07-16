@@ -78,16 +78,21 @@ final class MessagePackTest extends TestCase
     public function testStoringCustomTypeInTuple() : void
     {
         $client = ClientBuilder::createFromEnv()
-            ->setPackerPureFactory(function () {
+            ->setPackerPureFactory(static function () {
                 return new PurePacker(
                     (new Packer())->registerTransformer($t = new DateTimeTransformer(42)),
                     (new BufferUnpacker())->registerTransformer($t)
                 );
             })
-            ->setPackerPeclFactory(function () {
+            ->setPackerPeclFactory(static function () {
                 return new PeclPacker(true);
             })
             ->build();
+
+        // @see https://github.com/msgpack/msgpack-php/issues/137
+        if (PHP_VERSION_ID >= 70400 && $client->getHandler()->getPacker() instanceof PeclPacker) {
+            self::markTestSkipped('The msgpack extension does not pack objects correctly on PHP 7.4.');
+        }
 
         $date = new \DateTimeImmutable();
         $space = $client->getSpace('msgpack');

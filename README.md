@@ -553,8 +553,9 @@ $space->insert([42, Money::EUR(500)]);
 [[$id, $money]] = $space->select(Ctiteria::key([42]));
 ```
 
-The [PeclPacker](src/Packer/PeclPacker.php) supports object serialization out of the box, no extra configuration is needed.  
-For the [PurePacker](src/Packer/PurePacker.php) you will need to write a type transformer 
+The [PeclPacker](src/Packer/PeclPacker.php) supports object serialization out of the box, no extra configuration 
+is needed (however note that the latest version 2.0.3 is [not compatible](https://github.com/msgpack/msgpack-php/issues/137) 
+with PHP 7.4 yet). For the [PurePacker](src/Packer/PurePacker.php) you will need to write a type transformer 
 that converts your objects to and from MessagePack structures (for more details, read 
 the msgpack.php's [README](https://github.com/rybakit/msgpack.php#type-transformers)). 
 Once you have implemented your transformer, you should register it with the packer object:
