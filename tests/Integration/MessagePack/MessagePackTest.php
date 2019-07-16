@@ -61,7 +61,7 @@ final class MessagePackTest extends TestCase
                 'bar' => [],
                 10000 => -1,
             ],
-            true
+            true,
         ];
 
         [$result] = $this->client->evaluate('return ...', $array);
