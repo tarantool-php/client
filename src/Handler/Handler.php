@@ -15,6 +15,7 @@ namespace Tarantool\Client\Handler;
 
 use Tarantool\Client\Connection\Connection;
 use Tarantool\Client\Exception\RequestFailed;
+use Tarantool\Client\Exception\UnexpectedResponse;
 use Tarantool\Client\Packer\Packer;
 use Tarantool\Client\Request\Request;
 use Tarantool\Client\Response;
@@ -22,9 +23,14 @@ use Tarantool\Client\Response;
 interface Handler
 {
     /**
+     * Processes a request and produces a response.
+     * On mismatched request/response a connection must be closed
+     * and the UnexpectedResponse exception must be thrown.
+     *
      * @param Request $request
      *
      * @throws RequestFailed
+     * @throws UnexpectedResponse
      *
      * @return Response
      */

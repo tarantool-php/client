@@ -15,6 +15,7 @@ namespace Tarantool\Client\Handler;
 
 use Tarantool\Client\Connection\Connection;
 use Tarantool\Client\Exception\RequestFailed;
+use Tarantool\Client\Exception\UnexpectedResponse;
 use Tarantool\Client\Packer\Packer;
 use Tarantool\Client\Request\Request;
 use Tarantool\Client\Response;
@@ -32,16 +33,22 @@ final class DefaultHandler implements Handler
 
     public function handle(Request $request) : Response
     {
-        $data = $this->packer->pack($request);
+        $data = $this->packer->pack($request, $sync = \mt_rand());
         $this->connection->open();
         $data = $this->connection->send($data);
 
         $response = $this->packer->unpack($data);
-        if (!$response->isError()) {
-            return $response;
+
+        if ($sync !== $response->getSync()) {
+            $this->connection->close();
+            throw UnexpectedResponse::fromSync($sync, $response->getSync());
         }
 
-        throw RequestFailed::fromErrorResponse($response);
+        if ($response->isError()) {
+            throw RequestFailed::fromErrorResponse($response);
+        }
+
+        return $response;
     }
 
     public function getConnection() : Connection
