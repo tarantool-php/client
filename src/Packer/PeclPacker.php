@@ -29,7 +29,7 @@ final class PeclPacker implements Packer
         $this->unpacker = new \MessagePackUnpacker($phpOnly);
     }
 
-    public function pack(Request $request, int $sync = 0) : string
+    public function pack(Request $request, int $sync) : string
     {
         // @see https://github.com/msgpack/msgpack-php/issues/45
         $content = \pack('C*', 0x82, Keys::CODE, $request->getType(), Keys::SYNC).

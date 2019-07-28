@@ -193,7 +193,7 @@ final class ConnectionTest extends TestCase
         $client = ClientBuilder::createFromEnv()->build();
         $connection = $client->getHandler()->getConnection();
         $packer = $client->getHandler()->getPacker();
-        $rawRequest = $packer->pack(new PingRequest());
+        $rawRequest = $packer->pack(new PingRequest(), 0);
 
         // write a ping request without reading a response
         $prop = (new \ReflectionObject($connection))->getProperty('stream');

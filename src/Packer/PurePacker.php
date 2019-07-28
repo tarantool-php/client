@@ -33,7 +33,7 @@ final class PurePacker implements ClientPacker
         $this->unpacker = $unpacker ?: new BufferUnpacker();
     }
 
-    public function pack(Request $request, int $sync = 0) : string
+    public function pack(Request $request, int $sync) : string
     {
         $content = $this->packer->packMapHeader(2).
             $this->packer->packInt(Keys::CODE).

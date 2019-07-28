@@ -18,7 +18,7 @@ use Tarantool\Client\Response;
 
 interface Packer
 {
-    public function pack(Request $request, int $sync = 0) : string;
+    public function pack(Request $request, int $sync) : string;
 
     public function unpack(string $data) : Response;
 }
