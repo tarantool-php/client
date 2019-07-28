@@ -31,7 +31,7 @@ final class PacketLength
     public static function unpack(string $data) : int
     {
         if (false === $data = @\unpack('C/N', $data)) {
-            throw new UnpackingFailed('Unable to unpack length value.');
+            throw new UnpackingFailed('Unable to unpack packet length.');
         }
 
         return $data[1];

@@ -30,7 +30,7 @@ final class PacketLengthTest extends TestCase
     public function testUnpackLengthFromMalformedData() : void
     {
         $this->expectException(UnpackingFailed::class);
-        $this->expectExceptionMessage('Unable to unpack length value.');
+        $this->expectExceptionMessage('Unable to unpack packet length.');
 
         PacketLength::unpack('foo');
     }
