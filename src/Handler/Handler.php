@@ -23,10 +23,6 @@ use Tarantool\Client\Response;
 interface Handler
 {
     /**
-     * Processes a request and produces a response.
-     * On mismatched request/response a connection must be closed
-     * and the UnexpectedResponse exception must be thrown.
-     *
      * @param Request $request
      *
      * @throws RequestFailed
