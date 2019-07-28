@@ -15,6 +15,8 @@ namespace Tarantool\Client\Tests\Integration\Connection;
 
 use Tarantool\Client\Exception\CommunicationFailed;
 use Tarantool\Client\Exception\ConnectionFailed;
+use Tarantool\Client\Exception\UnexpectedResponse;
+use Tarantool\Client\Request\PingRequest;
 use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Schema\Operations;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
@@ -170,11 +172,47 @@ final class ConnectionTest extends TestCase
         $clientBuilder->setConnectionOptions(['socket_timeout' => 1]);
 
         $client = $clientBuilder->build();
-        $retryableClient = $clientBuilder->setOptions(['max_retries' => 1])->build();
+        $retryableClient = $clientBuilder->setOptions(['max_retries' => 2])->build();
 
-        $retryableClient->evaluate('require("fiber").sleep(2)');
+        $client->evaluate($luaInit = 'create_space("connection_retry")');
+        // trigger timeout only on the first call
+        $retryableClient->evaluate($luaCall = '
+            if box.space.connection_retry then 
+                require("fiber").sleep(1.2) 
+                box.space.connection_retry:drop() 
+            end
+        ');
 
+        $client->evaluate($luaInit);
         $this->expectException(CommunicationFailed::class);
-        $client->evaluate('require("fiber").sleep(2)');
+        $client->evaluate($luaCall);
+    }
+
+    public function testUnexpectedResponse() : void
+    {
+        $client = ClientBuilder::createFromEnv()->build();
+        $connection = $client->getHandler()->getConnection();
+        $packer = $client->getHandler()->getPacker();
+        $rawRequest = $packer->pack(new PingRequest(), 0);
+
+        // write a ping request without reading a response
+        $prop = (new \ReflectionObject($connection))->getProperty('stream');
+        $prop->setAccessible(true);
+
+        $connection->open();
+        if (!\fwrite($prop->getValue($connection), $rawRequest)) {
+            throw new CommunicationFailed('Unable to write request.');
+        }
+
+        // Tarantool will answer with the ping response
+        try {
+            $client->evaluate('return 42');
+        } catch (UnexpectedResponse $e) {
+            self::assertTrue($connection->isClosed());
+
+            return;
+        }
+
+        self::fail(UnexpectedResponse::class.' was not thrown.');
     }
 }
