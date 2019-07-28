@@ -41,7 +41,7 @@ final class DefaultHandler implements Handler
 
         if ($sync !== $response->getSync()) {
             $this->connection->close();
-            throw UnexpectedResponse::fromSync($sync, $response->getSync());
+            throw UnexpectedResponse::outOfSync($sync, $response->getSync());
         }
 
         if ($response->isError()) {

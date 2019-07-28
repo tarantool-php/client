@@ -15,8 +15,8 @@ namespace Tarantool\Client\Exception;
 
 final class UnexpectedResponse extends \RuntimeException implements ClientException
 {
-    public static function fromSync(int $expected, int $actual) : self
+    public static function outOfSync(int $expectedSync, int $actualSync) : self
     {
-        return new self("Unexpected response received: expected sync #$expected, got #$actual.");
+        return new self("Unexpected response received: expected sync #$expectedSync, got #$actualSync.");
     }
 }
