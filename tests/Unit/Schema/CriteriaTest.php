@@ -118,4 +118,23 @@ final class CriteriaTest extends TestCase
             ['NEIGHBOR'],
         ];
     }
+
+    public function testDefaultIteratorTypeIsChosenAutomaticallyBasedOnKeyValue() : void
+    {
+        self::assertSame(IteratorTypes::ALL, Criteria::index(1)->getIteratorType());
+        self::assertSame(IteratorTypes::ALL, Criteria::key([])->getIteratorType());
+        self::assertSame(IteratorTypes::EQ, Criteria::key([3])->getIteratorType());
+
+        $criteria = Criteria::key([]);
+        $criteria->getIteratorType();
+        $criteria->getKey();
+
+        self::assertSame(IteratorTypes::EQ, $criteria->andKey([3])->getIteratorType());
+
+        $criteria = Criteria::key([3]);
+        $criteria->getIteratorType();
+        $criteria->getKey();
+
+        self::assertSame(IteratorTypes::ALL, $criteria->andKey([])->getIteratorType());
+    }
 }

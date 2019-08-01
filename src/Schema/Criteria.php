@@ -19,7 +19,7 @@ final class Criteria
     private $key = [];
     private $limit = \PHP_INT_MAX & 0xffffffff;
     private $offset = 0;
-    private $iteratorType = IteratorTypes::EQ;
+    private $iteratorType;
 
     private function __construct()
     {
@@ -256,6 +256,10 @@ final class Criteria
 
     public function getIteratorType() : int
     {
-        return $this->iteratorType;
+        if (null !== $this->iteratorType) {
+            return $this->iteratorType;
+        }
+
+        return [] === $this->key ? IteratorTypes::ALL : IteratorTypes::EQ;
     }
 }
