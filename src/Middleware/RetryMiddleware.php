@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Middleware;
 
+use Tarantool\Client\Exception\UnexpectedResponse;
 use Tarantool\Client\Handler\Handler;
 use Tarantool\Client\Request\Request;
 use Tarantool\Client\Response;
@@ -63,6 +64,8 @@ final class RetryMiddleware implements Middleware
         do {
             try {
                 return $handler->handle($request);
+            } catch (UnexpectedResponse $e) {
+                break;
             } catch (\Throwable $e) {
                 if (null === $delayMs = ($this->getDelayMs)(++$retries)) {
                     break;

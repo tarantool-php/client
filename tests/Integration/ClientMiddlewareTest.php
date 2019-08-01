@@ -15,8 +15,10 @@ namespace Tarantool\Client\Tests\Integration;
 
 use Tarantool\Client\Client;
 use Tarantool\Client\Exception\RequestFailed;
+use Tarantool\Client\Exception\UnexpectedResponse;
 use Tarantool\Client\Handler\Handler;
 use Tarantool\Client\Middleware\Middleware;
+use Tarantool\Client\Request\PingRequest;
 use Tarantool\Client\Request\Request;
 use Tarantool\Client\Response;
 use Tarantool\Client\Schema\Criteria;
@@ -83,6 +85,37 @@ final class ClientMiddlewareTest extends TestCase
         $this->expectException(RequestFailed::class);
         $this->expectExceptionMessage("User 'ghost' is not found");
 
+        $client->ping();
+    }
+
+    public function testRetry() : void
+    {
+        $clientBuilder = ClientBuilder::createFromEnv();
+        $client = $clientBuilder->build();
+        $retryableClient = $clientBuilder->setOptions(['max_retries' => 1])->build();
+
+        $client->evaluate($luaInit = 'create_space("connection_retry")');
+        // trigger an error only on the first call
+        $retryableClient->evaluate($luaCall = '
+            if box.space.connection_retry then
+                box.space.connection_retry:drop() 
+                box.error{code = 42, reason = "Foobar."}
+            end
+        ');
+
+        $client->evaluate($luaInit);
+        $this->expectException(RequestFailed::class);
+        $client->evaluate($luaCall);
+    }
+
+    public function testNoRetriesOnUnexpectedResponse() : void
+    {
+        $clientBuilder = ClientBuilder::createFromEnv();
+        $client = $clientBuilder->setOptions(['max_retries' => 5])->build();
+
+        self::triggerUnexpectedResponse($client->getHandler(), new PingRequest());
+
+        $this->expectException(UnexpectedResponse::class);
         $client->ping();
     }
 }

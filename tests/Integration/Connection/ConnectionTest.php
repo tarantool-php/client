@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\Connection;
 
-use Tarantool\Client\Exception\CommunicationFailed;
 use Tarantool\Client\Exception\ConnectionFailed;
 use Tarantool\Client\Exception\UnexpectedResponse;
 use Tarantool\Client\Request\PingRequest;
@@ -166,43 +165,10 @@ final class ConnectionTest extends TestCase
         self::fail();
     }
 
-    public function testConnectionRetry() : void
-    {
-        $clientBuilder = ClientBuilder::createFromEnv();
-        $clientBuilder->setConnectionOptions(['socket_timeout' => 1]);
-
-        $client = $clientBuilder->build();
-        $retryableClient = $clientBuilder->setOptions(['max_retries' => 2])->build();
-
-        $client->evaluate($luaInit = 'create_space("connection_retry")');
-        // trigger timeout only on the first call
-        $retryableClient->evaluate($luaCall = '
-            if box.space.connection_retry then 
-                require("fiber").sleep(1.2) 
-                box.space.connection_retry:drop() 
-            end
-        ');
-
-        $client->evaluate($luaInit);
-        $this->expectException(CommunicationFailed::class);
-        $client->evaluate($luaCall);
-    }
-
     public function testUnexpectedResponse() : void
     {
         $client = ClientBuilder::createFromEnv()->build();
-        $connection = $client->getHandler()->getConnection();
-        $packer = $client->getHandler()->getPacker();
-        $rawRequest = $packer->pack(new PingRequest(), 0);
-
-        // write a ping request without reading a response
-        $prop = (new \ReflectionObject($connection))->getProperty('stream');
-        $prop->setAccessible(true);
-
-        $connection->open();
-        if (!\fwrite($prop->getValue($connection), $rawRequest)) {
-            throw new CommunicationFailed('Unable to write request.');
-        }
+        $connection = self::triggerUnexpectedResponse($client->getHandler(), new PingRequest());
 
         // Tarantool will answer with the ping response
         try {

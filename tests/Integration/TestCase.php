@@ -16,11 +16,16 @@ namespace Tarantool\Client\Tests\Integration;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use PHPUnit\Util\Test;
 use Tarantool\Client\Client;
+use Tarantool\Client\Connection\Connection;
+use Tarantool\Client\Exception\CommunicationFailed;
+use Tarantool\Client\Handler\Handler;
+use Tarantool\Client\Request\Request;
 
 abstract class TestCase extends BaseTestCase
 {
     protected const STAT_REQUEST_SELECT = 'SELECT';
     protected const STAT_REQUEST_AUTH = 'AUTH';
+    protected const STAT_REQUEST_CALL = 'CALL';
 
     /**
      * @var Client
@@ -67,5 +72,23 @@ abstract class TestCase extends BaseTestCase
         $connection = ClientBuilder::createFromEnv()->createConnection();
 
         return $connection->open()->getServerVersion();
+    }
+
+    final protected static function triggerUnexpectedResponse(Handler $handler, Request $initialRequest, int $sync = 0) : Connection
+    {
+        $connection = $handler->getConnection();
+        $packer = $handler->getPacker();
+        $rawRequest = $packer->pack($initialRequest, $sync);
+
+        // write a request without reading a response
+        $prop = (new \ReflectionObject($connection))->getProperty('stream');
+        $prop->setAccessible(true);
+
+        $connection->open();
+        if (!\fwrite($prop->getValue($connection), $rawRequest)) {
+            throw new CommunicationFailed('Unable to write request.');
+        }
+
+        return $connection;
     }
 }
