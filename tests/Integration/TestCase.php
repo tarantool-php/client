@@ -25,7 +25,6 @@ abstract class TestCase extends BaseTestCase
 {
     protected const STAT_REQUEST_SELECT = 'SELECT';
     protected const STAT_REQUEST_AUTH = 'AUTH';
-    protected const STAT_REQUEST_CALL = 'CALL';
 
     /**
      * @var Client

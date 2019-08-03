@@ -85,8 +85,9 @@ final class CriteriaTest extends TestCase
     public function testIteratorTypeByName(string $name) : void
     {
         $method = str_replace('_', '', $name).'iterator';
+        $criteria = [Criteria::class, $method]();
 
-        self::assertSame(constant(IteratorTypes::class.'::'.$name), [Criteria::class, $method]()->getIteratorType());
+        self::assertSame(constant(IteratorTypes::class.'::'.$name), $criteria->getIteratorType());
     }
 
     /**
@@ -97,8 +98,9 @@ final class CriteriaTest extends TestCase
         // make sure we don't assign the same iterator twice
         $method = 'EQ' === $name ? 'allIterator' : 'eqIterator';
         $andMethod = 'and'.str_replace('_', '', $name).'iterator';
+        $criteria = [Criteria::class, $method]();
 
-        self::assertSame(constant(IteratorTypes::class.'::'.$name), [Criteria::class, $method]()->$andMethod()->getIteratorType());
+        self::assertSame(constant(IteratorTypes::class.'::'.$name), $criteria->$andMethod()->getIteratorType());
     }
 
     public function provideIteratorTypeNames() : iterable
