@@ -31,7 +31,7 @@ LUA
 
 $space = $client->getSpace($spaceName);
 $result1 = $space->delete([2]);
-$result2 = $space->delete(['baz'], 1);
+$result2 = $space->delete(['baz'], 'secondary');
 
 printf("Result 1: %s\n", json_encode($result1));
 printf("Result 2: %s\n", json_encode($result2));
