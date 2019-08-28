@@ -33,11 +33,9 @@ final class TcpNoDelayTest extends TestCase
         $client = $builder->build();
         $client->ping();
 
-        $conn = $client->getHandler()->getConnection();
-        $prop = (new \ReflectionObject($conn))->getProperty('stream');
-        $prop->setAccessible(true);
+        $connection = $client->getHandler()->getConnection();
+        $socket = socket_import_stream(self::getRawStream($connection));
 
-        $socket = socket_import_stream($prop->getValue($conn));
         self::assertSame(1, socket_get_option($socket, SOL_TCP, TCP_NODELAY));
     }
 
@@ -53,11 +51,9 @@ final class TcpNoDelayTest extends TestCase
         $client = $builder->build();
         $client->ping();
 
-        $conn = $client->getHandler()->getConnection();
-        $prop = (new \ReflectionObject($conn))->getProperty('stream');
-        $prop->setAccessible(true);
+        $connection = $client->getHandler()->getConnection();
+        $socket = socket_import_stream(self::getRawStream($connection));
 
-        $socket = socket_import_stream($prop->getValue($conn));
         self::assertSame(0, socket_get_option($socket, SOL_TCP, TCP_NODELAY));
     }
 }

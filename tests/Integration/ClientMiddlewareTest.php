@@ -14,10 +14,12 @@ declare(strict_types=1);
 namespace Tarantool\Client\Tests\Integration;
 
 use Tarantool\Client\Client;
+use Tarantool\Client\Exception\CommunicationFailed;
 use Tarantool\Client\Exception\RequestFailed;
 use Tarantool\Client\Exception\UnexpectedResponse;
 use Tarantool\Client\Handler\Handler;
 use Tarantool\Client\Middleware\Middleware;
+use Tarantool\Client\Middleware\RetryMiddleware;
 use Tarantool\Client\Request\PingRequest;
 use Tarantool\Client\Request\Request;
 use Tarantool\Client\Response;
@@ -117,5 +119,56 @@ final class ClientMiddlewareTest extends TestCase
 
         $this->expectException(UnexpectedResponse::class);
         $client->ping();
+    }
+
+    /**
+     * @doesNotPerformAssertions
+     */
+    public function testReconnectOnBrokenConnection() : void
+    {
+        $clientBuilder = ClientBuilder::createFromEnv();
+        $client = $clientBuilder->setConnectionOptions(['socket_timeout' => 1])->build();
+
+        $client = $client->withMiddleware(RetryMiddleware::constant(1));
+        $client = $client->withMiddleware(self::createBrokenConnectionMiddleware());
+
+        $client->ping();
+        $client->ping();
+    }
+
+    public function testNoReconnectOnBrokenConnection() : void
+    {
+        $clientBuilder = ClientBuilder::createFromEnv();
+        $client = $clientBuilder->setConnectionOptions(['socket_timeout' => 1])->build();
+
+        $client = $client->withMiddleware(RetryMiddleware::constant(1)->withoutReconnect());
+        $client = $client->withMiddleware(self::createBrokenConnectionMiddleware());
+
+        $client->ping();
+
+        $this->expectException(CommunicationFailed::class);
+        $this->expectExceptionMessage('Unable to write request');
+        $client->ping();
+    }
+
+    private static function createBrokenConnectionMiddleware() : Middleware
+    {
+        return new class() implements Middleware {
+            private $count = 0;
+
+            public function process(Request $request, Handler $handler) : Response
+            {
+                if (1 === $this->count) {
+                    $connection = $handler->getConnection();
+                    stream_socket_shutdown(TestCase::getRawStream($connection), STREAM_SHUT_WR);
+                }
+
+                ++$this->count;
+
+                // Suppress PHPUnit\Framework\Error\Notice:
+                // fwrite(): send of 15 bytes failed with errno=32 Broken pipe
+                return @$handler->handle($request);
+            }
+        };
     }
 }

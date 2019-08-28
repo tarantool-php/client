@@ -80,14 +80,19 @@ abstract class TestCase extends BaseTestCase
         $rawRequest = $packer->pack($initialRequest, $sync);
 
         // write a request without reading a response
-        $prop = (new \ReflectionObject($connection))->getProperty('stream');
-        $prop->setAccessible(true);
-
         $connection->open();
-        if (!\fwrite($prop->getValue($connection), $rawRequest)) {
+        if (!\fwrite(self::getRawStream($connection), $rawRequest)) {
             throw new CommunicationFailed('Unable to write request.');
         }
 
         return $connection;
+    }
+
+    final public static function getRawStream(Connection $connection)
+    {
+        $prop = (new \ReflectionObject($connection))->getProperty('stream');
+        $prop->setAccessible(true);
+
+        return $prop->getValue($connection);
     }
 }
