@@ -17,6 +17,7 @@ use PHPUnit\Framework\TestCase as BaseTestCase;
 use PHPUnit\Util\Test;
 use Tarantool\Client\Client;
 use Tarantool\Client\Connection\Connection;
+use Tarantool\Client\Connection\StreamConnection;
 use Tarantool\Client\Exception\CommunicationFailed;
 use Tarantool\Client\Handler\Handler;
 use Tarantool\Client\Request\Request;
@@ -88,7 +89,7 @@ abstract class TestCase extends BaseTestCase
         return $connection;
     }
 
-    final public static function getRawStream(Connection $connection)
+    final public static function getRawStream(StreamConnection $connection)
     {
         $prop = (new \ReflectionObject($connection))->getProperty('stream');
         $prop->setAccessible(true);
