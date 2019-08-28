@@ -25,19 +25,10 @@ final class RetryMiddleware implements Middleware
     public const DEFAULT_MAX_RETRIES = 3;
 
     private $getDelayMs;
-    private $reconnect = true;
 
     private function __construct(\Closure $getDelayMs)
     {
         $this->getDelayMs = $getDelayMs;
-    }
-
-    public function withoutReconnect() : self
-    {
-        $new = clone $this;
-        $new->reconnect = false;
-
-        return $new;
     }
 
     public static function constant(int $maxRetries = self::DEFAULT_MAX_RETRIES, int $intervalMs = 100) : self
@@ -81,7 +72,7 @@ final class RetryMiddleware implements Middleware
                 if (null === $delayMs = ($this->getDelayMs)(++$retries, $e)) {
                     break;
                 }
-                if ($this->reconnect && ($e instanceof ConnectionFailed || $e instanceof CommunicationFailed)) {
+                if ($e instanceof ConnectionFailed || $e instanceof CommunicationFailed) {
                     $handler->getConnection()->close();
                 }
                 \usleep($delayMs * 1000);

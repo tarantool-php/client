@@ -136,12 +136,11 @@ final class ClientMiddlewareTest extends TestCase
         $client->ping();
     }
 
-    public function testNoReconnectOnBrokenConnection() : void
+    public function testThrowOnBrokenConnection() : void
     {
         $clientBuilder = ClientBuilder::createFromEnv();
         $client = $clientBuilder->setConnectionOptions(['socket_timeout' => 1])->build();
 
-        $client = $client->withMiddleware(RetryMiddleware::constant(1)->withoutReconnect());
         $client = $client->withMiddleware(self::createBrokenConnectionMiddleware());
 
         $client->ping();
