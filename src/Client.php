@@ -193,6 +193,15 @@ final class Client
         $this->spaces = [];
     }
 
+    public function closeConnection() : void
+    {
+        $conn = $this->handler->getConnection();
+        if (!$conn) {
+            return;
+        }
+        $conn->close();
+    }
+
     private function getSpaceIdByName(string $spaceName) : int
     {
         $schema = $this->getSpaceById(Space::VSPACE_ID);
