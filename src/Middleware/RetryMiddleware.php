@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Middleware;
 
+use Tarantool\Client\Exception\CommunicationFailed;
+use Tarantool\Client\Exception\ConnectionFailed;
 use Tarantool\Client\Exception\UnexpectedResponse;
 use Tarantool\Client\Handler\Handler;
 use Tarantool\Client\Request\Request;
@@ -20,7 +22,7 @@ use Tarantool\Client\Response;
 
 final class RetryMiddleware implements Middleware
 {
-    public const DEFAULT_MAX_RETRIES = 3;
+    private const DEFAULT_MAX_RETRIES = 2;
 
     private $getDelayMs;
 
@@ -52,8 +54,8 @@ final class RetryMiddleware implements Middleware
 
     public static function custom(\Closure $getDelayMs) : self
     {
-        return new self(static function (int $retries) use ($getDelayMs) : ?int {
-            return $getDelayMs($retries);
+        return new self(static function (int $retries, \Throwable $e) use ($getDelayMs) : ?int {
+            return $getDelayMs($retries, $e);
         });
     }
 
@@ -66,8 +68,12 @@ final class RetryMiddleware implements Middleware
                 return $handler->handle($request);
             } catch (UnexpectedResponse $e) {
                 break;
+            } catch (ConnectionFailed | CommunicationFailed $e) {
+                $handler->getConnection()->close();
+                goto retry;
             } catch (\Throwable $e) {
-                if (null === $delayMs = ($this->getDelayMs)(++$retries)) {
+                retry:
+                if (null === $delayMs = ($this->getDelayMs)(++$retries, $e)) {
                     break;
                 }
                 \usleep($delayMs * 1000);
