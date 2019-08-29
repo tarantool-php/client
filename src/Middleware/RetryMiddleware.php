@@ -22,7 +22,7 @@ use Tarantool\Client\Response;
 
 final class RetryMiddleware implements Middleware
 {
-    public const DEFAULT_MAX_RETRIES = 3;
+    private const DEFAULT_MAX_RETRIES = 2;
 
     private $getDelayMs;
 
@@ -68,12 +68,13 @@ final class RetryMiddleware implements Middleware
                 return $handler->handle($request);
             } catch (UnexpectedResponse $e) {
                 break;
+            } catch (ConnectionFailed | CommunicationFailed $e) {
+                $handler->getConnection()->close();
+                goto retry;
             } catch (\Throwable $e) {
+                retry:
                 if (null === $delayMs = ($this->getDelayMs)(++$retries, $e)) {
                     break;
-                }
-                if ($e instanceof ConnectionFailed || $e instanceof CommunicationFailed) {
-                    $handler->getConnection()->close();
                 }
                 \usleep($delayMs * 1000);
             }
