@@ -20,5 +20,5 @@ interface Packer
 {
     public function pack(Request $request, int $sync) : string;
 
-    public function unpack(string $data) : Response;
+    public function unpack(string $packet) : Response;
 }

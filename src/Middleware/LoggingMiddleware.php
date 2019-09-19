@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Tarantool\Client\Middleware;
 
 use Psr\Log\LoggerInterface;
-use Tarantool\Client\Exception\ClientException;
 use Tarantool\Client\Handler\Handler;
 use Tarantool\Client\Request\Request;
 use Tarantool\Client\RequestTypes;
@@ -40,7 +39,7 @@ final class LoggingMiddleware implements Middleware
         $start = \microtime(true);
         try {
             $response = $handler->handle($request);
-        } catch (ClientException $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Request \"$requestName\" failed.", [
                 'request' => $request,
                 'exception' => $e,

@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Exception;
 
-final class ConnectionFailed extends \RuntimeException implements ClientException
+final class ConnectionFailed extends \RuntimeException
 {
     public static function fromUriAndReason(string $uri, string $reason) : self
     {

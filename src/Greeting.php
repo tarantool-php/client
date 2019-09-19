@@ -13,8 +13,6 @@ declare(strict_types=1);
 
 namespace Tarantool\Client;
 
-use Tarantool\Client\Exception\InvalidGreeting;
-
 final class Greeting
 {
     public const SIZE_BYTES = 128;
@@ -34,7 +32,7 @@ final class Greeting
             return new self($greeting);
         }
 
-        throw InvalidGreeting::invalidServerName();
+        throw new \UnexpectedValueException('Unable to recognize Tarantool server.');
     }
 
     public function getSalt() : string
@@ -44,7 +42,7 @@ final class Greeting
         }
 
         if (false === $salt = \base64_decode(\substr($this->greeting, 64, 44), true)) {
-            throw InvalidGreeting::invalidSalt();
+            throw new \UnexpectedValueException('Unable to decode salt.');
         }
 
         $salt = \substr($salt, 0, 20);
@@ -53,7 +51,7 @@ final class Greeting
             return $this->salt = $salt;
         }
 
-        throw InvalidGreeting::invalidSalt();
+        throw new \UnexpectedValueException('Salt is too short.');
     }
 
     public function getServerVersion() : int

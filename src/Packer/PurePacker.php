@@ -14,9 +14,7 @@ declare(strict_types=1);
 namespace Tarantool\Client\Packer;
 
 use MessagePack\BufferUnpacker;
-use MessagePack\Exception\UnpackingFailedException;
 use MessagePack\Packer;
-use Tarantool\Client\Exception\UnpackingFailed;
 use Tarantool\Client\Keys;
 use Tarantool\Client\Packer\Packer as ClientPacker;
 use Tarantool\Client\Request\Request;
@@ -35,27 +33,23 @@ final class PurePacker implements ClientPacker
 
     public function pack(Request $request, int $sync) : string
     {
-        $content = $this->packer->packMapHeader(2).
+        $packet = $this->packer->packMapHeader(2).
             $this->packer->packInt(Keys::CODE).
             $this->packer->packInt($request->getType()).
             $this->packer->packInt(Keys::SYNC).
             $this->packer->packInt($sync).
             $this->packer->packMap($request->getBody());
 
-        return PacketLength::pack(\strlen($content)).$content;
+        return PacketLength::pack(\strlen($packet)).$packet;
     }
 
-    public function unpack(string $data) : Response
+    public function unpack(string $packet) : Response
     {
-        try {
-            $this->unpacker->reset($data);
+        $this->unpacker->reset($packet);
 
-            return new Response(
-                $this->unpacker->unpackMap(),
-                $this->unpacker->unpackMap()
-            );
-        } catch (UnpackingFailedException $e) {
-            throw new UnpackingFailed('Unable to unpack response.', 0, $e);
-        }
+        return new Response(
+            $this->unpacker->unpackMap(),
+            $this->unpacker->unpackMap()
+        );
     }
 }

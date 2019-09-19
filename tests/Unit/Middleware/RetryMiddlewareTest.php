@@ -19,7 +19,7 @@ use Tarantool\Client\Exception\ConnectionFailed;
 use Tarantool\Client\Handler\Handler;
 use Tarantool\Client\Middleware\RetryMiddleware;
 use Tarantool\Client\Request\Request;
-use Tarantool\Client\Response;
+use Tarantool\Client\Tests\Unit\ResponseFactory;
 
 final class RetryMiddlewareTest extends TestCase
 {
@@ -41,7 +41,7 @@ final class RetryMiddlewareTest extends TestCase
 
     public function testSuccessfulRetry() : void
     {
-        $response = new Response([], []);
+        $response = ResponseFactory::create();
 
         $this->handler->expects($this->exactly(3))->method('handle')
             ->will($this->onConsecutiveCalls(

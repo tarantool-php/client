@@ -33,11 +33,11 @@ final class DefaultHandler implements Handler
 
     public function handle(Request $request) : Response
     {
-        $data = $this->packer->pack($request, $sync = \mt_rand());
+        $packet = $this->packer->pack($request, $sync = \mt_rand());
         $this->connection->open();
-        $data = $this->connection->send($data);
+        $packet = $this->connection->send($packet);
 
-        $response = $this->packer->unpack($data);
+        $response = $this->packer->unpack($packet);
 
         if ($sync !== $response->getSync()) {
             $this->connection->close();

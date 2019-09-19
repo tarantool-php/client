@@ -51,7 +51,7 @@ final class Response
     public function getBodyField(int $key)
     {
         if (!isset($this->body[$key])) {
-            throw new \OutOfBoundsException(\sprintf('Invalid body key 0x%x.', $key));
+            throw new \OutOfRangeException(\sprintf('Invalid body key 0x%x.', $key));
         }
 
         return $this->body[$key];

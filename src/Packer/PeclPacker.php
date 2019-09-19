@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Packer;
 
-use Tarantool\Client\Exception\UnpackingFailed;
 use Tarantool\Client\Keys;
 use Tarantool\Client\Request\Request;
 use Tarantool\Client\Response;
@@ -32,38 +31,33 @@ final class PeclPacker implements Packer
     public function pack(Request $request, int $sync) : string
     {
         // @see https://github.com/msgpack/msgpack-php/issues/45
-        $content = \pack('C*', 0x82, Keys::CODE, $request->getType(), Keys::SYNC).
+        $packet = \pack('C*', 0x82, Keys::CODE, $request->getType(), Keys::SYNC).
             $this->packer->pack($sync).
             $this->packer->pack($request->getBody());
 
-        return PacketLength::pack(\strlen($content)).$content;
+        return PacketLength::pack(\strlen($packet)).$packet;
     }
 
-    public function unpack(string $data) : Response
+    public function unpack(string $packet) : Response
     {
-        $this->unpacker->feed($data);
+        $this->unpacker->feed($packet);
 
         if (!$this->unpacker->execute()) {
-            throw UnpackingFailed::invalidResponse();
+            throw new \UnexpectedValueException('Unable to unpack response header.');
         }
-
         $header = $this->unpacker->data();
-        if (!\is_array($header)) {
-            throw UnpackingFailed::invalidResponse();
-        }
 
         if (!$this->unpacker->execute()) {
-            throw UnpackingFailed::invalidResponse();
+            throw new \UnexpectedValueException('Unable to unpack response body.');
         }
-
         $body = $this->unpacker->data();
-        if (\is_array($body)) {
-            return new Response($header, $body);
-        }
+
+        // with PHP_ONLY = true an empty array
+        // will be unpacked to stdClass
         if ($body instanceof \stdClass) {
-            return new Response($header, (array) $body);
+            $body = (array) $body;
         }
 
-        throw UnpackingFailed::invalidResponse();
+        return new Response($header, $body);
     }
 }

@@ -15,7 +15,7 @@ namespace Tarantool\Client\Exception;
 
 use Tarantool\Client\Request\Request;
 
-final class RequestDenied extends \RuntimeException implements ClientException
+final class RequestDenied extends \RuntimeException
 {
     public static function fromObject(Request $request) : self
     {

@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Tarantool\Client\Tests\Integration\Connection;
 
 use Tarantool\Client\Exception\CommunicationFailed;
-use Tarantool\Client\Exception\InvalidGreeting;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\FakeServer\FakeServerBuilder;
 use Tarantool\Client\Tests\Integration\FakeServer\Handler\WriteHandler;
@@ -41,7 +40,7 @@ final class ParseGreetingTest extends TestCase
             self::assertSame('Unable to read greeting.', $e->getMessage());
 
             return;
-        } catch (InvalidGreeting $e) {
+        } catch (\RuntimeException $e) {
             self::assertSame('Unable to recognize Tarantool server.', $e->getMessage());
 
             return;
@@ -63,8 +62,8 @@ final class ParseGreetingTest extends TestCase
 
         $client = $clientBuilder->setOptions(['username' => 'guest'])->build();
 
-        $this->expectException(InvalidGreeting::class);
-        $this->expectExceptionMessage('Unable to parse salt.');
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessageRegExp('/(Unable to decode salt|Salt is too short)\./');
 
         $client->ping();
     }

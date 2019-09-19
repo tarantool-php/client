@@ -16,7 +16,7 @@ namespace Tarantool\Client\Exception;
 use Tarantool\Client\Keys;
 use Tarantool\Client\Response;
 
-final class RequestFailed extends \RuntimeException implements ClientException
+final class RequestFailed extends \RuntimeException
 {
     public static function fromErrorResponse(Response $response) : self
     {

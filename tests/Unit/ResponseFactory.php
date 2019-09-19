@@ -11,8 +11,14 @@
 
 declare(strict_types=1);
 
-namespace Tarantool\Client\Exception;
+namespace Tarantool\Client\Tests\Unit;
 
-interface ClientException extends \Throwable
+use Tarantool\Client\Response;
+
+final class ResponseFactory
 {
+    public static function create() : Response
+    {
+        return new Response([], []);
+    }
 }

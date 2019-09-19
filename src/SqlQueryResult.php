@@ -23,8 +23,7 @@ final class SqlQueryResult implements \IteratorAggregate, \Countable
     {
         $this->data = $data;
         $this->metadata = $metadata;
-
-        unset($this->keys);
+        $this->keys = ([] === $metadata) ? [] : \array_column($metadata, 0);
     }
 
     public function getData() : array
@@ -62,10 +61,5 @@ final class SqlQueryResult implements \IteratorAggregate, \Countable
     public function count() : int
     {
         return \count($this->data);
-    }
-
-    public function __get(string $property) : array
-    {
-        return $this->keys = $this->metadata ? \array_column($this->metadata, 0) : [];
     }
 }

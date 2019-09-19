@@ -14,37 +14,28 @@ declare(strict_types=1);
 namespace Tarantool\Client\Tests\Unit\Packer;
 
 use PHPUnit\Framework\TestCase;
-use Tarantool\Client\Exception\UnpackingFailed;
+use Tarantool\Client\Keys;
 use Tarantool\Client\Packer\Packer;
+use Tarantool\Client\RequestTypes;
 
 abstract class PackerTest extends TestCase
 {
     /**
      * @var Packer
      */
-    private $packer;
+    protected $packer;
 
-    protected function setUp() : void
+    final protected function setUp() : void
     {
         $this->packer = $this->createPacker();
-    }
-
-    /**
-     * @dataProvider provideBadUnpackData
-     */
-    public function testThrowExceptionOnBadUnpackData(string $data) : void
-    {
-        $this->expectException(UnpackingFailed::class);
-        $this->expectExceptionMessage('Unable to unpack response.');
-
-        $this->packer->unpack($data);
     }
 
     public function provideBadUnpackData() : iterable
     {
         return [
-            ['foobar'],
-            ["\0"],
+            [''],
+            ["\x82"],
+            [\pack('C*', 0x82, Keys::CODE, RequestTypes::CALL, Keys::SYNC, 0)."\x82"],
         ];
     }
 
