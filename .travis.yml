@@ -8,6 +8,7 @@ services:
 env:
   global:
     TNT_IMAGE='tarantool/tarantool:2'
+    PHP_IMAGE='php:7.3-cli'
 
   matrix:
     - PHP_IMAGE='php:7.1-cli'
@@ -18,18 +19,19 @@ env:
     - PHP_IMAGE='php:7.2-cli' TNT_PACKER=pecl COVERAGE_FILE='coverage.clover'
     - PHP_IMAGE='php:7.2-cli' TNT_CONN_URI=/tmp/tarantool_client.sock
 
-    - PHP_IMAGE='php:7.3-cli' CHECK_CS=1
-    - PHP_IMAGE='php:7.3-cli' TNT_PACKER=pecl
-    - PHP_IMAGE='php:7.3-cli' TNT_CONN_URI=/tmp/tarantool_client.sock
+    - CHECK_CS=1
+    - TNT_PACKER=pecl
+    - TNT_CONN_URI=/tmp/tarantool_client.sock
 
     - PHP_IMAGE='php:7.4.0RC1-cli'
     - PHP_IMAGE='php:7.4.0RC1-cli' TNT_PACKER=pecl
     - PHP_IMAGE='php:7.4.0RC1-cli' TNT_CONN_URI=/tmp/tarantool_client.sock
 
-    - PHP_IMAGE='php:7.3-cli' TNT_IMAGE='tarantool/tarantool:1.7'
-    - PHP_IMAGE='php:7.3-cli' TNT_IMAGE='tarantool/tarantool:1.9'
-    - PHP_IMAGE='php:7.3-cli' TNT_IMAGE='tarantool/tarantool:1'
-    - PHP_IMAGE='php:7.3-cli' TNT_IMAGE='tarantool/tarantool:2.1'
+    - TNT_IMAGE='tarantool/tarantool:1.7'
+    - TNT_IMAGE='tarantool/tarantool:1.9'
+    - TNT_IMAGE='tarantool/tarantool:1'
+    - TNT_IMAGE='tarantool/tarantool:2.1'
+    - TNT_IMAGE='tarantool/tarantool:2.2'
 
 install:
   - ./dockerfile.sh | tee /dev/tty | docker build -t client -
