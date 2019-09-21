@@ -69,41 +69,41 @@ final class CriteriaTest extends TestCase
         self::assertSame(2, Criteria::offset(1)->andOffset(2)->getOffset());
     }
 
-    public function testIteratorType() : void
+    public function testIterator() : void
     {
         self::assertSame(IteratorTypes::ALL, Criteria::iterator(IteratorTypes::ALL)->getIterator());
     }
 
-    public function testAndIteratorType() : void
+    public function testAndIterator() : void
     {
         self::assertSame(IteratorTypes::GE, Criteria::iterator(IteratorTypes::ALL)->andIterator(IteratorTypes::GE)->getIterator());
     }
 
     /**
-     * @dataProvider provideIteratorTypeNames
+     * @dataProvider provideIteratorTypes
      */
     public function testIteratorTypeByName(string $name) : void
     {
         $method = str_replace('_', '', $name).'iterator';
         $criteria = [Criteria::class, $method]();
 
-        self::assertSame(constant(IteratorTypes::class.'::'.$name), $criteria->getIteratorType());
+        self::assertSame(constant(IteratorTypes::class.'::'.$name), $criteria->getIterator());
     }
 
     /**
-     * @dataProvider provideIteratorTypeNames
+     * @dataProvider provideIteratorTypes
      */
     public function testAndIteratorTypeByName(string $name) : void
     {
         // make sure we don't assign the same iterator twice
         $method = 'EQ' === $name ? 'allIterator' : 'eqIterator';
         $andMethod = 'and'.str_replace('_', '', $name).'iterator';
-        $criteria = [Criteria::class, $method]();
+        $criteria = ([Criteria::class, $method])();
 
-        self::assertSame(constant(IteratorTypes::class.'::'.$name), $criteria->$andMethod()->getIteratorType());
+        self::assertSame(constant(IteratorTypes::class.'::'.$name), $criteria->$andMethod()->getIterator());
     }
 
-    public function provideIteratorTypeNames() : iterable
+    public function provideIteratorTypes() : iterable
     {
         return [
             ['EQ'],
