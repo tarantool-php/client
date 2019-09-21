@@ -57,7 +57,7 @@ final class Space
             $criteria->getKey(),
             $criteria->getOffset(),
             $criteria->getLimit(),
-            $criteria->getIteratorType()
+            $criteria->getIterator()
         );
 
         return $this->handler->handle($request)->getBodyField(Keys::DATA);

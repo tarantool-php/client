@@ -71,12 +71,12 @@ final class CriteriaTest extends TestCase
 
     public function testIteratorType() : void
     {
-        self::assertSame(IteratorTypes::ALL, Criteria::iteratorType(IteratorTypes::ALL)->getIteratorType());
+        self::assertSame(IteratorTypes::ALL, Criteria::iterator(IteratorTypes::ALL)->getIterator());
     }
 
     public function testAndIteratorType() : void
     {
-        self::assertSame(IteratorTypes::GE, Criteria::iteratorType(IteratorTypes::ALL)->andIteratorType(IteratorTypes::GE)->getIteratorType());
+        self::assertSame(IteratorTypes::GE, Criteria::iterator(IteratorTypes::ALL)->andIterator(IteratorTypes::GE)->getIterator());
     }
 
     /**
@@ -123,20 +123,20 @@ final class CriteriaTest extends TestCase
 
     public function testDefaultIteratorTypeIsChosenAutomaticallyBasedOnKeyValue() : void
     {
-        self::assertSame(IteratorTypes::ALL, Criteria::index(1)->getIteratorType());
-        self::assertSame(IteratorTypes::ALL, Criteria::key([])->getIteratorType());
-        self::assertSame(IteratorTypes::EQ, Criteria::key([3])->getIteratorType());
+        self::assertSame(IteratorTypes::ALL, Criteria::index(1)->getIterator());
+        self::assertSame(IteratorTypes::ALL, Criteria::key([])->getIterator());
+        self::assertSame(IteratorTypes::EQ, Criteria::key([3])->getIterator());
 
         $criteria = Criteria::key([]);
-        $criteria->getIteratorType();
+        $criteria->getIterator();
         $criteria->getKey();
 
-        self::assertSame(IteratorTypes::EQ, $criteria->andKey([3])->getIteratorType());
+        self::assertSame(IteratorTypes::EQ, $criteria->andKey([3])->getIterator());
 
         $criteria = Criteria::key([3]);
-        $criteria->getIteratorType();
+        $criteria->getIterator();
         $criteria->getKey();
 
-        self::assertSame(IteratorTypes::ALL, $criteria->andKey([])->getIteratorType());
+        self::assertSame(IteratorTypes::ALL, $criteria->andKey([])->getIterator());
     }
 }
