@@ -18,12 +18,13 @@ final class Response
     public const TYPE_ERROR = 0x8000;
 
     private $header;
+    private $bodyGetter;
     private $body;
 
-    public function __construct(array $header, array $body)
+    public function __construct(array $header, \Closure $bodyGetter)
     {
         $this->header = $header;
-        $this->body = $body;
+        $this->bodyGetter = $bodyGetter;
     }
 
     public function isError() : bool
@@ -50,6 +51,10 @@ final class Response
 
     public function getBodyField(int $key)
     {
+        if (null === $this->body) {
+            $this->body = ($this->bodyGetter)();
+        }
+
         if (!isset($this->body[$key])) {
             throw new \OutOfRangeException(\sprintf('Invalid body key 0x%x.', $key));
         }
@@ -59,6 +64,10 @@ final class Response
 
     public function tryGetBodyField(int $key, $default = null)
     {
+        if (null === $this->body) {
+            $this->body = ($this->bodyGetter)();
+        }
+
         return $this->body[$key] ?? $default;
     }
 }

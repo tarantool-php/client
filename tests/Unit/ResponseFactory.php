@@ -19,6 +19,6 @@ final class ResponseFactory
 {
     public static function create() : Response
     {
-        return new Response([], []);
+        return new Response([], static function () { return []; });
     }
 }

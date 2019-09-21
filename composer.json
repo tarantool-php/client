@@ -21,7 +21,7 @@
         "monolog/monolog": "^1.24",
         "phpunit/phpunit": "^7.1|^8.2.5",
         "psr/log": "^1.1",
-        "rybakit/msgpack": "^0.5.4"
+        "rybakit/msgpack": "dev-master"
     },
     "suggest": {
         "ext-msgpack": "For using Pecl packer",

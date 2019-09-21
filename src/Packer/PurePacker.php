@@ -45,11 +45,12 @@ final class PurePacker implements ClientPacker
 
     public function unpack(string $packet) : Response
     {
-        $this->unpacker->reset($packet);
+        $unpacker = $this->unpacker->withBuffer($packet);
 
-        return new Response(
-            $this->unpacker->unpackMap(),
-            $this->unpacker->unpackMap()
+        return new Response($unpacker->unpackMap(),
+            static function () use ($unpacker) {
+                return $unpacker->unpackMap();
+            }
         );
     }
 }

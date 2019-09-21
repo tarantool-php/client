@@ -19,13 +19,13 @@ use Tarantool\Client\Response;
 
 final class PeclPacker implements Packer
 {
+    private $phpOnly;
     private $packer;
-    private $unpacker;
 
     public function __construct(bool $phpOnly = true)
     {
+        $this->phpOnly = $phpOnly;
         $this->packer = new \MessagePack($phpOnly);
-        $this->unpacker = new \MessagePackUnpacker($phpOnly);
     }
 
     public function pack(Request $request, int $sync) : string
@@ -40,24 +40,28 @@ final class PeclPacker implements Packer
 
     public function unpack(string $packet) : Response
     {
-        $this->unpacker->feed($packet);
+        // @see https://github.com/msgpack/msgpack-php/issues/139
+        // $unpacker = clone $this->unpacker;
+        $unpacker = new \MessagePackUnpacker($this->phpOnly);
+        $unpacker->feed($packet);
 
-        if (!$this->unpacker->execute()) {
+        if (!$unpacker->execute()) {
             throw new \UnexpectedValueException('Unable to unpack response header.');
         }
-        $header = $this->unpacker->data();
 
-        if (!$this->unpacker->execute()) {
-            throw new \UnexpectedValueException('Unable to unpack response body.');
-        }
-        $body = $this->unpacker->data();
+        return new Response($unpacker->data(),
+            static function () use ($unpacker) {
+                if (!$unpacker->execute()) {
+                    throw new \UnexpectedValueException('Unable to unpack response body.');
+                }
 
-        // with PHP_ONLY = true an empty array
-        // will be unpacked to stdClass
-        if ($body instanceof \stdClass) {
-            $body = (array) $body;
-        }
-
-        return new Response($header, $body);
+                $body = $unpacker->data();
+                // with PHP_ONLY = true an empty array
+                // will be unpacked to stdClass
+                return $body instanceof \stdClass
+                    ? (array) $body
+                    : $body;
+            }
+        );
     }
 }
