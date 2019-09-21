@@ -85,7 +85,7 @@ final class CriteriaTest extends TestCase
     public function testIteratorTypeByName(string $name) : void
     {
         $method = str_replace('_', '', $name).'iterator';
-        $criteria = [Criteria::class, $method]();
+        $criteria = ([Criteria::class, $method])();
 
         self::assertSame(constant(IteratorTypes::class.'::'.$name), $criteria->getIterator());
     }
