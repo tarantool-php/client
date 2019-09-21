@@ -15,7 +15,6 @@ namespace Tarantool\Client\Connection;
 
 use Tarantool\Client\Exception\CommunicationFailed;
 use Tarantool\Client\Exception\ConnectionFailed;
-use Tarantool\Client\Greeting;
 use Tarantool\Client\Packer\PacketLength;
 
 final class StreamConnection implements Connection

@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-namespace Tarantool\Client;
+namespace Tarantool\Client\Connection;
 
 final class Greeting
 {
