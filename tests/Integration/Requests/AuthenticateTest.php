@@ -21,11 +21,7 @@ final class AuthenticateTest extends TestCase
 {
     /**
      * @doesNotPerformAssertions
-     * @testWith
-     * ["guest", ""]
-     * ["user_foo", "foo"]
-     * ["user_empty", ""]
-     * ["user_big", "123456789012345678901234567890123456789012345678901234567890"]
+     * @dataProvider provideValidCredentials
      *
      * @eval create_user('user_foo', 'foo')
      * @eval create_user('user_empty', '')
@@ -41,10 +37,18 @@ final class AuthenticateTest extends TestCase
         $client->ping();
     }
 
+    public function provideValidCredentials() : iterable
+    {
+        return [
+            ['guest', ''],
+            ['user_foo', 'foo'],
+            ['user_empty', ''],
+            ['user_big', '123456789012345678901234567890123456789012345678901234567890'],
+        ];
+    }
+
     /**
-     * @testWith
-     * ["User 'non_existing_user' is not found", 45, "non_existing_user", "password"]
-     * ["Incorrect password supplied for user 'guest'", 47, "guest", "password"]
+     * @dataProvider provideInvalidCredentials
      */
     public function testAuthenticateWithInvalidCredentials(string $errorMessage, int $errorCode, $username, $password) : void
     {
@@ -60,6 +64,14 @@ final class AuthenticateTest extends TestCase
             self::assertSame($errorMessage, $e->getMessage());
             self::assertSame($errorCode, $e->getCode());
         }
+    }
+
+    public function provideInvalidCredentials() : iterable
+    {
+        return [
+            ["User 'non_existing_user' is not found", 45, 'non_existing_user', 'password'],
+            ["Incorrect password supplied for user 'guest'", 47, 'guest', 'password'],
+        ];
     }
 
     /**
