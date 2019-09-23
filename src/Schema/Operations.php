@@ -22,119 +22,173 @@ final class Operations
         $this->operations = [$operation];
     }
 
-    public static function add(int $fieldNumber, int $value) : self
+    /**
+     * @param int|string $field
+     */
+    public static function add($field, int $value) : self
     {
-        return new self(['+', $fieldNumber, $value]);
+        return new self(['+', $field, $value]);
     }
 
-    public function andAdd(int $fieldNumber, int $value) : self
+    /**
+     * @param int|string $field
+     */
+    public function andAdd($field, int $value) : self
     {
         $new = clone $this;
-        $new->operations[] = ['+', $fieldNumber, $value];
+        $new->operations[] = ['+', $field, $value];
 
         return $new;
     }
 
-    public static function subtract(int $fieldNumber, int $value) : self
+    /**
+     * @param int|string $field
+     */
+    public static function subtract($field, int $value) : self
     {
-        return new self(['-', $fieldNumber, $value]);
+        return new self(['-', $field, $value]);
     }
 
-    public function andSubtract(int $fieldNumber, int $value) : self
+    /**
+     * @param int|string $field
+     */
+    public function andSubtract($field, int $value) : self
     {
         $new = clone $this;
-        $new->operations[] = ['-', $fieldNumber, $value];
+        $new->operations[] = ['-', $field, $value];
 
         return $new;
     }
 
-    public static function bitAnd(int $fieldNumber, int $value) : self
+    /**
+     * @param int|string $field
+     */
+    public static function bitAnd($field, int $value) : self
     {
-        return new self(['&', $fieldNumber, $value]);
+        return new self(['&', $field, $value]);
     }
 
-    public function andBitAnd(int $fieldNumber, int $value) : self
+    /**
+     * @param int|string $field
+     */
+    public function andBitAnd($field, int $value) : self
     {
         $new = clone $this;
-        $new->operations[] = ['&', $fieldNumber, $value];
+        $new->operations[] = ['&', $field, $value];
 
         return $new;
     }
 
-    public static function bitOr(int $fieldNumber, int $value) : self
+    /**
+     * @param int|string $field
+     */
+    public static function bitOr($field, int $value) : self
     {
-        return new self(['|', $fieldNumber, $value]);
+        return new self(['|', $field, $value]);
     }
 
-    public function andBitOr(int $fieldNumber, int $value) : self
+    /**
+     * @param int|string $field
+     */
+    public function andBitOr($field, int $value) : self
     {
         $new = clone $this;
-        $new->operations[] = ['|', $fieldNumber, $value];
+        $new->operations[] = ['|', $field, $value];
 
         return $new;
     }
 
-    public static function bitXor(int $fieldNumber, int $value) : self
+    /**
+     * @param int|string $field
+     */
+    public static function bitXor($field, int $value) : self
     {
-        return new self(['^', $fieldNumber, $value]);
+        return new self(['^', $field, $value]);
     }
 
-    public function andBitXor(int $fieldNumber, int $value) : self
+    /**
+     * @param int|string $field
+     */
+    public function andBitXor($field, int $value) : self
     {
         $new = clone $this;
-        $new->operations[] = ['^', $fieldNumber, $value];
+        $new->operations[] = ['^', $field, $value];
 
         return $new;
     }
 
-    public static function splice(int $fieldNumber, int $offset, int $length, string $replacement) : self
+    /**
+     * @param int|string $field
+     */
+    public static function splice($field, int $offset, int $length, string $replacement) : self
     {
-        return new self([':', $fieldNumber, $offset, $length, $replacement]);
+        return new self([':', $field, $offset, $length, $replacement]);
     }
 
-    public function andSplice(int $fieldNumber, int $offset, int $length, string $replacement) : self
+    /**
+     * @param int|string $field
+     */
+    public function andSplice($field, int $offset, int $length, string $replacement) : self
     {
         $new = clone $this;
-        $new->operations[] = [':', $fieldNumber, $offset, $length, $replacement];
+        $new->operations[] = [':', $field, $offset, $length, $replacement];
 
         return $new;
     }
 
-    public static function insert(int $fieldNumber, int $value) : self
+    /**
+     * @param int|string $field
+     */
+    public static function insert($field, int $value) : self
     {
-        return new self(['!', $fieldNumber, $value]);
+        return new self(['!', $field, $value]);
     }
 
-    public function andInsert(int $fieldNumber, int $value) : self
+    /**
+     * @param int|string $field
+     */
+    public function andInsert($field, int $value) : self
     {
         $new = clone $this;
-        $new->operations[] = ['!', $fieldNumber, $value];
+        $new->operations[] = ['!', $field, $value];
 
         return $new;
     }
 
-    public static function delete(int $fieldNumber, int $value) : self
+    /**
+     * @param int|string $field
+     */
+    public static function delete($field, int $value) : self
     {
-        return new self(['#', $fieldNumber, $value]);
+        return new self(['#', $field, $value]);
     }
 
-    public function andDelete(int $fieldNumber, int $value) : self
+    /**
+     * @param int|string $field
+     */
+    public function andDelete($field, int $value) : self
     {
         $new = clone $this;
-        $new->operations[] = ['#', $fieldNumber, $value];
+        $new->operations[] = ['#', $field, $value];
 
         return $new;
     }
 
-    public static function set(int $fieldNumber, $value) : self
+    /**
+     * @param int|string $field
+     */
+    public static function set($field, $value) : self
     {
-        return new self(['=', $fieldNumber, $value]);
+        return new self(['=', $field, $value]);
     }
 
-    public function andSet(int $fieldNumber, $value) : self
+    /**
+     * @param int|string $field
+     */
+    public function andSet($field, $value) : self
     {
         $new = clone $this;
-        $new->operations[] = ['=', $fieldNumber, $value];
+        $new->operations[] = ['=', $field, $value];
 
         return $new;
     }

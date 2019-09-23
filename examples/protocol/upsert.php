@@ -24,12 +24,22 @@ $client->evaluate(
     if box.space[...] then box.space[...]:drop() end
     space = box.schema.space.create(...)
     space:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
+    space:format({
+        {name = 'id', type = 'unsigned'},
+        {name = 'name1', type = 'string'},
+        {name = 'name2', type = 'string'}
+    })
 LUA
 , $spaceName);
 
 $space = $client->getSpace($spaceName);
 $space->upsert([1, 'foo', 'bar'], Operations::set(1, 'baz'));
-$space->upsert([1, 'foo', 'bar'], Operations::set(2, 'qux'));
+
+if (get_server_version($client) < 20300) {
+    $space->upsert([1, 'foo', 'bar'], Operations::set(2, 'qux'));
+} else {
+    $space->upsert([1, 'foo', 'bar'], Operations::set('name2', 'qux'));
+}
 
 $result = $space->select(Criteria::key([]));
 printf("Result: %s\n", json_encode($result));

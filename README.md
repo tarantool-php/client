@@ -298,6 +298,12 @@ tarantool> box.space.example:select()
 ```lua
 space = box.schema.space.create('example')
 space:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
+space:format({
+    {name = 'id', type = 'unsigned'}, 
+    {name = 'num', type = 'unsigned'}, 
+    {name = 'name', type = 'string'}
+})
+
 space:insert({1, 10, 'foo'})
 space:insert({2, 20, 'bar'})
 space:insert({3, 30, 'baz'})
@@ -308,6 +314,9 @@ space:insert({3, 30, 'baz'})
 ```php
 $space = $client->getSpace('example');
 $result = $space->update([2], Operations::add(1, 5)->andSet(2, 'BAR'));
+
+// Since Tarantool 2.3 you can refer to tuple fields by name:
+// $result = $space->update([2], Operations::add('num', 5)->andSet('name', 'BAR'));
 
 printf("Result: %s\n", json_encode($result));
 ```
@@ -338,7 +347,12 @@ tarantool> box.space.example:select()
 
 ```lua
 space = box.schema.space.create('example')
-space:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
+space:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}}) 
+space:format({
+    {name = 'id', type = 'unsigned'}, 
+    {name = 'name1', type = 'string'}, 
+    {name = 'name2', type = 'string'}
+})
 ```
 
 *Code*
@@ -347,6 +361,10 @@ space:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
 $space = $client->getSpace('example');
 $space->upsert([1, 'foo', 'bar'], Operations::set(1, 'baz'));
 $space->upsert([1, 'foo', 'bar'], Operations::set(2, 'qux'));
+
+// Since Tarantool 2.3 you can refer to tuple fields by name:
+// $space->upsert([1, 'foo', 'bar'], Operations::set('name1', 'baz'));
+// $space->upsert([1, 'foo', 'bar'], Operations::set('name2'', 'qux'));
 ```
 
 *Space data*

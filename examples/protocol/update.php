@@ -23,6 +23,11 @@ $client->evaluate(
     if box.space[...] then box.space[...]:drop() end
     space = box.schema.space.create(...)
     space:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
+    space:format({
+        {name = 'id', type = 'unsigned'}, 
+        {name = 'num', type = 'unsigned'}, 
+        {name = 'name', type = 'string'}
+    })
     space:insert({1, 10, 'foo'})
     space:insert({2, 20, 'bar'})
     space:insert({3, 30, 'baz'})
@@ -30,7 +35,12 @@ LUA
 , $spaceName);
 
 $space = $client->getSpace($spaceName);
-$result = $space->update([2], Operations::add(1, 5)->andSet(2, 'BAR'));
+
+if (get_server_version($client) < 20300) {
+    $result = $space->update([2], Operations::add(1, 5)->andSet(2, 'BAR'));
+} else {
+    $result = $space->update([2], Operations::add(1, 5)->andSet('name', 'BAR'));
+}
 
 printf("Result: %s\n", json_encode($result));
 
