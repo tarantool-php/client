@@ -20,9 +20,8 @@ use MessagePack\TypeTransformer\Extension;
 
 class DecimalExtension implements Extension
 {
-    public const DEFAULT_PRECISION = 38;
-
     private const TYPE = 1;
+    private const DEFAULT_PRECISION = 38;
 
     public function getType() : int
     {

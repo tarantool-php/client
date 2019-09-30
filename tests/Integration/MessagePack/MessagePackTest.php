@@ -24,6 +24,8 @@ use Tarantool\Client\Tests\Integration\TestCase;
 
 final class MessagePackTest extends TestCase
 {
+    private const TARANTOOL_DECIMAL_PRECISION = 38;
+
     /**
      * @dataProvider providePackUnpackData
      */
@@ -121,7 +123,7 @@ final class MessagePackTest extends TestCase
 
         [$isEqual] = $client->evaluate(
             'return dec.new(...) == ...',
-            $decimalString, new Decimal($decimalString, DecimalExtension::DEFAULT_PRECISION)
+            $decimalString, new Decimal($decimalString, self::TARANTOOL_DECIMAL_PRECISION)
         );
         self::assertTrue($isEqual);
     }
@@ -138,10 +140,10 @@ final class MessagePackTest extends TestCase
             ['4.2'],
             ['1E-10'],
             ['0.0000234'],
-            ['0.'.str_repeat('1', DecimalExtension::DEFAULT_PRECISION)],
-            [str_repeat('1', DecimalExtension::DEFAULT_PRECISION).'.0'],
-            ['9.'.str_repeat('9', DecimalExtension::DEFAULT_PRECISION - 1)],
-            [str_repeat('9', DecimalExtension::DEFAULT_PRECISION - 1).'.9'],
+            ['0.'.str_repeat('1', self::TARANTOOL_DECIMAL_PRECISION)],
+            [str_repeat('1', self::TARANTOOL_DECIMAL_PRECISION).'.0'],
+            ['9.'.str_repeat('9', self::TARANTOOL_DECIMAL_PRECISION - 1)],
+            [str_repeat('9', self::TARANTOOL_DECIMAL_PRECISION - 1).'.9'],
         ];
     }
 }
