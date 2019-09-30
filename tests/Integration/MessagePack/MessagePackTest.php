@@ -112,7 +112,7 @@ final class MessagePackTest extends TestCase
     {
         $client = ClientBuilder::createFromEnv()
             ->setPackerPureFactory(static function () {
-                return PurePacker::fromExtensions(new DecimalExtension(1));
+                return PurePacker::fromExtensions(new DecimalExtension());
             })
             ->build();
 
