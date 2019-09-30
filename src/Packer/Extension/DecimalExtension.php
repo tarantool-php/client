@@ -21,7 +21,7 @@ use MessagePack\TypeTransformer\Extension;
 class DecimalExtension implements Extension
 {
     private const TYPE = 1;
-    private const DEFAULT_PRECISION = 38;
+    private const PRECISION = 38;
 
     public function getType() : int
     {
@@ -35,7 +35,7 @@ class DecimalExtension implements Extension
         }
 
         // @see https://github.com/php-decimal/ext-decimal/issues/22#issuecomment-512364914
-        $data = $value->toFixed(self::DEFAULT_PRECISION);
+        $data = $value->toFixed(self::PRECISION);
 
         if ('-' === $data[0]) {
             $nibble = 'd';
@@ -71,6 +71,6 @@ class DecimalExtension implements Extension
                 : \substr_replace($dec, '.', -$scale, 0);
         }
 
-        return new Decimal($sign.$dec, self::DEFAULT_PRECISION);
+        return new Decimal($sign.$dec, self::PRECISION);
     }
 }
