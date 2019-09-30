@@ -580,7 +580,6 @@ and from MessagePack structures (for more details, read the  msgpack.php's [READ
 Once you have implemented your extension, you should register it with the packer object:
 
 ```php
-...
 $packer = PurePacker::fromExtensions(new MoneyExtension());
 $client = new Client(new DefaultHandler($connection, $packer));
 ```
