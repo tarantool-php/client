@@ -32,11 +32,13 @@ abstract class TestCase extends BaseTestCase
      */
     protected $client;
 
+    private const REGEX_REQURES_TARANTOOL_VERSION = '/tarantool\s+?(?<version>.+?)$/i';
+
     public static function setUpBeforeClass() : void
     {
         $annotations = Test::parseTestMethodAnnotations(static::class);
 
-        self::enableCustomAnnotations($annotations['class']);
+        self::handleCustomAnnotations($annotations['class']);
     }
 
     protected function setUp() : void
@@ -45,18 +47,33 @@ abstract class TestCase extends BaseTestCase
 
         $annotations = $this->getAnnotations();
 
-        self::enableCustomAnnotations($annotations['method']);
+        self::handleCustomAnnotations($annotations['method']);
     }
 
-    private static function enableCustomAnnotations(array $annotations) : void
+    private static function handleCustomAnnotations(array $annotations) : void
     {
-        if (empty($annotations['eval'])) {
-            return;
+        if (isset($annotations['requires'])) {
+            foreach ($annotations['requires'] as $requirement) {
+                if (!preg_match(self::REGEX_REQURES_TARANTOOL_VERSION, $requirement, $matches)) {
+                    continue;
+                }
+
+                [$major, $minor, $patch] = \sscanf($matches['version'], '%d.%d.%d');
+                $requiredVersionId = $major * 10000 + $minor * 100 + $patch;
+
+                if (self::getTarantoolVersionId() < $requiredVersionId) {
+                    self::markTestSkipped(sprintf('Tarantool >= %s is required.', $matches['version']));
+                }
+
+                break;
+            }
         }
 
-        $client = ClientBuilder::createFromEnv()->build();
-        foreach ($annotations['eval'] as $expr) {
-            $client->evaluate($expr);
+        if (isset($annotations['eval'])) {
+            $client = ClientBuilder::createFromEnv()->build();
+            foreach ($annotations['eval'] as $expr) {
+                $client->evaluate($expr);
+            }
         }
     }
 
@@ -67,11 +84,11 @@ abstract class TestCase extends BaseTestCase
         return $client->evaluate("return box.stat().$requestName.total")[0];
     }
 
-    final protected static function getTarantoolVersion() : int
+    final protected static function getTarantoolVersionId() : int
     {
         $connection = ClientBuilder::createFromEnv()->createConnection();
 
-        return $connection->open()->getServerVersion();
+        return $connection->open()->getServerVersionId();
     }
 
     final protected static function triggerUnexpectedResponse(Handler $handler, Request $initialRequest, int $sync = 0) : Connection

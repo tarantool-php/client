@@ -31,7 +31,7 @@ final class GreetingTest extends TestCase
      */
     public function testGetServerVersion(string $greeting, int $expectedVersion) : void
     {
-        self::assertSame($expectedVersion, Greeting::parse($greeting)->getServerVersion());
+        self::assertSame($expectedVersion, Greeting::parse($greeting)->getServerVersionId());
     }
 
     public function provideServerVersions() : iterable

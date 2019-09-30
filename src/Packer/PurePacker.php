@@ -15,6 +15,7 @@ namespace Tarantool\Client\Packer;
 
 use MessagePack\BufferUnpacker;
 use MessagePack\Packer;
+use MessagePack\TypeTransformer\Extension;
 use Tarantool\Client\Keys;
 use Tarantool\Client\Packer\Packer as ClientPacker;
 use Tarantool\Client\Request\Request;
@@ -29,6 +30,16 @@ final class PurePacker implements ClientPacker
     {
         $this->packer = $packer ?: new Packer();
         $this->unpacker = $unpacker ?: new BufferUnpacker();
+    }
+
+    public static function fromExtensions(Extension $extension, Extension ...$extensions) : self
+    {
+        $extensions = [-1 => $extension] + $extensions;
+
+        return new self(
+            new Packer(null, $extensions),
+            new BufferUnpacker('', null, $extensions)
+        );
     }
 
     public function pack(Request $request, int $sync) : string

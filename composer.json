@@ -14,6 +14,7 @@
         "php": "^7.1"
     },
     "require-dev": {
+        "ext-decimal": "*",
         "ext-json": "*",
         "ext-msgpack": "*",
         "ext-sockets": "*",
@@ -21,9 +22,10 @@
         "monolog/monolog": "^1.24",
         "phpunit/phpunit": "^7.1|^8.2.5",
         "psr/log": "^1.1",
-        "rybakit/msgpack": "^0.5.4"
+        "rybakit/msgpack": "dev-master"
     },
     "suggest": {
+        "ext-decimal": "For using decimals with Tarantool 2.3+",
         "ext-msgpack": "For using Pecl packer",
         "rybakit/msgpack": "For using Pure packer (version 0.5.1 and above is required)",
         "psr/log": "For using LoggingMiddleware"

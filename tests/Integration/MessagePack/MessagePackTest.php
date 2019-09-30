@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\MessagePack;
 
-use MessagePack\BufferUnpacker;
-use MessagePack\Packer;
+use Decimal\Decimal;
 use PHPUnit\Framework\Assert;
+use Tarantool\Client\Packer\Extension\DecimalExtension;
 use Tarantool\Client\Packer\PeclPacker;
 use Tarantool\Client\Packer\PurePacker;
 use Tarantool\Client\Schema\Criteria;
@@ -72,17 +72,14 @@ final class MessagePackTest extends TestCase
     }
 
     /**
-     * @eval space = create_space('msgpack')
+     * @eval space = create_space('custom_type')
      * @eval space:create_index('primary', {type = 'hash', parts = {1, 'unsigned'}})
      */
-    public function testStoringCustomTypeInTuple() : void
+    public function testCustomType() : void
     {
         $client = ClientBuilder::createFromEnv()
             ->setPackerPureFactory(static function () {
-                return new PurePacker(
-                    (new Packer())->registerTransformer($t = new DateTimeTransformer(42)),
-                    (new BufferUnpacker())->registerTransformer($t)
-                );
+                return PurePacker::fromExtensions(new DateTimeExtension(42));
             })
             ->setPackerPeclFactory(static function () {
                 return new PeclPacker(true);
@@ -95,10 +92,56 @@ final class MessagePackTest extends TestCase
         }
 
         $date = new \DateTimeImmutable();
-        $space = $client->getSpace('msgpack');
+        $space = $client->getSpace('custom_type');
         $result = $space->insert([100, $date]);
 
         self::assertEquals($date, $result[0][1]);
         self::assertEquals($date, $space->select(Criteria::key([100]))[0][1]);
+    }
+
+    /**
+     * @requires Tarantool 2.3
+     * @requires extension decimal
+     * @requires function MessagePack\Packer::pack
+     *
+     * @eval dec = require('decimal')
+     *
+     * @dataProvider provideDecimalStrings
+     */
+    public function testDecimalType(string $decimalString) : void
+    {
+        $client = ClientBuilder::createFromEnv()
+            ->setPackerPureFactory(static function () {
+                return PurePacker::fromExtensions(new DecimalExtension(1));
+            })
+            ->build();
+
+        [$decimal] = $client->evaluate('return dec.new(...)', $decimalString);
+        self::assertTrue($decimal->equals($decimalString));
+
+        [$isEqual] = $client->evaluate(
+            'return dec.new(...) == ...',
+            $decimalString, new Decimal($decimalString, DecimalExtension::DEFAULT_PRECISION)
+        );
+        self::assertTrue($isEqual);
+    }
+
+    public function provideDecimalStrings() : iterable
+    {
+        return [
+            ['0'],
+            ['-0'],
+            ['0.0'],
+            ['00000.0000000'],
+            ['00009.9000000'],
+            ['-127'],
+            ['4.2'],
+            ['1E-10'],
+            ['0.0000234'],
+            ['0.'.str_repeat('1', DecimalExtension::DEFAULT_PRECISION)],
+            [str_repeat('1', DecimalExtension::DEFAULT_PRECISION).'.0'],
+            ['9.'.str_repeat('9', DecimalExtension::DEFAULT_PRECISION - 1)],
+            [str_repeat('9', DecimalExtension::DEFAULT_PRECISION - 1).'.9'],
+        ];
     }
 }

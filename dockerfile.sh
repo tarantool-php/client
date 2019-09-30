@@ -16,10 +16,14 @@ if [[ $TNT_PACKER == pecl ]]; then
     RUN_CMDS="$RUN_CMDS && \\\\\n    pecl install msgpack && docker-php-ext-enable msgpack"
     COMPOSER_REMOVE='rybakit/msgpack'
 else
+    if [[ $TNT_PACKER == pure ]] && [[ $TNT_IMAGE == *"2"* ]]; then
+        RUN_CMDS="$RUN_CMDS && \\\\\n    apt-get install -y libmpdec-dev"
+        RUN_CMDS="$RUN_CMDS && \\\\\n    pecl install decimal && docker-php-ext-enable decimal"
+    fi
     COMPOSER_REMOVE='ext-msgpack'
 fi
 
-if [[ ! -z "$COVERAGE_FILE" ]]; then
+if [[ -n "$COVERAGE_FILE" ]]; then
     RUN_CMDS="$RUN_CMDS && \\\\\n    pecl install xdebug && docker-php-ext-enable xdebug"
 fi
 

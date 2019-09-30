@@ -20,8 +20,8 @@ final class ExamplesTest extends TestCase
      */
     public function testExample(string $filename) : void
     {
-        if (strpos($filename, '/execute.php') && self::getTarantoolVersion() < 20000) {
-            self::markTestSkipped(sprintf('This version of Tarantool (%d) does not support sql.', self::getTarantoolVersion()));
+        if (strpos($filename, '/execute.php') && self::getTarantoolVersionId() < 20000) {
+            self::markTestSkipped(sprintf('This version of Tarantool (%d) does not support sql.', self::getTarantoolVersionId()));
         }
 
         $uri = ClientBuilder::createFromEnv()->getUri();

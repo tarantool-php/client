@@ -12,9 +12,8 @@
 declare(strict_types=1);
 
 use App\Email;
-use App\EmailTransformer;
+use App\EmailExtension;
 use MessagePack\BufferUnpacker;
-use MessagePack\Packer;
 use Tarantool\Client\Client;
 use Tarantool\Client\Connection\StreamConnection;
 use Tarantool\Client\Handler\DefaultHandler;
@@ -29,15 +28,9 @@ $connection = isset($_SERVER['argv'][1])
     ? StreamConnection::create($_SERVER['argv'][1])
     : StreamConnection::createTcp();
 
-if (class_exists(BufferUnpacker::class)) {
-    $transformer = new EmailTransformer(42);
-    $packer = new PurePacker(
-        (new Packer())->registerTransformer($transformer),
-        (new BufferUnpacker())->registerTransformer($transformer)
-    );
-} else {
-    $packer = new PeclPacker();
-}
+$packer = class_exists(BufferUnpacker::class)
+    ? PurePacker::fromExtensions(new EmailExtension(42))
+    : new PeclPacker();
 
 $client = new Client(new DefaultHandler($connection, $packer));
 $spaceName = 'example';
