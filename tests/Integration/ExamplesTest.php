@@ -20,8 +20,14 @@ final class ExamplesTest extends TestCase
      */
     public function testExample(string $filename) : void
     {
-        if (strpos($filename, '/execute.php') && self::getTarantoolVersionId() < 20000) {
-            self::markTestSkipped(sprintf('This version of Tarantool (%d) does not support sql.', self::getTarantoolVersionId()));
+        $info = self::parseFile($filename);
+
+        if (isset($info['tarantool_version'])) {
+            [$major, $minor, $patch] = \sscanf($info['tarantool_version'], '%d.%d.%d');
+            $requiredVersionId = $major * 10000 + $minor * 100 + $patch;
+            if (self::getTarantoolVersionId() < $requiredVersionId) {
+                self::markTestSkipped(sprintf('Tarantool >= %s is required.', $info['tarantool_version']));
+            }
         }
 
         $uri = ClientBuilder::createFromEnv()->getUri();
@@ -30,8 +36,8 @@ final class ExamplesTest extends TestCase
 
         self::assertSame(0, $exitCode, implode("\n", $output));
 
-        if ($output) {
-            self::assertOutput($filename, implode("\n", $output));
+        if (isset($info['output'])) {
+            self::assertSame($info['output'], implode("\n", $output));
         }
     }
 
@@ -52,12 +58,18 @@ final class ExamplesTest extends TestCase
         }
     }
 
-    private static function assertOutput(string $filename, string $output) : void
+    private static function parseFile(string $filename) : array
     {
         $content = file_get_contents($filename);
 
-        if (preg_match('~\/\*\s*?OUTPUT\b(.+?)\*\/~s', $content, $matches)) {
-            self::assertSame(trim($matches[1]), $output);
+        $result = [];
+        if (preg_match('~@requires\s+?tarantool\s+?(?<version>[.\d]+)~i', $content, $matches)) {
+            $result['tarantool_version'] = $matches['version'];
         }
+        if (preg_match('~\/\*\s*?OUTPUT\b(.+?)\*\/~s', $content, $matches)) {
+            $result['output'] = trim($matches[1]);
+        }
+
+        return $result;
     }
 }

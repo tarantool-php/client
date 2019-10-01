@@ -9,6 +9,10 @@
  * file that was distributed with this source code.
  */
 
+/**
+ * @requires Tarantool 2
+ */
+
 declare(strict_types=1);
 
 require __DIR__.'/../bootstrap.php';
