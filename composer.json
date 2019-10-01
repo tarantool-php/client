@@ -22,12 +22,12 @@
         "monolog/monolog": "^1.24",
         "phpunit/phpunit": "^7.1|^8.2.5",
         "psr/log": "^1.1",
-        "rybakit/msgpack": "dev-master"
+        "rybakit/msgpack": "^0.6"
     },
     "suggest": {
         "ext-decimal": "For using decimals with Tarantool 2.3+",
         "ext-msgpack": "For using Pecl packer",
-        "rybakit/msgpack": "For using Pure packer (version 0.5.1 and above is required)",
+        "rybakit/msgpack": "For using Pure packer (version 0.6 or above is required)",
         "psr/log": "For using LoggingMiddleware"
     },
     "autoload": {
