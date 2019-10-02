@@ -21,14 +21,7 @@ final class ExamplesTest extends TestCase
     public function testExample(string $filename) : void
     {
         $info = self::parseFile($filename);
-
-        if (isset($info['tarantool_version'])) {
-            [$major, $minor, $patch] = \sscanf($info['tarantool_version'], '%d.%d.%d');
-            $requiredVersionId = $major * 10000 + $minor * 100 + $patch;
-            if (self::getTarantoolVersionId() < $requiredVersionId) {
-                self::markTestSkipped(sprintf('Tarantool >= %s is required.', $info['tarantool_version']));
-            }
-        }
+        self::checkExampleRequirements($info['requirements']);
 
         $uri = ClientBuilder::createFromEnv()->getUri();
 
@@ -62,14 +55,38 @@ final class ExamplesTest extends TestCase
     {
         $content = file_get_contents($filename);
 
-        $result = [];
-        if (preg_match('~@requires\s+?tarantool\s+?(?<version>[.\d]+)~i', $content, $matches)) {
-            $result['tarantool_version'] = $matches['version'];
+        $result = ['requirements' => []];
+        if (preg_match_all('~@requires\s+?(\w+?)\s+?(.+?)\s*?$~mi', $content, $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $match) {
+                $result['requirements'][strtolower($match[1])] = $match[2];
+            }
         }
         if (preg_match('~\/\*\s*?OUTPUT\b(.+?)\*\/~s', $content, $matches)) {
             $result['output'] = trim($matches[1]);
         }
 
         return $result;
+    }
+
+    private static function checkExampleRequirements(array $requirements) : void
+    {
+        if (isset($requirements['tarantool'])) {
+            [$major, $minor, $patch] = \sscanf($requirements['tarantool'], '%d.%d.%d');
+            $requiredVersionId = $major * 10000 + $minor * 100 + $patch;
+            if (self::getTarantoolVersionId() < $requiredVersionId) {
+                self::markTestSkipped(sprintf('Tarantool >= %s is required.', $requirements['tarantool']));
+            }
+        }
+
+        if (isset($requirements['extension']) && !extension_loaded($requirements['extension'])) {
+            self::markTestSkipped(sprintf('Extension %s is required.', $requirements['extension']));
+        }
+
+        if (isset($requirements['function']) && !\function_exists($requirements['function'])) {
+            $pieces = \explode('::', $requirements['function']);
+            if ((2 !== \count($pieces)) || !\class_exists($pieces[0]) || !\method_exists($pieces[0], $pieces[1])) {
+                self::markTestSkipped(sprintf('Function %s is required.', $requirements['function']));
+            }
+        }
     }
 }

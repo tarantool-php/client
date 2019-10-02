@@ -44,14 +44,18 @@ class DecimalExtension implements Extension
             $nibble = 'c';
         }
 
-        if ($scale = \strpos($data, '.')) {
-            $data = \substr_replace($data, '', $scale, 1);
+        $pieces = \explode('.', $data, 2);
+        if (isset($pieces[1])) {
+            $pieces[1] = \rtrim($pieces[1], '0');
         }
 
-        $data = (0 === \strlen($data) % 2) ? "0{$data}{$nibble}" : "{$data}{$nibble}";
+        $data = "{$pieces[0]}{$pieces[1]}{$nibble}";
+        if (0 !== \strlen($data) % 2) {
+            $data = "0{$data}";
+        }
 
         return $packer->packExt(self::TYPE,
-            $packer->packInt($scale).\hex2bin($data)
+            $packer->packInt(empty($pieces[1]) ? 0 : \strlen($pieces[1])).\hex2bin($data)
         );
     }
 

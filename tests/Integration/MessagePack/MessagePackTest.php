@@ -122,8 +122,8 @@ final class MessagePackTest extends TestCase
         self::assertTrue($decimal->equals($decimalString));
 
         [$isEqual] = $client->evaluate(
-            'return dec.new(...) == ...',
-            $decimalString, new Decimal($decimalString, self::TARANTOOL_DECIMAL_PRECISION)
+            "return dec.new('$decimalString') == ...",
+            new Decimal($decimalString, self::TARANTOOL_DECIMAL_PRECISION)
         );
         self::assertTrue($isEqual);
     }
@@ -136,6 +136,7 @@ final class MessagePackTest extends TestCase
             ['0.0'],
             ['00000.0000000'],
             ['00009.9000000'],
+            ['1.000000099'],
             ['-127'],
             ['4.2'],
             ['1E-10'],
