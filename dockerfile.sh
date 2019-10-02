@@ -12,14 +12,22 @@ if [[ -z "$TNT_CONN_URI" ]]; then
     TNT_CONN_URI='tcp://tarantool:3301'
 fi
 
+COMPOSER_REMOVE=''
+
 if [[ $TNT_PACKER == pecl ]]; then
     RUN_CMDS="$RUN_CMDS && \\\\\n    pecl install msgpack && docker-php-ext-enable msgpack"
-    COMPOSER_REMOVE='rybakit/msgpack'
+    COMPOSER_REMOVE="$COMPOSER_REMOVE rybakit/msgpack ext-decimal"
 else
-    COMPOSER_REMOVE='ext-msgpack'
+    if [[ $TNT_PACKER == pure ]] && [[ $TNT_IMAGE == *"2"* ]]; then
+        RUN_CMDS="$RUN_CMDS && \\\\\n    apt-get install -y libmpdec-dev"
+        RUN_CMDS="$RUN_CMDS && \\\\\n    pecl install decimal && docker-php-ext-enable decimal"
+    else
+      COMPOSER_REMOVE="$COMPOSER_REMOVE ext-decimal"
+    fi
+    COMPOSER_REMOVE="$COMPOSER_REMOVE ext-msgpack"
 fi
 
-if [[ ! -z "$COVERAGE_FILE" ]]; then
+if [[ -n "$COVERAGE_FILE" ]]; then
     RUN_CMDS="$RUN_CMDS && \\\\\n    pecl install xdebug && docker-php-ext-enable xdebug"
 fi
 

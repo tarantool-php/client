@@ -19,7 +19,7 @@ final class Greeting
 
     private $greeting;
     private $salt;
-    private $serverVersion;
+    private $serverVersionId;
 
     private function __construct($greeting)
     {
@@ -54,14 +54,14 @@ final class Greeting
         throw new \UnexpectedValueException('Salt is too short.');
     }
 
-    public function getServerVersion() : int
+    public function getServerVersionId() : int
     {
-        if (null !== $this->serverVersion) {
-            return $this->serverVersion;
+        if (null !== $this->serverVersionId) {
+            return $this->serverVersionId;
         }
 
         [$major, $minor, $patch] = \sscanf($this->greeting, 'Tarantool %d.%d.%d');
 
-        return $this->serverVersion = $major * 10000 + $minor * 100 + $patch;
+        return $this->serverVersionId = $major * 10000 + $minor * 100 + $patch;
     }
 }

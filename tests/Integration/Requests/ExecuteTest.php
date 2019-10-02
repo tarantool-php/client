@@ -15,18 +15,11 @@ namespace Tarantool\Client\Tests\Integration\Requests;
 
 use Tarantool\Client\Tests\Integration\TestCase;
 
+/**
+ * @requires Tarantool 2
+ */
 final class ExecuteTest extends TestCase
 {
-    /**
-     * @beforeClass
-     */
-    public static function ensureSqlSupport() : void
-    {
-        if (self::getTarantoolVersion() < 20000) {
-            self::markTestSkipped(sprintf('This version of Tarantool (%d) does not support sql.', self::getTarantoolVersion()));
-        }
-    }
-
     /**
      * @dataProvider provideExecuteUpdateData
      */

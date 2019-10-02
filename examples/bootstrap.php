@@ -27,12 +27,12 @@ function create_client() : Client
     return new Client(new DefaultHandler($connection, PackerFactory::create()));
 }
 
-function get_server_version(Client $client) : int
+function get_server_version_id(Client $client) : int
 {
     $connection = $client->getHandler()->getConnection();
     if (!$greeting = $connection->open()) {
         throw new \RuntimeException('Failed to retrieve the server version.');
     }
 
-    return $greeting->getServerVersion();
+    return $greeting->getServerVersionId();
 }

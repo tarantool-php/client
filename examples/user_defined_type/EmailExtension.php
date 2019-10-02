@@ -11,14 +11,13 @@
 
 declare(strict_types=1);
 
-namespace Tarantool\Client\Tests\Integration\MessagePack;
+namespace App;
 
 use MessagePack\BufferUnpacker;
 use MessagePack\Packer;
-use MessagePack\TypeTransformer\Packable;
-use MessagePack\TypeTransformer\Unpackable;
+use MessagePack\TypeTransformer\Extension;
 
-class DateTimeTransformer implements Packable, Unpackable
+final class EmailExtension implements Extension
 {
     private $type;
 
@@ -34,17 +33,17 @@ class DateTimeTransformer implements Packable, Unpackable
 
     public function pack(Packer $packer, $value) : ?string
     {
-        if (!$value instanceof \DateTimeInterface) {
+        if (!$value instanceof Email) {
             return null;
         }
 
         return $packer->packExt($this->type,
-            $packer->packStr($value->format('Y-m-d\TH:i:s.uP'))
+            $packer->packStr($value->toString())
         );
     }
 
-    public function unpack(BufferUnpacker $unpacker, int $extLength)
+    public function unpackExt(BufferUnpacker $unpacker, int $extLength) : Email
     {
-        return new \DateTimeImmutable($unpacker->unpackStr());
+        return new Email($unpacker->unpackStr());
     }
 }

@@ -20,9 +20,8 @@ final class ExamplesTest extends TestCase
      */
     public function testExample(string $filename) : void
     {
-        if (strpos($filename, '/execute.php') && self::getTarantoolVersion() < 20000) {
-            self::markTestSkipped(sprintf('This version of Tarantool (%d) does not support sql.', self::getTarantoolVersion()));
-        }
+        $info = self::parseFile($filename);
+        self::checkExampleRequirements($info['requirements']);
 
         $uri = ClientBuilder::createFromEnv()->getUri();
 
@@ -30,8 +29,8 @@ final class ExamplesTest extends TestCase
 
         self::assertSame(0, $exitCode, implode("\n", $output));
 
-        if ($output) {
-            self::assertOutput($filename, implode("\n", $output));
+        if (isset($info['output'])) {
+            self::assertSame($info['output'], implode("\n", $output));
         }
     }
 
@@ -52,12 +51,42 @@ final class ExamplesTest extends TestCase
         }
     }
 
-    private static function assertOutput(string $filename, string $output) : void
+    private static function parseFile(string $filename) : array
     {
         $content = file_get_contents($filename);
 
+        $result = ['requirements' => []];
+        if (preg_match_all('~@requires\s+?(\w+?)\s+?(.+?)\s*?$~mi', $content, $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $match) {
+                $result['requirements'][strtolower($match[1])] = $match[2];
+            }
+        }
         if (preg_match('~\/\*\s*?OUTPUT\b(.+?)\*\/~s', $content, $matches)) {
-            self::assertSame(trim($matches[1]), $output);
+            $result['output'] = trim($matches[1]);
+        }
+
+        return $result;
+    }
+
+    private static function checkExampleRequirements(array $requirements) : void
+    {
+        if (isset($requirements['tarantool'])) {
+            [$major, $minor, $patch] = \sscanf($requirements['tarantool'], '%d.%d.%d');
+            $requiredVersionId = $major * 10000 + $minor * 100 + $patch;
+            if (self::getTarantoolVersionId() < $requiredVersionId) {
+                self::markTestSkipped(sprintf('Tarantool >= %s is required.', $requirements['tarantool']));
+            }
+        }
+
+        if (isset($requirements['extension']) && !extension_loaded($requirements['extension'])) {
+            self::markTestSkipped(sprintf('Extension %s is required.', $requirements['extension']));
+        }
+
+        if (isset($requirements['function']) && !\function_exists($requirements['function'])) {
+            $pieces = \explode('::', $requirements['function']);
+            if ((2 !== \count($pieces)) || !\class_exists($pieces[0]) || !\method_exists($pieces[0], $pieces[1])) {
+                self::markTestSkipped(sprintf('Function %s is required.', $requirements['function']));
+            }
         }
     }
 }

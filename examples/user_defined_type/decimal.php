@@ -9,35 +9,29 @@
  * file that was distributed with this source code.
  */
 
+/**
+ * @requires Tarantool 2.3
+ * @requires extension decimal
+ * @requires function MessagePack\Packer::pack
+ */
+
 declare(strict_types=1);
 
-use App\Email;
-use App\EmailTransformer;
-use MessagePack\BufferUnpacker;
-use MessagePack\Packer;
+use Decimal\Decimal;
 use Tarantool\Client\Client;
 use Tarantool\Client\Connection\StreamConnection;
 use Tarantool\Client\Handler\DefaultHandler;
-use Tarantool\Client\Packer\PeclPacker;
+use Tarantool\Client\Packer\Extension\DecimalExtension;
 use Tarantool\Client\Packer\PurePacker;
 use Tarantool\Client\Schema\Criteria;
 
-$loader = require __DIR__.'/../../vendor/autoload.php';
-$loader->addPsr4('App\\', __DIR__);
+require __DIR__.'/../../vendor/autoload.php';
 
 $connection = isset($_SERVER['argv'][1])
     ? StreamConnection::create($_SERVER['argv'][1])
     : StreamConnection::createTcp();
 
-if (class_exists(BufferUnpacker::class)) {
-    $transformer = new EmailTransformer(42);
-    $packer = new PurePacker(
-        (new Packer())->registerTransformer($transformer),
-        (new BufferUnpacker())->registerTransformer($transformer)
-    );
-} else {
-    $packer = new PeclPacker();
-}
+$packer = PurePacker::fromExtensions(new DecimalExtension());
 
 $client = new Client(new DefaultHandler($connection, $packer));
 $spaceName = 'example';
@@ -52,31 +46,13 @@ LUA
 
 $space = $client->getSpace($spaceName);
 
-$result1 = $space->insert([3, new Email('foo@bar.com')]);
+$result1 = $space->insert([3, new Decimal('1.000000099')]);
 $result2 = $space->select(Criteria::key([3]));
 
-printf("Result 1: %s\n", var_export($result2, true));
-printf("Result 2: %s\n", var_export($result2, true));
+printf("Result 1: %s\n", $result1[0][1]->toString());
+printf("Result 2: %s\n", $result2[0][1]->toString());
 
 /* OUTPUT
-Result 1: array (
-  0 =>
-  array (
-    0 => 3,
-    1 =>
-    App\Email::__set_state(array(
-       'value' => 'foo@bar.com',
-    )),
-  ),
-)
-Result 2: array (
-  0 =>
-  array (
-    0 => 3,
-    1 =>
-    App\Email::__set_state(array(
-       'value' => 'foo@bar.com',
-    )),
-  ),
-)
+Result 1: 1.000000099
+Result 2: 1.000000099
 */
