@@ -14,13 +14,16 @@ declare(strict_types=1);
 namespace Tarantool\Client\Packer;
 
 use MessagePack\BufferUnpacker;
+use Tarantool\Client\Packer\Extension\DecimalExtension;
 
 final class PackerFactory
 {
     public static function create() : Packer
     {
         if (\class_exists(BufferUnpacker::class)) {
-            return new PurePacker();
+            return \extension_loaded('decimal')
+                ? PurePacker::fromExtensions(new DecimalExtension())
+                : new PurePacker();
         }
 
         if (\extension_loaded('msgpack')) {
