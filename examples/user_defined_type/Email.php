@@ -22,6 +22,11 @@ final class Email
         $this->value = $value;
     }
 
+    public function equals(self $email) : bool
+    {
+        return $this->value === $email->value;
+    }
+
     public function toString() : string
     {
         return $this->value;

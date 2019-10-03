@@ -45,31 +45,14 @@ LUA
 
 $space = $client->getSpace($spaceName);
 
-$result1 = $space->insert([3, new Email('foo@bar.com')]);
-$result2 = $space->select(Criteria::key([3]));
+$email = new Email('foo@bar.com');
+[$insertedRow] = $space->insert([3, $email]);
+[$selectedRow] = $space->select(Criteria::key([3]));
 
-printf("Result 1: %s\n", var_export($result1, true));
-printf("Result 2: %s\n", var_export($result2, true));
+printf("Result 1: %s\n", $selectedRow[1]->toString());
+printf("Result 2: %s\n", json_encode([$insertedRow[1]->equals($selectedRow[1]), $selectedRow[1]->equals($email)]));
 
 /* OUTPUT
-Result 1: array (
-  0 =>
-  array (
-    0 => 3,
-    1 =>
-    App\Email::__set_state(array(
-       'value' => 'foo@bar.com',
-    )),
-  ),
-)
-Result 2: array (
-  0 =>
-  array (
-    0 => 3,
-    1 =>
-    App\Email::__set_state(array(
-       'value' => 'foo@bar.com',
-    )),
-  ),
-)
+Result 1: foo@bar.com
+Result 2: [true,true]
 */
