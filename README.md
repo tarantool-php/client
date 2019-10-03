@@ -40,9 +40,13 @@ The recommended way to install the library is through [Composer](http://getcompo
 composer require tarantool/client
 ```
 
-In addition, you will need to install one of the supported msgpack packages (either 
-[rybakit/msgpack.php](https://github.com/rybakit/msgpack.php#installation) 
+In addition, you need to install one of the supported msgpack packages 
+(either [rybakit/msgpack.php](https://github.com/rybakit/msgpack.php#installation) 
 or [msgpack/msgpack-php](https://github.com/msgpack/msgpack-php#install)).
+ 
+Note that the Decimal type that was added in Tarantool 2.3 is only supported by 
+the `rybakit/msgpack.php` package. In order to use decimals with this package, 
+you additionally need to install the [decimal](https://github.com/php-decimal/ext-decimal#install) extension.
 
 
 ## Creating a client
