@@ -18,22 +18,11 @@
 declare(strict_types=1);
 
 use Decimal\Decimal;
-use Tarantool\Client\Client;
-use Tarantool\Client\Connection\StreamConnection;
-use Tarantool\Client\Handler\DefaultHandler;
-use Tarantool\Client\Packer\Extension\DecimalExtension;
-use Tarantool\Client\Packer\PurePacker;
 use Tarantool\Client\Schema\Criteria;
 
 require __DIR__.'/../../vendor/autoload.php';
 
-$connection = isset($_SERVER['argv'][1])
-    ? StreamConnection::create($_SERVER['argv'][1])
-    : StreamConnection::createTcp();
-
-$packer = PurePacker::fromExtensions(new DecimalExtension());
-
-$client = new Client(new DefaultHandler($connection, $packer));
+$client = create_client();
 $spaceName = 'example';
 
 $client->evaluate(
