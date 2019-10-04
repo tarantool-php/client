@@ -20,7 +20,7 @@ declare(strict_types=1);
 use Decimal\Decimal;
 use Tarantool\Client\Schema\Criteria;
 
-require __DIR__.'/../../vendor/autoload.php';
+require __DIR__.'/../bootstrap.php';
 
 $client = create_client();
 $spaceName = 'example';
