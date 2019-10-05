@@ -43,12 +43,12 @@ final class PeclPacker implements Packer
         $this->unpacker->feed($packet);
 
         if (!$this->unpacker->execute()) {
-            throw new \UnexpectedValueException('Unable to unpack response header.');
+            throw new \RuntimeException('Unable to unpack response header.');
         }
         $header = $this->unpacker->data();
 
         if (!$this->unpacker->execute()) {
-            throw new \UnexpectedValueException('Unable to unpack response body.');
+            throw new \RuntimeException('Unable to unpack response body.');
         }
         $body = $this->unpacker->data();
 
