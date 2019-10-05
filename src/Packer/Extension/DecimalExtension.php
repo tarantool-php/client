@@ -45,13 +45,11 @@ class DecimalExtension implements Extension
         }
 
         $pieces = \explode('.', $data, 2);
-        if (isset($pieces[1])) {
-            $pieces[1] = \rtrim($pieces[1], '0');
-        }
+        $pieces[1] = \rtrim($pieces[1], '0');
 
         $data = "{$pieces[0]}{$pieces[1]}{$nibble}";
         if (0 !== \strlen($data) % 2) {
-            $data = "0{$data}";
+            $data = '0'.$data;
         }
 
         return $packer->packExt(self::TYPE,
