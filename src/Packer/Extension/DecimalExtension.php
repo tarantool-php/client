@@ -53,7 +53,7 @@ class DecimalExtension implements Extension
         }
 
         return $packer->packExt(self::TYPE,
-            $packer->packInt(empty($pieces[1]) ? 0 : \strlen($pieces[1])).\hex2bin($data)
+            $packer->packInt('' === $pieces[1] ? 0 : \strlen($pieces[1])).\hex2bin($data)
         );
     }
 
