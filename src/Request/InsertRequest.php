@@ -18,13 +18,14 @@ use Tarantool\Client\RequestTypes;
 
 final class InsertRequest implements Request
 {
-    private $spaceId;
-    private $tuple;
+    private $body;
 
     public function __construct(int $spaceId, array $tuple)
     {
-        $this->spaceId = $spaceId;
-        $this->tuple = $tuple;
+        $this->body = [
+            Keys::SPACE_ID => $spaceId,
+            Keys::TUPLE => $tuple,
+        ];
     }
 
     public function getType() : int
@@ -34,9 +35,6 @@ final class InsertRequest implements Request
 
     public function getBody() : array
     {
-        return [
-            Keys::SPACE_ID => $this->spaceId,
-            Keys::TUPLE => $this->tuple,
-        ];
+        return $this->body;
     }
 }

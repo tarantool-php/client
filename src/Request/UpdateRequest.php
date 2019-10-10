@@ -18,17 +18,16 @@ use Tarantool\Client\RequestTypes;
 
 final class UpdateRequest implements Request
 {
-    private $spaceId;
-    private $indexId;
-    private $key;
-    private $operations;
+    private $body;
 
     public function __construct(int $spaceId, int $indexId, array $key, array $operations)
     {
-        $this->spaceId = $spaceId;
-        $this->indexId = $indexId;
-        $this->key = $key;
-        $this->operations = $operations;
+        $this->body = [
+            Keys::SPACE_ID => $spaceId,
+            Keys::INDEX_ID => $indexId,
+            Keys::KEY => $key,
+            Keys::TUPLE => $operations,
+        ];
     }
 
     public function getType() : int
@@ -38,11 +37,6 @@ final class UpdateRequest implements Request
 
     public function getBody() : array
     {
-        return [
-            Keys::SPACE_ID => $this->spaceId,
-            Keys::INDEX_ID => $this->indexId,
-            Keys::KEY => $this->key,
-            Keys::TUPLE => $this->operations,
-        ];
+        return $this->body;
     }
 }

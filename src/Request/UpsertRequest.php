@@ -18,15 +18,15 @@ use Tarantool\Client\RequestTypes;
 
 final class UpsertRequest implements Request
 {
-    private $spaceId;
-    private $tuple;
-    private $operations;
+    private $body;
 
     public function __construct(int $spaceId, array $tuple, array $operations)
     {
-        $this->spaceId = $spaceId;
-        $this->tuple = $tuple;
-        $this->operations = $operations;
+        $this->body = [
+            Keys::SPACE_ID => $spaceId,
+            Keys::TUPLE => $tuple,
+            Keys::OPERATIONS => $operations,
+        ];
     }
 
     public function getType() : int
@@ -36,10 +36,6 @@ final class UpsertRequest implements Request
 
     public function getBody() : array
     {
-        return [
-            Keys::SPACE_ID => $this->spaceId,
-            Keys::TUPLE => $this->tuple,
-            Keys::OPERATIONS => $this->operations,
-        ];
+        return $this->body;
     }
 }

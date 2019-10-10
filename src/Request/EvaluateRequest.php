@@ -18,13 +18,14 @@ use Tarantool\Client\RequestTypes;
 
 final class EvaluateRequest implements Request
 {
-    private $expr;
-    private $args;
+    private $body;
 
     public function __construct(string $expr, array $args = [])
     {
-        $this->expr = $expr;
-        $this->args = $args;
+        $this->body = [
+            Keys::EXPR => $expr,
+            Keys::TUPLE => $args,
+        ];
     }
 
     public function getType() : int
@@ -34,9 +35,6 @@ final class EvaluateRequest implements Request
 
     public function getBody() : array
     {
-        return [
-            Keys::EXPR => $this->expr,
-            Keys::TUPLE => $this->args,
-        ];
+        return $this->body;
     }
 }

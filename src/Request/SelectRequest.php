@@ -18,21 +18,18 @@ use Tarantool\Client\RequestTypes;
 
 final class SelectRequest implements Request
 {
-    private $spaceId;
-    private $indexId;
-    private $key;
-    private $offset;
-    private $limit;
-    private $iteratorType;
+    private $body;
 
     public function __construct(int $spaceId, int $indexId, array $key, int $offset, int $limit, int $iteratorType)
     {
-        $this->spaceId = $spaceId;
-        $this->indexId = $indexId;
-        $this->key = $key;
-        $this->offset = $offset;
-        $this->limit = $limit;
-        $this->iteratorType = $iteratorType;
+        $this->body = [
+            Keys::KEY => $key,
+            Keys::SPACE_ID => $spaceId,
+            Keys::INDEX_ID => $indexId,
+            Keys::LIMIT => $limit,
+            Keys::OFFSET => $offset,
+            Keys::ITERATOR => $iteratorType,
+        ];
     }
 
     public function getType() : int
@@ -42,13 +39,6 @@ final class SelectRequest implements Request
 
     public function getBody() : array
     {
-        return [
-            Keys::KEY => $this->key,
-            Keys::SPACE_ID => $this->spaceId,
-            Keys::INDEX_ID => $this->indexId,
-            Keys::LIMIT => $this->limit,
-            Keys::OFFSET => $this->offset,
-            Keys::ITERATOR => $this->iteratorType,
-        ];
+        return $this->body;
     }
 }

@@ -18,16 +18,17 @@ use Tarantool\Client\RequestTypes;
 
 final class AuthenticateRequest implements Request
 {
-    private $salt;
-    private $username;
-    private $password;
-    private $scramble;
+    private $body;
 
     public function __construct(string $salt, string $username, string $password = '')
     {
-        $this->salt = $salt;
-        $this->username = $username;
-        $this->password = $password;
+        $hash1 = \sha1($password, true);
+        $hash2 = \sha1($hash1, true);
+
+        $this->body = [
+            Keys::TUPLE => ['chap-sha1', $hash1 ^ \sha1($salt.$hash2, true)],
+            Keys::USER_NAME => $username,
+        ];
     }
 
     public function getType() : int
@@ -37,15 +38,6 @@ final class AuthenticateRequest implements Request
 
     public function getBody() : array
     {
-        if (null === $this->scramble) {
-            $hash1 = \sha1($this->password, true);
-            $hash2 = \sha1($hash1, true);
-            $this->scramble = $hash1 ^ \sha1($this->salt.$hash2, true);
-        }
-
-        return [
-            Keys::TUPLE => ['chap-sha1', $this->scramble],
-            Keys::USER_NAME => $this->username,
-        ];
+        return $this->body;
     }
 }

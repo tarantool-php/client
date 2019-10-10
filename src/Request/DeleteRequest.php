@@ -18,15 +18,15 @@ use Tarantool\Client\RequestTypes;
 
 final class DeleteRequest implements Request
 {
-    private $spaceId;
-    private $indexId;
-    private $key;
+    private $body;
 
     public function __construct(int $spaceId, int $indexId, array $key)
     {
-        $this->spaceId = $spaceId;
-        $this->indexId = $indexId;
-        $this->key = $key;
+        $this->body = [
+            Keys::SPACE_ID => $spaceId,
+            Keys::INDEX_ID => $indexId,
+            Keys::KEY => $key,
+        ];
     }
 
     public function getType() : int
@@ -36,10 +36,6 @@ final class DeleteRequest implements Request
 
     public function getBody() : array
     {
-        return [
-            Keys::SPACE_ID => $this->spaceId,
-            Keys::INDEX_ID => $this->indexId,
-            Keys::KEY => $this->key,
-        ];
+        return $this->body;
     }
 }

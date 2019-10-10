@@ -18,13 +18,16 @@ use Tarantool\Client\RequestTypes;
 
 final class ExecuteRequest implements Request
 {
-    private $sql;
-    private $params;
+    private $body;
 
     public function __construct(string $sql, array $params = [])
     {
-        $this->sql = $sql;
-        $this->params = $params;
+        $this->body = [] === $params ? [
+            Keys::SQL_TEXT => $sql,
+        ] : [
+            Keys::SQL_TEXT => $sql,
+            Keys::SQL_BIND => $params,
+        ];
     }
 
     public function getType() : int
@@ -34,11 +37,6 @@ final class ExecuteRequest implements Request
 
     public function getBody() : array
     {
-        return [] === $this->params ? [
-            Keys::SQL_TEXT => $this->sql,
-        ] : [
-            Keys::SQL_TEXT => $this->sql,
-            Keys::SQL_BIND => $this->params,
-        ];
+        return $this->body;
     }
 }

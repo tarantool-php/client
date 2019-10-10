@@ -18,13 +18,14 @@ use Tarantool\Client\RequestTypes;
 
 final class CallRequest implements Request
 {
-    private $funcName;
-    private $args;
+    private $body;
 
     public function __construct(string $funcName, array $args = [])
     {
-        $this->funcName = $funcName;
-        $this->args = $args;
+        $this->body = [
+            Keys::FUNCTION_NAME => $funcName,
+            Keys::TUPLE => $args,
+        ];
     }
 
     public function getType() : int
@@ -34,9 +35,6 @@ final class CallRequest implements Request
 
     public function getBody() : array
     {
-        return [
-            Keys::FUNCTION_NAME => $this->funcName,
-            Keys::TUPLE => $this->args,
-        ];
+        return $this->body;
     }
 }
