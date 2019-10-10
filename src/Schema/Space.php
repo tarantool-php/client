@@ -26,7 +26,9 @@ use Tarantool\Client\Request\UpsertRequest;
 final class Space
 {
     public const VSPACE_ID = 281;
+    public const VSPACE_NAME_INDEX = 2;
     public const VINDEX_ID = 289;
+    public const VINDEX_NAME_INDEX = 2;
 
     private $handler;
     private $id;
@@ -118,7 +120,7 @@ final class Space
         }
 
         $schema = new self($this->handler, self::VINDEX_ID);
-        $data = $schema->select(Criteria::key([$this->id, $indexName])->andIndex(IndexIds::INDEX_NAME));
+        $data = $schema->select(Criteria::key([$this->id, $indexName])->andIndex(self::VINDEX_NAME_INDEX));
 
         if ([] === $data) {
             throw RequestFailed::unknownIndex($indexName, $this->id);
