@@ -143,6 +143,8 @@ final class MessagePackTest extends TestCase
             ['1E-10'],
             ['-2E-15'],
             ['0.0000234'],
+            [str_repeat('9', self::TARANTOOL_DECIMAL_PRECISION)],
+            ['-'.str_repeat('9', self::TARANTOOL_DECIMAL_PRECISION)],
             ['0.'.str_repeat('1', self::TARANTOOL_DECIMAL_PRECISION)],
             [str_repeat('1', self::TARANTOOL_DECIMAL_PRECISION).'.0'],
             ['9.'.str_repeat('9', self::TARANTOOL_DECIMAL_PRECISION - 1)],
