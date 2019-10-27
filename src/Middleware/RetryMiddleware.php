@@ -67,6 +67,7 @@ final class RetryMiddleware implements Middleware
             try {
                 return $handler->handle($request);
             } catch (UnexpectedResponse $e) {
+                $handler->getConnection()->close();
                 break;
             } catch (ConnectionFailed | CommunicationFailed $e) {
                 $handler->getConnection()->close();

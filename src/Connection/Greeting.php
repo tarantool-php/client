@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Connection;
 
+use Tarantool\Client\Exception\UnexpectedResponse;
+
 final class Greeting
 {
     public const SIZE_BYTES = 128;
@@ -32,7 +34,7 @@ final class Greeting
             return new self($greeting);
         }
 
-        throw new \UnexpectedValueException('Unable to recognize Tarantool server.');
+        throw new UnexpectedResponse('Unable to recognize Tarantool server.');
     }
 
     public function getSalt() : string
@@ -42,7 +44,7 @@ final class Greeting
         }
 
         if (false === $salt = \base64_decode(\substr($this->greeting, 64, 44), true)) {
-            throw new \UnexpectedValueException('Unable to decode salt.');
+            throw new UnexpectedResponse('Unable to decode salt.');
         }
 
         $salt = \substr($salt, 0, 20);
@@ -51,7 +53,7 @@ final class Greeting
             return $this->salt = $salt;
         }
 
-        throw new \UnexpectedValueException('Salt is too short.');
+        throw new UnexpectedResponse('Salt is too short.');
     }
 
     public function getServerVersionId() : int
