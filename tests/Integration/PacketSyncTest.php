@@ -39,7 +39,8 @@ final class PacketSyncTest extends TestCase
     {
         return [
             [0],
-            [128],
+            [127],
+            [255],
             [65535],
             [4294967295],
             [9223372036854775807], // PHP_INT_MAX
