@@ -15,6 +15,7 @@ namespace Tarantool\Client\Packer;
 
 use MessagePack\BufferUnpacker;
 use MessagePack\Packer;
+use MessagePack\PackOptions;
 use MessagePack\TypeTransformer\Extension;
 use Tarantool\Client\Keys;
 use Tarantool\Client\Packer\Packer as ClientPacker;
@@ -28,7 +29,7 @@ final class PurePacker implements ClientPacker
 
     public function __construct(?Packer $packer = null, ?BufferUnpacker $unpacker = null)
     {
-        $this->packer = $packer ?: new Packer();
+        $this->packer = $packer ?: new Packer(PackOptions::FORCE_STR);
         $this->unpacker = $unpacker ?: new BufferUnpacker();
     }
 
@@ -37,17 +38,15 @@ final class PurePacker implements ClientPacker
         $extensions = [-1 => $extension] + $extensions;
 
         return new self(
-            new Packer(null, $extensions),
+            new Packer(PackOptions::FORCE_STR, $extensions),
             new BufferUnpacker('', null, $extensions)
         );
     }
 
     public function pack(Request $request, int $sync) : string
     {
-        $packet = $this->packer->packMapHeader(2).
-            $this->packer->packInt(Keys::CODE).
-            $this->packer->packInt($request->getType()).
-            $this->packer->packInt(Keys::SYNC).
+        // hot path optimization
+        $packet = \pack('C*', 0x82, Keys::CODE, $request->getType(), Keys::SYNC).
             $this->packer->packInt($sync).
             $this->packer->packMap($request->getBody());
 
