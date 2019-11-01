@@ -15,7 +15,7 @@ A pure PHP client for [Tarantool](http://tarantool.io) 1.7.1 or above.
  * Supports user defined types
  * Highly customizable
  * [Tested](https://travis-ci.org/tarantool-php/client) on PHP 7.1-7.4 and Tarantool 1.7-2.3
- * Being used in other open source projects, including [Queue](https://github.com/tarantool-php/queue), [Mapper](https://github.com/tarantool-php/mapper), [Web Admin UI](https://github.com/basis-company/tarantool-admin) and [more](https://github.com/tarantool-php).
+ * Being used in other open source projects, including [Queue](https://github.com/tarantool-php/queue), [Mapper](https://github.com/tarantool-php/mapper), [Web Admin](https://github.com/basis-company/tarantool-admin) and [more](https://github.com/tarantool-php).
 
 
 ## Table of contents
@@ -630,7 +630,7 @@ You may change the default runtime by defining the `PHP_IMAGE` environment varia
 PHP_IMAGE='php:7.2-cli' ./dockerfile.sh | docker build -t client -
 ```
 
-> See a list of various images [here](.travis.yml#L12).
+> See a list of various images [here](.travis.yml#L13).
 
 
 Then run a Tarantool instance (needed for integration tests):
