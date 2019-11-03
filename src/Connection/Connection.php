@@ -22,8 +22,6 @@ interface Connection
      * Opens a new connection or reuses an existing one.
      *
      * @throws ConnectionFailed|CommunicationFailed
-     *
-     * @return Greeting|null
      */
     public function open() : ?Greeting;
 
@@ -34,19 +32,13 @@ interface Connection
 
     /**
      * Indicates whether a connection is closed.
-     *
-     * @return bool
      */
     public function isClosed() : bool;
 
     /**
      * Sends a MessagePack request and gets a MessagePack response back.
      *
-     * @param string $data
-     *
      * @throws CommunicationFailed
-     *
-     * @return string
      */
     public function send(string $data) : string;
 }
