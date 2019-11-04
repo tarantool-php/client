@@ -527,7 +527,8 @@ Result 3: [3]
 ### SQL protocol
 
 Below is an example of the SQL execute request. For more detailed information and examples please see 
-the [official documentation](https://www.tarantool.io/en/doc/2.1/tutorials/sql_tutorial).
+the [official documentation](https://www.tarantool.io/en/doc/2.2/tutorials/sql_tutorial/). 
+*Note that SQL is supported only as of Tarantool 2.0.*
 
 <details>
 <summary><strong>Execute</strong></summary><br />
