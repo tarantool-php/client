@@ -28,10 +28,13 @@ final class PacketLength
 
     public static function unpack(string $data) : int
     {
-        if (false === $data = @\unpack('C/N', $data)) {
+        if (!isset($data[4]) || "\xce" !== $data[0]) {
             throw new \RuntimeException('Unable to unpack packet length.');
         }
 
-        return $data[1];
+        return \ord($data[1]) << 24
+            | \ord($data[2]) << 16
+            | \ord($data[3]) << 8
+            | \ord($data[4]);
     }
 }
