@@ -29,6 +29,7 @@ A pure PHP client for [Tarantool](http://tarantool.io) 1.7.1 or above.
    * [SQL protocol](#sql-protocol)
    * [User defined types](#user-defined-types) 
  * [Tests](#tests)
+ * [Benchmarks](#benchmarks)
  * [License](#license)
 
 
@@ -648,6 +649,11 @@ And then run both unit and integration tests:
 ```bash
 docker run --rm --net=tarantool-php -v $(pwd):/client -w /client client
 ```
+
+
+## Benchmarks
+
+The benchmarks can be found in the [dedicated repository](https://github.com/tarantool-php/benchmarks).
 
 
 ## License
