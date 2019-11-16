@@ -23,9 +23,9 @@ env:
     - TNT_PACKER=pecl COVERAGE_FILE='coverage.clover'
     - TNT_CONN_URI=/tmp/tarantool_client.sock
 
-    - PHP_IMAGE='php:7.4.0RC5-cli'
-    - PHP_IMAGE='php:7.4.0RC5-cli' TNT_PACKER=pecl
-    - PHP_IMAGE='php:7.4.0RC5-cli' TNT_CONN_URI=/tmp/tarantool_client.sock
+    - PHP_IMAGE='php:7.4.0RC6-cli'
+    - PHP_IMAGE='php:7.4.0RC6-cli' TNT_PACKER=pecl
+    - PHP_IMAGE='php:7.4.0RC6-cli' TNT_CONN_URI=/tmp/tarantool_client.sock
 
     - TNT_IMAGE='tarantool/tarantool:1.7'
     - TNT_IMAGE='tarantool/tarantool:1.9'
