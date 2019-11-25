@@ -28,7 +28,7 @@ else
 fi
 
 if [[ -n "$COVERAGE_FILE" ]]; then
-    RUN_CMDS="$RUN_CMDS && \\\\\n    pecl install xdebug && docker-php-ext-enable xdebug"
+    RUN_CMDS="$RUN_CMDS && \\\\\n    pecl install pcov && docker-php-ext-enable pcov"
 fi
 
 if [[ "1" != "$CHECK_CS" ]]; then
