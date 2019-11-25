@@ -18,26 +18,48 @@ use Tarantool\Client\Schema\Operations;
 
 final class OperationsTest extends TestCase
 {
-    /**
-     * @dataProvider provideOperationsData
-     */
-    public function testOperations(array $resultArray, Operations $operations) : void
+    public function testAdd() : void
     {
-        self::assertSame($resultArray, $operations->toArray());
+        self::assertSame([['+', 1, 5], ['+', 2, 7]], Operations::add(1, 5)->andAdd(2, 7)->toArray());
     }
 
-    public function provideOperationsData() : iterable
+    public function testSubtract() : void
     {
-        return [
-            [[['+', 1, 5], ['+', 2, 7]], Operations::add(1, 5)->andAdd(2, 7)],
-            [[['-', 1, 5], ['-', 2, 7]], Operations::subtract(1, 5)->andSubtract(2, 7)],
-            [[['&', 1, 5], ['&', 2, 7]], Operations::bitAnd(1, 5)->andBitAnd(2, 7)],
-            [[['|', 1, 5], ['|', 2, 7]], Operations::bitOr(1, 5)->andBitOr(2, 7)],
-            [[['^', 1, 5], ['^', 2, 7]], Operations::bitXor(1, 5)->andBitXor(2, 7)],
-            [[[':', 1, 0, 5, 'foo'], [':', 2, 1, 7, 'bar']], Operations::splice(1, 0, 5, 'foo')->andSplice(2, 1, 7, 'bar')],
-            [[['!', 1, 5], ['!', 2, 7]], Operations::insert(1, 5)->andInsert(2, 7)],
-            [[['#', 1, 5], ['#', 2, 7]], Operations::delete(1, 5)->andDelete(2, 7)],
-            [[['=', 1, 5], ['=', 2, 7]], Operations::set(1, 5)->andSet(2, 7)],
-        ];
+        self::assertSame([['-', 1, 5], ['-', 2, 7]], Operations::subtract(1, 5)->andSubtract(2, 7)->toArray());
+    }
+
+    public function testAnd() : void
+    {
+        self::assertSame([['&', 1, 5], ['&', 2, 7]], Operations::bitAnd(1, 5)->andBitAnd(2, 7)->toArray());
+    }
+
+    public function testOr() : void
+    {
+        self::assertSame([['|', 1, 5], ['|', 2, 7]], Operations::bitOr(1, 5)->andBitOr(2, 7)->toArray());
+    }
+
+    public function testXor() : void
+    {
+        self::assertSame([['^', 1, 5], ['^', 2, 7]], Operations::bitXor(1, 5)->andBitXor(2, 7)->toArray());
+    }
+
+    public function testSplice() : void
+    {
+        self::assertSame([[':', 1, 0, 5, 'foo'], [':', 2, 1, 7, 'bar']], Operations::splice(1, 0, 5, 'foo')->andSplice(2, 1, 7, 'bar')->toArray());
+    }
+
+    public function testInsert() : void
+    {
+        self::assertSame([['!', 1, 5], ['!', 2, 7]], Operations::insert(1, 5)->andInsert(2, 7)->toArray());
+    }
+
+    public function testDelete() : void
+    {
+        self::assertSame([['#', 1, 5], ['#', 2, 7]], Operations::delete(1, 5)->andDelete(2, 7)->toArray());
+    }
+
+    public function testSet() : void
+    {
+        self::assertSame([['=', 1, 5], ['=', 2, 7]], Operations::set(1, 5)->andSet(2, 7)->toArray());
     }
 }
