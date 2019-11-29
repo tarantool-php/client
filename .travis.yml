@@ -8,7 +8,7 @@ services:
 env:
   global:
     TNT_IMAGE='tarantool/tarantool:2'
-    PHP_IMAGE='php:7.3-cli'
+    PHP_IMAGE='php:7.4-cli'
 
   matrix:
     - PHP_IMAGE='php:7.1-cli' CHECK_CS=1
@@ -19,13 +19,13 @@ env:
     - PHP_IMAGE='php:7.2-cli' TNT_PACKER=pecl
     - PHP_IMAGE='php:7.2-cli' TNT_CONN_URI=/tmp/tarantool_client.sock
 
-    - COVERAGE_FILE='coverage.clover'
-    - TNT_PACKER=pecl COVERAGE_FILE='coverage.clover'
-    - TNT_CONN_URI=/tmp/tarantool_client.sock
+    - PHP_IMAGE='php:7.3-cli'
+    - PHP_IMAGE='php:7.3-cli' TNT_PACKER=pecl
+    - PHP_IMAGE='php:7.3-cli' TNT_CONN_URI=/tmp/tarantool_client.sock
 
-    - PHP_IMAGE='php:7.4.0RC6-cli'
-    - PHP_IMAGE='php:7.4.0RC6-cli' TNT_PACKER=pecl
-    - PHP_IMAGE='php:7.4.0RC6-cli' TNT_CONN_URI=/tmp/tarantool_client.sock
+    - COVERAGE_FILE='coverage.clover'
+    - COVERAGE_FILE='coverage.clover' TNT_PACKER=pecl
+    - COVERAGE_FILE='coverage.clover' TNT_CONN_URI=/tmp/tarantool_client.sock
 
     - TNT_IMAGE='tarantool/tarantool:1.7'
     - TNT_IMAGE='tarantool/tarantool:1.9'

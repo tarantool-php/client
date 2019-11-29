@@ -625,11 +625,11 @@ First, create a container:
 ./dockerfile.sh | docker build -t client -
 ```
 
-The command above will create a container named `client` with PHP 7.3 runtime.
+The command above will create a container named `client` with PHP 7.4 runtime.
 You may change the default runtime by defining the `PHP_IMAGE` environment variable:
 
 ```bash
-PHP_IMAGE='php:7.2-cli' ./dockerfile.sh | docker build -t client -
+PHP_IMAGE='php:7.3-cli' ./dockerfile.sh | docker build -t client -
 ```
 
 > See a list of various images [here](.travis.yml#L13).

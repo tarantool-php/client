@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [[ -z "$PHP_IMAGE" ]]; then
-    PHP_IMAGE='php:7.3-cli'
+    PHP_IMAGE='php:7.4-cli'
 fi
 
 if [[ -z "$TNT_PACKER" ]]; then
