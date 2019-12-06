@@ -39,9 +39,8 @@ echo -e "
 FROM $PHP_IMAGE
 
 RUN apt-get update && \\
-    apt-get install -y curl git unzip libzip-dev && \\
-    docker-php-ext-configure zip --with-libzip && \\
-    docker-php-ext-install sockets zip${RUN_CMDS}
+    apt-get install -y curl git unzip && \\
+    docker-php-ext-install sockets${RUN_CMDS}
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
