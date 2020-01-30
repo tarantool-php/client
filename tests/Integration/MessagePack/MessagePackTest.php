@@ -15,7 +15,10 @@ namespace Tarantool\Client\Tests\Integration\MessagePack;
 
 use Decimal\Decimal;
 use PHPUnit\Framework\Assert;
+use Tarantool\Client\Client;
+use Tarantool\Client\Handler\DefaultHandler;
 use Tarantool\Client\Packer\Extension\DecimalExtension;
+use Tarantool\Client\Packer\PackerFactory;
 use Tarantool\Client\Packer\PeclPacker;
 use Tarantool\Client\Packer\PurePacker;
 use Tarantool\Client\Schema\Criteria;
@@ -150,5 +153,42 @@ final class MessagePackTest extends TestCase
             ['9.'.str_repeat('9', self::TARANTOOL_DECIMAL_PRECISION - 1)],
             [str_repeat('9', self::TARANTOOL_DECIMAL_PRECISION - 1).'.9'],
         ];
+    }
+
+    /**
+     * @requires function MessagePack\Packer::pack
+     */
+    public function testUnpackingBigIntegerAsString() : void
+    {
+        [$number] = $this->client->evaluate('return 18446744073709551615ULL');
+
+        self::assertSame('18446744073709551615', $number);
+    }
+
+    /**
+     * @requires extension decimal
+     * @requires function MessagePack\Packer::pack
+     */
+    public function testUnpackingBigIntegerAsDecimal() : void
+    {
+        [$number] = $this->client->evaluate('return 18446744073709551615ULL');
+
+        self::assertTrue((new Decimal('18446744073709551615'))->equals($number));
+    }
+
+    /**
+     * @requires extension decimal
+     * @requires function MessagePack\Packer::pack
+     */
+    public function testPackerFactorySetsBigIntAsDecUnpackOption() : void
+    {
+        $client = new Client(new DefaultHandler(
+            ClientBuilder::createFromEnv()->createConnection(),
+            PackerFactory::create()
+        ));
+
+        [$number] = $client->evaluate('return 18446744073709551615ULL');
+
+        self::assertTrue((new Decimal('18446744073709551615'))->equals($number));
     }
 }
