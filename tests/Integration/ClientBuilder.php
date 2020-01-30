@@ -32,16 +32,16 @@ final class ClientBuilder
     private const DEFAULT_TCP_HOST = '127.0.0.1';
     private const DEFAULT_TCP_PORT = 3301;
 
-    private $packer;
+    private $packerType;
     private $packerPureFactory;
     private $packerPeclFactory;
     private $uri;
     private $options = [];
     private $connectionOptions = [];
 
-    public function setPacker(string $packer) : self
+    public function setPackerType(string $packerType) : self
     {
-        $this->packer = $packer;
+        $this->packerType = $packerType;
 
         return $this;
     }
@@ -130,7 +130,7 @@ final class ClientBuilder
     public static function createFromEnv() : self
     {
         return (new self())
-            ->setPacker(getenv('TNT_PACKER'))
+            ->setPackerType(getenv('TNT_PACKER'))
             ->setUri(getenv('TNT_CONN_URI'));
     }
 
@@ -159,15 +159,15 @@ final class ClientBuilder
 
     public function createPacker() : Packer
     {
-        if (self::PACKER_PURE === $this->packer) {
+        if (self::PACKER_PURE === $this->packerType) {
             return $this->packerPureFactory ? ($this->packerPureFactory)() : new PurePacker();
         }
 
-        if (self::PACKER_PECL === $this->packer) {
+        if (self::PACKER_PECL === $this->packerType) {
             return $this->packerPeclFactory ? ($this->packerPeclFactory)() : new PeclPacker();
         }
 
-        throw new \UnexpectedValueException(sprintf('"%s" packer is not supported.', $this->packer));
+        throw new \UnexpectedValueException(sprintf('"%s" packer is not supported.', $this->packerType));
     }
 
     private static function findOpenTcpPort(int $min) : int
