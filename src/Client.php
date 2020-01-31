@@ -197,10 +197,10 @@ final class Client
         $schema = $this->getSpaceById(Space::VSPACE_ID);
         $data = $schema->select(Criteria::key([$spaceName])->andIndex(Space::VSPACE_NAME_INDEX));
 
-        if ([] === $data) {
-            throw RequestFailed::unknownSpace($spaceName);
+        if ($data) {
+            return $data[0][0];
         }
 
-        return $data[0][0];
+        throw RequestFailed::unknownSpace($spaceName);
     }
 }

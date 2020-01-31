@@ -23,7 +23,7 @@ final class SqlQueryResult implements \IteratorAggregate, \Countable
     {
         $this->data = $data;
         $this->metadata = $metadata;
-        $this->keys = ([] === $metadata) ? [] : \array_column($metadata, 0);
+        $this->keys = $metadata ? \array_column($metadata, 0) : [];
     }
 
     public function getData() : array
@@ -38,7 +38,7 @@ final class SqlQueryResult implements \IteratorAggregate, \Countable
 
     public function isEmpty() : bool
     {
-        return [] === $this->data;
+        return !$this->data;
     }
 
     public function getFirst() : ?array

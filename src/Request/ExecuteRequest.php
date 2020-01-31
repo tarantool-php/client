@@ -22,11 +22,11 @@ final class ExecuteRequest implements Request
 
     public function __construct(string $sql, array $params = [])
     {
-        $this->body = [] === $params ? [
-            Keys::SQL_TEXT => $sql,
-        ] : [
+        $this->body = $params ? [
             Keys::SQL_TEXT => $sql,
             Keys::SQL_BIND => $params,
+        ] : [
+            Keys::SQL_TEXT => $sql,
         ];
     }
 

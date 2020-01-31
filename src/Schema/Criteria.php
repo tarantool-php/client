@@ -260,6 +260,6 @@ final class Criteria
             return $this->iteratorType;
         }
 
-        return [] === $this->key ? IteratorTypes::ALL : IteratorTypes::EQ;
+        return $this->key ? IteratorTypes::EQ : IteratorTypes::ALL;
     }
 }
