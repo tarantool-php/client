@@ -33,13 +33,16 @@ final class Keys
     public const EXPR = 0x27;
     public const OPERATIONS = 0x28;
     public const DATA = 0x30;
-    public const METADATA = 0x32;
     public const ERROR = 0x31;
+    public const METADATA = 0x32;
+    public const BIND_METADATA = 0x33;
+    public const BIND_COUNT = 0x34;
     public const SQL_TEXT = 0x40;
     public const SQL_BIND = 0x41;
     public const SQL_INFO = 0x42;
     public const SQL_INFO_ROW_COUNT = 0x00;
     public const SQL_INFO_AUTO_INCREMENT_IDS = 0x01;
+    public const STMT_ID = 0x43;
 
     private function __construct()
     {

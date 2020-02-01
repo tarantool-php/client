@@ -18,17 +18,35 @@ use Tarantool\Client\RequestTypes;
 
 final class ExecuteRequest implements Request
 {
-    /** @var non-empty-array<int, string|array> */
+    /** @var non-empty-array<int, int|string|array> */
     private $body;
 
-    public function __construct(string $sql, array $params = [])
+    /**
+     * @param non-empty-array<int, int|string|array> $body
+     */
+    private function __construct($body)
     {
-        $this->body = $params ? [
+        $this->body = $body;
+    }
+
+    public static function fromSql(string $sql, array $params = []) : self
+    {
+        return new self($params ? [
             Keys::SQL_TEXT => $sql,
             Keys::SQL_BIND => $params,
         ] : [
             Keys::SQL_TEXT => $sql,
-        ];
+        ]);
+    }
+
+    public static function fromStatementId(int $statementId, array $params = []) : self
+    {
+        return new self($params ? [
+            Keys::STMT_ID => $statementId,
+            Keys::SQL_BIND => $params,
+        ] : [
+            Keys::STMT_ID => $statementId,
+        ]);
     }
 
     public function getType() : int

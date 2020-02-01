@@ -25,6 +25,7 @@ final class RequestTypes
     public const UPSERT = 9;
     public const CALL = 10;
     public const EXECUTE = 11;
+    public const PREPARE = 13;
     public const PING = 64;
 
     private const ALL = [
@@ -38,6 +39,7 @@ final class RequestTypes
         self::UPSERT => 'upsert',
         self::CALL => 'call',
         self::EXECUTE => 'execute',
+        self::PREPARE => 'prepare',
         self::PING => 'ping',
     ];
 
