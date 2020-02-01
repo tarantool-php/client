@@ -32,7 +32,7 @@ abstract class TestCase extends BaseTestCase
      */
     protected $client;
 
-    private const REGEX_REQUIRES_TARANTOOL_VERSION = '/tarantool\s+?(?<version>.+?)$/i';
+    private const REGEX_REQUIRES_TARANTOOL_VERSION = '/tarantool\s+(?P<operator>[<>=!]{0,2})\s*(?<version>.+)$/i';
 
     public static function setUpBeforeClass() : void
     {
@@ -58,11 +58,12 @@ abstract class TestCase extends BaseTestCase
                     continue;
                 }
 
-                if (version_compare(self::getTarantoolVersion(), $matches['version'], '<')) {
-                    self::markTestSkipped(sprintf('Tarantool >= %s is required', $matches['version']));
+                $operator = empty($matches['operator']) ? '>=' : $matches['operator'];
+                if (version_compare(self::getTarantoolVersion(), $matches['version'], $operator)) {
+                    continue;
                 }
 
-                break;
+                self::markTestSkipped(sprintf('Tarantool %s %s is required', $operator, $matches['version']));
             }
         }
 
@@ -83,9 +84,9 @@ abstract class TestCase extends BaseTestCase
 
     final protected static function getTarantoolVersion() : string
     {
-        $connection = ClientBuilder::createFromEnv()->createConnection();
+        [$info] = ClientBuilder::createFromEnv()->build()->call('box.info');
 
-        return $connection->open()->getServerVersion();
+        return preg_replace('/-[^-]+$/', '', $info['version']);
     }
 
     final protected static function triggerUnexpectedResponse(Handler $handler, Request $initialRequest, int $sync = 0) : Connection

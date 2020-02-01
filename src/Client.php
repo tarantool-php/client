@@ -26,6 +26,7 @@ use Tarantool\Client\Request\CallRequest;
 use Tarantool\Client\Request\EvaluateRequest;
 use Tarantool\Client\Request\ExecuteRequest;
 use Tarantool\Client\Request\PingRequest;
+use Tarantool\Client\Request\PrepareRequest;
 use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Schema\Space;
 
@@ -174,7 +175,7 @@ final class Client
      */
     public function execute(string $sql, ...$params) : Response
     {
-        return $this->handler->handle(new ExecuteRequest($sql, $params));
+        return $this->handler->handle(ExecuteRequest::fromSql($sql, $params));
     }
 
     /**
@@ -182,7 +183,7 @@ final class Client
      */
     public function executeQuery(string $sql, ...$params) : SqlQueryResult
     {
-        $response = $this->handler->handle(new ExecuteRequest($sql, $params));
+        $response = $this->handler->handle(ExecuteRequest::fromSql($sql, $params));
 
         return new SqlQueryResult(
             $response->getBodyField(Keys::DATA),
@@ -195,9 +196,22 @@ final class Client
      */
     public function executeUpdate(string $sql, ...$params) : SqlUpdateResult
     {
-        $response = $this->handler->handle(new ExecuteRequest($sql, $params));
+        $response = $this->handler->handle(ExecuteRequest::fromSql($sql, $params));
 
         return new SqlUpdateResult($response->getBodyField(Keys::SQL_INFO));
+    }
+
+    public function prepare(string $sql) : PreparedStatement
+    {
+        $response = $this->handler->handle(PrepareRequest::fromSql($sql));
+
+        return new PreparedStatement(
+            $this->handler,
+            $response->getBodyField(Keys::STMT_ID),
+            $response->getBodyField(Keys::BIND_COUNT),
+            $response->getBodyField(Keys::BIND_METADATA),
+            $response->tryGetBodyField(Keys::METADATA, [])
+        );
     }
 
     public function flushSpaces() : void

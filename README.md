@@ -218,7 +218,6 @@ $client = Client::fromDefaults()->withMiddleware(
 The following are examples of binary protocol requests. For more detailed information and examples please see
 the [official documentation](https://www.tarantool.io/en/doc/2.1/book/box/box_space/#box-space-operations-detailed-examples).
 
-
 <details>
 <summary><strong>Select</strong></summary><br />
 
@@ -528,7 +527,7 @@ Result 3: [3]
 
 ### SQL protocol
 
-Below is an example of the SQL execute request. For more detailed information and examples please see
+The following are examples of SQL protocol requests. For more detailed information and examples please see
 the [official documentation](https://www.tarantool.io/en/doc/2.2/tutorials/sql_tutorial/). 
 *Note that SQL is supported only as of Tarantool 2.0.*
 
@@ -580,6 +579,37 @@ if ($resultSet === null) {
     $affectedCount = $sqlInfo[Keys::SQL_INFO_ROW_COUNT];
 } 
 ``` 
+</details>
+
+
+<details>
+<summary><strong>Prepare</strong></summary><br />
+
+*Note that the `prepare` request is supported only as of Tarantool 2.3.2.*
+
+*Code*
+
+```php
+$client->execute('CREATE TABLE users ("id" INTEGER PRIMARY KEY AUTOINCREMENT, "name" VARCHAR(50))');
+
+$stmt = $client->prepare('INSERT INTO users VALUES(null, ?)');
+for ($i = 1; $i <= 100; ++$i) {
+    $stmt->execute("name_$i");
+    // you can also use executeSelect() and executeUpdate(), e.g.:
+    // $lastInsertIds = $stmt->executeUpdate("name_$i")->getAutoincrementIds();
+}
+$stmt->close();
+
+$result = $client->executeQuery('SELECT COUNT("id") AS "cnt" FROM users');
+
+printf("Result: %s\n", json_encode($result->getFirst()));
+```
+
+*Output*
+
+```
+Result: {"cnt":100}
+```
 </details>
 
 

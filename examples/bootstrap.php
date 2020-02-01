@@ -32,12 +32,10 @@ function create_client(?Packer $packer = null) : Client
 
 function server_version_at_least(string $version, Client $client) : bool
 {
-    $connection = $client->getHandler()->getConnection();
-    if (!$greeting = $connection->open()) {
-        throw new \RuntimeException('Failed to retrieve server version');
-    }
+    [$info] = $client->call('box.info');
+    $actualVersion = preg_replace('/-[^-]+$/', '', $info['version']);
 
-    return version_compare($greeting->getServerVersion(), $version, '>=');
+    return version_compare($actualVersion, $version, '>=');
 }
 
 function ensure_server_version_at_least(string $version, Client $client) : void
