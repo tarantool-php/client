@@ -17,54 +17,101 @@ use Tarantool\Client\Tests\Integration\TestCase;
 
 /**
  * @requires Tarantool 2
+ *
+ * @eval box.execute([[ DROP TABLE IF EXISTS exec_query ]])
+ * @eval box.execute([[ CREATE TABLE exec_query (id INTEGER PRIMARY KEY, name VARCHAR(50)) ]])
+ * @eval box.execute([[ INSERT INTO exec_query VALUES (1, 'A'), (2, 'B') ]])
  */
 final class ExecuteTest extends TestCase
 {
     /**
-     * @dataProvider provideExecuteUpdateData
+     * @eval box.execute([[ DROP TABLE IF EXISTS exec_update ]])
+     * @eval box.execute([[ CREATE TABLE exec_update (id INTEGER PRIMARY KEY, name VARCHAR(50)) ]])
      */
-    public function testExecuteUpdate(string $sql, array $params, $expectedCount, ?array $expectedAutoincrementIds) : void
+    public function testExecuteUpdateInsertsRows() : void
     {
-        $result = $this->client->executeUpdate($sql, ...$params);
+        $result = $this->client->executeUpdate(
+            'INSERT INTO exec_update VALUES (1, :name1), (2, :name2)',
+            [':name1' => 'A'], [':name2' => 'B']
+        );
 
-        is_array($expectedCount)
-            ? self::assertContains($result->count(), $expectedCount)
-            : self::assertSame($expectedCount, $result->count())
-        ;
-
-        self::assertSame($expectedAutoincrementIds, $result->getAutoincrementIds());
-    }
-
-    public function provideExecuteUpdateData() : iterable
-    {
-        return [
-            ['DROP TABLE IF EXISTS table_exec', [], [0, 1], null],
-            ['CREATE TABLE table_exec (column1 INTEGER PRIMARY KEY AUTOINCREMENT, column2 VARCHAR(100))', [], 1, null],
-            ['INSERT INTO table_exec VALUES (1, :val1), (2, :val2)', [[':val1' => 'A'], [':val2' => 'B']], 2, null],
-            ['UPDATE table_exec SET column2 = ? WHERE column1 = 2', ['BB'], 1, null],
-            ["INSERT INTO table_exec VALUES (100, 'a'), (null, 'b'), (120, 'c'), (null, 'd')", [], 4, [101, 121]],
-        ];
+        self::assertNull($result->getAutoincrementIds());
+        self::assertSame(2, $result->count());
     }
 
     /**
-     * @dataProvider provideExecuteQueryData
-     *
-     * @depends testExecuteUpdate
+     * @eval box.execute([[ DROP TABLE IF EXISTS exec_update ]])
+     * @eval box.execute([[ CREATE TABLE exec_update (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(50)) ]])
      */
-    public function testExecuteQuery(string $sql, array $params, array $expectedData) : void
+    public function testExecuteUpdateInsertsRowsWithAutoIncrementedIds() : void
     {
-        $result = $this->client->executeQuery($sql, ...$params);
+        $result = $this->client->executeUpdate("INSERT INTO exec_update VALUES (100, 'A'), (null, 'B'), (120, 'C'), (null, 'D')");
 
-        self::assertSame($expectedData, $result->getData());
+        self::assertSame([101, 121], $result->getAutoincrementIds());
+        self::assertSame(4, $result->count());
     }
 
-    public function provideExecuteQueryData() : iterable
+    /**
+     * @eval box.execute([[ DROP TABLE IF EXISTS exec_update ]])
+     * @eval box.execute([[ CREATE TABLE exec_update (id INTEGER PRIMARY KEY, name VARCHAR(50)) ]])
+     * @eval box.execute([[ INSERT INTO exec_update VALUES (1, 'A'), (2, 'B') ]])
+     */
+    public function testExecuteUpdateUpdatesRow() : void
     {
-        return [
-            ['SELECT * FROM table_exec WHERE column1 = 1', [], [[1, 'A']]],
-            ['SELECT column2 FROM table_exec WHERE column1 = 1', [], [['A']]],
-            ['SELECT * FROM table_exec WHERE column1 = 2', [], [[2, 'BB']]],
-            ['SELECT * FROM table_exec WHERE column1 = 3', [], []],
-        ];
+        $result = $this->client->executeUpdate('UPDATE exec_update SET name = ? WHERE id = ?', 'BB', 2);
+
+        self::assertNull($result->getAutoincrementIds());
+        self::assertSame(1, $result->count());
+    }
+
+    public function testExecuteQueryFetchesAllRows() : void
+    {
+        $result = $this->client->executeQuery('SELECT * FROM exec_query');
+
+        self::assertSame([[1, 'A'], [2, 'B']], $result->getData());
+        self::assertSame(2, $result->count());
+    }
+
+    public function testExecuteQueryFetchesOneRow() : void
+    {
+        $result = $this->client->executeQuery('SELECT * FROM exec_query WHERE id = 1');
+
+        self::assertSame([[1, 'A']], $result->getData());
+        self::assertSame(1, $result->count());
+    }
+
+    public function testExecuteQueryFetchesNoRows() : void
+    {
+        $result = $this->client->executeQuery('SELECT * FROM exec_query WHERE id = -1');
+
+        self::assertSame([], $result->getData());
+        self::assertSame(0, $result->count());
+    }
+
+    public function testExecuteQueryBindsPositionalParameters() : void
+    {
+        $result = $this->client->executeQuery('SELECT * FROM exec_query WHERE id = ? AND name = ?', 2, 'B');
+
+        self::assertSame([[2, 'B']], $result->getData());
+        self::assertSame(1, $result->count());
+    }
+
+    public function testExecuteQueryBindsNamedParameters() : void
+    {
+        $result = $this->client->executeQuery('SELECT * FROM exec_query WHERE id = :id AND name = :name', [':name' => 'B'], [':id' => 2]);
+
+        self::assertSame([[2, 'B']], $result->getData());
+        self::assertSame(1, $result->count());
+    }
+
+    public function testExecuteQueryBindsMixedParameters() : void
+    {
+        $result = $this->client->executeQuery('SELECT * FROM exec_query WHERE id = ? AND name = :name', 2, [':name' => 'B']);
+
+        // this doesn't work, see https://github.com/tarantool/doc/issues/1096
+        // $result = $this->client->executeQuery('SELECT * FROM exec_query WHERE id = :id AND name = ?', 'B', [':id' => 2]);
+
+        self::assertSame([[2, 'B']], $result->getData());
+        self::assertSame(1, $result->count());
     }
 }
