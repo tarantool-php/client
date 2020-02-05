@@ -14,10 +14,19 @@ declare(strict_types=1);
 namespace Tarantool\Client\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
+use Tarantool\Client\Keys;
 use Tarantool\Client\Response;
 
 final class ResponseTest extends TestCase
 {
+    public function testGetSchemaIdReturnsCorrectId() : void
+    {
+        $schemaId = 42;
+        $response = new Response([Keys::SCHEMA_ID => $schemaId], []);
+
+        self::assertSame($schemaId, $response->getSchemaId());
+    }
+
     public function testHasBodyKeyReturnsTrue() : void
     {
         $response = new Response([], [42 => null]);
