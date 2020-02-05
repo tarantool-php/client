@@ -50,15 +50,20 @@ final class Response
 
     public function getBodyField(int $key)
     {
-        if (!isset($this->body[$key])) {
-            throw new \OutOfRangeException(\sprintf('Invalid body key 0x%x.', $key));
+        if (\array_key_exists($key, $this->body)) {
+            return $this->body[$key];
         }
 
-        return $this->body[$key];
+        throw new \OutOfRangeException(\sprintf('Invalid body key 0x%x.', $key));
     }
 
     public function tryGetBodyField(int $key, $default = null)
     {
-        return $this->body[$key] ?? $default;
+        return \array_key_exists($key, $this->body) ? $this->body[$key] : $default;
+    }
+
+    public function hasBodyField(int $key) : bool
+    {
+        return \array_key_exists($key, $this->body);
     }
 }
