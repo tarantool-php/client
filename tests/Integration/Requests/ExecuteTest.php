@@ -35,7 +35,7 @@ final class ExecuteTest extends TestCase
             [':name1' => 'A'], [':name2' => 'B']
         );
 
-        self::assertNull($result->getAutoincrementIds());
+        self::assertSame([], $result->getAutoincrementIds());
         self::assertSame(2, $result->count());
     }
 
@@ -60,7 +60,7 @@ final class ExecuteTest extends TestCase
     {
         $result = $this->client->executeUpdate('UPDATE exec_update SET name = ? WHERE id = ?', 'BB', 2);
 
-        self::assertNull($result->getAutoincrementIds());
+        self::assertSame([], $result->getAutoincrementIds());
         self::assertSame(1, $result->count());
     }
 

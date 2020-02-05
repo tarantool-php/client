@@ -27,8 +27,8 @@ final class SqlUpdateResult implements \Countable
         return $this->info[0];
     }
 
-    public function getAutoincrementIds() : ?array
+    public function getAutoincrementIds() : array
     {
-        return $this->info[1] ?? null;
+        return $this->info[1] ?? [];
     }
 }

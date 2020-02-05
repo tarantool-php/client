@@ -40,7 +40,7 @@ printf("Result 3: %s\n", json_encode([$result3->count(), $result3->getFirst()]))
 printf("Result 4: %s\n", json_encode(iterator_to_array($result4)));
 
 /* OUTPUT
-Result 1: [1,null]
+Result 1: [1,[]]
 Result 2: [2,[1,2]]
 Result 3: [1,{"id":1,"email":"foo@example.com"}]
 Result 4: [{"id":1,"email":"foo@example.com"},{"id":2,"email":"bar@example.com"}]
