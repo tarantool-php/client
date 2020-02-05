@@ -286,7 +286,7 @@ Result: [[1,"foo","bar"]]
 
 *Space data*
 
-```
+```lua
 tarantool> box.space.example:select()
 ---
 - - [1, 'foo', 'bar']
@@ -334,7 +334,7 @@ Result: [[2,25,"BAR"]]
 
 *Space data*
 
-```
+```lua
 tarantool> box.space.example:select()
 ---
 - - [1, 10, 'foo']
@@ -374,7 +374,7 @@ $space->upsert([1, 'foo', 'bar'], Operations::set(2, 'qux'));
 
 *Space data*
 
-```
+```lua
 tarantool> box.space.example:select()
 ---
 - - [1, 'foo', 'qux']
@@ -415,7 +415,7 @@ Result 2: [[3,"BAZ"]]
 
 *Space data*
 
-```
+```lua
 tarantool> box.space.example:select()
 ---
 - - [1, 'foo']
@@ -432,6 +432,7 @@ tarantool> box.space.example:select()
 *Fixtures*
 
 ```lua
+space = box.schema.space.create('example')
 space:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
 space:create_index('secondary', {type = 'tree', parts = {2, 'str'}})
 space:insert({1, 'foo'})
@@ -460,7 +461,7 @@ Result 2: [[3,"baz"]]
 
 *Space data*
 
-```
+```lua
 tarantool> box.space.example:select()
 ---
 - - [1, 'foo']
