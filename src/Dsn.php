@@ -153,7 +153,7 @@ final class Dsn
             return $default;
         }
 
-        if (null === $value = \filter_var($this->options[$name], \FILTER_VALIDATE_INT, \FILTER_NULL_ON_FAILURE)) {
+        if (false === $value = \filter_var($this->options[$name], \FILTER_VALIDATE_INT)) {
             throw new \TypeError(\sprintf('DSN option "%s" must be of the type int.', $name));
         }
 
