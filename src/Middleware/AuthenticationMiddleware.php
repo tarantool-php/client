@@ -32,9 +32,9 @@ final class AuthenticationMiddleware implements Middleware
 
     public function process(Request $request, Handler $handler) : Response
     {
-        $connection = $handler->getConnection();
+        $greeting = $handler->getConnection()->open();
 
-        if ($this->greeting !== $greeting = $connection->open()) {
+        if ($greeting && $greeting !== $this->greeting) {
             $handler->handle(new AuthenticateRequest(
                 $greeting->getSalt(),
                 $this->username,
