@@ -24,7 +24,7 @@ final class FirewallMiddleware implements Middleware
     private $allowed;
     private $denied;
 
-    private function __construct(array $allowed, array $denied)
+    private function __construct($allowed, $denied)
     {
         $this->allowed = $allowed ? \array_fill_keys($allowed, true) : [];
         $this->denied = $denied ? \array_fill_keys($denied, true) : [];

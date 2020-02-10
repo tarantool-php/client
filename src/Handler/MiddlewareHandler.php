@@ -25,7 +25,7 @@ final class MiddlewareHandler implements Handler
     private $middlewares;
     private $index = 0;
 
-    private function __construct(Handler $handler, array $middlewares)
+    private function __construct($handler, $middlewares)
     {
         $this->handler = $handler;
         $this->middlewares = $middlewares;

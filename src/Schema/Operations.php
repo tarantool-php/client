@@ -17,7 +17,7 @@ final class Operations
 {
     private $operations;
 
-    private function __construct(array $operation)
+    private function __construct($operation)
     {
         $this->operations = [$operation];
     }

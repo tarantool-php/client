@@ -34,7 +34,7 @@ final class StreamConnection implements Connection
     private $options;
     private $greeting;
 
-    private function __construct(string $uri, array $options)
+    private function __construct($uri, $options)
     {
         $this->uri = $uri;
         $this->options = $options + self::DEFAULT_OPTIONS;

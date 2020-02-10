@@ -24,7 +24,7 @@ final class Dsn
     private $isTcp = false;
     private $options;
 
-    private function __construct(string $connectionUri)
+    private function __construct($connectionUri)
     {
         $this->connectionUri = $connectionUri;
     }

@@ -26,7 +26,7 @@ final class RetryMiddleware implements Middleware
 
     private $getDelayMs;
 
-    private function __construct(\Closure $getDelayMs)
+    private function __construct($getDelayMs)
     {
         $this->getDelayMs = $getDelayMs;
     }
