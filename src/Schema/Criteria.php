@@ -15,10 +15,19 @@ namespace Tarantool\Client\Schema;
 
 final class Criteria
 {
+    /** @var int|string */
     private $index = 0;
+
+    /** @var array<int, mixed> */
     private $key = [];
+
+    /** @var int */
     private $limit = \PHP_INT_MAX & 0xffffffff;
+
+    /** @var int */
     private $offset = 0;
+
+    /** @psalm-var null|IteratorTypes::* */
     private $iteratorType;
 
     private function __construct()
@@ -118,6 +127,9 @@ final class Criteria
         return $this->offset;
     }
 
+    /**
+     * @psalm-param IteratorTypes::* $iteratorType
+     */
     public static function iterator(int $iteratorType) : self
     {
         $self = new self();
@@ -126,6 +138,9 @@ final class Criteria
         return $self;
     }
 
+    /**
+     * @psalm-param IteratorTypes::* $iteratorType
+     */
     public function andIterator(int $iteratorType) : self
     {
         $new = clone $this;
@@ -254,6 +269,9 @@ final class Criteria
         return $this->andIterator(IteratorTypes::NEIGHBOR);
     }
 
+    /**
+     * @psalm-return IteratorTypes::*
+     */
     public function getIterator() : int
     {
         if (null !== $this->iteratorType) {

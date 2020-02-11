@@ -18,6 +18,7 @@ use Tarantool\Client\RequestTypes;
 
 final class CallRequest implements Request
 {
+    /** @var array<int, string|array> */
     private $body;
 
     public function __construct(string $funcName, array $args = [])

@@ -21,9 +21,16 @@ use Tarantool\Client\Response;
 
 final class FirewallMiddleware implements Middleware
 {
+    /** @var array<int, true> */
     private $allowed;
+
+    /** @var array<int, true> */
     private $denied;
 
+    /**
+     * @param array $allowed
+     * @param array $denied
+     */
     private function __construct($allowed, $denied)
     {
         $this->allowed = $allowed ? \array_fill_keys($allowed, true) : [];

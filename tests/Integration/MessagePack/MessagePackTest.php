@@ -105,9 +105,10 @@ final class MessagePackTest extends TestCase
     }
 
     /**
+     * @group only-pure-packer
+     *
      * @requires Tarantool 2.3
      * @requires extension decimal
-     * @requires function MessagePack\Packer::pack
      *
      * @eval dec = require('decimal')
      *
@@ -156,7 +157,7 @@ final class MessagePackTest extends TestCase
     }
 
     /**
-     * @requires function MessagePack\Packer::pack
+     * @group only-pure-packer
      */
     public function testUnpackingBigIntegerAsString() : void
     {
@@ -166,8 +167,9 @@ final class MessagePackTest extends TestCase
     }
 
     /**
+     * @group only-pure-packer
+     *
      * @requires extension decimal
-     * @requires function MessagePack\Packer::pack
      */
     public function testUnpackingBigIntegerAsDecimal() : void
     {
@@ -177,8 +179,9 @@ final class MessagePackTest extends TestCase
     }
 
     /**
+     * @group only-pure-packer
+     *
      * @requires extension decimal
-     * @requires function MessagePack\Packer::pack
      */
     public function testPackerFactorySetsBigIntAsDecUnpackOption() : void
     {

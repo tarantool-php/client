@@ -28,6 +28,9 @@ class DecimalExtension implements Extension
         return self::TYPE;
     }
 
+    /**
+     * @param object $value
+     */
     public function pack(Packer $packer, $value) : ?string
     {
         if (!$value instanceof Decimal) {
@@ -57,6 +60,9 @@ class DecimalExtension implements Extension
         );
     }
 
+    /**
+     * @return Decimal
+     */
     public function unpackExt(BufferUnpacker $unpacker, int $extLength)
     {
         $scale = $unpacker->unpackInt();

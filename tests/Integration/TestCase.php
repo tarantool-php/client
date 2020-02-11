@@ -32,7 +32,7 @@ abstract class TestCase extends BaseTestCase
      */
     protected $client;
 
-    private const REGEX_REQURES_TARANTOOL_VERSION = '/tarantool\s+?(?<version>.+?)$/i';
+    private const REGEX_REQUIRES_TARANTOOL_VERSION = '/tarantool\s+?(?<version>.+?)$/i';
 
     public static function setUpBeforeClass() : void
     {
@@ -54,7 +54,7 @@ abstract class TestCase extends BaseTestCase
     {
         if (isset($annotations['requires'])) {
             foreach ($annotations['requires'] as $requirement) {
-                if (!preg_match(self::REGEX_REQURES_TARANTOOL_VERSION, $requirement, $matches)) {
+                if (!preg_match(self::REGEX_REQUIRES_TARANTOOL_VERSION, $requirement, $matches)) {
                     continue;
                 }
 

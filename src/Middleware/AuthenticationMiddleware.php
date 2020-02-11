@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Middleware;
 
+use Tarantool\Client\Connection\Greeting;
 use Tarantool\Client\Handler\Handler;
 use Tarantool\Client\Request\AuthenticateRequest;
 use Tarantool\Client\Request\Request;
@@ -22,6 +23,8 @@ final class AuthenticationMiddleware implements Middleware
 {
     private $username;
     private $password;
+
+    /** @var Greeting|null */
     private $greeting;
 
     public function __construct(string $username, string $password = '')

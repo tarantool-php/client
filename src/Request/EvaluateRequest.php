@@ -18,6 +18,7 @@ use Tarantool\Client\RequestTypes;
 
 final class EvaluateRequest implements Request
 {
+    /** @var array<int, string|array> */
     private $body;
 
     public function __construct(string $expr, array $args = [])

@@ -24,8 +24,12 @@ final class RetryMiddleware implements Middleware
 {
     private const DEFAULT_MAX_RETRIES = 2;
 
+    /** @var \Closure */
     private $getDelayMs;
 
+    /**
+     * @param \Closure $getDelayMs
+     */
     private function __construct($getDelayMs)
     {
         $this->getDelayMs = $getDelayMs;

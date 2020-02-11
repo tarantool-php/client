@@ -12,41 +12,31 @@ if [[ -z "$TNT_CONN_URI" ]]; then
     TNT_CONN_URI='tcp://tarantool:3301'
 fi
 
-COMPOSER_REMOVE=''
-
-if [[ $TNT_PACKER == pecl ]]; then
-    RUN_CMDS="$RUN_CMDS && \\\\\n    pecl install msgpack && docker-php-ext-enable msgpack"
-    COMPOSER_REMOVE="$COMPOSER_REMOVE rybakit/msgpack ext-decimal"
-else
-    if [[ $TNT_PACKER == pure ]] && [[ $TNT_IMAGE == *"2"* ]]; then
-        RUN_CMDS="$RUN_CMDS && \\\\\n    apt-get install -y libmpdec-dev"
-        RUN_CMDS="$RUN_CMDS && \\\\\n    pecl install decimal && docker-php-ext-enable decimal"
-    else
-      COMPOSER_REMOVE="$COMPOSER_REMOVE ext-decimal"
-    fi
-    COMPOSER_REMOVE="$COMPOSER_REMOVE ext-msgpack"
-fi
-
+RUN_CMDS=''
 if [[ -n "$COVERAGE_FILE" ]]; then
     RUN_CMDS="$RUN_CMDS && \\\\\n    pecl install pcov && docker-php-ext-enable pcov"
 fi
 
-if [[ "1" != "$CHECK_CS" ]]; then
-    COMPOSER_REMOVE="$COMPOSER_REMOVE friendsofphp/php-cs-fixer"
+if [[ $TNT_PACKER == pecl ]]; then
+  PHPUNIT_EXCLUDE_GROUP='only-pure-packer'
+else
+  PHPUNIT_EXCLUDE_GROUP='only-pecl-packer'
 fi
 
 echo -e "
 FROM $PHP_IMAGE
 
 RUN apt-get update && \\
-    apt-get install -y curl git unzip && \\
-    docker-php-ext-install sockets${RUN_CMDS}
+    apt-get install -y curl git libmpdec-dev unzip && \\
+    docker-php-ext-install sockets && \\
+    pecl install msgpack && docker-php-ext-enable msgpack && \\
+    pecl install decimal && docker-php-ext-enable decimal${RUN_CMDS}
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 ENV PATH=~/.composer/vendor/bin:\$PATH
 ENV TNT_PACKER=$TNT_PACKER TNT_CONN_URI=$TNT_CONN_URI
 
-CMD if [ ! -f composer.lock ]; then ${COMPOSER_REMOVE:+composer remove --dev --no-update }$COMPOSER_REMOVE${COMPOSER_REMOVE:+ && }composer install; fi && \\
-    vendor/bin/phpunit${COVERAGE_FILE:+ --coverage-text --coverage-clover=}$COVERAGE_FILE
+CMD if [ ! -f composer.lock ]; then composer install; fi && \\
+    vendor/bin/phpunit --exclude-group ${PHPUNIT_EXCLUDE_GROUP} ${COVERAGE_FILE:+ --coverage-text --coverage-clover=}$COVERAGE_FILE
 "

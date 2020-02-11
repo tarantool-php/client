@@ -19,7 +19,7 @@ use Tarantool\Client\Packer\Packer;
 use Tarantool\Client\Packer\PurePacker;
 
 /**
- * @requires function MessagePack\Packer::pack
+ * @group only-pure-packer
  */
 final class PurePackerTest extends PackerTest
 {

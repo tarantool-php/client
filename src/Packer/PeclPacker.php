@@ -19,7 +19,10 @@ use Tarantool\Client\Response;
 
 final class PeclPacker implements Packer
 {
+    /** @var \MessagePack */
     private $packer;
+
+    /** @var \MessagePackUnpacker */
     private $unpacker;
 
     public function __construct(bool $phpOnly = true)

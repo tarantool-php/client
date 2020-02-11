@@ -22,7 +22,8 @@
         "monolog/monolog": "^1.24|^2.0",
         "phpunit/phpunit": "^7.1|^8.2.5",
         "psr/log": "^1.1",
-        "rybakit/msgpack": "^0.7"
+        "rybakit/msgpack": "^0.7",
+        "vimeo/psalm": "dev-master"
     },
     "suggest": {
         "ext-decimal": "For using decimals with Tarantool 2.3+",

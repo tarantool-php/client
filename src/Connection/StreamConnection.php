@@ -28,12 +28,25 @@ final class StreamConnection implements Connection
         'persistent' => false,
     ];
 
+    /** @var resource|null */
     private $stream;
+
+    /** @var resource|null */
     private $streamContext;
+
+    /** @var string */
     private $uri;
+
+    /** @var array<string, mixed> */
     private $options;
+
+    /** @var Greeting|null */
     private $greeting;
 
+    /**
+     * @param string $uri
+     * @param array<string, mixed> $options
+     */
     private function __construct($uri, $options)
     {
         $this->uri = $uri;
@@ -107,6 +120,7 @@ final class StreamConnection implements Connection
     public function close() : void
     {
         if (\is_resource($this->stream)) {
+            /** @psalm-suppress InvalidPropertyAssignmentValue */
             \fclose($this->stream);
         }
 
@@ -121,6 +135,7 @@ final class StreamConnection implements Connection
 
     public function send(string $data) : string
     {
+        /** @psalm-suppress PossiblyNullArgument */
         if (!\fwrite($this->stream, $data)) {
             throw new CommunicationFailed('Unable to write request.');
         }
@@ -133,10 +148,12 @@ final class StreamConnection implements Connection
 
     private function read(int $length, string $errorMessage) : string
     {
+        /** @psalm-suppress PossiblyNullArgument */
         if ($data = \stream_get_contents($this->stream, $length)) {
             return $data;
         }
 
+        /** @psalm-suppress PossiblyNullArgument */
         $meta = \stream_get_meta_data($this->stream);
         throw new CommunicationFailed($meta['timed_out'] ? 'Read timed out.' : $errorMessage);
     }

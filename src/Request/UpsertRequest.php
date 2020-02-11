@@ -18,6 +18,7 @@ use Tarantool\Client\RequestTypes;
 
 final class UpsertRequest implements Request
 {
+    /** @var array<int, int|array> */
     private $body;
 
     public function __construct(int $spaceId, array $tuple, array $operations)

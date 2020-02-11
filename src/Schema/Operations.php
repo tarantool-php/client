@@ -15,8 +15,12 @@ namespace Tarantool\Client\Schema;
 
 final class Operations
 {
+    /** @var array<int, array> */
     private $operations;
 
+    /**
+     * @param array<int, mixed> $operation
+     */
     private function __construct($operation)
     {
         $this->operations = [$operation];
@@ -176,6 +180,7 @@ final class Operations
 
     /**
      * @param int|string $field
+     * @param mixed $value
      */
     public static function set($field, $value) : self
     {
@@ -184,6 +189,7 @@ final class Operations
 
     /**
      * @param int|string $field
+     * @param mixed $value
      */
     public function andSet($field, $value) : self
     {

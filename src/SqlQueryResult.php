@@ -15,8 +15,13 @@ namespace Tarantool\Client;
 
 final class SqlQueryResult implements \IteratorAggregate, \Countable
 {
+    /** @var array<int, mixed> */
     private $data;
+
+    /** @var array<int, array<int, string>> */
     private $metadata;
+
+    /** @var array<int, string> */
     private $keys;
 
     public function __construct(array $data, array $metadata)

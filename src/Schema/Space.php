@@ -32,6 +32,8 @@ final class Space
 
     private $handler;
     private $id;
+
+    /** @var array<string, int> */
     private $indexes = [];
 
     public function __construct(Handler $handler, int $id)
@@ -79,6 +81,10 @@ final class Space
         return $this->handler->handle($request)->getBodyField(Keys::DATA);
     }
 
+    /**
+     * @param array<int, mixed> $key
+     * @param int|string $index
+     */
     public function update(array $key, Operations $operations, $index = 0) : array
     {
         if (\is_string($index)) {
@@ -97,6 +103,10 @@ final class Space
         $this->handler->handle($request);
     }
 
+    /**
+     * @param array<int, mixed> $key
+     * @param int|string $index
+     */
     public function delete(array $key, $index = 0) : array
     {
         if (\is_string($index)) {

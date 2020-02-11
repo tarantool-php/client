@@ -31,7 +31,10 @@ use Tarantool\Client\Schema\Space;
 
 final class Client
 {
+    /** @var Handler */
     private $handler;
+
+    /** @var array<array-key, Space> */
     private $spaces = [];
 
     public function __construct(Handler $handler)
@@ -148,6 +151,9 @@ final class Client
         return $this->spaces[$spaceId] = new Space($this->handler, $spaceId);
     }
 
+    /**
+     * @param mixed ...$args
+     */
     public function call(string $funcName, ...$args) : array
     {
         $request = new CallRequest($funcName, $args);
@@ -155,6 +161,19 @@ final class Client
         return $this->handler->handle($request)->getBodyField(Keys::DATA);
     }
 
+    /**
+     * @param mixed ...$args
+     */
+    public function evaluate(string $expr, ...$args) : array
+    {
+        $request = new EvaluateRequest($expr, $args);
+
+        return $this->handler->handle($request)->getBodyField(Keys::DATA);
+    }
+
+    /**
+     * @param mixed ...$params
+     */
     public function executeQuery(string $sql, ...$params) : SqlQueryResult
     {
         $request = new ExecuteRequest($sql, $params);
@@ -166,6 +185,9 @@ final class Client
         );
     }
 
+    /**
+     * @param mixed ...$params
+     */
     public function executeUpdate(string $sql, ...$params) : SqlUpdateResult
     {
         $request = new ExecuteRequest($sql, $params);
@@ -173,13 +195,6 @@ final class Client
         return new SqlUpdateResult(
             $this->handler->handle($request)->getBodyField(Keys::SQL_INFO)
         );
-    }
-
-    public function evaluate(string $expr, ...$args) : array
-    {
-        $request = new EvaluateRequest($expr, $args);
-
-        return $this->handler->handle($request)->getBodyField(Keys::DATA);
     }
 
     public function flushSpaces() : void
