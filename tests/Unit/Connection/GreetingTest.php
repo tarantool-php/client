@@ -15,6 +15,7 @@ namespace Tarantool\Client\Tests\Unit\Connection;
 
 use PHPUnit\Framework\TestCase;
 use Tarantool\Client\Connection\Greeting;
+use Tarantool\Client\Tests\GreetingDataProvider;
 
 final class GreetingTest extends TestCase
 {
@@ -27,25 +28,28 @@ final class GreetingTest extends TestCase
     }
 
     /**
-     * @dataProvider provideServerVersions
+     * @dataProvider provideServerVersionData
      */
-    public function testGetServerVersion(string $greeting, int $expectedVersion) : void
+    public function testGetServerVersion(string $greeting, string $expectedVersion, int $expectedVersionId) : void
     {
-        self::assertSame($expectedVersion, Greeting::parse($greeting)->getServerVersionId());
+        $greeting = Greeting::parse($greeting);
+
+        self::assertSame($expectedVersion, $greeting->getServerVersion());
+        self::assertSame($expectedVersionId, $greeting->getServerVersionId());
     }
 
-    public function provideServerVersions() : iterable
+    public function provideServerVersionData() : iterable
     {
         return [
-            ['Tarantool foobar', 0],
-            ['Tarantool 0.0.2', 2],
-            ['Tarantool 0.2.0', 200],
-            ['Tarantool 0.2.2', 202],
-            ['Tarantool 2.0.0', 20000],
-            ['Tarantool 2.0.2', 20002],
-            ['Tarantool 2.2.0', 20200],
-            ['Tarantool 2.2.2', 20202],
-            ['Tarantool 10.20.30', 102030],
+            [GreetingDataProvider::generateGreeting('foobar'), '', 0],
+            [GreetingDataProvider::generateGreeting('0.0.2'), '0.0.2', 2],
+            [GreetingDataProvider::generateGreeting('0.2.0'), '0.2.0', 200],
+            [GreetingDataProvider::generateGreeting('0.2.2'), '0.2.2', 202],
+            [GreetingDataProvider::generateGreeting('2.0.0'), '2.0.0', 20000],
+            [GreetingDataProvider::generateGreeting('2.0.2'), '2.0.2', 20002],
+            [GreetingDataProvider::generateGreeting('2.2.0'), '2.2.0', 20200],
+            [GreetingDataProvider::generateGreeting('2.2.2'), '2.2.2', 20202],
+            [GreetingDataProvider::generateGreeting('10.20.30'), '10.20.30', 102030],
         ];
     }
 }

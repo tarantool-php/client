@@ -15,6 +15,9 @@ namespace Tarantool\Client\Tests;
 
 final class GreetingDataProvider
 {
+    private const DEFAULT_SERVER_VERSION = '2.2.2';
+    private const SALT_SIZE_BYTES = 20;
+
     public static function provideGreetingsWithInvalidServerName() : iterable
     {
         return [
@@ -46,17 +49,36 @@ final class GreetingDataProvider
     public static function provideValidGreetings() : iterable
     {
         return [
-            [self::generateGreeting('12345678901234567890'), '12345678901234567890'],
+            [self::generateGreetingFromSalt('12345678901234567890'), '12345678901234567890'],
         ];
     }
 
-    public static function generateGreeting(?string $salt = null) : string
+    public static function generateGreeting(string $version = self::DEFAULT_SERVER_VERSION) : string
     {
-        $salt = null === $salt ? substr(md5(uniqid()), 0, 20) : $salt;
+        return self::generateGreetingFromSalt(self::generateSalt(), $version);
+    }
 
-        $greeting = str_pad('Tarantool 2.2.2 (Binary) 5e612e67-a9d2-4774-9709-31e44b40ffad', 63, ' ')."\n";
+    public static function generateGreetingFromSalt(string $salt, string $version = self::DEFAULT_SERVER_VERSION) : string
+    {
+        $uuid = self::generateUuid4();
+
+        $greeting = str_pad("Tarantool $version (Binary) $uuid", 63, ' ')."\n";
         $greeting .= str_pad(base64_encode($salt.str_repeat('_', 12)), 63, ' ')."\n";
 
         return $greeting;
+    }
+
+    private static function generateSalt() : string
+    {
+        return random_bytes(self::SALT_SIZE_BYTES);
+    }
+
+    private static function generateUuid4() : string
+    {
+        $data = random_bytes(16);
+        $data[6] = \chr(\ord($data[6]) & 0x0f | 0x40);
+        $data[8] = \chr(\ord($data[8]) & 0x3f | 0x80);
+
+        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
     }
 }

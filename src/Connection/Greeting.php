@@ -21,6 +21,7 @@ final class Greeting
 
     private $greeting;
     private $salt;
+    private $serverVersion;
     private $serverVersionId;
 
     private function __construct($greeting)
@@ -54,6 +55,15 @@ final class Greeting
         }
 
         throw new UnexpectedResponse('Salt is too short.');
+    }
+
+    public function getServerVersion() : string
+    {
+        if (null !== $this->serverVersion) {
+            return $this->serverVersion;
+        }
+
+        return $this->serverVersion = \substr($this->greeting, 10, \strspn($this->greeting, '0123456789.', 10));
     }
 
     public function getServerVersionId() : int
