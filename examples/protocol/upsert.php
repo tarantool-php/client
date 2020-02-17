@@ -35,10 +35,10 @@ LUA
 $space = $client->getSpace($spaceName);
 $space->upsert([1, 'foo', 'bar'], Operations::set(1, 'baz'));
 
-if (get_server_version_id($client) < 20300) {
-    $space->upsert([1, 'foo', 'bar'], Operations::set(2, 'qux'));
-} else {
+if (server_version_at_least($client, '2.3')) {
     $space->upsert([1, 'foo', 'bar'], Operations::set('name2', 'qux'));
+} else {
+    $space->upsert([1, 'foo', 'bar'], Operations::set(2, 'qux'));
 }
 
 $result = $space->select(Criteria::key([]));

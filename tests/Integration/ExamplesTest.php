@@ -71,9 +71,7 @@ final class ExamplesTest extends TestCase
     private static function checkExampleRequirements(array $requirements) : void
     {
         if (isset($requirements['tarantool'])) {
-            [$major, $minor, $patch] = \sscanf($requirements['tarantool'], '%d.%d.%d');
-            $requiredVersionId = $major * 10000 + $minor * 100 + $patch;
-            if (self::getTarantoolVersionId() < $requiredVersionId) {
+            if (version_compare(self::getTarantoolVersion(), $requirements['tarantool'], '<')) {
                 self::markTestSkipped(sprintf('Tarantool >= %s is required.', $requirements['tarantool']));
             }
         }

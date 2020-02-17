@@ -58,10 +58,7 @@ abstract class TestCase extends BaseTestCase
                     continue;
                 }
 
-                [$major, $minor, $patch] = \sscanf($matches['version'], '%d.%d.%d');
-                $requiredVersionId = $major * 10000 + $minor * 100 + $patch;
-
-                if (self::getTarantoolVersionId() < $requiredVersionId) {
+                if (version_compare(self::getTarantoolVersion(), $matches['version'], '<')) {
                     self::markTestSkipped(sprintf('Tarantool >= %s is required.', $matches['version']));
                 }
 
@@ -84,11 +81,11 @@ abstract class TestCase extends BaseTestCase
         return $client->evaluate("return box.stat().$requestName.total")[0];
     }
 
-    final protected static function getTarantoolVersionId() : int
+    final protected static function getTarantoolVersion() : string
     {
         $connection = ClientBuilder::createFromEnv()->createConnection();
 
-        return $connection->open()->getServerVersionId();
+        return $connection->open()->getServerVersion();
     }
 
     final protected static function triggerUnexpectedResponse(Handler $handler, Request $initialRequest, int $sync = 0) : Connection

@@ -22,7 +22,6 @@ final class Greeting
     private $greeting;
     private $salt;
     private $serverVersion;
-    private $serverVersionId;
 
     private function __construct($greeting)
     {
@@ -64,16 +63,5 @@ final class Greeting
         }
 
         return $this->serverVersion = \substr($this->greeting, 10, \strspn($this->greeting, '0123456789.', 10));
-    }
-
-    public function getServerVersionId() : int
-    {
-        if (null !== $this->serverVersionId) {
-            return $this->serverVersionId;
-        }
-
-        [$major, $minor, $patch] = \sscanf($this->greeting, 'Tarantool %d.%d.%d');
-
-        return $this->serverVersionId = $major * 10000 + $minor * 100 + $patch;
     }
 }

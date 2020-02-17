@@ -36,10 +36,10 @@ LUA
 
 $space = $client->getSpace($spaceName);
 
-if (get_server_version_id($client) < 20300) {
-    $result = $space->update([2], Operations::add(1, 5)->andSet(2, 'BAR'));
-} else {
+if (server_version_at_least($client, '2.3')) {
     $result = $space->update([2], Operations::add(1, 5)->andSet('name', 'BAR'));
+} else {
+    $result = $space->update([2], Operations::add(1, 5)->andSet(2, 'BAR'));
 }
 
 printf("Result: %s\n", json_encode($result));
