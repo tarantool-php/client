@@ -55,7 +55,7 @@ function ensure_extension(string $name) : void
         return;
     }
 
-    printf('"PHP extension "%s" is required to run "%s".%s', $name, $_SERVER['SCRIPT_FILENAME'], PHP_EOL);
+    printf('PHP extension "%s" is required to run "%s".%s', $name, $_SERVER['SCRIPT_FILENAME'], PHP_EOL);
     exit(ExamplesTest::EXIT_CODE_SKIP);
 }
 
