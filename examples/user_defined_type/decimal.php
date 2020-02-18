@@ -9,12 +9,6 @@
  * file that was distributed with this source code.
  */
 
-/**
- * @requires Tarantool 2.3
- * @requires extension decimal
- * @requires function MessagePack\Packer::pack
- */
-
 declare(strict_types=1);
 
 use Decimal\Decimal;
@@ -23,6 +17,10 @@ use Tarantool\Client\Schema\Criteria;
 require __DIR__.'/../bootstrap.php';
 
 $client = create_client();
+ensure_server_version_at_least('2.3', $client);
+ensure_extension('decimal');
+ensure_pure_packer($client);
+
 $spaceName = 'example';
 
 $client->evaluate(

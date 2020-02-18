@@ -36,7 +36,7 @@ LUA
 
 $space = $client->getSpace($spaceName);
 
-if (server_version_at_least($client, '2.3')) {
+if (server_version_at_least('2.3', $client)) {
     $result = $space->update([2], Operations::add(1, 5)->andSet('name', 'BAR'));
 } else {
     $result = $space->update([2], Operations::add(1, 5)->andSet(2, 'BAR'));

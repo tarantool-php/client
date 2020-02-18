@@ -9,15 +9,13 @@
  * file that was distributed with this source code.
  */
 
-/**
- * @requires Tarantool 2
- */
-
 declare(strict_types=1);
 
 require __DIR__.'/../bootstrap.php';
 
 $client = create_client();
+ensure_server_version_at_least('2', $client);
+
 $client->executeUpdate('DROP TABLE IF EXISTS users');
 
 $result1 = $client->executeUpdate('

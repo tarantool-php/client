@@ -35,7 +35,7 @@ LUA
 $space = $client->getSpace($spaceName);
 $space->upsert([1, 'foo', 'bar'], Operations::set(1, 'baz'));
 
-if (server_version_at_least($client, '2.3')) {
+if (server_version_at_least('2.3', $client)) {
     $space->upsert([1, 'foo', 'bar'], Operations::set('name2', 'qux'));
 } else {
     $space->upsert([1, 'foo', 'bar'], Operations::set(2, 'qux'));

@@ -15,22 +15,26 @@ namespace Tarantool\Client\Tests\Integration;
 
 final class ExamplesTest extends TestCase
 {
+    public const EXIT_CODE_SKIP = 42;
+
     /**
      * @dataProvider provideExampleData
      */
     public function testExample(string $filename) : void
     {
-        $info = self::parseFile($filename);
-        self::checkExampleRequirements($info['requirements']);
-
         $uri = ClientBuilder::createFromEnv()->getUri();
 
         exec("php $filename $uri", $output, $exitCode);
 
+        if (self::EXIT_CODE_SKIP === $exitCode) {
+            self::markTestSkipped(implode("\n", $output));
+        }
+
         self::assertSame(0, $exitCode, implode("\n", $output));
 
-        if (isset($info['output'])) {
-            self::assertSame($info['output'], implode("\n", $output));
+        $expectedOutput = self::parseFile($filename);
+        if (null !== $expectedOutput) {
+            self::assertSame($expectedOutput, implode("\n", $output));
         }
     }
 
@@ -51,40 +55,13 @@ final class ExamplesTest extends TestCase
         }
     }
 
-    private static function parseFile(string $filename) : array
+    private static function parseFile(string $filename) : ?string
     {
         $content = file_get_contents($filename);
-
-        $result = ['requirements' => []];
-        if (preg_match_all('~@requires\s+?(\w+?)\s+?(.+?)\s*?$~mi', $content, $matches, PREG_SET_ORDER)) {
-            foreach ($matches as $match) {
-                $result['requirements'][strtolower($match[1])] = $match[2];
-            }
-        }
         if (preg_match('~\/\*\s*?OUTPUT\b(.+?)\*\/~s', $content, $matches)) {
-            $result['output'] = trim($matches[1]);
+            return trim($matches[1]);
         }
 
-        return $result;
-    }
-
-    private static function checkExampleRequirements(array $requirements) : void
-    {
-        if (isset($requirements['tarantool'])) {
-            if (version_compare(self::getTarantoolVersion(), $requirements['tarantool'], '<')) {
-                self::markTestSkipped(sprintf('Tarantool >= %s is required.', $requirements['tarantool']));
-            }
-        }
-
-        if (isset($requirements['extension']) && !extension_loaded($requirements['extension'])) {
-            self::markTestSkipped(sprintf('Extension %s is required.', $requirements['extension']));
-        }
-
-        if (isset($requirements['function']) && !\function_exists($requirements['function'])) {
-            $pieces = \explode('::', $requirements['function']);
-            if ((2 !== \count($pieces)) || !\class_exists($pieces[0]) || !\method_exists($pieces[0], $pieces[1])) {
-                self::markTestSkipped(sprintf('Function %s is required.', $requirements['function']));
-            }
-        }
+        return null;
     }
 }
