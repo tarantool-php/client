@@ -56,8 +56,7 @@ final class InsertTest extends TestCase
         $space = $this->client->getSpace($spaceName);
 
         $this->expectException(RequestFailed::class);
-        $this->expectExceptionMessageRegExp('/Tuple field 1 type does not match one required by operation: expected .+/');
-        $this->expectExceptionCode(23);
+        $this->expectExceptionCode(23); // ER_FIELD_TYPE
 
         $space->insert($values);
     }
@@ -76,18 +75,31 @@ final class InsertTest extends TestCase
     }
 
     /**
-     * @eval space = create_space('request_insert')
+     * @eval space = create_space('request_insert_dup_key')
      * @eval space:create_index('primary', {type = 'hash', parts = {1, 'unsigned'}})
      * @eval space:insert{1, 'foobar'}
      */
     public function testInsertDuplicateKey() : void
     {
-        $space = $this->client->getSpace('request_insert');
+        $space = $this->client->getSpace('request_insert_dup_key');
 
         $this->expectException(RequestFailed::class);
-        $this->expectExceptionMessage("Duplicate key exists in unique index 'primary' in space 'request_insert'");
-        $this->expectExceptionCode(3);
+        $this->expectExceptionMessage("Duplicate key exists in unique index 'primary' in space 'request_insert_dup_key'");
 
         $space->insert([1, 'bazqux']);
+    }
+
+    /**
+     * @eval space = create_space('request_insert_empty_tuple')
+     * @eval space:create_index('primary', {type = 'hash', parts = {1, 'unsigned'}})
+     */
+    public function testInsertEmptyTuple() : void
+    {
+        $space = $this->client->getSpace('request_insert_empty_tuple');
+
+        $this->expectException(RequestFailed::class);
+        $this->expectExceptionCode(39); // ER_FIELD_MISSING
+
+        $space->insert([]);
     }
 }

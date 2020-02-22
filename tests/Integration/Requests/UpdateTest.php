@@ -88,4 +88,14 @@ final class UpdateTest extends TestCase
 
         self::assertSame([], $result);
     }
+
+    public function testUpdateByEmptyKeyThrowsException() : void
+    {
+        $space = $this->client->getSpace('request_update');
+
+        $this->expectException(RequestFailed::class);
+        $this->expectExceptionCode(19); // ER_EXACT_MATCH
+
+        $space->update([], Operations::set(2, 'qux'));
+    }
 }

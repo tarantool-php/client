@@ -18,7 +18,7 @@ use Tarantool\Client\RequestTypes;
 
 final class SelectRequest implements Request
 {
-    /** @var array<int, int|array> */
+    /** @var non-empty-array<int, int|array> */
     private $body;
 
     public function __construct(int $spaceId, int $indexId, array $key, int $offset, int $limit, int $iteratorType)

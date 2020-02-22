@@ -37,7 +37,7 @@ final class StreamConnection implements Connection
     /** @var string */
     private $uri;
 
-    /** @var array<string, mixed> */
+    /** @var non-empty-array<string, mixed> */
     private $options;
 
     /** @var Greeting|null */

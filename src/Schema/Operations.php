@@ -15,11 +15,11 @@ namespace Tarantool\Client\Schema;
 
 final class Operations
 {
-    /** @var array<int, array> */
+    /** @var non-empty-array<int, array> */
     private $operations;
 
     /**
-     * @param array<int, mixed> $operation
+     * @param non-empty-array<int, mixed> $operation
      */
     private function __construct($operation)
     {

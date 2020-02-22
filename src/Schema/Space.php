@@ -67,6 +67,9 @@ final class Space
         return $this->handler->handle($request)->getBodyField(Keys::DATA);
     }
 
+    /**
+     * @psalm-param non-empty-array<int, mixed> $tuple
+     */
     public function insert(array $tuple) : array
     {
         $request = new InsertRequest($this->id, $tuple);
@@ -74,6 +77,9 @@ final class Space
         return $this->handler->handle($request)->getBodyField(Keys::DATA);
     }
 
+    /**
+     * @psalm-param non-empty-array<int, mixed> $tuple
+     */
     public function replace(array $tuple) : array
     {
         $request = new ReplaceRequest($this->id, $tuple);
@@ -82,7 +88,7 @@ final class Space
     }
 
     /**
-     * @param array<int, mixed> $key
+     * @psalm-param non-empty-array<int, mixed> $key
      * @param int|string $index
      */
     public function update(array $key, Operations $operations, $index = 0) : array
@@ -96,6 +102,9 @@ final class Space
         return $this->handler->handle($request)->getBodyField(Keys::DATA);
     }
 
+    /**
+     * @psalm-param non-empty-array<int, mixed> $tuple
+     */
     public function upsert(array $tuple, Operations $operations) : void
     {
         $request = new UpsertRequest($this->id, $tuple, $operations->toArray());
@@ -104,7 +113,7 @@ final class Space
     }
 
     /**
-     * @param array<int, mixed> $key
+     * @psalm-param non-empty-array<int, mixed> $key
      * @param int|string $index
      */
     public function delete(array $key, $index = 0) : array

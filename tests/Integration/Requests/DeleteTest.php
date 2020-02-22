@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\Requests;
 
+use Tarantool\Client\Exception\RequestFailed;
 use Tarantool\Client\Tests\Integration\TestCase;
 
 /**
@@ -47,5 +48,15 @@ final class DeleteTest extends TestCase
         $result = $space->delete(['delete_me_3'], 'secondary');
 
         self::assertSame([[5, 'delete_me_3']], $result);
+    }
+
+    public function testDeleteByEmptyKey() : void
+    {
+        $space = $this->client->getSpace('request_delete');
+
+        $this->expectException(RequestFailed::class);
+        $this->expectExceptionCode(19); // ER_EXACT_MATCH
+
+        $space->delete([]);
     }
 }

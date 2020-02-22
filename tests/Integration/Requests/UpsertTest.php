@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\Requests;
 
+use Tarantool\Client\Exception\RequestFailed;
 use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Schema\Operations;
 use Tarantool\Client\Tests\Integration\TestCase;
@@ -37,5 +38,15 @@ final class UpsertTest extends TestCase
 
         $space->upsert($values, $operations);
         self::assertSame([$updatedValues], $space->select(Criteria::key([$key])));
+    }
+
+    public function testUpsertEmptyTuple() : void
+    {
+        $space = $this->client->getSpace('request_upsert');
+
+        $this->expectException(RequestFailed::class);
+        $this->expectExceptionCode(39); // ER_FIELD_MISSING
+
+        $space->upsert([], Operations::set(1, 'Foo'));
     }
 }

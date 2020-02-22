@@ -24,7 +24,7 @@ final class MiddlewareHandler implements Handler
     /** @var Handler */
     private $handler;
 
-    /** @var array<int, Middleware> */
+    /** @var non-empty-array<int, Middleware> */
     private $middlewares;
 
     /** @var int */
@@ -32,7 +32,7 @@ final class MiddlewareHandler implements Handler
 
     /**
      * @param Handler $handler
-     * @param array<int, Middleware> $middlewares
+     * @param non-empty-array<int, Middleware> $middlewares
      */
     private function __construct($handler, $middlewares)
     {

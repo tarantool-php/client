@@ -18,7 +18,7 @@ use Tarantool\Client\RequestTypes;
 
 final class ExecuteRequest implements Request
 {
-    /** @var array<int, string|array> */
+    /** @var non-empty-array<int, string|array> */
     private $body;
 
     public function __construct(string $sql, array $params = [])

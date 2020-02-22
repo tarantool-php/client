@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\Requests;
 
+use Tarantool\Client\Exception\RequestFailed;
 use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Tests\Integration\TestCase;
 
@@ -30,5 +31,15 @@ final class ReplaceTest extends TestCase
 
         self::assertSame([[2, 'replace_me']], $space->select(Criteria::key([2])));
         self::assertSame([[2, 'replaced']], $space->replace([2, 'replaced']));
+    }
+
+    public function testReplaceEmptyTuple() : void
+    {
+        $space = $this->client->getSpace('request_replace');
+
+        $this->expectException(RequestFailed::class);
+        $this->expectExceptionCode(39); // ER_FIELD_MISSING
+
+        $space->replace([]);
     }
 }
