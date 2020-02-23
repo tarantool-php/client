@@ -91,6 +91,7 @@ return Config::create()
         'phpdoc_align' => false,
         'phpdoc_order' => true,
         'phpdoc_to_comment' => false,
+        'phpdoc_separation' => false, // do not separate @param and @psalm-param
         'return_type_declaration' => ['space_before' => 'one'],
         'strict_comparison' => true,
         'header_comment' => [
