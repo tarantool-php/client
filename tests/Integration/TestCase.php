@@ -59,7 +59,7 @@ abstract class TestCase extends BaseTestCase
                 }
 
                 if (version_compare(self::getTarantoolVersion(), $matches['version'], '<')) {
-                    self::markTestSkipped(sprintf('Tarantool >= %s is required.', $matches['version']));
+                    self::markTestSkipped(sprintf('Tarantool >= %s is required', $matches['version']));
                 }
 
                 break;
@@ -97,7 +97,7 @@ abstract class TestCase extends BaseTestCase
         // write a request without reading a response
         $connection->open();
         if (!\fwrite(self::getRawStream($connection), $rawRequest)) {
-            throw new CommunicationFailed('Unable to write request.');
+            throw new CommunicationFailed('Unable to write request');
         }
 
         return $connection;

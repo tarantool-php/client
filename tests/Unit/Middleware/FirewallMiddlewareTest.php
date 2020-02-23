@@ -63,7 +63,7 @@ final class FirewallMiddlewareTest extends TestCase
         $middleware = FirewallMiddleware::allow(RequestTypes::PING);
 
         $this->expectException(RequestDenied::class);
-        $this->expectExceptionMessage(sprintf('Request "%s" is denied.', CallRequest::class));
+        $this->expectExceptionMessage(sprintf('Request "%s" is denied', CallRequest::class));
 
         $middleware->process(new CallRequest('foo'), $this->handler);
     }
@@ -83,7 +83,7 @@ final class FirewallMiddlewareTest extends TestCase
         $middleware = FirewallMiddleware::deny(RequestTypes::CALL)->andAllow(RequestTypes::PING);
 
         $this->expectException(RequestDenied::class);
-        $this->expectExceptionMessage(sprintf('Request "%s" is denied.', EvaluateRequest::class));
+        $this->expectExceptionMessage(sprintf('Request "%s" is denied', EvaluateRequest::class));
 
         $middleware->process(new EvaluateRequest('return 42'), $this->handler);
     }
@@ -103,7 +103,7 @@ final class FirewallMiddlewareTest extends TestCase
         $middleware = FirewallMiddleware::allow(RequestTypes::CALL)->andAllowOnly(RequestTypes::PING);
 
         $this->expectException(RequestDenied::class);
-        $this->expectExceptionMessage(sprintf('Request "%s" is denied.', CallRequest::class));
+        $this->expectExceptionMessage(sprintf('Request "%s" is denied', CallRequest::class));
 
         $middleware->process(new CallRequest('foo'), $this->handler);
     }
@@ -123,7 +123,7 @@ final class FirewallMiddlewareTest extends TestCase
         $middleware = FirewallMiddleware::deny(RequestTypes::PING);
 
         $this->expectException(RequestDenied::class);
-        $this->expectExceptionMessage(sprintf('Request "%s" is denied.', PingRequest::class));
+        $this->expectExceptionMessage(sprintf('Request "%s" is denied', PingRequest::class));
 
         $middleware->process(new PingRequest(), $this->handler);
     }
@@ -143,7 +143,7 @@ final class FirewallMiddlewareTest extends TestCase
         $middleware = FirewallMiddleware::allow(RequestTypes::PING)->andDeny(RequestTypes::CALL);
 
         $this->expectException(RequestDenied::class);
-        $this->expectExceptionMessage(sprintf('Request "%s" is denied.', CallRequest::class));
+        $this->expectExceptionMessage(sprintf('Request "%s" is denied', CallRequest::class));
 
         $middleware->process(new CallRequest('foo'), $this->handler);
     }
@@ -163,7 +163,7 @@ final class FirewallMiddlewareTest extends TestCase
         $middleware = FirewallMiddleware::deny(RequestTypes::PING)->andDenyOnly(RequestTypes::CALL);
 
         $this->expectException(RequestDenied::class);
-        $this->expectExceptionMessage(sprintf('Request "%s" is denied.', CallRequest::class));
+        $this->expectExceptionMessage(sprintf('Request "%s" is denied', CallRequest::class));
 
         $middleware->process(new CallRequest('foo'), $this->handler);
     }
@@ -174,7 +174,7 @@ final class FirewallMiddlewareTest extends TestCase
     public function testDenyHasPriority(Middleware $middleware) : void
     {
         $this->expectException(RequestDenied::class);
-        $this->expectExceptionMessage(sprintf('Request "%s" is denied.', PingRequest::class));
+        $this->expectExceptionMessage(sprintf('Request "%s" is denied', PingRequest::class));
 
         $middleware->process(new PingRequest(), $this->handler);
     }
@@ -200,7 +200,7 @@ final class FirewallMiddlewareTest extends TestCase
     public function testAllowReadOnlyForbids() : void
     {
         $this->expectException(RequestDenied::class);
-        $this->expectExceptionMessage(sprintf('Request "%s" is denied.', EvaluateRequest::class));
+        $this->expectExceptionMessage(sprintf('Request "%s" is denied', EvaluateRequest::class));
 
         FirewallMiddleware::allowReadOnly()->process(new EvaluateRequest('return 42'), $this->handler);
     }

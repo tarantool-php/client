@@ -59,7 +59,7 @@ final class AuthenticateTest extends TestCase
 
         try {
             $client->ping();
-            self::fail(sprintf('Client must throw an exception on authenticating "%s" with the password "%s".', $username, $password));
+            self::fail(sprintf('Client must throw an exception on authenticating "%s" with the password "%s"', $username, $password));
         } catch (RequestFailed $e) {
             self::assertSame($errorMessage, $e->getMessage());
             self::assertSame($errorCode, $e->getCode());

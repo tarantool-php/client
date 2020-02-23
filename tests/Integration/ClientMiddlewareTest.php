@@ -101,7 +101,7 @@ final class ClientMiddlewareTest extends TestCase
         $retryableClient->evaluate($luaCall = '
             if box.space.connection_retry then
                 box.space.connection_retry:drop() 
-                box.error{code = 42, reason = "Foobar."}
+                box.error{code = 42, reason = "Foobar"}
             end
         ');
 

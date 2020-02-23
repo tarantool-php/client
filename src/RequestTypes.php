@@ -47,7 +47,7 @@ final class RequestTypes
             return self::ALL[$type];
         }
 
-        throw new \InvalidArgumentException("Unknown request type #$type.");
+        throw new \InvalidArgumentException("Unknown request type #$type");
     }
 
     private function __construct()

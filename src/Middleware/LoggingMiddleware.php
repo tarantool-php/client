@@ -40,7 +40,7 @@ final class LoggingMiddleware implements Middleware
         try {
             $response = $handler->handle($request);
         } catch (\Throwable $e) {
-            $this->logger->error("Request \"$requestName\" failed.", [
+            $this->logger->error("Request \"$requestName\" failed", [
                 'request' => $request,
                 'exception' => $e,
                 'duration_ms' => \round((\microtime(true) - $start) * 1000),

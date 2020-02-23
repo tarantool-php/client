@@ -43,7 +43,7 @@ final class ReadTest extends TestCase
         $client = $clientBuilder->build();
 
         $this->expectException(CommunicationFailed::class);
-        $this->expectExceptionMessage('Unable to read greeting.');
+        $this->expectExceptionMessage('Unable to read greeting');
 
         $client->ping();
     }
@@ -62,7 +62,7 @@ final class ReadTest extends TestCase
         $client = $clientBuilder->build();
 
         $this->expectException(CommunicationFailed::class);
-        $this->expectExceptionMessage('Unable to read response length.');
+        $this->expectExceptionMessage('Unable to read response length');
 
         $client->ping();
     }
@@ -82,7 +82,7 @@ final class ReadTest extends TestCase
         $client = $clientBuilder->build();
 
         $this->expectException(CommunicationFailed::class);
-        $this->expectExceptionMessage('Read timed out.');
+        $this->expectExceptionMessage('Read timed out');
 
         $client->ping();
     }
@@ -102,7 +102,7 @@ final class ReadTest extends TestCase
         $client = $clientBuilder->build();
 
         $this->expectException(CommunicationFailed::class);
-        $this->expectExceptionMessage('Unable to read response.');
+        $this->expectExceptionMessage('Unable to read response');
 
         $client->ping();
     }
@@ -121,7 +121,7 @@ final class ReadTest extends TestCase
             $client->evaluate('require("fiber").sleep(2)');
         } catch (CommunicationFailed $e) {
             $time = microtime(true) - $start;
-            self::assertSame('Read timed out.', $e->getMessage());
+            self::assertSame('Read timed out', $e->getMessage());
             self::assertGreaterThanOrEqual($socketTimeout, $time);
             self::assertLessThanOrEqual($socketTimeout + 0.1, $time);
 

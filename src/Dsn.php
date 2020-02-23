@@ -162,7 +162,7 @@ final class Dsn
         }
 
         if (null === $value = \filter_var($this->options[$name], \FILTER_VALIDATE_BOOLEAN, \FILTER_NULL_ON_FAILURE)) {
-            throw new \TypeError(\sprintf('DSN option "%s" must be of the type bool.', $name));
+            throw new \TypeError(\sprintf('DSN option "%s" must be of the type bool', $name));
         }
 
         return $value;
@@ -175,7 +175,7 @@ final class Dsn
         }
 
         if (false === $value = \filter_var($this->options[$name], \FILTER_VALIDATE_INT)) {
-            throw new \TypeError(\sprintf('DSN option "%s" must be of the type int.', $name));
+            throw new \TypeError(\sprintf('DSN option "%s" must be of the type int', $name));
         }
 
         return $value;
@@ -183,6 +183,6 @@ final class Dsn
 
     private static function throwParseError(string $dsn) : void
     {
-        throw new \InvalidArgumentException(\sprintf('Unable to parse DSN "%s".', $dsn));
+        throw new \InvalidArgumentException(\sprintf('Unable to parse DSN "%s"', $dsn));
     }
 }

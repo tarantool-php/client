@@ -33,7 +33,7 @@ final class PeclPackerTest extends PackerTest
     public function testThrowExceptionOnBadUnpackData(string $data) : void
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageRegExp('/Unable to unpack response (header|body)\./');
+        $this->expectExceptionMessageRegExp('/Unable to unpack response (header|body)/');
 
         $this->packer->unpack($data)->tryGetBodyField(Keys::DATA);
     }

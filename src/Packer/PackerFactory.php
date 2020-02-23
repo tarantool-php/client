@@ -41,6 +41,6 @@ final class PackerFactory
             return new PeclPacker();
         }
 
-        throw new \Error('None of the supported msgpack packages were found. To install one, run "composer require rybakit/msgpack".');
+        throw new \Error('None of the supported msgpack packages were found. To install one, run "composer require rybakit/msgpack"');
     }
 }

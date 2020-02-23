@@ -57,7 +57,7 @@ final class Response
             return $this->body[$key];
         }
 
-        throw new \OutOfRangeException(\sprintf('Invalid body key 0x%x.', $key));
+        throw new \OutOfRangeException(\sprintf('Invalid body key 0x%x', $key));
     }
 
     /**

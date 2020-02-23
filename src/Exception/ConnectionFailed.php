@@ -17,6 +17,6 @@ final class ConnectionFailed extends \RuntimeException
 {
     public static function fromUriAndReason(string $uri, string $reason) : self
     {
-        throw new self(\sprintf('Failed to connect to %s: %s.', $uri, $reason));
+        throw new self(\sprintf('Failed to connect to %s: %s', $uri, $reason));
     }
 }

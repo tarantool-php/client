@@ -37,11 +37,11 @@ final class ParseGreetingTest extends TestCase
         try {
             $client->ping();
         } catch (CommunicationFailed $e) {
-            self::assertSame('Unable to read greeting.', $e->getMessage());
+            self::assertSame('Unable to read greeting', $e->getMessage());
 
             return;
         } catch (\RuntimeException $e) {
-            self::assertSame('Unable to recognize Tarantool server.', $e->getMessage());
+            self::assertSame('Unable to recognize Tarantool server', $e->getMessage());
 
             return;
         }
@@ -63,7 +63,7 @@ final class ParseGreetingTest extends TestCase
         $client = $clientBuilder->setOptions(['username' => 'guest'])->build();
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageRegExp('/(Unable to decode salt|Salt is too short)\./');
+        $this->expectExceptionMessageRegExp('/(Unable to decode salt|Salt is too short)/');
 
         $client->ping();
     }

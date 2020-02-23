@@ -20,9 +20,9 @@ final class BoxErrorTest extends TestCase
     public function testExceptionIsThrownOnBoxError() : void
     {
         $this->expectException(RequestFailed::class);
-        $this->expectExceptionMessage('Foobar.');
+        $this->expectExceptionMessage('Foobar');
         $this->expectExceptionCode(42);
 
-        $this->client->evaluate('box.error{code = 42, reason = "Foobar."}');
+        $this->client->evaluate('box.error{code = 42, reason = "Foobar"}');
     }
 }

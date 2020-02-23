@@ -71,7 +71,7 @@ final class FakeServerBuilder
     {
         exec($this->getCommand(), $output, $result);
         if (0 !== $result) {
-            throw new \RuntimeException("Unable to start the fake server ($this->uri).");
+            throw new \RuntimeException("Unable to start fake server ($this->uri)");
         }
 
         $stopTime = time() + 5;
@@ -84,7 +84,7 @@ final class FakeServerBuilder
             usleep(100);
         }
 
-        throw new \RuntimeException("Unable to connect to the fake server ($this->uri).");
+        throw new \RuntimeException("Unable to connect to fake server ($this->uri)");
     }
 
     public static function create(Handler ...$handlers) : self

@@ -89,7 +89,7 @@ final class DsnTest extends TestCase
     public function testParseInvalidDsn(string $nonDsn) : void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage(sprintf('Unable to parse DSN "%s".', $nonDsn));
+        $this->expectExceptionMessage(sprintf('Unable to parse DSN "%s"', $nonDsn));
         Dsn::parse($nonDsn);
     }
 
@@ -186,7 +186,7 @@ final class DsnTest extends TestCase
         $dsn = Dsn::parse($dsn);
 
         $this->expectException(\TypeError::class);
-        $this->expectExceptionMessage('DSN option "foo" must be of the type int.');
+        $this->expectExceptionMessage('DSN option "foo" must be of the type int');
         $dsn->getInt($option);
     }
 
@@ -249,7 +249,7 @@ final class DsnTest extends TestCase
         $dsn = Dsn::parse($dsn);
 
         $this->expectException(\TypeError::class);
-        $this->expectExceptionMessage('DSN option "foo" must be of the type bool.');
+        $this->expectExceptionMessage('DSN option "foo" must be of the type bool');
         $dsn->getBool($option);
     }
 

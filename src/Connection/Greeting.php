@@ -42,7 +42,7 @@ final class Greeting
             return new self($greeting);
         }
 
-        throw new UnexpectedResponse('Unable to recognize Tarantool server.');
+        throw new UnexpectedResponse('Unable to recognize Tarantool server');
     }
 
     public function getSalt() : string
@@ -52,7 +52,7 @@ final class Greeting
         }
 
         if (false === $salt = \base64_decode(\substr($this->greeting, 64, 44), true)) {
-            throw new UnexpectedResponse('Unable to decode salt.');
+            throw new UnexpectedResponse('Unable to decode salt');
         }
 
         $salt = \substr($salt, 0, 20);
@@ -61,7 +61,7 @@ final class Greeting
             return $this->salt = $salt;
         }
 
-        throw new UnexpectedResponse('Salt is too short.');
+        throw new UnexpectedResponse('Salt is too short');
     }
 
     public function getServerVersion() : string

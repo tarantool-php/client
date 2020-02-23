@@ -151,7 +151,7 @@ final class ClientBuilder
     public function createConnection() : Connection
     {
         if (!$this->uri) {
-            throw new \LogicException('Connection URI is not set.');
+            throw new \LogicException('Connection URI is not set');
         }
 
         return StreamConnection::create($this->uri, $this->connectionOptions);
@@ -167,7 +167,7 @@ final class ClientBuilder
             return $this->packerPeclFactory ? ($this->packerPeclFactory)() : new PeclPacker();
         }
 
-        throw new \UnexpectedValueException(sprintf('"%s" packer is not supported.', $this->packerType));
+        throw new \UnexpectedValueException(sprintf('"%s" packer is not supported', $this->packerType));
     }
 
     private static function findOpenTcpPort(int $min) : int
@@ -184,7 +184,7 @@ final class ClientBuilder
             fclose($fp);
 
             if (++$try === $maxTries) {
-                throw new \RuntimeException('Failed to find open tcp port.');
+                throw new \RuntimeException('Failed to find open tcp port');
             }
         }
     }

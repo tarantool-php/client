@@ -19,6 +19,6 @@ final class RequestDenied extends \RuntimeException
 {
     public static function fromObject(Request $request) : self
     {
-        return new self(\sprintf('Request "%s" is denied.', \get_class($request)));
+        return new self(\sprintf('Request "%s" is denied', \get_class($request)));
     }
 }

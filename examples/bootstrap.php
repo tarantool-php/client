@@ -33,7 +33,7 @@ function server_version_at_least(string $version, Client $client) : bool
 {
     $connection = $client->getHandler()->getConnection();
     if (!$greeting = $connection->open()) {
-        throw new \RuntimeException('Failed to retrieve server version.');
+        throw new \RuntimeException('Failed to retrieve server version');
     }
 
     return version_compare($greeting->getServerVersion(), $version, '>=');
@@ -45,7 +45,7 @@ function ensure_server_version_at_least(string $version, Client $client) : void
         return;
     }
 
-    printf('Tarantool version >= %s is required to run "%s".%s', $version, $_SERVER['SCRIPT_FILENAME'], PHP_EOL);
+    printf('Tarantool version >= %s is required to run "%s"%s', $version, $_SERVER['SCRIPT_FILENAME'], PHP_EOL);
     exit(ExamplesTest::EXIT_CODE_SKIP);
 }
 
@@ -55,7 +55,7 @@ function ensure_extension(string $name) : void
         return;
     }
 
-    printf('PHP extension "%s" is required to run "%s".%s', $name, $_SERVER['SCRIPT_FILENAME'], PHP_EOL);
+    printf('PHP extension "%s" is required to run "%s"%s', $name, $_SERVER['SCRIPT_FILENAME'], PHP_EOL);
     exit(ExamplesTest::EXIT_CODE_SKIP);
 }
 
@@ -66,6 +66,6 @@ function ensure_pure_packer(Client $client) : void
         return;
     }
 
-    printf('Client needs to be configured to use pure packer to run "%s".%s', $_SERVER['SCRIPT_FILENAME'], PHP_EOL);
+    printf('Client needs to be configured to use pure packer to run "%s"%s', $_SERVER['SCRIPT_FILENAME'], PHP_EOL);
     exit(ExamplesTest::EXIT_CODE_SKIP);
 }

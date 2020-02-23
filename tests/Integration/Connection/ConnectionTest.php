@@ -151,11 +151,11 @@ final class ConnectionTest extends TestCase
             $client->ping();
         } catch (ConnectionFailed $e) {
             if (false !== strpos($e->getMessage(), 'No route to host')) {
-                self::markTestSkipped(sprintf('Unable to route to host %s.', $host));
+                self::markTestSkipped(sprintf('Unable to route to host %s', $host));
             }
 
             $time = microtime(true) - $start;
-            self::assertRegExp('/Failed to connect to .+?: (Connection|Operation) timed out\./', $e->getMessage());
+            self::assertRegExp('/Failed to connect to .+?: (Connection|Operation) timed out/', $e->getMessage());
             self::assertGreaterThanOrEqual($connectTimeout, $time);
             self::assertLessThanOrEqual($connectTimeout + 0.1, $time);
 
@@ -179,6 +179,6 @@ final class ConnectionTest extends TestCase
             return;
         }
 
-        self::fail(UnexpectedResponse::class.' was not thrown.');
+        self::fail(UnexpectedResponse::class.' was not thrown');
     }
 }
