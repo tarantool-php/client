@@ -43,7 +43,7 @@ script:
   - docker run --net=tarantool-php -d --name=tarantool -v /tmp:/tmp -v $(pwd)/tests/Integration/client.lua:/client.lua -e TNT_LISTEN_URI=$TNT_CONN_URI ${TNT_IMAGE} tarantool /client.lua
   - docker run --net=tarantool-php --rm -v /tmp:/tmp -v $(pwd):/client -w /client client
   - if [[ -n "$QA" ]]; then
-      docker run --net=tarantool-php --rm -v $(pwd):/client -w /client client php vendor/bin/php-cs-fixer fix --dry-run --diff --verbose .;
+      docker run --net=tarantool-php --rm -v $(pwd):/client -w /client client php vendor/bin/php-cs-fixer fix --dry-run --diff --verbose . &&
       docker run --net=tarantool-php --rm -v $(pwd):/client -w /client client php vendor/bin/psalm;
     fi
 
