@@ -89,7 +89,7 @@ final class UpdateTest extends TestCase
         self::assertSame([], $result);
     }
 
-    public function testUpdateByEmptyKeyThrowsException() : void
+    public function testUpdateByEmptyKey() : void
     {
         $space = $this->client->getSpace('request_update');
 
