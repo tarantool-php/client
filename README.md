@@ -4,7 +4,7 @@
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/tarantool-php/client/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/tarantool-php/client/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/tarantool-php/client/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/tarantool-php/client/?branch=master)
 
-A pure PHP client for [Tarantool](http://tarantool.io) 1.7.1 or above.
+A pure PHP client for [Tarantool](https://www.tarantool.io/en/developers/) 1.7.1 or above.
 
 
 ## Features
@@ -15,7 +15,7 @@ A pure PHP client for [Tarantool](http://tarantool.io) 1.7.1 or above.
  * Supports user defined types
  * Highly customizable
  * [Tested](https://travis-ci.org/tarantool-php/client) on PHP 7.1-7.4 and Tarantool 1.7-2.3
- * Being used in other open source projects, including [Queue](https://github.com/tarantool-php/queue), [Mapper](https://github.com/tarantool-php/mapper), [Web Admin](https://github.com/basis-company/tarantool-admin) and [more](https://github.com/tarantool-php).
+ * Being used in a number of projects, including [Queue](https://github.com/tarantool-php/queue), [Mapper](https://github.com/tarantool-php/mapper), [Web Admin](https://github.com/basis-company/tarantool-admin) and [others](https://github.com/tarantool-php).
 
 
 ## Table of contents
