@@ -20,8 +20,13 @@ use Tarantool\Client\RequestTypes;
 
 final class SlowRequestHandler extends HandlerWrapper
 {
+    /** @var int */
     private $thresholdMs;
+
+    /** @var int */
     private $level;
+
+    /** @var string */
     private $levelName;
 
     public function __construct(HandlerInterface $handler, int $thresholdMs, int $level = Logger::WARNING)

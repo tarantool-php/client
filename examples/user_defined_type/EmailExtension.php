@@ -31,6 +31,9 @@ final class EmailExtension implements Extension
         return $this->type;
     }
 
+    /**
+     * @param mixed $value
+     */
     public function pack(Packer $packer, $value) : ?string
     {
         if (!$value instanceof Email) {
