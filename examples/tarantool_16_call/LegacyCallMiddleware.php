@@ -45,11 +45,16 @@ final class LegacyCallMiddleware implements Middleware
 
     public function process(Request $request, Handler $handler) : Response
     {
-        $response = $request instanceof CallRequest
-            ? $handler->handle(LegacyCallRequest::fromCallRequest($request))
-            : $handler->handle($request);
+        if (!$request instanceof CallRequest) {
+            return $handler->handle($request);
+        }
 
-        return $this->useLegacyMarshalling ? $response : new Response([
+        $response = $handler->handle(LegacyCallRequest::fromCallRequest($request));
+        if ($this->useLegacyMarshalling) {
+            return $response;
+        }
+
+        return new Response([
             Keys::CODE => $response->getCode(),
             Keys::SYNC => $response->getSync(),
             Keys::SCHEMA_ID => $response->getSchemaId(),
