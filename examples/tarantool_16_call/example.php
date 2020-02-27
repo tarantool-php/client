@@ -17,19 +17,15 @@ $loader = require __DIR__.'/../bootstrap.php';
 $loader->addPsr4('App\\', __DIR__);
 
 $client = create_client();
-$client17plus = $client->withMiddleware(LegacyCallMiddleware::newResponseMarshalling());
-$client16 = $client->withMiddleware(LegacyCallMiddleware::legacyResponseMarshalling());
+$clientCall16 = $client->withMiddleware(new LegacyCallMiddleware());
 
 $result = $client->call('math.min', 5, 3, 8);
-$result17plus = $client17plus->call('math.min', 5, 3, 8);
-$result16 = $client16->call('math.min', 5, 3, 8);
+$resultCall16 = $clientCall16->call('math.min', 5, 3, 8);
 
-printf("Actual response: %s\n", json_encode($result));
-printf("  1.7+ response: %s\n", json_encode($result17plus));
-printf("   1.6 response: %s\n", json_encode($result16));
+printf("1.7.1+ call response: %s\n", json_encode($result));
+printf("1.6 call response: %s\n", json_encode($resultCall16));
 
 /* OUTPUT
-Actual response: [3]
-  1.7+ response: [3]
-   1.6 response: [[3]]
+1.7.1+ call response: [3]
+1.6 call response: [[3]]
 */
