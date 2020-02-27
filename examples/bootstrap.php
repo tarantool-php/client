@@ -14,19 +14,20 @@ declare(strict_types=1);
 use Tarantool\Client\Client;
 use Tarantool\Client\Connection\StreamConnection;
 use Tarantool\Client\Handler\DefaultHandler;
+use Tarantool\Client\Packer\Packer;
 use Tarantool\Client\Packer\PackerFactory;
 use Tarantool\Client\Packer\PurePacker;
 use Tarantool\Client\Tests\Integration\ExamplesTest;
 
 return require __DIR__.'/../vendor/autoload.php';
 
-function create_client() : Client
+function create_client(?Packer $packer = null) : Client
 {
     $connection = isset($_SERVER['argv'][1])
         ? StreamConnection::create($_SERVER['argv'][1])
         : StreamConnection::createTcp();
 
-    return new Client(new DefaultHandler($connection, PackerFactory::create()));
+    return new Client(new DefaultHandler($connection, $packer ?? PackerFactory::create()));
 }
 
 function server_version_at_least(string $version, Client $client) : bool
