@@ -67,7 +67,7 @@ final class Operations
     /**
      * @param int|string $field
      */
-    public static function bitAnd($field, int $value) : self
+    public static function bitwiseAnd($field, int $value) : self
     {
         return new self(['&', $field, $value]);
     }
@@ -75,7 +75,7 @@ final class Operations
     /**
      * @param int|string $field
      */
-    public function andBitAnd($field, int $value) : self
+    public function andBitwiseAnd($field, int $value) : self
     {
         $new = clone $this;
         $new->operations[] = ['&', $field, $value];
@@ -86,7 +86,7 @@ final class Operations
     /**
      * @param int|string $field
      */
-    public static function bitOr($field, int $value) : self
+    public static function bitwiseOr($field, int $value) : self
     {
         return new self(['|', $field, $value]);
     }
@@ -94,7 +94,7 @@ final class Operations
     /**
      * @param int|string $field
      */
-    public function andBitOr($field, int $value) : self
+    public function andBitwiseOr($field, int $value) : self
     {
         $new = clone $this;
         $new->operations[] = ['|', $field, $value];
@@ -105,7 +105,7 @@ final class Operations
     /**
      * @param int|string $field
      */
-    public static function bitXor($field, int $value) : self
+    public static function bitwiseXor($field, int $value) : self
     {
         return new self(['^', $field, $value]);
     }
@@ -113,7 +113,7 @@ final class Operations
     /**
      * @param int|string $field
      */
-    public function andBitXor($field, int $value) : self
+    public function andBitwiseXor($field, int $value) : self
     {
         $new = clone $this;
         $new->operations[] = ['^', $field, $value];

@@ -30,17 +30,17 @@ final class OperationsTest extends TestCase
 
     public function testAnd() : void
     {
-        self::assertSame([['&', 1, 5], ['&', 2, 7]], Operations::bitAnd(1, 5)->andBitAnd(2, 7)->toArray());
+        self::assertSame([['&', 1, 5], ['&', 2, 7]], Operations::bitwiseAnd(1, 5)->andBitwiseAnd(2, 7)->toArray());
     }
 
-    public function testOr() : void
+    public function testBitwiseOr() : void
     {
-        self::assertSame([['|', 1, 5], ['|', 2, 7]], Operations::bitOr(1, 5)->andBitOr(2, 7)->toArray());
+        self::assertSame([['|', 1, 5], ['|', 2, 7]], Operations::bitwiseOr(1, 5)->andBitwiseOr(2, 7)->toArray());
     }
 
-    public function testXor() : void
+    public function testBitwiseXor() : void
     {
-        self::assertSame([['^', 1, 5], ['^', 2, 7]], Operations::bitXor(1, 5)->andBitXor(2, 7)->toArray());
+        self::assertSame([['^', 1, 5], ['^', 2, 7]], Operations::bitwiseXor(1, 5)->andBitwiseXor(2, 7)->toArray());
     }
 
     public function testSplice() : void

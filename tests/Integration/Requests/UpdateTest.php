@@ -46,11 +46,11 @@ final class UpdateTest extends TestCase
                 [[1, 18, 'tuple_1', 98, 0x11111]],
             ],
             [
-                Operations::subtract(3, 10)->andBitAnd(4, 0x10101),
+                Operations::subtract(3, 10)->andBitwiseAnd(4, 0x10101),
                 [[1, 18, 'tuple_1', 88, 0x10101]],
             ],
             [
-                Operations::bitXor(4, 0x11100),
+                Operations::bitwiseXor(4, 0x11100),
                 [[1, 18, 'tuple_1', 88, 0x01001]],
             ],
             [
