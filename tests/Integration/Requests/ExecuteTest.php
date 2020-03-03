@@ -90,7 +90,7 @@ final class ExecuteTest extends TestCase
 
     public function testExecuteQueryBindsPositionalParameters() : void
     {
-        $result = $this->client->executeQuery('SELECT * FROM exec_query WHERE id = ? AND name = ?', 2, 'B');
+        $result = $this->client->executeQuery('SELECT ?, ?', 2, 'B');
 
         self::assertSame([[2, 'B']], $result->getData());
         self::assertSame(1, $result->count());
@@ -98,7 +98,7 @@ final class ExecuteTest extends TestCase
 
     public function testExecuteQueryBindsNamedParameters() : void
     {
-        $result = $this->client->executeQuery('SELECT * FROM exec_query WHERE id = :id AND name = :name', [':name' => 'B'], [':id' => 2]);
+        $result = $this->client->executeQuery('SELECT :id, :name', [':name' => 'B'], [':id' => 2]);
 
         self::assertSame([[2, 'B']], $result->getData());
         self::assertSame(1, $result->count());
@@ -106,12 +106,20 @@ final class ExecuteTest extends TestCase
 
     public function testExecuteQueryBindsMixedParameters() : void
     {
-        $result = $this->client->executeQuery('SELECT * FROM exec_query WHERE id = ? AND name = :name', 2, [':name' => 'B']);
-
-        // this doesn't work, see https://github.com/tarantool/doc/issues/1096
-        // $result = $this->client->executeQuery('SELECT * FROM exec_query WHERE id = :id AND name = ?', 'B', [':id' => 2]);
+        $result = $this->client->executeQuery('SELECT ?, :name', 2, [':name' => 'B']);
 
         self::assertSame([[2, 'B']], $result->getData());
+        self::assertSame(1, $result->count());
+    }
+
+    /**
+     * @see https://github.com/tarantool/tarantool/issues/4782
+     */
+    public function testExecuteQueryBindsMixedParametersAndSubstitutesPositionalOnes() : void
+    {
+        $result = $this->client->executeQuery('SELECT :id, ?', 'B', [':id' => 2]);
+
+        self::assertSame([[2, null]], $result->getData());
         self::assertSame(1, $result->count());
     }
 }
