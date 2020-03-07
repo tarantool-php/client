@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Tarantool\Client;
 
 /**
- * @see https://www.tarantool.io/en/doc/2.1/dev_guide/internals/box_protocol/
+ * @see https://www.tarantool.io/en/doc/2.2/dev_guide/internals/box_protocol/
  */
 final class Keys
 {
@@ -38,6 +38,8 @@ final class Keys
     public const SQL_TEXT = 0x40;
     public const SQL_BIND = 0x41;
     public const SQL_INFO = 0x42;
+    public const SQL_INFO_ROW_COUNT = 0x00;
+    public const SQL_INFO_AUTO_INCREMENT_IDS = 0x01;
 
     private function __construct()
     {

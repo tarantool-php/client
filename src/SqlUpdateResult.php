@@ -24,11 +24,11 @@ final class SqlUpdateResult implements \Countable
 
     public function count() : int
     {
-        return $this->info[0];
+        return $this->info[Keys::SQL_INFO_ROW_COUNT];
     }
 
     public function getAutoincrementIds() : array
     {
-        return $this->info[1] ?? [];
+        return $this->info[Keys::SQL_INFO_AUTO_INCREMENT_IDS] ?? [];
     }
 }
