@@ -126,11 +126,6 @@ final class Client
         return $this->handler;
     }
 
-    public function ping() : void
-    {
-        $this->handler->handle(new PingRequest());
-    }
-
     public function getSpace(string $spaceName) : Space
     {
         if (isset($this->spaces[$spaceName])) {
@@ -151,14 +146,18 @@ final class Client
         return $this->spaces[$spaceId] = new Space($this->handler, $spaceId);
     }
 
+    public function ping() : void
+    {
+        $this->handler->handle(new PingRequest());
+    }
+
     /**
      * @param mixed ...$args
      */
     public function call(string $funcName, ...$args) : array
     {
-        $request = new CallRequest($funcName, $args);
-
-        return $this->handler->handle($request)->getBodyField(Keys::DATA);
+        return $this->handler->handle(new CallRequest($funcName, $args))
+            ->getBodyField(Keys::DATA);
     }
 
     /**
@@ -166,9 +165,16 @@ final class Client
      */
     public function evaluate(string $expr, ...$args) : array
     {
-        $request = new EvaluateRequest($expr, $args);
+        return $this->handler->handle(new EvaluateRequest($expr, $args))
+            ->getBodyField(Keys::DATA);
+    }
 
-        return $this->handler->handle($request)->getBodyField(Keys::DATA);
+    /**
+     * @param mixed ...$params
+     */
+    public function execute(string $sql, ...$params) : Response
+    {
+        return $this->handler->handle(new ExecuteRequest($sql, $params));
     }
 
     /**
@@ -176,8 +182,7 @@ final class Client
      */
     public function executeQuery(string $sql, ...$params) : SqlQueryResult
     {
-        $request = new ExecuteRequest($sql, $params);
-        $response = $this->handler->handle($request);
+        $response = $this->handler->handle(new ExecuteRequest($sql, $params));
 
         return new SqlQueryResult(
             $response->getBodyField(Keys::DATA),
@@ -190,11 +195,9 @@ final class Client
      */
     public function executeUpdate(string $sql, ...$params) : SqlUpdateResult
     {
-        $request = new ExecuteRequest($sql, $params);
+        $response = $this->handler->handle(new ExecuteRequest($sql, $params));
 
-        return new SqlUpdateResult(
-            $this->handler->handle($request)->getBodyField(Keys::SQL_INFO)
-        );
+        return new SqlUpdateResult($response->getBodyField(Keys::SQL_INFO));
     }
 
     public function flushSpaces() : void

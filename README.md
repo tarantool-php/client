@@ -41,12 +41,12 @@ The recommended way to install the library is through [Composer](http://getcompo
 composer require tarantool/client
 ```
 
-In addition, you need to install one of the supported msgpack packages 
+In addition, you need to install one of the supported msgpack packages
 (either [rybakit/msgpack.php](https://github.com/rybakit/msgpack.php#installation) 
 or [msgpack/msgpack-php](https://github.com/msgpack/msgpack-php#install)).
  
-Note that the Decimal type that was added in Tarantool 2.3 is only supported by 
-the `rybakit/msgpack.php` package. In order to use decimals with this package, 
+Note that the Decimal type that was added in Tarantool 2.3 is only supported by
+the `rybakit/msgpack.php` package. In order to use decimals with this package,
 you additionally need to install the [decimal](http://php-decimal.io/#installation) extension.
 
 
@@ -61,7 +61,7 @@ $client = Client::fromDefaults();
 ```
 
 The client will be configured to connect to `127.0.0.1` on port `3301` with the default stream connection options.
-Also, the best available msgpack package will be chosen automatically. A custom configuration can be accomplished 
+Also, the best available msgpack package will be chosen automatically. A custom configuration can be accomplished
 by one of several methods listed.
 
 #### DSN string
@@ -158,7 +158,7 @@ $client = new Client($handler);
 
 ## Handlers
 
-A handler is a function which transforms a request into a response. Once you have created a handler object, 
+A handler is a function which transforms a request into a response. Once you have created a handler object,
 you can make requests to Tarantool, for example:
 
 ```php
@@ -180,7 +180,7 @@ The library ships with two handlers:
 
 ## Middleware
 
-Middleware is the suggested way to extend the client with custom functionality. There are several middleware classes 
+Middleware is the suggested way to extend the client with custom functionality. There are several middleware classes
 implemented to address the common use cases, like authentification, logging and [more](src/Middleware). 
 The usage is straightforward:
 
@@ -206,7 +206,7 @@ use Tarantool\Client\Middleware\RetryMiddleware;
 $client = Client::fromDefaults()->withMiddleware(
     new LoggingMiddleware($logger),
     FirewallMiddleware::allowReadOnly(),
-    RetryMiddleware::linear(),
+    RetryMiddleware::linear()
 );
 ```
 
@@ -215,7 +215,7 @@ $client = Client::fromDefaults()->withMiddleware(
 
 ### Binary protocol
 
-The following are examples of binary protocol requests. For more detailed information and examples please see 
+The following are examples of binary protocol requests. For more detailed information and examples please see
 the [official documentation](https://www.tarantool.io/en/doc/2.1/book/box/box_space/#box-space-operations-detailed-examples).
 
 
@@ -528,7 +528,7 @@ Result 3: [3]
 
 ### SQL protocol
 
-Below is an example of the SQL execute request. For more detailed information and examples please see 
+Below is an example of the SQL execute request. For more detailed information and examples please see
 the [official documentation](https://www.tarantool.io/en/doc/2.2/tutorials/sql_tutorial/). 
 *Note that SQL is supported only as of Tarantool 2.0.*
 
@@ -566,6 +566,20 @@ Result 2: [2,[1,2]]
 Result 3: [1,{"id":1,"email":"foo@example.com"}]
 Result 4: [{"id":1,"email":"foo@example.com"},{"id":2,"email":"bar@example.com"}]
 ```
+
+If you need to execute a dynamic SQL statement whose type you don't know, you can use the generic method `execute()`. 
+This method returns a Response object with the body containing either an array of result set rows or an array
+with information about the changed rows:
+
+```php
+$response = $client->execute('<any-type-of-sql-statement>');
+$resultSet = $response->tryGetBodyField(Keys::DATA);
+
+if ($resultSet === null) {
+    $sqlInfo = $response->getBodyField(Keys::SQL_INFO);
+    $affectedCount = $sqlInfo[Keys::SQL_INFO_ROW_COUNT];
+} 
+``` 
 </details>
 
 
@@ -578,11 +592,10 @@ $space->insert([42, Money::EUR(500)]);
 [[$id, $money]] = $space->select(Ctiteria::key([42]));
 ```
 
-The [PeclPacker](src/Packer/PeclPacker.php) supports object serialization out of the box, no extra configuration 
-is needed (however note that it doesn't support MessagePack extensions needed for Tarantool decimals to work and 
-it's [not compatible](https://github.com/msgpack/msgpack-php/issues/137) with PHP 7.4 yet). 
+The [PeclPacker](src/Packer/PeclPacker.php) supports object serialization out of the box, no extra configuration
+is needed (however note that it doesn't support MessagePack extensions needed for Tarantool decimals to work). 
 
-For the [PurePacker](src/Packer/PurePacker.php) you will need to write an extension that converts your objects to 
+For the [PurePacker](src/Packer/PurePacker.php) you will need to write an extension that converts your objects to
 and from MessagePack structures (for more details, read the  msgpack.php's [README](https://github.com/rybakit/msgpack.php#type-transformers)). 
 Once you have implemented your extension, you should register it with the packer object:
 

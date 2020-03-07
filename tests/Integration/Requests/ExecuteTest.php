@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\Requests;
 
+use Tarantool\Client\Keys;
 use Tarantool\Client\Tests\Integration\TestCase;
 
 /**
@@ -24,6 +25,32 @@ use Tarantool\Client\Tests\Integration\TestCase;
  */
 final class ExecuteTest extends TestCase
 {
+    /**
+     * @eval box.execute([[ DROP TABLE IF EXISTS exec_update ]])
+     * @eval box.execute([[ CREATE TABLE exec_update (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(50)) ]])
+     */
+    public function testExecuteInsertsRows() : void
+    {
+        $response = $this->client->execute(
+            'INSERT INTO exec_update VALUES (5, :name1), (null, :name2)',
+            [':name1' => 'A'], [':name2' => 'B']
+        );
+
+        $expectedSqlInfo = [
+            Keys::SQL_INFO_ROW_COUNT => 2,
+            Keys::SQL_INFO_AUTO_INCREMENT_IDS => [6],
+        ];
+
+        self::assertSame($expectedSqlInfo, $response->getBodyField(Keys::SQL_INFO));
+    }
+
+    public function testExecuteFetchesAllRows() : void
+    {
+        $response = $this->client->execute('SELECT * FROM exec_query');
+
+        self::assertSame([[1, 'A'], [2, 'B']], $response->getBodyField(Keys::DATA));
+    }
+
     /**
      * @eval box.execute([[ DROP TABLE IF EXISTS exec_update ]])
      * @eval box.execute([[ CREATE TABLE exec_update (id INTEGER PRIMARY KEY, name VARCHAR(50)) ]])

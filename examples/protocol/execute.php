@@ -16,7 +16,7 @@ require __DIR__.'/../bootstrap.php';
 $client = create_client();
 ensure_server_version_at_least('2', $client);
 
-$client->executeUpdate('DROP TABLE IF EXISTS users');
+$client->execute('DROP TABLE IF EXISTS users');
 
 $result1 = $client->executeUpdate('
     CREATE TABLE users ("id" INTEGER PRIMARY KEY AUTOINCREMENT, "email" VARCHAR(255))
