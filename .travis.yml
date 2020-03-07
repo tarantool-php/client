@@ -1,16 +1,13 @@
-sudo: required
-
-language: bash
-
-services:
-  - docker
+os: linux
+language: shell
+services: [docker]
 
 env:
   global:
     TNT_IMAGE='tarantool/tarantool:2'
     PHP_IMAGE='php:7.4-cli'
 
-  matrix:
+  jobs:
     - PHP_IMAGE='php:7.1-cli'
     - PHP_IMAGE='php:7.1-cli' TNT_PACKER=pecl
     - PHP_IMAGE='php:7.1-cli' TNT_CONN_URI=/tmp/tarantool_client.sock
