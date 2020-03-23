@@ -21,6 +21,7 @@ use Tarantool\Client\Handler\MiddlewareHandler;
 use Tarantool\Client\Middleware\AuthenticationMiddleware;
 use Tarantool\Client\Middleware\Middleware;
 use Tarantool\Client\Middleware\RetryMiddleware;
+use Tarantool\Client\Packer\Packer;
 use Tarantool\Client\Packer\PackerFactory;
 use Tarantool\Client\Request\CallRequest;
 use Tarantool\Client\Request\EvaluateRequest;
@@ -51,7 +52,7 @@ final class Client
         ));
     }
 
-    public static function fromOptions(array $options) : self
+    public static function fromOptions(array $options, ?Packer $packer = null) : self
     {
         $connectionOptions = [];
         if (isset($options['connect_timeout'])) {
@@ -68,7 +69,7 @@ final class Client
         }
 
         $connection = StreamConnection::create($options['uri'] ?? StreamConnection::DEFAULT_URI, $connectionOptions);
-        $handler = new DefaultHandler($connection, PackerFactory::create());
+        $handler = new DefaultHandler($connection, $packer ?? PackerFactory::create());
 
         if (isset($options['max_retries']) && 0 !== $options['max_retries']) {
             $handler = MiddlewareHandler::create($handler, RetryMiddleware::linear($options['max_retries']));
@@ -80,7 +81,7 @@ final class Client
         return new self($handler);
     }
 
-    public static function fromDsn(string $dsn) : self
+    public static function fromDsn(string $dsn, ?Packer $packer = null) : self
     {
         $dsn = Dsn::parse($dsn);
 
@@ -102,7 +103,7 @@ final class Client
             ? StreamConnection::createTcp($dsn->getConnectionUri(), $connectionOptions)
             : StreamConnection::createUds($dsn->getConnectionUri(), $connectionOptions);
 
-        $handler = new DefaultHandler($connection, PackerFactory::create());
+        $handler = new DefaultHandler($connection, $packer ?? PackerFactory::create());
 
         if ($maxRetries = $dsn->getInt('max_retries')) {
             $handler = MiddlewareHandler::create($handler, RetryMiddleware::linear($maxRetries));
