@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration;
 
-use PHPUnit\Framework\TestCase;
 use Tarantool\Client\Client;
 use Tarantool\Client\Packer\Packer;
 use Tarantool\Client\Packer\PurePacker;
