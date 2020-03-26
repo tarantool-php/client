@@ -96,7 +96,7 @@ final class Dsn
         if (false === $parsed) {
             self::throwParseError($dsn);
         }
-        if (isset($parsed['host'])) {
+        if (isset($parsed['host']) || !isset($parsed['path'])) {
             self::throwParseError($dsn);
         }
 
@@ -181,6 +181,9 @@ final class Dsn
         return $value;
     }
 
+    /**
+     * @psalm-return never-returns
+     */
     private static function throwParseError(string $dsn) : void
     {
         throw new \InvalidArgumentException(\sprintf('Unable to parse DSN "%s"', $dsn));
