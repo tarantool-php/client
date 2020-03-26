@@ -21,9 +21,12 @@ use Tarantool\Client\Connection\StreamConnection;
 use Tarantool\Client\Exception\CommunicationFailed;
 use Tarantool\Client\Handler\Handler;
 use Tarantool\Client\Request\Request;
+use Tarantool\Client\Tests\PhpUnitCompat;
 
 abstract class TestCase extends BaseTestCase
 {
+    use PhpUnitCompat;
+
     protected const STAT_REQUEST_SELECT = 'SELECT';
     protected const STAT_REQUEST_AUTH = 'AUTH';
 

@@ -16,12 +16,15 @@ namespace Tarantool\Client\Tests\Unit\Packer;
 use Tarantool\Client\Keys;
 use Tarantool\Client\Packer\Packer;
 use Tarantool\Client\Packer\PeclPacker;
+use Tarantool\Client\Tests\PhpUnitCompat;
 
 /**
  * @requires extension msgpack
  */
 final class PeclPackerTest extends PackerTest
 {
+    use PhpUnitCompat;
+
     protected function createPacker() : Packer
     {
         return new PeclPacker();
@@ -33,7 +36,7 @@ final class PeclPackerTest extends PackerTest
     public function testThrowExceptionOnBadUnpackData(string $data) : void
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageRegExp('/Unable to unpack response (header|body)/');
+        $this->expectExceptionMessageMatches('/Unable to unpack response (header|body)/');
 
         $this->packer->unpack($data)->tryGetBodyField(Keys::DATA);
     }

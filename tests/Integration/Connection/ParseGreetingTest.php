@@ -63,7 +63,7 @@ final class ParseGreetingTest extends TestCase
         $client = $clientBuilder->setOptions(['username' => 'guest'])->build();
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageRegExp('/(Unable to decode salt|Salt is too short)/');
+        $this->expectExceptionMessageMatches('/(Unable to decode salt|Salt is too short)/');
 
         $client->ping();
     }
