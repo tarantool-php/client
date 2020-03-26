@@ -21,9 +21,10 @@ interface Connection
     /**
      * Opens a new connection or reuses an existing one.
      *
-     * @throws ConnectionFailed|CommunicationFailed
+     * @throws ConnectionFailed
+     * @throws CommunicationFailed
      */
-    public function open() : ?Greeting;
+    public function open() : Greeting;
 
     /**
      * Closes an opened connection.

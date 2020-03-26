@@ -76,9 +76,15 @@ final class StreamConnection implements Connection
             : self::createTcp($uri, $options);
     }
 
-    public function open() : ?Greeting
+    /**
+     * @see https://github.com/vimeo/psalm/issues/3021
+     * @psalm-suppress InvalidNullableReturnType
+     */
+    public function open() : Greeting
     {
         if (\is_resource($this->stream)) {
+            /** @see https://github.com/vimeo/psalm/issues/3021 */
+            /** @psalm-suppress NullableReturnStatement */
             return $this->greeting;
         }
 
@@ -109,7 +115,7 @@ final class StreamConnection implements Connection
         \stream_set_timeout($this->stream, $this->options['socket_timeout']);
 
         if ($this->options['persistent'] && \ftell($this->stream)) {
-            return $this->greeting;
+            return $this->greeting = Greeting::unknown();
         }
 
         $greeting = $this->read(Greeting::SIZE_BYTES, 'Unable to read greeting');

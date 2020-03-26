@@ -28,6 +28,9 @@ final class Greeting
     /** @var string|null */
     private $serverVersion;
 
+    /** @var bool */
+    private $unknown = false;
+
     /**
      * @param string $greeting
      */
@@ -45,10 +48,22 @@ final class Greeting
         throw new UnexpectedResponse('Unable to recognize Tarantool server');
     }
 
+    public static function unknown() : self
+    {
+        $self = new self('');
+        $self->unknown = true;
+
+        return $self;
+    }
+
     public function getSalt() : string
     {
         if (null !== $this->salt) {
             return $this->salt;
+        }
+
+        if ($this->unknown) {
+            throw new \BadMethodCallException('Salt is unknown for persistent connections');
         }
 
         if (false === $salt = \base64_decode(\substr($this->greeting, 64, 44), true)) {
@@ -70,6 +85,23 @@ final class Greeting
             return $this->serverVersion;
         }
 
+        if ($this->unknown) {
+            throw new \BadMethodCallException('Server version is unknown for persistent connections');
+        }
+
         return $this->serverVersion = \substr($this->greeting, 10, \strspn($this->greeting, '0123456789.', 10));
+    }
+
+    public function isEqualTo(?self $greeting) : bool
+    {
+        if (!$greeting || $greeting->unknown) {
+            return $this->unknown;
+        }
+
+        if ($this->unknown) {
+            return true;
+        }
+
+        return $greeting->getSalt() === $this->getSalt();
     }
 }

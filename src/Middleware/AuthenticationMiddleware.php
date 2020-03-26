@@ -37,15 +37,17 @@ final class AuthenticationMiddleware implements Middleware
     {
         $greeting = $handler->getConnection()->open();
 
-        if ($greeting && $greeting !== $this->greeting) {
-            $handler->handle(new AuthenticateRequest(
-                $greeting->getSalt(),
-                $this->username,
-                $this->password
-            ));
-
-            $this->greeting = $greeting;
+        if ($greeting->isEqualTo($this->greeting)) {
+            return $handler->handle($request);
         }
+
+        $handler->handle(new AuthenticateRequest(
+            $greeting->getSalt(),
+            $this->username,
+            $this->password
+        ));
+
+        $this->greeting = $greeting;
 
         return $handler->handle($request);
     }
