@@ -20,12 +20,12 @@ trait PhpUnitCompat
 {
     public function expectExceptionMessageMatches(string $regularExpression) : void
     {
-        if (is_callable('parent::expectExceptionMessageRegExp')) {
-            parent::expectExceptionMessageRegExp($regularExpression);
+        if (is_callable('parent::expectExceptionMessageMatches')) {
+            parent::expectExceptionMessageMatches($regularExpression);
 
             return;
         }
 
-        parent::expectExceptionMessageMatches($regularExpression);
+        parent::expectExceptionMessageRegExp($regularExpression);
     }
 }
