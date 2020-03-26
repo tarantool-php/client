@@ -92,7 +92,7 @@ final class Greeting
         return $this->serverVersion = \substr($this->greeting, 10, \strspn($this->greeting, '0123456789.', 10));
     }
 
-    public function isEqualTo(?self $greeting) : bool
+    public function equals(?self $greeting) : bool
     {
         if (!$greeting || $greeting->unknown) {
             return $this->unknown;
