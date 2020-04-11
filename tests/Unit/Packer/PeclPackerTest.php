@@ -18,9 +18,6 @@ use Tarantool\Client\Packer\Packer;
 use Tarantool\Client\Packer\PeclPacker;
 use Tarantool\Client\Tests\PhpUnitCompat;
 
-/**
- * @requires extension msgpack
- */
 final class PeclPackerTest extends PackerTest
 {
     use PhpUnitCompat;

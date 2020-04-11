@@ -18,9 +18,6 @@ use Tarantool\Client\Keys;
 use Tarantool\Client\Packer\Packer;
 use Tarantool\Client\Packer\PurePacker;
 
-/**
- * @group only-pure-packer
- */
 final class PurePackerTest extends PackerTest
 {
     protected function createPacker() : Packer
