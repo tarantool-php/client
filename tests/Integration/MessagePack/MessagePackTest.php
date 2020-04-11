@@ -108,7 +108,6 @@ final class MessagePackTest extends TestCase
      * @group only-pure-packer
      *
      * @requires Tarantool 2.3
-     * @requires extension decimal
      *
      * @eval dec = require('decimal')
      *
@@ -168,8 +167,6 @@ final class MessagePackTest extends TestCase
 
     /**
      * @group only-pure-packer
-     *
-     * @requires extension decimal
      */
     public function testUnpackingBigIntegerAsDecimal() : void
     {
@@ -180,8 +177,6 @@ final class MessagePackTest extends TestCase
 
     /**
      * @group only-pure-packer
-     *
-     * @requires extension decimal
      */
     public function testPackerFactorySetsBigIntAsDecUnpackOption() : void
     {

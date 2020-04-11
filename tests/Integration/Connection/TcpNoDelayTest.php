@@ -16,9 +16,6 @@ namespace Tarantool\Client\Tests\Integration\Connection;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\TestCase;
 
-/**
- * @requires extension sockets
- */
 final class TcpNoDelayTest extends TestCase
 {
     public function testTcpNoDelayEnabled() : void
