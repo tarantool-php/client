@@ -29,7 +29,7 @@ $stmt->close();
 
 $result = $client->executeQuery('SELECT COUNT("id") AS "cnt" FROM users');
 
-printf("Result: %s\n", json_encode($result->getFirst()));
+printf("Result: %s\n", json_encode($result[0]));
 
 /* OUTPUT
 Result: {"cnt":100}

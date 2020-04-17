@@ -61,7 +61,10 @@ final class SqlQueryResultTest extends TestCase
     {
         $result = new SqlQueryResult(self::DATA, self::METADATA);
 
-        self::assertSame(['column1' => 1, 'column2' => 'foo'], $result->getFirst());
+        self::assertSame([
+            self::METADATA[0][0] => self::DATA[0][0],
+            self::METADATA[1][0] => self::DATA[0][1],
+        ], $result->getFirst());
     }
 
     public function testGetFirstReturnsNull() : void
@@ -75,7 +78,10 @@ final class SqlQueryResultTest extends TestCase
     {
         $result = new SqlQueryResult(self::DATA, self::METADATA);
 
-        self::assertSame(['column1' => 2, 'column2' => 'bar'], $result->getLast());
+        self::assertSame([
+            self::METADATA[0][0] => self::DATA[1][0],
+            self::METADATA[1][0] => self::DATA[1][1],
+        ], $result->getLast());
     }
 
     public function testGetLastReturnsNull() : void
@@ -107,6 +113,62 @@ final class SqlQueryResultTest extends TestCase
     {
         $result = new SqlQueryResult(self::DATA, self::METADATA);
 
-        self::assertSame(2, count($result));
+        self::assertCount(2, $result);
+    }
+
+    public function testOffsetGetReturnsFirstItem() : void
+    {
+        $result = new SqlQueryResult(self::DATA, self::METADATA);
+
+        self::assertSame($result->getFirst(), $result[0]);
+    }
+
+    public function testOffsetGetReturnsSecondItem() : void
+    {
+        $result = new SqlQueryResult(self::DATA, self::METADATA);
+
+        self::assertSame($result->getLast(), $result[1]);
+    }
+
+    public function testOffsetGetFailsOnInvalidOffset() : void
+    {
+        $result = new SqlQueryResult(self::DATA, self::METADATA);
+
+        $this->expectException(\OutOfBoundsException::class);
+        $this->expectExceptionMessage('The offset "2" does not exist');
+        $result[2];
+    }
+
+    public function testOffsetIssetReturnsTrue() : void
+    {
+        $result = new SqlQueryResult(self::DATA, self::METADATA);
+
+        self::assertTrue(isset($result[0]));
+    }
+
+    public function testOffsetIssetReturnsFalse() : void
+    {
+        $result = new SqlQueryResult(self::DATA, self::METADATA);
+
+        self::assertFalse(isset($result[2]));
+    }
+
+    public function testOffsetSetIsForbidden() : void
+    {
+        $result = new SqlQueryResult(self::DATA, self::METADATA);
+
+        $this->expectException(\BadMethodCallException::class);
+        $result[2] = [
+            self::METADATA[0][0] => self::DATA[0][0],
+            self::METADATA[1][0] => self::DATA[0][1],
+        ];
+    }
+
+    public function testOffsetUnsetIsForbidden() : void
+    {
+        $result = new SqlQueryResult(self::DATA, self::METADATA);
+
+        $this->expectException(\BadMethodCallException::class);
+        unset($result[0]);
     }
 }

@@ -34,7 +34,7 @@ $result4 = $client->executeQuery('SELECT * FROM users WHERE "id" IN (?, ?)', 1, 
 
 printf("Result 1: %s\n", json_encode([$result1->count(), $result1->getAutoincrementIds()]));
 printf("Result 2: %s\n", json_encode([$result2->count(), $result2->getAutoincrementIds()]));
-printf("Result 3: %s\n", json_encode([$result3->count(), $result3->getFirst()]));
+printf("Result 3: %s\n", json_encode([$result3->count(), $result3[0]]));
 printf("Result 4: %s\n", json_encode(iterator_to_array($result4)));
 
 /* OUTPUT

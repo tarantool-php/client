@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client;
 
-final class SqlQueryResult implements \IteratorAggregate, \Countable
+final class SqlQueryResult implements \ArrayAccess, \Countable, \IteratorAggregate
 {
     /** @var array<int, mixed> */
     private $data;
@@ -66,5 +66,29 @@ final class SqlQueryResult implements \IteratorAggregate, \Countable
     public function count() : int
     {
         return \count($this->data);
+    }
+
+    public function offsetExists($offset) : bool
+    {
+        return isset($this->data[$offset]);
+    }
+
+    public function offsetGet($offset) : array
+    {
+        if (!isset($this->data[$offset])) {
+            throw new \OutOfBoundsException(\sprintf('The offset "%s" does not exist', $offset));
+        }
+
+        return \array_combine($this->keys, $this->data[$offset]);
+    }
+
+    public function offsetSet($offset, $value) : void
+    {
+        throw new \BadMethodCallException(self::class.' object cannot be modified');
+    }
+
+    public function offsetUnset($offset) : void
+    {
+        throw new \BadMethodCallException(self::class.' object cannot be modified');
     }
 }
