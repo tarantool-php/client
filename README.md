@@ -217,7 +217,7 @@ $client = Client::fromDefaults()->withMiddleware(
 ### Binary protocol
 
 The following are examples of binary protocol requests. For more detailed information and examples please see
-the [official documentation](https://www.tarantool.io/en/doc/2.1/book/box/box_space/#box-space-operations-detailed-examples).
+the [official documentation](https://www.tarantool.io/en/doc/2.3/book/box/data_model/#operations).
 
 <details>
 <summary><strong>Select</strong></summary><br />
@@ -529,7 +529,7 @@ Result 3: [3]
 ### SQL protocol
 
 The following are examples of SQL protocol requests. For more detailed information and examples please see
-the [official documentation](https://www.tarantool.io/en/doc/2.2/tutorials/sql_tutorial/). 
+the [official documentation](https://www.tarantool.io/en/doc/2.3/reference/reference_sql/sql/). 
 *Note that SQL is supported only as of Tarantool 2.0.*
 
 <details>
@@ -624,7 +624,8 @@ $space->insert([42, Money::EUR(500)]);
 ```
 
 The [PeclPacker](src/Packer/PeclPacker.php) supports object serialization out of the box, no extra configuration
-is needed (however note that it doesn't support MessagePack extensions needed for Tarantool decimals to work). 
+is needed (however, please note that it does not support [MessagePack extensions](https://github.com/msgpack/msgpack/blob/master/spec.md#ext-format-family)
+which are required, for example, to handle decimal numbers or UUIDs).
 
 For the [PurePacker](src/Packer/PurePacker.php) you will need to write an extension that converts your objects to
 and from MessagePack structures (for more details, read the  msgpack.php's [README](https://github.com/rybakit/msgpack.php#type-transformers)). 
