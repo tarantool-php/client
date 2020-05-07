@@ -19,11 +19,11 @@ use Tarantool\Client\Schema\Operations;
 use Tarantool\Client\Tests\Integration\TestCase;
 
 /**
- * @eval space = create_space('request_update')
- * @eval space:create_index('primary', {type = 'tree', unique = true, parts = {1, 'unsigned'}})
- * @eval space:create_index('secondary', {type = 'tree', unique = false, parts = {2, 'unsigned', 3, 'str'}})
- * @eval space:replace{1, 2, 'tuple_1'}
- * @eval space:replace{2, 4, 'tuple_2'}
+ * @lua space = create_space('request_update')
+ * @lua space:create_index('primary', {type = 'tree', unique = true, parts = {1, 'unsigned'}})
+ * @lua space:create_index('secondary', {type = 'tree', unique = false, parts = {2, 'unsigned', 3, 'str'}})
+ * @lua space:replace{1, 2, 'tuple_1'}
+ * @lua space:replace{2, 4, 'tuple_2'}
  */
 final class UpdateTest extends TestCase
 {

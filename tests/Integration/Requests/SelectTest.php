@@ -22,10 +22,10 @@ final class SelectTest extends TestCase
     /**
      * @dataProvider provideSelectData
      *
-     * @eval space = create_space('request_select')
-     * @eval space:create_index('primary', {type = 'tree', unique = true, parts = {1, 'unsigned'}})
-     * @eval space:create_index('secondary', {type = 'tree', unique = false, parts = {2, 'unsigned', 3, 'str'}})
-     * @eval for i = 1, 100 do space:replace{i, i * 2 % 5, 'tuple_' .. i} end
+     * @lua space = create_space('request_select')
+     * @lua space:create_index('primary', {type = 'tree', unique = true, parts = {1, 'unsigned'}})
+     * @lua space:create_index('secondary', {type = 'tree', unique = false, parts = {2, 'unsigned', 3, 'str'}})
+     * @lua for i = 1, 100 do space:replace{i, i * 2 % 5, 'tuple_' .. i} end
      */
     public function testSelect(int $expectedCount, Criteria $criteria) : void
     {
@@ -56,7 +56,7 @@ final class SelectTest extends TestCase
     }
 
     /**
-     * @eval create_space('request_select'):create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
+     * @lua create_space('request_select'):create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
      */
     public function testSelectEmpty() : void
     {
@@ -66,7 +66,7 @@ final class SelectTest extends TestCase
     }
 
     /**
-     * @eval create_space('request_select'):create_index('primary', {type = 'hash', parts = {1, 'unsigned'}})
+     * @lua create_space('request_select'):create_index('primary', {type = 'hash', parts = {1, 'unsigned'}})
      */
     public function testSelectWithNonExistingIndexName() : void
     {
@@ -79,7 +79,7 @@ final class SelectTest extends TestCase
     }
 
     /**
-     * @eval create_space('request_select'):create_index('primary', {type = 'hash', parts = {1, 'unsigned'}})
+     * @lua create_space('request_select'):create_index('primary', {type = 'hash', parts = {1, 'unsigned'}})
      */
     public function testSelectWithNonExistingIndexId() : void
     {

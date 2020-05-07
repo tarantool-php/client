@@ -20,9 +20,9 @@
         "ext-sockets": "*",
         "friendsofphp/php-cs-fixer": "^2.14",
         "monolog/monolog": "^1.24|^2.0",
-        "phpunit/phpunit": "^7.1|^8|^9",
         "psr/log": "^1.1",
         "rybakit/msgpack": "^0.7",
+        "tarantool/phpunit-extras": "dev-master",
         "vimeo/psalm": "^3.9"
     },
     "suggest": {
@@ -46,5 +46,10 @@
             "*": "dist"
         },
         "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.7.x-dev"
+        }
     }
 }

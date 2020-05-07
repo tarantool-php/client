@@ -23,9 +23,9 @@ final class AuthenticateTest extends TestCase
      * @doesNotPerformAssertions
      * @dataProvider provideValidCredentials
      *
-     * @eval create_user('user_foo', 'foo')
-     * @eval create_user('user_empty', '')
-     * @eval create_user('user_big', '123456789012345678901234567890123456789012345678901234567890')
+     * @lua create_user('user_foo', 'foo')
+     * @lua create_user('user_empty', '')
+     * @lua create_user('user_big', '123456789012345678901234567890123456789012345678901234567890')
      */
     public function testAuthenticateWithValidCredentials(string $username, string $password) : void
     {
@@ -75,8 +75,8 @@ final class AuthenticateTest extends TestCase
     }
 
     /**
-     * @eval create_user('user_foo', 'foo')
-     * @eval create_space('test_auth_reconnect'):create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
+     * @lua create_user('user_foo', 'foo')
+     * @lua create_space('test_auth_reconnect'):create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
      */
     public function testUseCredentialsAfterReconnect() : void
     {
@@ -95,7 +95,7 @@ final class AuthenticateTest extends TestCase
 
     public function testAuthenticateOnceOnOpenedPersistentConnection() : void
     {
-        $total = self::getTotalCalls(self::STAT_REQUEST_AUTH);
+        $this->expectAuthRequestToBeCalledOnce();
 
         $client = ClientBuilder::createFromEnv()
             ->setConnectionOptions(['persistent' => true])
@@ -119,13 +119,11 @@ final class AuthenticateTest extends TestCase
         $client->ping();
 
         $connection->close();
-
-        self::assertSame(1, self::getTotalCalls(self::STAT_REQUEST_AUTH) - $total);
     }
 
     public function testReauthenticateOnClosedPersistentConnection() : void
     {
-        $total = self::getTotalCalls(self::STAT_REQUEST_AUTH);
+        $this->expectAuthRequestToBeCalled(2);
 
         $client = ClientBuilder::createFromEnv()
             ->setConnectionOptions(['persistent' => true])
@@ -151,7 +149,5 @@ final class AuthenticateTest extends TestCase
         $client->ping();
 
         $connection->close();
-
-        self::assertSame(2, self::getTotalCalls(self::STAT_REQUEST_AUTH) - $total);
     }
 }

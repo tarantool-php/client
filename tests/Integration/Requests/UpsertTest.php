@@ -19,8 +19,8 @@ use Tarantool\Client\Schema\Operations;
 use Tarantool\Client\Tests\Integration\TestCase;
 
 /**
- * @eval space = create_space('request_upsert')
- * @eval space:create_index('primary', {type = 'hash', parts = {1, 'unsigned'}})
+ * @lua space = create_space('request_upsert')
+ * @lua space:create_index('primary', {type = 'hash', parts = {1, 'unsigned'}})
  */
 final class UpsertTest extends TestCase
 {

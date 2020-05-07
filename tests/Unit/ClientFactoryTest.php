@@ -11,17 +11,15 @@
 
 declare(strict_types=1);
 
-namespace Tarantool\Client\Tests\Integration;
+namespace Tarantool\Client\Tests\Unit;
 
+use PHPUnit\Framework\TestCase;
 use Tarantool\Client\Client;
 use Tarantool\Client\Packer\Packer;
 use Tarantool\Client\Packer\PurePacker;
 
 final class ClientFactoryTest extends TestCase
 {
-    /**
-     * @group only-pure-packer
-     */
     public function testFromDefaultsCreatesClientWithPurePacker() : void
     {
         $client = Client::fromDefaults();
@@ -29,30 +27,7 @@ final class ClientFactoryTest extends TestCase
         self::assertInstanceOf(PurePacker::class, $client->getHandler()->getPacker());
     }
 
-    /**
-     * @group only-pecl-packer
-     */
-    public function testFromDefaultsCreatesClientWithPeclPacker() : void
-    {
-        $client = Client::fromDefaults();
-
-        self::assertInstanceOf(PurePacker::class, $client->getHandler()->getPacker());
-    }
-
-    /**
-     * @group only-pure-packer
-     */
     public function testFromOptionsCreatesClientWithPurePacker() : void
-    {
-        $client = Client::fromOptions(['uri' => 'tcp://tnt']);
-
-        self::assertInstanceOf(PurePacker::class, $client->getHandler()->getPacker());
-    }
-
-    /**
-     * @group only-pecl-packer
-     */
-    public function testFromOptionsCreatesClientWithPeclPacker() : void
     {
         $client = Client::fromOptions(['uri' => 'tcp://tnt']);
 
@@ -67,20 +42,7 @@ final class ClientFactoryTest extends TestCase
         self::assertSame($packer, $client->getHandler()->getPacker());
     }
 
-    /**
-     * @group only-pure-packer
-     */
     public function testFromDsnCreatesClientWithPurePacker() : void
-    {
-        $client = Client::fromDsn('tcp://tnt');
-
-        self::assertInstanceOf(PurePacker::class, $client->getHandler()->getPacker());
-    }
-
-    /**
-     * @group only-pecl-packer
-     */
-    public function testFromDsnCreatesClientWithPeclPacker() : void
     {
         $client = Client::fromDsn('tcp://tnt');
 

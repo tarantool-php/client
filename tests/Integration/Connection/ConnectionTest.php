@@ -27,7 +27,7 @@ final class ConnectionTest extends TestCase
      * @dataProvider provideAutoConnectData
      * @doesNotPerformAssertions
      *
-     * @eval create_space('test_auto_connect'):create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
+     * @lua create_space('test_auto_connect'):create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
      */
     public function testAutoConnect(string $methodName, array $methodArgs, ?string $space = null) : void
     {

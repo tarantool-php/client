@@ -17,12 +17,12 @@ use Tarantool\Client\Exception\RequestFailed;
 use Tarantool\Client\Tests\Integration\TestCase;
 
 /**
- * @eval space = create_space('request_delete')
- * @eval space:create_index('primary', {type = 'hash', parts = {1, 'unsigned'}})
- * @eval space:create_index('secondary', {type = 'tree', parts = {2, 'str'}})
- * @eval space:insert{3, 'delete_me_1'}
- * @eval space:insert{4, 'delete_me_2'}
- * @eval space:insert{5, 'delete_me_3'}
+ * @lua space = create_space('request_delete')
+ * @lua space:create_index('primary', {type = 'hash', parts = {1, 'unsigned'}})
+ * @lua space:create_index('secondary', {type = 'tree', parts = {2, 'str'}})
+ * @lua space:insert{3, 'delete_me_1'}
+ * @lua space:insert{4, 'delete_me_2'}
+ * @lua space:insert{5, 'delete_me_3'}
  */
 final class DeleteTest extends TestCase
 {

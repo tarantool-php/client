@@ -61,9 +61,9 @@ final class ClientMiddlewareTest extends TestCase
     /**
      * @doesNotPerformAssertions
      *
-     * @eval fiber = require('fiber')
-     * @eval function test() try_drop_user('foobar') fiber.sleep(.5) create_user('foobar', '') end
-     * @eval fiber.create(test)
+     * @lua fiber = require('fiber')
+     * @lua function test() try_drop_user('foobar') fiber.sleep(.5) create_user('foobar', '') end
+     * @lua fiber.create(test)
      */
     public function testAuthenticationRetrySucceeds() : void
     {

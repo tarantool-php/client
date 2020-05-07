@@ -18,7 +18,7 @@ use Tarantool\Client\PreparedStatement;
 use Tarantool\Client\Tests\Integration\TestCase;
 
 /**
- * @requires Tarantool >= 2.3.1-68
+ * @requires Tarantool ^2.3.2
  */
 final class PrepareTest extends TestCase
 {
@@ -49,16 +49,16 @@ final class PrepareTest extends TestCase
         $selectResult2 = $stmt->executeQuery([':v1' => 3], [':v2' => 4]);
 
         try {
-            self::assertSame([':v1' => 1, ':v2' => 2], $selectResult1->getFirst());
-            self::assertSame([':v1' => 3, ':v2' => 4], $selectResult2->getFirst());
+            self::assertSame([':v1' => 1, ':v2' => 2], $selectResult1[0]);
+            self::assertSame([':v1' => 3, ':v2' => 4], $selectResult2[0]);
         } finally {
             $stmt->close();
         }
     }
 
     /**
-     * @eval box.execute([[ DROP TABLE IF EXISTS prepare_execute ]])
-     * @eval box.execute([[ CREATE TABLE prepare_execute (id INTEGER PRIMARY KEY, name VARCHAR(50)) ]])
+     * @sql DROP TABLE IF EXISTS prepare_execute
+     * @sql CREATE TABLE prepare_execute (id INTEGER PRIMARY KEY, name VARCHAR(50))
      */
     public function testExecuteUpdateUpdatesRows() : void
     {
@@ -82,14 +82,11 @@ final class PrepareTest extends TestCase
     {
         $stmt = $this->client->prepare('SELECT ?');
 
-        [$preparedCountBefore] = $this->client->evaluate('return box.info.sql().cache.stmt_count');
+        $this->expectPreparedStatementToBeDeallocatedOnce();
         $stmt->close();
-        [$preparedCountAfter] = $this->client->evaluate('return box.info.sql().cache.stmt_count');
-
-        self::assertSame($preparedCountBefore - 1, $preparedCountAfter);
     }
 
-    public function testCloseClosesPreparedInLuaSqlStatement() : void
+    public function testCloseDeallocatesPreparedInLuaSqlStatement() : void
     {
         [$data] = $this->client->evaluate("s = box.prepare('SELECT ?') return {
             id=s.stmt_id, 
@@ -106,11 +103,8 @@ final class PrepareTest extends TestCase
             $data['metadata']
         );
 
-        [$preparedCountBefore] = $this->client->evaluate('return box.info.sql().cache.stmt_count');
+        $this->expectPreparedStatementToBeDeallocatedOnce();
         $stmt->close();
-        [$preparedCountAfter] = $this->client->evaluate('return box.info.sql().cache.stmt_count');
-
-        self::assertSame($preparedCountBefore - 1, $preparedCountAfter);
     }
 
     public function testCloseFailsOnNonexistentPreparedStatement() : void
@@ -120,5 +114,22 @@ final class PrepareTest extends TestCase
         $this->expectException(RequestFailed::class);
         $this->expectExceptionMessage('Prepared statement with id 42 does not exist');
         $stmt->close();
+    }
+
+    /**
+     * @see https://github.com/tarantool/tarantool/issues/4825
+     */
+    public function testPrepareResetsPreviouslyBoundParameters() : void
+    {
+        $stmt = $this->client->prepare('SELECT :a, :b');
+
+        // bind parameters to the current statement
+        $stmt->execute([':a' => 1], [':b' => 2]);
+
+        $result = $stmt->executeQuery([':a' => 1]);
+        self::assertSame([1, null], $result->getData()[0]);
+
+        $result = $stmt->executeQuery();
+        self::assertSame([null, null], $result->getData()[0]);
     }
 }

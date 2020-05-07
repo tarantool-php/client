@@ -17,17 +17,17 @@ use Tarantool\Client\Keys;
 use Tarantool\Client\Tests\Integration\TestCase;
 
 /**
- * @requires Tarantool 2
+ * @requires Tarantool ^2
  *
- * @eval box.execute([[ DROP TABLE IF EXISTS exec_query ]])
- * @eval box.execute([[ CREATE TABLE exec_query (id INTEGER PRIMARY KEY, name VARCHAR(50)) ]])
- * @eval box.execute([[ INSERT INTO exec_query VALUES (1, 'A'), (2, 'B') ]])
+ * @sql DROP TABLE IF EXISTS exec_query
+ * @sql CREATE TABLE exec_query (id INTEGER PRIMARY KEY, name VARCHAR(50))
+ * @sql INSERT INTO exec_query VALUES (1, 'A'), (2, 'B')
  */
 final class ExecuteTest extends TestCase
 {
     /**
-     * @eval box.execute([[ DROP TABLE IF EXISTS exec_update ]])
-     * @eval box.execute([[ CREATE TABLE exec_update (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(50)) ]])
+     * @sql DROP TABLE IF EXISTS exec_update
+     * @sql CREATE TABLE exec_update (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(50))
      */
     public function testExecuteInsertsRows() : void
     {
@@ -52,8 +52,8 @@ final class ExecuteTest extends TestCase
     }
 
     /**
-     * @eval box.execute([[ DROP TABLE IF EXISTS exec_update ]])
-     * @eval box.execute([[ CREATE TABLE exec_update (id INTEGER PRIMARY KEY, name VARCHAR(50)) ]])
+     * @sql DROP TABLE IF EXISTS exec_update
+     * @sql CREATE TABLE exec_update (id INTEGER PRIMARY KEY, name VARCHAR(50))
      */
     public function testExecuteUpdateInsertsRows() : void
     {
@@ -67,8 +67,8 @@ final class ExecuteTest extends TestCase
     }
 
     /**
-     * @eval box.execute([[ DROP TABLE IF EXISTS exec_update ]])
-     * @eval box.execute([[ CREATE TABLE exec_update (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(50)) ]])
+     * @sql DROP TABLE IF EXISTS exec_update
+     * @sql CREATE TABLE exec_update (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(50))
      */
     public function testExecuteUpdateInsertsRowsWithAutoIncrementedIds() : void
     {
@@ -79,9 +79,9 @@ final class ExecuteTest extends TestCase
     }
 
     /**
-     * @eval box.execute([[ DROP TABLE IF EXISTS exec_update ]])
-     * @eval box.execute([[ CREATE TABLE exec_update (id INTEGER PRIMARY KEY, name VARCHAR(50)) ]])
-     * @eval box.execute([[ INSERT INTO exec_update VALUES (1, 'A'), (2, 'B') ]])
+     * @sql DROP TABLE IF EXISTS exec_update
+     * @sql CREATE TABLE exec_update (id INTEGER PRIMARY KEY, name VARCHAR(50))
+     * @sql INSERT INTO exec_update VALUES (1, 'A'), (2, 'B')
      */
     public function testExecuteUpdateUpdatesRow() : void
     {

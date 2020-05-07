@@ -17,10 +17,10 @@ use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Schema\Operations;
 
 /**
- * @eval space = create_space('composite_key')
- * @eval space:create_index('primary', {type = 'tree', unique = true, parts = {1, 'unsigned', 2, 'unsigned'}})
- * @eval space:insert{2016, 10, 1}
- * @eval space:insert{2016, 11, 0}
+ * @lua space = create_space('composite_key')
+ * @lua space:create_index('primary', {type = 'tree', unique = true, parts = {1, 'unsigned', 2, 'unsigned'}})
+ * @lua space:insert{2016, 10, 1}
+ * @lua space:insert{2016, 11, 0}
  */
 final class CompositeKeyTest extends TestCase
 {

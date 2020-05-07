@@ -17,12 +17,6 @@ if [[ -n "$COVERAGE_FILE" ]]; then
     RUN_CMDS="$RUN_CMDS && \\\\\n    pecl install pcov && docker-php-ext-enable pcov"
 fi
 
-if [[ $TNT_PACKER == pecl ]]; then
-  PHPUNIT_EXCLUDE_GROUP='only-pure-packer'
-else
-  PHPUNIT_EXCLUDE_GROUP='only-pecl-packer'
-fi
-
 echo -e "
 FROM $PHP_IMAGE
 
@@ -38,5 +32,5 @@ ENV PATH=~/.composer/vendor/bin:\$PATH
 ENV TNT_PACKER=$TNT_PACKER TNT_LISTEN_URI=$TNT_LISTEN_URI
 
 CMD if [ ! -f composer.lock ]; then composer install; fi && \\
-    vendor/bin/phpunit --exclude-group ${PHPUNIT_EXCLUDE_GROUP} ${COVERAGE_FILE:+ --coverage-text --coverage-clover=}$COVERAGE_FILE
+    vendor/bin/phpunit ${COVERAGE_FILE:+ --coverage-text --coverage-clover=}$COVERAGE_FILE
 "

@@ -18,15 +18,15 @@ use Tarantool\Client\Schema\Criteria;
 final class BoxNullTest extends TestCase
 {
     /**
-     * @eval format = {}
-     * @eval format[1] = {name = 'foo', type = 'unsigned'}
-     * @eval format[2] = {name = 'bar', type = 'map', is_nullable = true}
-     * @eval format[3] = {name = 'baz', type = 'unsigned', is_nullable = true}
-     * @eval space = create_space('box_null', {format = format})
-     * @eval space:create_index('pk')
-     * @eval space:insert{1, {a = 1}}
-     * @eval space:insert{2, {b = 2}, box.NULL}
-     * @eval space:insert{3, box.NULL, 300}
+     * @lua format = {}
+     * @lua format[1] = {name = 'foo', type = 'unsigned'}
+     * @lua format[2] = {name = 'bar', type = 'map', is_nullable = true}
+     * @lua format[3] = {name = 'baz', type = 'unsigned', is_nullable = true}
+     * @lua space = create_space('box_null', {format = format})
+     * @lua space:create_index('pk')
+     * @lua space:insert{1, {a = 1}}
+     * @lua space:insert{2, {b = 2}, box.NULL}
+     * @lua space:insert{3, box.NULL, 300}
      */
     public function testNull() : void
     {

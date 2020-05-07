@@ -21,8 +21,8 @@ final class InsertTest extends TestCase
     /**
      * @dataProvider provideInsertData
      *
-     * @eval create_space('request_insert_str'):create_index('primary', {type = 'hash', parts = {1, 'str'}})
-     * @eval create_space('request_insert_num'):create_index('primary', {type = 'hash', parts = {1, 'unsigned'}})
+     * @lua create_space('request_insert_str'):create_index('primary', {type = 'hash', parts = {1, 'str'}})
+     * @lua create_space('request_insert_num'):create_index('primary', {type = 'hash', parts = {1, 'unsigned'}})
      */
     public function testInsert(string $spaceName, array $values) : void
     {
@@ -48,8 +48,8 @@ final class InsertTest extends TestCase
     /**
      * @dataProvider provideInsertDataWithMismatchedTypes
      *
-     * @eval create_space('request_insert_str'):create_index('primary', {type = 'hash', parts = {1, 'str'}})
-     * @eval create_space('request_insert_num'):create_index('primary', {type = 'hash', parts = {1, 'unsigned'}})
+     * @lua create_space('request_insert_str'):create_index('primary', {type = 'hash', parts = {1, 'str'}})
+     * @lua create_space('request_insert_num'):create_index('primary', {type = 'hash', parts = {1, 'unsigned'}})
      */
     public function testInsertTypeMismatchedValues(string $spaceName, array $values) : void
     {
@@ -75,9 +75,9 @@ final class InsertTest extends TestCase
     }
 
     /**
-     * @eval space = create_space('request_insert_dup_key')
-     * @eval space:create_index('primary', {type = 'hash', parts = {1, 'unsigned'}})
-     * @eval space:insert{1, 'foobar'}
+     * @lua space = create_space('request_insert_dup_key')
+     * @lua space:create_index('primary', {type = 'hash', parts = {1, 'unsigned'}})
+     * @lua space:insert{1, 'foobar'}
      */
     public function testInsertDuplicateKey() : void
     {
@@ -90,8 +90,8 @@ final class InsertTest extends TestCase
     }
 
     /**
-     * @eval space = create_space('request_insert_empty_tuple')
-     * @eval space:create_index('primary', {type = 'hash', parts = {1, 'unsigned'}})
+     * @lua space = create_space('request_insert_empty_tuple')
+     * @lua space:create_index('primary', {type = 'hash', parts = {1, 'unsigned'}})
      */
     public function testInsertEmptyTuple() : void
     {
