@@ -8,8 +8,8 @@ if [[ -z "$TNT_PACKER" ]]; then
     TNT_PACKER='pure'
 fi
 
-if [[ -z "$TNT_CONN_URI" ]]; then
-    TNT_CONN_URI='tcp://tarantool:3301'
+if [[ -z "$TNT_LISTEN_URI" ]]; then
+    TNT_LISTEN_URI='tarantool:3301'
 fi
 
 RUN_CMDS=''
@@ -35,7 +35,7 @@ RUN apt-get update && \\
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 ENV PATH=~/.composer/vendor/bin:\$PATH
-ENV TNT_PACKER=$TNT_PACKER TNT_CONN_URI=$TNT_CONN_URI
+ENV TNT_PACKER=$TNT_PACKER TNT_LISTEN_URI=$TNT_LISTEN_URI
 
 CMD if [ ! -f composer.lock ]; then composer install; fi && \\
     vendor/bin/phpunit --exclude-group ${PHPUNIT_EXCLUDE_GROUP} ${COVERAGE_FILE:+ --coverage-text --coverage-clover=}$COVERAGE_FILE

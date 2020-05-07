@@ -99,6 +99,12 @@ final class ClientBuilder
     {
         if (0 === strpos($uri, '/')) {
             $uri = 'unix://'.$uri;
+        } elseif (0 === strpos($uri, 'unix/:')) {
+            $uri = 'unix://'.substr($uri, 6);
+        } elseif (ctype_digit($uri)) {
+            $uri = 'tcp://127.0.0.1:'.$uri;
+        } elseif (0 !== strpos($uri, 'tcp://') && (0 !== strpos($uri, 'unix://'))) {
+            $uri = 'tcp://'.$uri;
         }
 
         $this->uri = $uri;
@@ -131,7 +137,7 @@ final class ClientBuilder
     {
         return (new self())
             ->setPackerType(getenv('TNT_PACKER'))
-            ->setUri(getenv('TNT_CONN_URI'));
+            ->setUri(getenv('TNT_LISTEN_URI'));
     }
 
     public static function createFromEnvForTheFakeServer() : self

@@ -20,7 +20,7 @@
         <ini name="error_reporting" value="E_ALL" />
 
         <env name="TNT_PACKER" value="pure" />
-        <env name="TNT_CONN_URI" value="tcp://127.0.0.1:3301" />
+        <env name="TNT_LISTEN_URI" value="3301" />
     </php>
 
     <testsuites>
