@@ -13,12 +13,17 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\Connection;
 
+use Tarantool\Client\Exception\CommunicationFailed;
 use Tarantool\Client\Exception\ConnectionFailed;
 use Tarantool\Client\Exception\UnexpectedResponse;
 use Tarantool\Client\Request\PingRequest;
 use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Schema\Operations;
+use Tarantool\Client\Tests\GreetingDataProvider;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
+use Tarantool\Client\Tests\Integration\FakeServer\FakeServerBuilder;
+use Tarantool\Client\Tests\Integration\FakeServer\Handler\AtConnectionHandler;
+use Tarantool\Client\Tests\Integration\FakeServer\Handler\WriteHandler;
 use Tarantool\Client\Tests\Integration\TestCase;
 
 final class ConnectionTest extends TestCase
@@ -180,5 +185,33 @@ final class ConnectionTest extends TestCase
         }
 
         self::fail(UnexpectedResponse::class.' was not thrown');
+    }
+
+    public function testOpenConnectionHandlesTheMissingGreetingCorrectly() : void
+    {
+        $clientBuilder = ClientBuilder::createFromEnvForTheFakeServer();
+
+        FakeServerBuilder::create(
+            new AtConnectionHandler(1, new WriteHandler('')),
+            new AtConnectionHandler(2, new WriteHandler(GreetingDataProvider::generateGreeting()))
+        )
+            ->setUri($clientBuilder->getUri())
+            ->start();
+
+        $client = $clientBuilder->build();
+        $connection = $client->getHandler()->getConnection();
+
+        try {
+            $connection->open();
+            self::fail('Connection not established');
+        } catch (CommunicationFailed $e) {
+            self::assertSame('Unable to read greeting', $e->getMessage());
+            // at that point the connection was successfully established,
+            // but the greeting message was not read
+        }
+
+        // the second call should correctly handle
+        // the missing greeting from the previous call
+        $connection->open();
     }
 }

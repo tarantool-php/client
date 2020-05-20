@@ -76,15 +76,9 @@ final class StreamConnection implements Connection
             : self::createTcp($uri, $options);
     }
 
-    /**
-     * @see https://github.com/vimeo/psalm/issues/3021
-     * @psalm-suppress InvalidNullableReturnType
-     */
     public function open() : Greeting
     {
-        if (\is_resource($this->stream)) {
-            /** @see https://github.com/vimeo/psalm/issues/3021 */
-            /** @psalm-suppress NullableReturnStatement */
+        if ($this->greeting) {
             return $this->greeting;
         }
 
@@ -125,7 +119,7 @@ final class StreamConnection implements Connection
 
     public function close() : void
     {
-        if (\is_resource($this->stream)) {
+        if ($this->stream) {
             /** @psalm-suppress InvalidPropertyAssignmentValue */
             \fclose($this->stream);
         }
@@ -136,13 +130,12 @@ final class StreamConnection implements Connection
 
     public function isClosed() : bool
     {
-        return !\is_resource($this->stream);
+        return !$this->stream;
     }
 
     public function send(string $data) : string
     {
-        /** @psalm-suppress PossiblyNullArgument */
-        if (!\fwrite($this->stream, $data)) {
+        if (!$this->stream || !\fwrite($this->stream, $data)) {
             throw new CommunicationFailed('Unable to write request');
         }
 
