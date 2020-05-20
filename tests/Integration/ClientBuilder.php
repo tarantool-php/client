@@ -101,7 +101,7 @@ final class ClientBuilder
             $uri = 'unix://'.$uri;
         } elseif (0 === strpos($uri, 'unix/:')) {
             $uri = 'unix://'.substr($uri, 6);
-        } elseif (ctype_digit($uri)) {
+        } elseif (!preg_match('/[\D]/', $uri)) {
             $uri = 'tcp://127.0.0.1:'.$uri;
         } elseif (0 !== strpos($uri, 'tcp://') && (0 !== strpos($uri, 'unix://'))) {
             $uri = 'tcp://'.$uri;
