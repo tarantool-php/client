@@ -58,6 +58,18 @@ function ensure_extension(string $name) : void
     exit(ExamplesTest::EXIT_CODE_SKIP);
 }
 
+function ensure_class(string $className, string $requireMessage = '') : void
+{
+    if (class_exists($className)) {
+        return;
+    }
+
+    $errorMessage = $requireMessage ?: sprintf('Class "%s" is required', $className);
+
+    printf('%s to run "%s"%s', $errorMessage, $_SERVER['SCRIPT_FILENAME'], PHP_EOL);
+    exit(ExamplesTest::EXIT_CODE_SKIP);
+}
+
 function ensure_pure_packer(Client $client) : void
 {
     $packer = $client->getHandler()->getPacker();

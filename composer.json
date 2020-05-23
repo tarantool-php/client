@@ -22,14 +22,16 @@
         "monolog/monolog": "^1.24|^2.0",
         "psr/log": "^1.1",
         "rybakit/msgpack": "^0.7",
+        "symfony/uid": "^5.1@dev",
         "tarantool/phpunit-extras": "^0.1",
         "vimeo/psalm": "^3.9"
     },
     "suggest": {
         "ext-decimal": "For using decimals with Tarantool 2.3+",
         "ext-msgpack": "For using Pecl packer",
+        "psr/log": "For using LoggingMiddleware",
         "rybakit/msgpack": "For using Pure packer (version 0.7 or above is required)",
-        "psr/log": "For using LoggingMiddleware"
+        "symfony/uid": "For using UUIDs with Tarantool 2.4+"
     },
     "autoload": {
         "psr-4": {

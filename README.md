@@ -13,7 +13,7 @@ A pure PHP client for [Tarantool](https://www.tarantool.io/en/developers/) 1.7.1
  * Written in pure PHP, no extensions are required
  * Supports Unix domain sockets
  * Supports SQL protocol
- * Supports user defined types
+ * Supports user-defined types (decimals and UUIDs are included)
  * Highly customizable
  * [Thoroughly tested](https://travis-ci.org/tarantool-php/client) on PHP 7.1-7.4 and Tarantool 1.7-2.4
  * Being used in a number of projects, including [Queue](https://github.com/tarantool-php/queue), [Mapper](https://github.com/tarantool-php/mapper), [Web Admin](https://github.com/basis-company/tarantool-admin) and [others](https://github.com/tarantool-php).
@@ -28,7 +28,7 @@ A pure PHP client for [Tarantool](https://www.tarantool.io/en/developers/) 1.7.1
  * [Data manipulation](#data-manipulation)
    * [Binary protocol](#binary-protocol)
    * [SQL protocol](#sql-protocol)
-   * [User defined types](#user-defined-types) 
+   * [User-defined types](#user-defined-types) 
  * [Tests](#tests)
  * [Benchmarks](#benchmarks)
  * [License](#license)
@@ -46,9 +46,19 @@ In addition, you need to install one of the supported msgpack packages
 (either [rybakit/msgpack.php](https://github.com/rybakit/msgpack.php#installation) 
 or [msgpack/msgpack-php](https://github.com/msgpack/msgpack-php#install)).
  
-Note that the Decimal type that was added in Tarantool 2.3 is only supported by
-the `rybakit/msgpack.php` package. In order to use decimals with this package,
-you additionally need to install the [decimal](http://php-decimal.io/#installation) extension.
+Note that the [Decimal](https://www.tarantool.io/en/doc/2.4/dev_guide/internals/box_protocol/#the-decimal-type) type 
+that was added in Tarantool 2.3 is only supported by the `rybakit/msgpack.php` package. In order to use decimals with 
+this package, you additionally need to install the [decimal](http://php-decimal.io/#installation) extension. The same 
+applies to the [UUID](https://www.tarantool.io/en/doc/2.4/dev_guide/internals/box_protocol/#the-uuid-type) type that 
+is available since Tarantool 2.4, install the [symfony/uid](https://symfony.com/doc/master/components/uid.html#installation) 
+package to be able to work with this type (for better performance you can additionally install 
+the [uuid](https://pecl.php.net/package/uuid) extension).
+
+> *Although it is recommended to use pecl extensions for such complex MessagePack data structures,
+> this is not mandatory, and their support can be relatively easily implemented in pure php
+> using well-established pure php libraries, or by writing your own implementation.
+> See the section "[User-defined types](https://github.com/tarantool-php/client#user-defined-types)" 
+> for more information.*
 
 
 ## Creating a client
@@ -614,7 +624,7 @@ Result: {"cnt":100}
 </details>
 
 
-### User defined types
+### User-defined types
 
 To store complex structures inside a tuple you may want to use objects:
 
@@ -636,9 +646,7 @@ $packer = PurePacker::fromExtensions(new MoneyExtension());
 $client = new Client(new DefaultHandler($connection, $packer));
 ```
 
-> *Note*
->
-> A working example of using the user defined types can be found in the [examples](examples/user_defined_type) folder. 
+> *A working example of using the user-defined types can be found in the [examples](examples/user_defined_type) folder.* 
 
 
 
@@ -656,7 +664,7 @@ To run integration tests:
 vendor/bin/phpunit --testsuite integration
 ```
 
-> Make sure to start [client.lua](tests/Integration/client.lua) first.
+> *Make sure to start [client.lua](tests/Integration/client.lua) first.*
 
 To run all tests:
 
@@ -678,7 +686,7 @@ You may change the default runtime by defining the `PHP_IMAGE` environment varia
 PHP_IMAGE='php:7.3-cli' ./dockerfile.sh | docker build -t client -
 ```
 
-> See a list of various images [here](.travis.yml#L13).
+> *See a list of various images [here](.travis.yml#L10).*
 
 
 Then run a Tarantool instance (needed for integration tests):
