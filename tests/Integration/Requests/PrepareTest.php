@@ -18,7 +18,7 @@ use Tarantool\Client\PreparedStatement;
 use Tarantool\Client\Tests\Integration\TestCase;
 
 /**
- * @requires Tarantool ^2.3.2
+ * @requires Tarantool >=2.3.2
  */
 final class PrepareTest extends TestCase
 {

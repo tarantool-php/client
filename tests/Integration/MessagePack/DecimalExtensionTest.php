@@ -23,7 +23,7 @@ use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\TestCase;
 
 /**
- * @requires Tarantool ^2.3
+ * @requires Tarantool >=2.3
  * @requires extension decimal
  * @requires clientPacker pure
  */

@@ -17,7 +17,7 @@ use Tarantool\Client\Keys;
 use Tarantool\Client\Tests\Integration\TestCase;
 
 /**
- * @requires Tarantool ^2
+ * @requires Tarantool >=2
  *
  * @sql DROP TABLE IF EXISTS exec_query
  * @sql CREATE TABLE exec_query (id INTEGER PRIMARY KEY, name VARCHAR(50))
