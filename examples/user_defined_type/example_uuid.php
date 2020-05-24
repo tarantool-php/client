@@ -28,8 +28,7 @@ $client->evaluate(
     if box.space[...] then box.space[...]:drop() end
     space = box.schema.space.create(...)
     space:create_index("primary", {parts = {1, 'uuid'}})
-    uuid = require('uuid')
-    space:insert({uuid.fromstr('64d22e4d-ac92-4a23-899a-e59f34af5479'), 'foo'})
+    space:insert({require('uuid').fromstr('64d22e4d-ac92-4a23-899a-e59f34af5479'), 'foo'})
 LUA
 , $spaceName);
 
