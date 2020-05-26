@@ -18,7 +18,7 @@ use MessagePack\Packer;
 use MessagePack\TypeTransformer\Extension;
 use Symfony\Component\Uid\Uuid;
 
-class UuidExtension implements Extension
+final class UuidExtension implements Extension
 {
     private const TYPE = 2;
 

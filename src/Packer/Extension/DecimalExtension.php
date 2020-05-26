@@ -18,7 +18,7 @@ use MessagePack\BufferUnpacker;
 use MessagePack\Packer;
 use MessagePack\TypeTransformer\Extension;
 
-class DecimalExtension implements Extension
+final class DecimalExtension implements Extension
 {
     private const TYPE = 1;
     private const PRECISION = 38;
