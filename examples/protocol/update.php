@@ -21,7 +21,7 @@ $spaceName = 'example';
 $client->evaluate(
 <<<LUA
     if box.space[...] then box.space[...]:drop() end
-    space = box.schema.space.create(...)
+    local space = box.schema.space.create(...)
     space:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
     space:format({
         {name = 'id', type = 'unsigned'}, 

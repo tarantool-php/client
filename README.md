@@ -235,7 +235,7 @@ the [official documentation](https://www.tarantool.io/en/doc/2.3/book/box/data_m
 *Fixtures*
 
 ```lua
-space = box.schema.space.create('example')
+local space = box.schema.space.create('example')
 space:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
 space:create_index('secondary', {type = 'tree', unique = false, parts = {2, 'str'}})
 space:insert({1, 'foo'})
@@ -275,7 +275,7 @@ Result 2: [[3,"bar"],[4,"bar"]]
 *Fixtures*
 
 ```lua
-space = box.schema.space.create('example')
+local space = box.schema.space.create('example')
 space:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
 ```
 
@@ -311,7 +311,7 @@ tarantool> box.space.example:select()
 *Fixtures*
 
 ```lua
-space = box.schema.space.create('example')
+local space = box.schema.space.create('example')
 space:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
 space:format({
     {name = 'id', type = 'unsigned'}, 
@@ -361,7 +361,7 @@ tarantool> box.space.example:select()
 *Fixtures*
 
 ```lua
-space = box.schema.space.create('example')
+local space = box.schema.space.create('example')
 space:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}}) 
 space:format({
     {name = 'id', type = 'unsigned'}, 
@@ -399,7 +399,7 @@ tarantool> box.space.example:select()
 *Fixtures*
 
 ```lua
-space = box.schema.space.create('example')
+local space = box.schema.space.create('example')
 space:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
 space:insert({1, 'foo'})
 space:insert({2, 'bar'})
@@ -442,7 +442,7 @@ tarantool> box.space.example:select()
 *Fixtures*
 
 ```lua
-space = box.schema.space.create('example')
+local space = box.schema.space.create('example')
 space:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
 space:create_index('secondary', {type = 'tree', parts = {2, 'str'}})
 space:insert({1, 'foo'})

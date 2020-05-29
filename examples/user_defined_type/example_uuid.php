@@ -26,9 +26,10 @@ $spaceName = 'example';
 $client->evaluate(
 <<<LUA
     if box.space[...] then box.space[...]:drop() end
-    space = box.schema.space.create(...)
+    local space = box.schema.space.create(...)
     space:create_index("primary", {parts = {1, 'uuid'}})
-    space:insert({require('uuid').fromstr('64d22e4d-ac92-4a23-899a-e59f34af5479'), 'foo'})
+    local uuid = require('uuid')
+    space:insert({uuid.fromstr('64d22e4d-ac92-4a23-899a-e59f34af5479'), 'foo'})
 LUA
 , $spaceName);
 
@@ -37,10 +38,21 @@ $space = $client->getSpace($spaceName);
 $result1 = $space->insert([new Uuid('7e3b84a4-0819-473a-9625-5d57ad1c9604'), 'bar']);
 $result2 = $space->select(Criteria::geIterator());
 
-printf("Result 1: %s\n", json_encode($result1[0]));
-printf("Result 2: %s\n", json_encode($result2));
+function print_result(string $title, array $rows) : void
+{
+    echo "$title:\n";
+    foreach ($rows as $row) {
+        printf("[%s('%s'), '%s']\n", get_class($row[0]), $row[0], $row[1]);
+    }
+}
+
+print_result('Result 1', $result1);
+print_result('Result 2', $result2);
 
 /* OUTPUT
-Result 1: ["7e3b84a4-0819-473a-9625-5d57ad1c9604","bar"]
-Result 2: [["64d22e4d-ac92-4a23-899a-e59f34af5479","foo"],["7e3b84a4-0819-473a-9625-5d57ad1c9604","bar"]]
+Result 1:
+[Symfony\Component\Uid\UuidV4('7e3b84a4-0819-473a-9625-5d57ad1c9604'), 'bar']
+Result 2:
+[Symfony\Component\Uid\UuidV4('64d22e4d-ac92-4a23-899a-e59f34af5479'), 'foo']
+[Symfony\Component\Uid\UuidV4('7e3b84a4-0819-473a-9625-5d57ad1c9604'), 'bar']
 */
