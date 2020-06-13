@@ -43,7 +43,7 @@ final class CustomErrorMiddleware implements Middleware
      * $middleware = CustomErrorMiddleware::fromFactory(
      *     static function (Error $err, RequestFailed $ex) : \Exception {
      *         return 'UserNotFound' === $err->tryGetField('custom_type')
-     *             ? new UserNotFound($err->getMessage(), $err->getCode(), $ex)
+     *             ? new UserNotFound($err->getMessage(), $err->getCode())
      *             : $ex;
      *     }
      * );
@@ -82,7 +82,7 @@ final class CustomErrorMiddleware implements Middleware
                 do {
                     $customType = $err->tryGetField('custom_type');
                     if ($customType && isset($mapping[$customType])) {
-                        return new $mapping[$customType]($err->getMessage(), $err->getCode(), $ex);
+                        return new $mapping[$customType]($err->getMessage(), $err->getCode());
                     }
                 } while ($err = $err->getPrevious());
 
@@ -113,11 +113,10 @@ final class CustomErrorMiddleware implements Middleware
 
                 /** @var class-string<\Exception> $className */
                 $className = $namespace.$customType;
-                if (!\class_exists($className)) {
-                    return $ex;
-                }
 
-                return new $className($err->getMessage(), $err->getCode(), $ex);
+                return \class_exists($className)
+                    ? new $className($err->getMessage(), $err->getCode())
+                    : $ex;
             }
         );
     }
