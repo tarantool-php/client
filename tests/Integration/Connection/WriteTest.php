@@ -33,6 +33,6 @@ final class WriteTest extends TestCase
         $response = $handler->getPacker()->unpack($data);
 
         self::assertTrue($response->isError());
-        self::assertSame('Invalid MsgPack - packet header', $response->getBodyField(Keys::ERROR));
+        self::assertSame('Invalid MsgPack - packet header', $response->getBodyField(Keys::ERROR_24));
     }
 }

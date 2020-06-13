@@ -13,17 +13,32 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Exception;
 
+use Tarantool\Client\Error;
 use Tarantool\Client\Keys;
 use Tarantool\Client\Response;
 
 final class RequestFailed extends \RuntimeException
 {
+    /** @var Error|null */
+    private $error;
+
+    public function getError() : ?Error
+    {
+        return $this->error;
+    }
+
     public static function fromErrorResponse(Response $response) : self
     {
-        return new self(
-            $response->getBodyField(Keys::ERROR),
+        $self = new self(
+            $response->getBodyField(Keys::ERROR_24),
             $response->getCode() & (Response::TYPE_ERROR - 1)
         );
+
+        if ($error = $response->tryGetBodyField(Keys::ERROR)) {
+            $self->error = Error::fromMap($error);
+        }
+
+        return $self;
     }
 
     public static function unknownSpace(string $spaceName) : self
@@ -33,10 +48,6 @@ final class RequestFailed extends \RuntimeException
 
     public static function unknownIndex(string $indexName, int $spaceId) : self
     {
-        return new self(\sprintf(
-            "No index '%s' is defined in space #%d",
-            $indexName,
-            $spaceId
-        ));
+        return new self(\sprintf("No index '%s' is defined in space #%d", $indexName, $spaceId));
     }
 }

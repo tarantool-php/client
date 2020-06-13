@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Tarantool\Client;
 
 /**
- * @see https://www.tarantool.io/en/doc/2.2/dev_guide/internals/box_protocol/
+ * @see https://www.tarantool.io/en/doc/2.4/dev_guide/internals/box_protocol/
  */
 final class Keys
 {
@@ -33,16 +33,29 @@ final class Keys
     public const EXPR = 0x27;
     public const OPERATIONS = 0x28;
     public const DATA = 0x30;
-    public const ERROR = 0x31;
+    public const ERROR_24 = 0x31;
     public const METADATA = 0x32;
     public const BIND_METADATA = 0x33;
     public const BIND_COUNT = 0x34;
     public const SQL_TEXT = 0x40;
     public const SQL_BIND = 0x41;
     public const SQL_INFO = 0x42;
-    public const SQL_INFO_ROW_COUNT = 0x00;
-    public const SQL_INFO_AUTO_INCREMENT_IDS = 0x01;
     public const STMT_ID = 0x43;
+    public const ERROR = 0x52;
+
+    // sql info map keys
+    public const SQL_INFO_ROW_COUNT = 0;
+    public const SQL_INFO_AUTO_INCREMENT_IDS = 1;
+
+    // error map keys
+    public const ERROR_STACK = 0;
+    public const ERROR_TYPE = 0;
+    public const ERROR_FILE = 1;
+    public const ERROR_LINE = 2;
+    public const ERROR_MESSAGE = 3;
+    public const ERROR_NUMBER = 4;
+    public const ERROR_CODE = 5;
+    public const ERROR_FIELDS = 6;
 
     private function __construct()
     {
