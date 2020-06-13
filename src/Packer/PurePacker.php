@@ -21,6 +21,7 @@ use MessagePack\UnpackOptions;
 use Symfony\Component\Uid\Uuid;
 use Tarantool\Client\Keys;
 use Tarantool\Client\Packer\Extension\DecimalExtension;
+use Tarantool\Client\Packer\Extension\ErrorExtension;
 use Tarantool\Client\Packer\Extension\UuidExtension;
 use Tarantool\Client\Packer\Packer as ClientPacker;
 use Tarantool\Client\Request\Request;
@@ -52,7 +53,7 @@ final class PurePacker implements ClientPacker
 
     public static function fromAvailableExtensions() : self
     {
-        $extensions = [];
+        $extensions = [new ErrorExtension()];
         if (\class_exists(Uuid::class)) {
             $extensions[] = new UuidExtension();
         }
