@@ -26,7 +26,7 @@ use Tarantool\Client\Request\PingRequest;
 use Tarantool\Client\Request\SelectRequest;
 use Tarantool\Client\RequestTypes;
 use Tarantool\Client\Schema\IteratorTypes;
-use Tarantool\Client\Tests\Unit\ResponseFactory;
+use Tarantool\PhpUnit\Client\TestDoubleFactory;
 
 final class FirewallMiddlewareTest extends TestCase
 {
@@ -43,7 +43,7 @@ final class FirewallMiddlewareTest extends TestCase
     public function testEmptyAllowList() : void
     {
         $this->handler->expects($this->once())->method('handle')
-            ->willReturn(ResponseFactory::create());
+            ->willReturn(TestDoubleFactory::createEmptyResponse());
 
         $middleware = FirewallMiddleware::deny(RequestTypes::CALL);
         $middleware->process(new PingRequest(), $this->handler);
@@ -52,7 +52,7 @@ final class FirewallMiddlewareTest extends TestCase
     public function testAllow() : void
     {
         $this->handler->expects($this->once())->method('handle')
-            ->willReturn(ResponseFactory::create());
+            ->willReturn(TestDoubleFactory::createEmptyResponse());
 
         $middleware = FirewallMiddleware::allow(RequestTypes::PING);
         $middleware->process(new PingRequest(), $this->handler);
@@ -71,7 +71,7 @@ final class FirewallMiddlewareTest extends TestCase
     public function testAndAllow() : void
     {
         $this->handler->expects($this->once())->method('handle')
-            ->willReturn(ResponseFactory::create());
+            ->willReturn(TestDoubleFactory::createEmptyResponse());
 
         $middleware = FirewallMiddleware::deny(RequestTypes::CALL)->andAllow(RequestTypes::PING);
 
@@ -91,7 +91,7 @@ final class FirewallMiddlewareTest extends TestCase
     public function testAndAllowOnly() : void
     {
         $this->handler->expects($this->once())->method('handle')
-            ->willReturn(ResponseFactory::create());
+            ->willReturn(TestDoubleFactory::createEmptyResponse());
 
         $middleware = FirewallMiddleware::allow(RequestTypes::CALL)->andAllowOnly(RequestTypes::PING);
 
@@ -111,7 +111,7 @@ final class FirewallMiddlewareTest extends TestCase
     public function testDeny() : void
     {
         $this->handler->expects($this->once())->method('handle')
-            ->willReturn(ResponseFactory::create());
+            ->willReturn(TestDoubleFactory::createEmptyResponse());
 
         $middleware = FirewallMiddleware::deny(RequestTypes::PING);
 
@@ -131,7 +131,7 @@ final class FirewallMiddlewareTest extends TestCase
     public function testAndDeny() : void
     {
         $this->handler->expects($this->once())->method('handle')
-            ->willReturn(ResponseFactory::create());
+            ->willReturn(TestDoubleFactory::createEmptyResponse());
 
         $middleware = FirewallMiddleware::allow(RequestTypes::PING)->andDeny(RequestTypes::CALL);
 
@@ -151,7 +151,7 @@ final class FirewallMiddlewareTest extends TestCase
     public function testAndDenyOnly() : void
     {
         $this->handler->expects($this->once())->method('handle')
-            ->willReturn(ResponseFactory::create());
+            ->willReturn(TestDoubleFactory::createEmptyResponse());
 
         $middleware = FirewallMiddleware::deny(RequestTypes::PING)->andDenyOnly(RequestTypes::CALL);
 
@@ -188,7 +188,7 @@ final class FirewallMiddlewareTest extends TestCase
     public function testAllowReadOnly() : void
     {
         $this->handler->expects($this->exactly(3))->method('handle')
-            ->willReturn(ResponseFactory::create());
+            ->willReturn(TestDoubleFactory::createEmptyResponse());
 
         $middleware = FirewallMiddleware::allowReadOnly();
 

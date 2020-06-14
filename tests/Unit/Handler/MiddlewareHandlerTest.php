@@ -19,7 +19,7 @@ use Tarantool\Client\Handler\Handler;
 use Tarantool\Client\Handler\MiddlewareHandler;
 use Tarantool\Client\Middleware\Middleware;
 use Tarantool\Client\Request\Request;
-use Tarantool\Client\Tests\Unit\ResponseFactory;
+use Tarantool\PhpUnit\Client\TestDoubleFactory;
 
 final class MiddlewareHandlerTest extends TestCase
 {
@@ -63,7 +63,7 @@ final class MiddlewareHandlerTest extends TestCase
             }
         );
 
-        $this->handler->method('handle')->willReturn(ResponseFactory::create());
+        $this->handler->method('handle')->willReturn(TestDoubleFactory::createEmptyResponse());
 
         $handler = MiddlewareHandler::create($this->handler, $middleware1, $middleware2);
         $handler->handle($this->request);
@@ -81,7 +81,7 @@ final class MiddlewareHandlerTest extends TestCase
         $middleware = $this->createMock(Middleware::class);
         $middleware->expects($this->exactly(2))->method('process')->willReturnCallback($middlewareCallback);
 
-        $this->handler->method('handle')->willReturn(ResponseFactory::create());
+        $this->handler->method('handle')->willReturn(TestDoubleFactory::createEmptyResponse());
 
         $handler = MiddlewareHandler::create($this->handler, $middleware);
         $handler->handle($this->request);
