@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the Tarantool Client package.
+ * This file is part of the tarantool/client package.
  *
  * (c) Eugene Leonovich <gen.work@gmail.com>
  *

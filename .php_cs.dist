@@ -57,7 +57,7 @@ final class FilterableFixer implements FixerInterface
 };
 
 $header = <<<EOF
-This file is part of the Tarantool Client package.
+This file is part of the tarantool/client package.
 
 (c) Eugene Leonovich <gen.work@gmail.com>
 
