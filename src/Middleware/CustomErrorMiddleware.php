@@ -93,7 +93,7 @@ final class CustomErrorMiddleware implements Middleware
 
     /**
      * Creates the middleware from the base namespace for the custom exception classes.
-     * The exception class name then will be in the format of "<namespace>/<lua_error.custom_type>".
+     * The exception class name then will be in the format of "<namespace>\<lua_error.custom_type>".
      *
      * Example:
      *
