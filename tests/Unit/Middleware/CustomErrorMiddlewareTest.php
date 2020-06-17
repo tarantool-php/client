@@ -22,7 +22,6 @@ use Tarantool\Client\Handler\Handler;
 use Tarantool\Client\Keys;
 use Tarantool\Client\Middleware\CustomErrorMiddleware;
 use Tarantool\Client\Request\PingRequest;
-use Tarantool\Client\Response;
 use Tarantool\PhpUnit\Client\TestDoubleFactory;
 
 final class CustomErrorMiddlewareTest extends TestCase
@@ -44,23 +43,16 @@ final class CustomErrorMiddlewareTest extends TestCase
 
         $this->handler->expects($this->once())->method('handle')
             ->willThrowException(RequestFailed::fromErrorResponse(
-                TestDoubleFactory::createResponse([
-                    Keys::ERROR_24 => $errorMessage,
-                    Keys::ERROR => [
-                        Keys::ERROR_STACK => [
-                            [
-                                Keys::ERROR_TYPE => 'CustomError',
-                                Keys::ERROR_FILE => 'file.lua',
-                                Keys::ERROR_LINE => 1,
-                                Keys::ERROR_MESSAGE => $errorMessage,
-                                Keys::ERROR_NUMBER => 2,
-                                Keys::ERROR_CODE => $errorCode,
-                                Keys::ERROR_FIELDS => ['custom_type' => 'RequestDenied'],
-                            ],
-                        ],
+                TestDoubleFactory::createErrorResponseFromStack([
+                    [
+                        Keys::ERROR_TYPE => 'CustomError',
+                        Keys::ERROR_FILE => 'file.lua',
+                        Keys::ERROR_LINE => 1,
+                        Keys::ERROR_MESSAGE => $errorMessage,
+                        Keys::ERROR_NUMBER => 2,
+                        Keys::ERROR_CODE => $errorCode,
+                        Keys::ERROR_FIELDS => ['custom_type' => 'RequestDenied'],
                     ],
-                ], [
-                    Keys::CODE => Response::TYPE_ERROR + $errorCode,
                 ])
             ));
 
@@ -80,23 +72,16 @@ final class CustomErrorMiddlewareTest extends TestCase
 
         $this->handler->expects($this->once())->method('handle')
             ->willThrowException(RequestFailed::fromErrorResponse(
-                TestDoubleFactory::createResponse([
-                    Keys::ERROR_24 => $errorMessage,
-                    Keys::ERROR => [
-                        Keys::ERROR_STACK => [
-                            [
-                                Keys::ERROR_TYPE => 'CustomError',
-                                Keys::ERROR_FILE => 'file.lua',
-                                Keys::ERROR_LINE => 1,
-                                Keys::ERROR_MESSAGE => $errorMessage,
-                                Keys::ERROR_NUMBER => 2,
-                                Keys::ERROR_CODE => $errorCode,
-                                Keys::ERROR_FIELDS => ['custom_type' => 'MyCustomErrorType'],
-                            ],
-                        ],
+                TestDoubleFactory::createErrorResponseFromStack([
+                    [
+                        Keys::ERROR_TYPE => 'CustomError',
+                        Keys::ERROR_FILE => 'file.lua',
+                        Keys::ERROR_LINE => 1,
+                        Keys::ERROR_MESSAGE => $errorMessage,
+                        Keys::ERROR_NUMBER => 2,
+                        Keys::ERROR_CODE => $errorCode,
+                        Keys::ERROR_FIELDS => ['custom_type' => 'MyCustomErrorType'],
                     ],
-                ], [
-                    Keys::CODE => Response::TYPE_ERROR + $errorCode,
                 ])
             ));
 
@@ -120,23 +105,16 @@ final class CustomErrorMiddlewareTest extends TestCase
 
         $this->handler->expects($this->once())->method('handle')
             ->willThrowException(RequestFailed::fromErrorResponse(
-                TestDoubleFactory::createResponse([
-                    Keys::ERROR_24 => $errorMessage,
-                    Keys::ERROR => [
-                        Keys::ERROR_STACK => [
-                            [
-                                Keys::ERROR_TYPE => 'CustomError',
-                                Keys::ERROR_FILE => 'file.lua',
-                                Keys::ERROR_LINE => 1,
-                                Keys::ERROR_MESSAGE => $errorMessage,
-                                Keys::ERROR_NUMBER => 2,
-                                Keys::ERROR_CODE => $errorCode,
-                                Keys::ERROR_FIELDS => ['custom_type' => 'MyCustomErrorType'],
-                            ],
-                        ],
+                TestDoubleFactory::createErrorResponseFromStack([
+                    [
+                        Keys::ERROR_TYPE => 'CustomError',
+                        Keys::ERROR_FILE => 'file.lua',
+                        Keys::ERROR_LINE => 1,
+                        Keys::ERROR_MESSAGE => $errorMessage,
+                        Keys::ERROR_NUMBER => 2,
+                        Keys::ERROR_CODE => $errorCode,
+                        Keys::ERROR_FIELDS => ['custom_type' => 'MyCustomErrorType'],
                     ],
-                ], [
-                    Keys::CODE => Response::TYPE_ERROR + $errorCode,
                 ])
             ));
 
@@ -158,32 +136,25 @@ final class CustomErrorMiddlewareTest extends TestCase
 
         $this->handler->expects($this->once())->method('handle')
             ->willThrowException(RequestFailed::fromErrorResponse(
-                TestDoubleFactory::createResponse([
-                    Keys::ERROR_24 => $errorMessage,
-                    Keys::ERROR => [
-                        Keys::ERROR_STACK => [
-                            [
-                                Keys::ERROR_TYPE => 'CustomError',
-                                Keys::ERROR_FILE => 'file1.lua',
-                                Keys::ERROR_LINE => 1,
-                                Keys::ERROR_MESSAGE => $errorMessage,
-                                Keys::ERROR_NUMBER => 2,
-                                Keys::ERROR_CODE => $errorCode,
-                                Keys::ERROR_FIELDS => ['custom_type' => 'MyCustomErrorType1'],
-                            ],
-                            [
-                                Keys::ERROR_TYPE => 'CustomError',
-                                Keys::ERROR_FILE => 'file2.lua',
-                                Keys::ERROR_LINE => 11,
-                                Keys::ERROR_MESSAGE => 'Error Message 2',
-                                Keys::ERROR_NUMBER => 12,
-                                Keys::ERROR_CODE => 13,
-                                Keys::ERROR_FIELDS => ['custom_type' => 'MyCustomErrorType2'],
-                            ],
-                        ],
+                TestDoubleFactory::createErrorResponseFromStack([
+                    [
+                        Keys::ERROR_TYPE => 'CustomError',
+                        Keys::ERROR_FILE => 'file1.lua',
+                        Keys::ERROR_LINE => 1,
+                        Keys::ERROR_MESSAGE => $errorMessage,
+                        Keys::ERROR_NUMBER => 2,
+                        Keys::ERROR_CODE => $errorCode,
+                        Keys::ERROR_FIELDS => ['custom_type' => 'MyCustomErrorType1'],
                     ],
-                ], [
-                    Keys::CODE => Response::TYPE_ERROR + $errorCode,
+                    [
+                        Keys::ERROR_TYPE => 'CustomError',
+                        Keys::ERROR_FILE => 'file2.lua',
+                        Keys::ERROR_LINE => 11,
+                        Keys::ERROR_MESSAGE => 'Error Message 2',
+                        Keys::ERROR_NUMBER => 12,
+                        Keys::ERROR_CODE => 13,
+                        Keys::ERROR_FIELDS => ['custom_type' => 'MyCustomErrorType2'],
+                    ],
                 ])
             ));
 
