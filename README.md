@@ -630,7 +630,7 @@ To store complex structures inside a tuple you may want to use objects:
 
 ```php
 $space->insert([42, Money::EUR(500)]);
-[[$id, $money]] = $space->select(Ctiteria::key([42]));
+[[$id, $money]] = $space->select(Criteria::key([42]));
 ```
 
 The [PeclPacker](src/Packer/PeclPacker.php) supports object serialization out of the box, no extra configuration
