@@ -15,8 +15,6 @@ namespace Tarantool\Client\Tests\Integration;
 
 final class ExamplesTest extends TestCase
 {
-    public const EXIT_CODE_SKIP = 42;
-
     /**
      * @dataProvider provideExampleData
      */
@@ -26,15 +24,16 @@ final class ExamplesTest extends TestCase
 
         exec("php $filename $uri", $output, $exitCode);
 
-        if (self::EXIT_CODE_SKIP === $exitCode) {
-            self::markTestSkipped(implode("\n", $output));
+        $flattenOutput = implode("\n", $output);
+        if (0 === strpos($flattenOutput, 'Unfulfilled requirement:')) {
+            self::markTestSkipped($flattenOutput);
         }
 
-        self::assertSame(0, $exitCode, implode("\n", $output));
+        self::assertSame(0, $exitCode, $flattenOutput);
 
         $expectedOutput = self::parseFile($filename);
         if (null !== $expectedOutput) {
-            self::assertSame($expectedOutput, implode("\n", $output));
+            self::assertSame($expectedOutput, $flattenOutput);
         }
     }
 

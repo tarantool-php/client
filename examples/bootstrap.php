@@ -17,7 +17,6 @@ use Tarantool\Client\Handler\DefaultHandler;
 use Tarantool\Client\Packer\Packer;
 use Tarantool\Client\Packer\PackerFactory;
 use Tarantool\Client\Packer\PurePacker;
-use Tarantool\Client\Tests\Integration\ExamplesTest;
 
 return require __DIR__.'/../vendor/autoload.php';
 
@@ -44,8 +43,7 @@ function ensure_server_version_at_least(string $version, Client $client) : void
         return;
     }
 
-    printf('Tarantool version >= %s is required to run "%s"%s', $version, $_SERVER['SCRIPT_FILENAME'], PHP_EOL);
-    exit(ExamplesTest::EXIT_CODE_SKIP);
+    requirement_exit('Tarantool version >= %s is required to run "%s"', $version, $_SERVER['SCRIPT_FILENAME']);
 }
 
 function ensure_extension(string $name) : void
@@ -54,8 +52,7 @@ function ensure_extension(string $name) : void
         return;
     }
 
-    printf('PHP extension "%s" is required to run "%s"%s', $name, $_SERVER['SCRIPT_FILENAME'], PHP_EOL);
-    exit(ExamplesTest::EXIT_CODE_SKIP);
+    requirement_exit('PHP extension "%s" is required to run "%s"', $name, $_SERVER['SCRIPT_FILENAME']);
 }
 
 function ensure_class(string $className, string $requireMessage = '') : void
@@ -66,8 +63,7 @@ function ensure_class(string $className, string $requireMessage = '') : void
 
     $errorMessage = $requireMessage ?: sprintf('Class "%s" is required', $className);
 
-    printf('%s to run "%s"%s', $errorMessage, $_SERVER['SCRIPT_FILENAME'], PHP_EOL);
-    exit(ExamplesTest::EXIT_CODE_SKIP);
+    requirement_exit('%s to run "%s"', $errorMessage, $_SERVER['SCRIPT_FILENAME']);
 }
 
 function ensure_pure_packer(Client $client) : void
@@ -77,6 +73,15 @@ function ensure_pure_packer(Client $client) : void
         return;
     }
 
-    printf('Client needs to be configured to use pure packer to run "%s"%s', $_SERVER['SCRIPT_FILENAME'], PHP_EOL);
-    exit(ExamplesTest::EXIT_CODE_SKIP);
+    requirement_exit('Client needs to be configured to use pure packer to run "%s"', $_SERVER['SCRIPT_FILENAME']);
+}
+
+function requirement_exit(string $message, ...$args) : void
+{
+    if ($args) {
+        $message = sprintf($message, ...$args);
+    }
+
+    echo "Unfulfilled requirement:\n$message\n";
+    exit(0);
 }
