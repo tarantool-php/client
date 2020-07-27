@@ -78,10 +78,7 @@ function ensure_pure_packer(Client $client) : void
 
 function requirement_exit(string $message, ...$args) : void
 {
-    if ($args) {
-        $message = sprintf($message, ...$args);
-    }
-
-    echo "Unfulfilled requirement:\n$message\n";
-    exit(0);
+    echo "Unfulfilled requirement:\n";
+    echo $args ? sprintf($message, ...$args) : $message, "\n";
+    exit(1);
 }
