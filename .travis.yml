@@ -4,7 +4,7 @@ services: [docker]
 
 env:
   global:
-    TNT_IMAGE='tarantool/tarantool:2.4'
+    TNT_IMAGE='tarantool/tarantool:2.5'
     PHP_IMAGE='php:7.4-cli'
 
   jobs:
@@ -30,6 +30,7 @@ env:
     - TNT_IMAGE='tarantool/tarantool:2.1'
     - TNT_IMAGE='tarantool/tarantool:2.2'
     - TNT_IMAGE='tarantool/tarantool:2.3'
+    - TNT_IMAGE='tarantool/tarantool:2.4'
 
 install:
   - ./dockerfile.sh | tee /dev/tty | docker build -t client -
