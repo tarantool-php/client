@@ -20,12 +20,14 @@ use Tarantool\Client\Exception\CommunicationFailed;
 use Tarantool\Client\Handler\Handler;
 use Tarantool\Client\Request\Request;
 use Tarantool\Client\Tests\PhpUnitCompat;
+use Tarantool\PhpUnit\Annotation\Requirement\TarantoolVersionRequirement;
 use Tarantool\PhpUnit\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
     use PhpUnitCompat;
 
+    /** @var Client|null */
     protected $client;
 
     /**
@@ -35,6 +37,11 @@ abstract class TestCase extends BaseTestCase
     {
         return $this->client
             ?? $this->client = ClientBuilder::createFromEnv()->build();
+    }
+
+    final protected function tarantoolVersionSatisfies(string $constraints) : bool
+    {
+        return null === (new TarantoolVersionRequirement($this->client))->check($constraints);
     }
 
     final protected static function triggerUnexpectedResponse(Handler $handler, Request $initialRequest, int $sync = 0) : Connection

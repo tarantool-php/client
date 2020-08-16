@@ -35,7 +35,8 @@ final class PrepareTest extends TestCase
             self::assertSame([['?', 'ANY']], $stmt->getBindMetadata());
             // If the data type of NULL cannot be determined from context, it is BOOLEAN.
             // @see https://www.tarantool.io/en/doc/2.2/reference/reference_sql/sql/#column-definition-data-type
-            self::assertSame([['?', 'boolean']], $stmt->getMetadata());
+            $metaColumnName = $this->tarantoolVersionSatisfies('<2.6.0') ? '?' : 'COLUMN_1';
+            self::assertSame([[$metaColumnName, 'boolean']], $stmt->getMetadata());
         } finally {
             $stmt->close();
         }
@@ -49,8 +50,13 @@ final class PrepareTest extends TestCase
         $selectResult2 = $stmt->executeQuery([':v1' => 3], [':v2' => 4]);
 
         try {
-            self::assertSame([':v1' => 1, ':v2' => 2], $selectResult1[0]);
-            self::assertSame([':v1' => 3, ':v2' => 4], $selectResult2[0]);
+            if ($this->tarantoolVersionSatisfies('<2.6.0')) {
+                self::assertSame([':v1' => 1, ':v2' => 2], $selectResult1[0]);
+                self::assertSame([':v1' => 3, ':v2' => 4], $selectResult2[0]);
+            } else {
+                self::assertSame(['COLUMN_1' => 1, 'COLUMN_2' => 2], $selectResult1[0]);
+                self::assertSame(['COLUMN_1' => 3, 'COLUMN_2' => 4], $selectResult2[0]);
+            }
         } finally {
             $stmt->close();
         }
