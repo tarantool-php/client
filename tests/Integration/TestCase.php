@@ -41,7 +41,7 @@ abstract class TestCase extends BaseTestCase
 
     final protected function tarantoolVersionSatisfies(string $constraints) : bool
     {
-        return null === (new TarantoolVersionRequirement($this->client))->check($constraints);
+        return null === (new TarantoolVersionRequirement($this->getClient()))->check($constraints);
     }
 
     final protected static function triggerUnexpectedResponse(Handler $handler, Request $initialRequest, int $sync = 0) : Connection
