@@ -33,7 +33,7 @@ final class TcpNoDelayTest extends TestCase
         $connection = $client->getHandler()->getConnection();
         $socket = socket_import_stream(self::getRawStream($connection));
 
-        self::assertSame(1, socket_get_option($socket, SOL_TCP, TCP_NODELAY));
+        self::assertGreaterThan(0, socket_get_option($socket, SOL_TCP, TCP_NODELAY));
     }
 
     public function testTcpNoDelayDisabled() : void
