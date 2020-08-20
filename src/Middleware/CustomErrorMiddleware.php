@@ -82,6 +82,7 @@ final class CustomErrorMiddleware implements Middleware
                 do {
                     $customType = $err->tryGetField('custom_type');
                     if ($customType && isset($mapping[$customType])) {
+                        /** @psalm-suppress UnsafeInstantiation */
                         return new $mapping[$customType]($err->getMessage(), $err->getCode());
                     }
                 } while ($err = $err->getPrevious());
@@ -114,6 +115,7 @@ final class CustomErrorMiddleware implements Middleware
                 /** @var class-string<\Exception> $className */
                 $className = $namespace.$customType;
 
+                /** @psalm-suppress UnsafeInstantiation */
                 return \class_exists($className)
                     ? new $className($err->getMessage(), $err->getCode())
                     : $ex;
