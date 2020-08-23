@@ -161,7 +161,7 @@ final class ConnectionTest extends TestCase
             }
 
             $time = microtime(true) - $start;
-            self::assertRegExp('/Failed to connect to .+?: (Connection|Operation) timed out/', $e->getMessage());
+            self::assertMatchesRegularExpression('/Failed to connect to .+?: (Connection|Operation) timed out/', $e->getMessage());
             self::assertGreaterThanOrEqual($connectTimeout, $time);
             self::assertLessThanOrEqual($connectTimeout + 0.1, $time);
 
