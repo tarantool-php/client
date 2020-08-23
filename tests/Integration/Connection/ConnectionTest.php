@@ -137,20 +137,19 @@ final class ConnectionTest extends TestCase
 
     public function testConnectTimedOut() : void
     {
-        $builder = ClientBuilder::createFromEnvForTheFakeServer();
+        $builder = ClientBuilder::createFromEnv();
         if (!$builder->isTcpConnection()) {
             self::markTestSkipped(sprintf('For tcp connections only (current: "%s")', $builder->getUri()));
         }
 
+        // @see http://stackoverflow.com/q/100841/1160901
+        $host = '8.8.8.8';
         $connectTimeout = 2;
-        $builder->setConnectionOptions(['connect_timeout' => $connectTimeout]);
-        $client = $builder->build();
 
-        // STREAM_SERVER_BIND is used here intentionally with the tcp transport to simulate timeout error
-        $socket = stream_socket_server($builder->getUri(), $errno, $errstr, STREAM_SERVER_BIND);
-        if (!$socket) {
-            self::markTestSkipped("Unable to create socket server: $errstr ($errno)");
-        }
+        $client = $builder->setConnectionOptions(['connect_timeout' => $connectTimeout])
+            ->setHost($host)
+            ->setPort(8008)
+            ->build();
 
         $start = microtime(true);
 
@@ -167,8 +166,6 @@ final class ConnectionTest extends TestCase
             self::assertLessThanOrEqual($connectTimeout + 0.1, $time);
 
             return;
-        } finally {
-            fclose($socket);
         }
 
         self::fail();
