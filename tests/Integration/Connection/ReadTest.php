@@ -34,7 +34,7 @@ final class ReadTest extends TestCase
 
     public function testReadEmptyGreeting() : void
     {
-        $clientBuilder = ClientBuilder::createFromEnvForTheFakeServer();
+        $clientBuilder = ClientBuilder::createForFakeServer();
 
         FakeServerBuilder::create()
             ->setUri($clientBuilder->getUri())
@@ -50,7 +50,7 @@ final class ReadTest extends TestCase
 
     public function testUnableToReadResponseLength() : void
     {
-        $clientBuilder = ClientBuilder::createFromEnvForTheFakeServer();
+        $clientBuilder = ClientBuilder::createForFakeServer();
 
         FakeServerBuilder::create(
             new WriteHandler(GreetingDataProvider::generateGreeting()),
@@ -69,7 +69,7 @@ final class ReadTest extends TestCase
 
     public function testReadResponseLengthTimedOut() : void
     {
-        $clientBuilder = ClientBuilder::createFromEnvForTheFakeServer();
+        $clientBuilder = ClientBuilder::createForFakeServer();
         $clientBuilder->setConnectionOptions(['socket_timeout' => 1]);
 
         FakeServerBuilder::create(
@@ -89,7 +89,7 @@ final class ReadTest extends TestCase
 
     public function testUnableToReadResponse() : void
     {
-        $clientBuilder = ClientBuilder::createFromEnvForTheFakeServer();
+        $clientBuilder = ClientBuilder::createForFakeServer();
 
         FakeServerBuilder::create(
             new WriteHandler(GreetingDataProvider::generateGreeting()),

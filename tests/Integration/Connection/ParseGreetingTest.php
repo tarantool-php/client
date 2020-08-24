@@ -26,7 +26,7 @@ final class ParseGreetingTest extends TestCase
      */
     public function testParseGreetingWithInvalidServerName(string $greeting) : void
     {
-        $clientBuilder = ClientBuilder::createFromEnvForTheFakeServer();
+        $clientBuilder = ClientBuilder::createForFakeServer();
 
         FakeServerBuilder::create(new WriteHandler($greeting))
             ->setUri($clientBuilder->getUri())
@@ -54,7 +54,7 @@ final class ParseGreetingTest extends TestCase
      */
     public function testParseGreetingWithInvalidSalt(string $greeting) : void
     {
-        $clientBuilder = ClientBuilder::createFromEnvForTheFakeServer();
+        $clientBuilder = ClientBuilder::createForFakeServer();
 
         FakeServerBuilder::create(new WriteHandler($greeting))
             ->setUri($clientBuilder->getUri())

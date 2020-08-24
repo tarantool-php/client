@@ -107,14 +107,14 @@ final class ConnectionTest extends TestCase
 
     public function testConnectInvalidHost() : void
     {
-        $builder = ClientBuilder::createFromEnv()
+        $clientBuilder = ClientBuilder::createFromEnv()
             ->setHost('invalid_host');
 
-        if (!$builder->isTcpConnection()) {
-            self::markTestSkipped(sprintf('For the tcp connections only (current: "%s")', $builder->getUri()));
+        if (!$clientBuilder->isTcpConnection()) {
+            self::markTestSkipped(sprintf('For tcp connections only (current: "%s")', $clientBuilder->getUri()));
         }
 
-        $client = $builder->build();
+        $client = $clientBuilder->build();
 
         $this->expectException(ConnectionFailed::class);
         $client->ping();
@@ -122,14 +122,14 @@ final class ConnectionTest extends TestCase
 
     public function testConnectInvalidPort() : void
     {
-        $builder = ClientBuilder::createFromEnv()
+        $clientBuilder = ClientBuilder::createFromEnv()
             ->setPort(123456);
 
-        if (!$builder->isTcpConnection()) {
-            self::markTestSkipped(sprintf('For the tcp connections only (current: "%s")', $builder->getUri()));
+        if (!$clientBuilder->isTcpConnection()) {
+            self::markTestSkipped(sprintf('For tcp connections only (current: "%s")', $clientBuilder->getUri()));
         }
 
-        $client = $builder->build();
+        $client = $clientBuilder->build();
 
         $this->expectException(ConnectionFailed::class);
         $client->ping();
@@ -137,16 +137,16 @@ final class ConnectionTest extends TestCase
 
     public function testConnectTimedOut() : void
     {
-        $builder = ClientBuilder::createFromEnv();
-        if (!$builder->isTcpConnection()) {
-            self::markTestSkipped(sprintf('For tcp connections only (current: "%s")', $builder->getUri()));
+        $clientBuilder = ClientBuilder::createFromEnv();
+        if (!$clientBuilder->isTcpConnection()) {
+            self::markTestSkipped(sprintf('For tcp connections only (current: "%s")', $clientBuilder->getUri()));
         }
 
         // @see http://stackoverflow.com/q/100841/1160901
         $host = '8.8.8.8';
         $connectTimeout = 2;
 
-        $client = $builder->setConnectionOptions(['connect_timeout' => $connectTimeout])
+        $client = $clientBuilder->setConnectionOptions(['connect_timeout' => $connectTimeout])
             ->setHost($host)
             ->setPort(8008)
             ->build();
@@ -190,7 +190,7 @@ final class ConnectionTest extends TestCase
 
     public function testOpenConnectionHandlesTheMissingGreetingCorrectly() : void
     {
-        $clientBuilder = ClientBuilder::createFromEnvForTheFakeServer();
+        $clientBuilder = ClientBuilder::createForFakeServer();
 
         FakeServerBuilder::create(
             new AtConnectionHandler(1, new WriteHandler('')),

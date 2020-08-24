@@ -20,14 +20,14 @@ final class TcpNoDelayTest extends TestCase
 {
     public function testTcpNoDelayEnabled() : void
     {
-        $builder = ClientBuilder::createFromEnv()
+        $clientBuilder = ClientBuilder::createFromEnv()
             ->setConnectionOptions(['tcp_nodelay' => true]);
 
-        if (!$builder->isTcpConnection()) {
-            self::markTestSkipped(sprintf('For the tcp connections only (current: "%s")', $builder->getUri()));
+        if (!$clientBuilder->isTcpConnection()) {
+            self::markTestSkipped(sprintf('For the tcp connections only (current: "%s")', $clientBuilder->getUri()));
         }
 
-        $client = $builder->build();
+        $client = $clientBuilder->build();
         $client->ping();
 
         $connection = $client->getHandler()->getConnection();
@@ -38,14 +38,14 @@ final class TcpNoDelayTest extends TestCase
 
     public function testTcpNoDelayDisabled() : void
     {
-        $builder = ClientBuilder::createFromEnv()
+        $clientBuilder = ClientBuilder::createFromEnv()
             ->setConnectionOptions(['tcp_nodelay' => false]);
 
-        if (!$builder->isTcpConnection()) {
-            self::markTestSkipped(sprintf('For the tcp connections only (current: "%s")', $builder->getUri()));
+        if (!$clientBuilder->isTcpConnection()) {
+            self::markTestSkipped(sprintf('For the tcp connections only (current: "%s")', $clientBuilder->getUri()));
         }
 
-        $client = $builder->build();
+        $client = $clientBuilder->build();
         $client->ping();
 
         $connection = $client->getHandler()->getConnection();

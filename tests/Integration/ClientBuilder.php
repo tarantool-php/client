@@ -140,13 +140,13 @@ final class ClientBuilder
             ->setUri(getenv('TNT_LISTEN_URI'));
     }
 
-    public static function createFromEnvForTheFakeServer() : self
+    public static function createForFakeServer() : self
     {
         $builder = self::createFromEnv();
 
         if ($builder->isTcpConnection()) {
             $builder->setHost('0.0.0.0');
-            $builder->setPort(self::findOpenTcpPort(8000));
+            $builder->setPort(self::findAvailableTcpPort(8000));
         } else {
             $builder->setUri(sprintf('unix://%s/tnt_client_%s.sock', sys_get_temp_dir(), bin2hex(random_bytes(10))));
         }
@@ -176,7 +176,7 @@ final class ClientBuilder
         throw new \UnexpectedValueException(sprintf('"%s" packer is not supported', $this->packerType));
     }
 
-    private static function findOpenTcpPort(int $min) : int
+    private static function findAvailableTcpPort(int $min) : int
     {
         $maxTries = 10;
         $try = 0;
