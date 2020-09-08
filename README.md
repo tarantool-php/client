@@ -46,10 +46,10 @@ In addition, you need to install one of the supported msgpack packages
 (either [rybakit/msgpack.php](https://github.com/rybakit/msgpack.php#installation) 
 or [msgpack/msgpack-php](https://github.com/msgpack/msgpack-php#install)).
  
-Note that the [Decimal](https://www.tarantool.io/en/doc/2.5/dev_guide/internals/msgpack_extensions/#the-decimal-type) type 
+Note that the [Decimal](https://www.tarantool.io/en/doc/latest/dev_guide/internals/msgpack_extensions/#the-decimal-type) type 
 that was added in Tarantool 2.3 is only supported by the `rybakit/msgpack.php` package. In order to use decimals with 
 this package, you additionally need to install the [decimal](http://php-decimal.io/#installation) extension. The same 
-applies to the [UUID](https://www.tarantool.io/en/doc/2.5/dev_guide/internals/msgpack_extensions/#the-uuid-type) type that 
+applies to the [UUID](https://www.tarantool.io/en/doc/latest/dev_guide/internals/msgpack_extensions/#the-uuid-type) type that 
 is available since Tarantool 2.4, install the [symfony/uid](https://symfony.com/doc/master/components/uid.html#installation) 
 package to be able to work with this type (for better performance you can additionally install 
 the [uuid](https://pecl.php.net/package/uuid) extension).
@@ -227,7 +227,7 @@ $client = Client::fromDefaults()->withMiddleware(
 ### Binary protocol
 
 The following are examples of binary protocol requests. For more detailed information and examples please see
-the [official documentation](https://www.tarantool.io/en/doc/2.5/book/box/data_model/#operations).
+the [official documentation](https://www.tarantool.io/en/doc/latest/book/box/data_model/#operations).
 
 <details>
 <summary><strong>Select</strong></summary><br />
@@ -539,7 +539,7 @@ Result 3: [3]
 ### SQL protocol
 
 The following are examples of SQL protocol requests. For more detailed information and examples please see
-the [official documentation](https://www.tarantool.io/en/doc/2.5/reference/reference_sql/sql/). 
+the [official documentation](https://www.tarantool.io/en/doc/latest/reference/reference_sql/sql/). 
 *Note that SQL is supported only as of Tarantool 2.0.*
 
 <details>

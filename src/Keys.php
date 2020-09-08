@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Tarantool\Client;
 
 /**
- * @see https://www.tarantool.io/en/doc/2.5/dev_guide/internals/box_protocol/
+ * @see https://www.tarantool.io/en/doc/latest/dev_guide/internals/box_protocol/
  * @see https://github.com/tarantool/tarantool/blob/master/src/box/iproto_constants.h
  */
 final class Keys
