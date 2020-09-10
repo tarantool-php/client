@@ -119,6 +119,12 @@ final class StreamConnection implements Connection
 
     public function close() : void
     {
+        // To close a previously opened persistent connection,
+        // we need to obtain its stream handler first
+        if (!$this->stream && $this->options['persistent']) {
+            $this->open();
+        }
+
         if ($this->stream) {
             /** @psalm-suppress InvalidPropertyAssignmentValue */
             \fclose($this->stream);
