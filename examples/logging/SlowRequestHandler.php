@@ -40,7 +40,7 @@ final class SlowRequestHandler extends HandlerWrapper
 
     public function isHandling(array $record) : bool
     {
-        // handle all levels
+        // Handle all levels
         return true;
     }
 

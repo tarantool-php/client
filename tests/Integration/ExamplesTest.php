@@ -45,7 +45,7 @@ final class ExamplesTest extends TestCase
             if ('bootstrap' === $basename) {
                 continue;
             }
-            // ignore classes
+            // Ignore classes
             if (strtolower($basename[0]) !== $basename[0]) {
                 continue;
             }

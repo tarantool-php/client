@@ -41,7 +41,7 @@ final class ClientMiddlewareTest extends TestCase
             }
         };
 
-        // cache the space
+        // Cache the space
         $this->client->getSpaceById(Space::VSPACE_ID)->select(Criteria::key([]));
 
         $clientWithMiddleware = $this->client->withMiddleware($middleware);
@@ -97,7 +97,7 @@ final class ClientMiddlewareTest extends TestCase
         $retryableClient = $clientBuilder->setOptions(['max_retries' => 1])->build();
 
         $client->evaluate($luaInit = 'create_space("connection_retry")');
-        // trigger an error only on the first call
+        // Trigger an error only on the first call
         $retryableClient->evaluate($luaCall = '
             if box.space.connection_retry then
                 box.space.connection_retry:drop() 

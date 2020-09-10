@@ -102,7 +102,7 @@ final class AuthenticateTest extends TestCase
             ->setOptions(['username' => 'guest'])
             ->build();
 
-        // ensure that no persistent connection is opened
+        // Ensure that no persistent connection is opened
         $connection = $client->getHandler()->getConnection();
         $connection->open();
         $connection->close();
@@ -130,7 +130,7 @@ final class AuthenticateTest extends TestCase
             ->setOptions(['username' => 'guest'])
             ->build();
 
-        // ensure that no persistent connection is opened
+        // Ensure that no persistent connection is opened
         $connection = $client->getHandler()->getConnection();
         $connection->open();
         $connection->close();

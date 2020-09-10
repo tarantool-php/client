@@ -74,7 +74,7 @@ final class PurePacker implements ClientPacker
 
     public function pack(Request $request, int $sync) : string
     {
-        // hot path optimization
+        // Hot path optimization
         $packet = \pack('C*', 0x82, Keys::CODE, $request->getType(), Keys::SYNC).
             $this->packer->packInt($sync).
             $this->packer->packMap($request->getBody());

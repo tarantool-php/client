@@ -22,7 +22,7 @@ $client->execute('CREATE TABLE users ("id" INTEGER PRIMARY KEY AUTOINCREMENT, "n
 $stmt = $client->prepare('INSERT INTO users VALUES(null, ?)');
 for ($i = 1; $i <= 100; ++$i) {
     $stmt->execute("name_$i");
-    // you can also use executeSelect() and executeUpdate(), e.g.:
+    // You can also use executeSelect() and executeUpdate(), e.g.:
     // $lastInsertIds = $stmt->executeUpdate("name_$i")->getAutoincrementIds();
 }
 $stmt->close();

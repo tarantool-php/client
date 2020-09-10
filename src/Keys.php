@@ -44,12 +44,12 @@ final class Keys
     public const STMT_ID = 0x43;
     public const ERROR = 0x52;
 
-    // sql info map keys
+    // Sql info map keys
     // https://github.com/tarantool/tarantool/blob/master/src/box/execute.h
     public const SQL_INFO_ROW_COUNT = 0;
     public const SQL_INFO_AUTO_INCREMENT_IDS = 1;
 
-    // metadata map keys
+    // Metadata map keys
     // https://github.com/tarantool/tarantool/blob/master/src/box/iproto_constants.h
     public const METADATA_FIELD_NAME = 0;
     public const METADATA_FIELD_TYPE = 1;
@@ -58,7 +58,7 @@ final class Keys
     public const METADATA_FIELD_IS_AUTOINCREMENT = 4;
     public const METADATA_FIELD_SPAN = 5;
 
-    // error map keys
+    // Error map keys
     // https://github.com/tarantool/tarantool/blob/master/src/box/mp_error.cc
     public const ERROR_STACK = 0;
     public const ERROR_TYPE = 0;

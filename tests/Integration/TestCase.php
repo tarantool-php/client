@@ -50,7 +50,7 @@ abstract class TestCase extends BaseTestCase
         $packer = $handler->getPacker();
         $rawRequest = $packer->pack($initialRequest, $sync);
 
-        // write a request without reading a response
+        // Write a request without reading a response
         $connection->open();
         if (!\fwrite(self::getRawStream($connection), $rawRequest)) {
             throw new CommunicationFailed('Unable to write request');

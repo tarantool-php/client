@@ -95,7 +95,7 @@ final class CriteriaTest extends TestCase
      */
     public function testAndIteratorTypeByName(string $name) : void
     {
-        // make sure we don't assign the same iterator twice
+        // Make sure we don't assign the same iterator twice
         $method = 'EQ' === $name ? 'allIterator' : 'eqIterator';
         $andMethod = 'and'.str_replace('_', '', $name).'iterator';
         $criteria = ([Criteria::class, $method])();

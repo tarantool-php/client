@@ -55,7 +55,7 @@ final class PeclPacker implements Packer
         }
         $body = $this->unpacker->data();
 
-        // with PHP_ONLY = true an empty array
+        // With PHP_ONLY = true an empty array
         // will be unpacked to stdClass
         if ($body instanceof \stdClass) {
             $body = (array) $body;

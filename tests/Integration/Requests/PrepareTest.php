@@ -129,7 +129,7 @@ final class PrepareTest extends TestCase
     {
         $stmt = $this->client->prepare('SELECT :a, :b');
 
-        // bind parameters to the current statement
+        // Bind parameters to the current statement
         $stmt->execute([':a' => 1], [':b' => 2]);
 
         $result = $stmt->executeQuery([':a' => 1]);

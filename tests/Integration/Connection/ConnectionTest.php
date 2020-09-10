@@ -207,11 +207,11 @@ final class ConnectionTest extends TestCase
             self::fail('Connection not established');
         } catch (CommunicationFailed $e) {
             self::assertSame('Unable to read greeting', $e->getMessage());
-            // at that point the connection was successfully established,
+            // At that point the connection was successfully established,
             // but the greeting message was not read
         }
 
-        // the second call should correctly handle
+        // The second call should correctly handle
         // the missing greeting from the previous call
         $connection->open();
     }
