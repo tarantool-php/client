@@ -24,49 +24,49 @@ final class MiddlewareHandler implements Handler
     /** @var Handler */
     private $handler;
 
-    /** @var non-empty-array<int, Middleware> */
-    private $middlewares;
+    /** @var Middleware[] */
+    private $middleware;
 
     /** @var int */
     private $index = 0;
 
     /**
      * @param Handler $handler
-     * @param non-empty-array<int, Middleware> $middlewares
+     * @param Middleware[] $middleware
      */
-    private function __construct($handler, $middlewares)
+    private function __construct($handler, $middleware)
     {
         $this->handler = $handler;
-        $this->middlewares = $middlewares;
+        $this->middleware = $middleware;
     }
 
-    public static function create(Handler $handler, Middleware $middleware, Middleware ...$middlewares) : Handler
+    /**
+     * @param Middleware[] $middleware
+     */
+    public static function create(Handler $handler, array $middleware, bool $prepend = false) : Handler
     {
         if (!$handler instanceof self) {
-            return $middlewares
-                ? new self($handler, \array_merge([$middleware], $middlewares))
-                : new self($handler, [$middleware]);
+            return new self($handler, $middleware);
         }
 
         $handler = clone $handler;
-        $handler->middlewares[] = $middleware;
-        if ($middlewares) {
-            $handler->middlewares = \array_merge($handler->middlewares, $middlewares);
-        }
+        $handler->middleware = $prepend
+            ? \array_merge($middleware, $handler->middleware)
+            : \array_merge($handler->middleware, $middleware);
 
         return $handler;
     }
 
     public function handle(Request $request) : Response
     {
-        if (!isset($this->middlewares[$this->index])) {
+        if (!isset($this->middleware[$this->index])) {
             return $this->handler->handle($request);
         }
 
         $new = clone $this;
         ++$new->index;
 
-        return $this->middlewares[$this->index]->process($request, $new);
+        return $this->middleware[$this->index]->process($request, $new);
     }
 
     public function getConnection() : Connection

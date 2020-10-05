@@ -25,21 +25,13 @@ use Tarantool\Client\Request\Request;
 use Tarantool\Client\Response;
 use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Schema\Space;
+use Tarantool\Client\Tests\SpyMiddleware;
 
 final class ClientMiddlewareTest extends TestCase
 {
     public function testSpaceInheritsMiddleware() : void
     {
-        $middleware = new class() implements Middleware {
-            public $counter = 0;
-
-            public function process(Request $request, Handler $handler) : Response
-            {
-                ++$this->counter;
-
-                return $handler->handle($request);
-            }
-        };
+        $middleware = SpyMiddleware::fromTraceId(1);
 
         // Cache the space
         $this->client->getSpaceById(Space::VSPACE_ID)->select(Criteria::key([]));
@@ -47,15 +39,15 @@ final class ClientMiddlewareTest extends TestCase
         $clientWithMiddleware = $this->client->withMiddleware($middleware);
 
         $clientWithMiddleware->ping();
-        self::assertSame(1, $middleware->counter);
+        self::assertSame([1], $middleware->getTraceLogArray());
 
         $spaceWithMiddleware = $clientWithMiddleware->getSpaceById(Space::VSPACE_ID);
 
         $spaceWithMiddleware->select(Criteria::key([]));
-        self::assertSame(2, $middleware->counter);
+        self::assertSame([1, 1], $middleware->getTraceLogArray());
 
         $spaceWithMiddleware->select(Criteria::key([]));
-        self::assertSame(3, $middleware->counter);
+        self::assertSame([1, 1, 1], $middleware->getTraceLogArray());
     }
 
     /**

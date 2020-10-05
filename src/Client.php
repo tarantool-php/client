@@ -68,17 +68,20 @@ final class Client
             $connectionOptions['persistent'] = $options['persistent'];
         }
 
+        $middleware = [];
+        if (isset($options['max_retries']) && 0 !== $options['max_retries']) {
+            $middleware[] = RetryMiddleware::linear($options['max_retries']);
+        }
+        if (isset($options['username'])) {
+            $middleware[] = new AuthenticationMiddleware($options['username'], $options['password'] ?? '');
+        }
+
         $connection = StreamConnection::create($options['uri'] ?? StreamConnection::DEFAULT_URI, $connectionOptions);
         $handler = new DefaultHandler($connection, $packer ?? PackerFactory::create());
 
-        if (isset($options['max_retries']) && 0 !== $options['max_retries']) {
-            $handler = MiddlewareHandler::create($handler, RetryMiddleware::linear($options['max_retries']));
-        }
-        if (isset($options['username'])) {
-            $handler = MiddlewareHandler::create($handler, new AuthenticationMiddleware($options['username'], $options['password'] ?? ''));
-        }
-
-        return new self($handler);
+        return $middleware
+            ? new self(MiddlewareHandler::create($handler, $middleware))
+            : new self($handler);
     }
 
     public static function fromDsn(string $dsn, ?Packer $packer = null) : self
@@ -99,26 +102,37 @@ final class Client
             $connectionOptions['persistent'] = $persistent;
         }
 
+        $middleware = [];
+        if ($maxRetries = $dsn->getInt('max_retries')) {
+            $middleware[] = RetryMiddleware::linear($maxRetries);
+        }
+        if ($username = $dsn->getUsername()) {
+            $middleware[] = new AuthenticationMiddleware($username, $dsn->getPassword() ?? '');
+        }
+
         $connection = $dsn->isTcp()
             ? StreamConnection::createTcp($dsn->getConnectionUri(), $connectionOptions)
             : StreamConnection::createUds($dsn->getConnectionUri(), $connectionOptions);
 
         $handler = new DefaultHandler($connection, $packer ?? PackerFactory::create());
 
-        if ($maxRetries = $dsn->getInt('max_retries')) {
-            $handler = MiddlewareHandler::create($handler, RetryMiddleware::linear($maxRetries));
-        }
-        if ($username = $dsn->getUsername()) {
-            $handler = MiddlewareHandler::create($handler, new AuthenticationMiddleware($username, $dsn->getPassword() ?? ''));
-        }
-
-        return new self($handler);
+        return $middleware
+            ? new self(MiddlewareHandler::create($handler, $middleware))
+            : new self($handler);
     }
 
-    public function withMiddleware(Middleware $middleware, Middleware ...$middlewares) : self
+    public function withMiddleware(Middleware ...$middleware) : self
     {
         $new = clone $this;
-        $new->handler = MiddlewareHandler::create($new->handler, $middleware, ...$middlewares);
+        $new->handler = MiddlewareHandler::create($new->handler, $middleware);
+
+        return $new;
+    }
+
+    public function withPrependedMiddleware(Middleware ...$middleware) : self
+    {
+        $new = clone $this;
+        $new->handler = MiddlewareHandler::create($new->handler, $middleware, true);
 
         return $new;
     }

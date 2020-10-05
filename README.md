@@ -157,11 +157,11 @@ $pureMsgpackUnpacker = new BufferUnpacker();
 $packer = new PurePacker($pureMsgpackPacker, $pureMsgpackUnpacker);
 
 $handler = new DefaultHandler($connection, $packer);
-$handler = MiddlewareHandler::create($handler,
-    new AuthenticationMiddleware('<username>', '<password>'),
+$handler = MiddlewareHandler::create($handler, [
     RetryMiddleware::exponential(3),
+    new AuthenticationMiddleware('<username>', '<password>'),
     // ...
-);
+]);
 
 $client = new Client($handler);
 ```
@@ -215,10 +215,47 @@ use Tarantool\Client\Middleware\RetryMiddleware;
 ...
 
 $client = Client::fromDefaults()->withMiddleware(
-    new LoggingMiddleware($logger),
     FirewallMiddleware::allowReadOnly(),
+    RetryMiddleware::linear(),
+    new LoggingMiddleware($logger)
+);
+```
+
+Please be aware that the order in which you add the middleware does matter. The same middleware, 
+placed in different order, can give very different or sometimes unexpected behavior. 
+To illustrate, consider the following configurations: 
+
+```php
+$client1 = Client::fromDefaults()->withMiddleware(
+    RetryMiddleware::linear(),
+    new AuthenticationMiddleware('<username>', '<password>') 
+);
+
+$client2 = Client::fromDefaults()->withMiddleware(
+    new AuthenticationMiddleware('<username>', '<password>'), 
     RetryMiddleware::linear()
 );
+
+$client3 = Client::fromOptions([
+    'username' => '<username>',
+    'password' => '<password>',
+])->withMiddleware(RetryMiddleware::linear());
+```
+
+In this example, `$client1` will retry an unsuccessful operation and in case of connection 
+problems may initiate reconnection with follow-up re-authentication. However, `$client2` 
+and `$client3` will perform reconnection *without* doing any re-authentication.
+
+> *You may wonder why `$client3` behaves like `$client2` in this case. This is because 
+> specifying some options (via an array or DSN string) implicitly registers middleware 
+> (in case of `username/password` it's `AuthenticationMiddleware`), so in fact the two 
+> configurations are equivalent.*
+
+To add your middleware to the top of an existing middleware stack use the 
+`withPrependedMiddleware()` method:
+
+```php
+$client = $client->withPrependedMiddleware($myMiddleware);
 ```
 
 

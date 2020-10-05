@@ -17,12 +17,14 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Tarantool\Client\Handler\Handler;
 use Tarantool\Client\Handler\MiddlewareHandler;
-use Tarantool\Client\Middleware\Middleware;
 use Tarantool\Client\Request\Request;
-use Tarantool\PhpUnit\Client\TestDoubleFactory;
+use Tarantool\Client\Tests\SpyMiddleware;
+use Tarantool\PhpUnit\Client\TestDoubleClient;
 
 final class MiddlewareHandlerTest extends TestCase
 {
+    use TestDoubleClient;
+
     /**
      * @var Request|MockObject
      */
@@ -36,55 +38,55 @@ final class MiddlewareHandlerTest extends TestCase
     protected function setUp() : void
     {
         $this->request = $this->createMock(Request::class);
-        $this->handler = $this->createMock(Handler::class);
+        $this->handler = $this->createDummyClient()->getHandler();
     }
 
-    public function testCreateMiddlewareExecutionOrder() : void
+    public function testCreateMiddlewareExecutesInFifoOrder() : void
     {
         $trace = new \ArrayObject();
+        $middleware1 = SpyMiddleware::fromTraceId(1, $trace);
+        $middleware2 = SpyMiddleware::fromTraceId(2, $trace);
 
-        /** @var Middleware $middleware1 */
-        $middleware1 = $this->createMock(Middleware::class);
-        $middleware1->expects($this->once())->method('process')->willReturnCallback(
-            static function (Request $request, Handler $handler) use (&$trace) {
-                $trace[] = 1;
-
-                return $handler->handle($request);
-            }
-        );
-
-        /** @var Middleware $middleware2 */
-        $middleware2 = $this->createMock(Middleware::class);
-        $middleware2->expects($this->once())->method('process')->willReturnCallback(
-            static function (Request $request, Handler $handler) use (&$trace) {
-                $trace[] = 2;
-
-                return $handler->handle($request);
-            }
-        );
-
-        $this->handler->method('handle')->willReturn(TestDoubleFactory::createEmptyResponse());
-
-        $handler = MiddlewareHandler::create($this->handler, $middleware1, $middleware2);
+        $handler = MiddlewareHandler::create($this->handler, [$middleware1, $middleware2]);
         $handler->handle($this->request);
 
-        self::assertSame('1,2', implode(',', $trace->getArrayCopy()));
+        self::assertSame([1, 2], $trace->getArrayCopy());
+    }
+
+    public function testCreateAppendsMiddleware() : void
+    {
+        $trace = new \ArrayObject();
+        $middleware1 = SpyMiddleware::fromTraceId(1, $trace);
+        $middleware2 = SpyMiddleware::fromTraceId(2, $trace);
+
+        $handler = MiddlewareHandler::create($this->handler, [$middleware1]);
+        $handler = MiddlewareHandler::create($handler, [$middleware2]);
+        $handler->handle($this->request);
+
+        self::assertSame([1, 2], $trace->getArrayCopy());
+    }
+
+    public function testCreatePrependsMiddleware() : void
+    {
+        $trace = new \ArrayObject();
+        $middleware1 = SpyMiddleware::fromTraceId(1, $trace);
+        $middleware2 = SpyMiddleware::fromTraceId(2, $trace);
+
+        $handler = MiddlewareHandler::create($this->handler, [$middleware1]);
+        $handler = MiddlewareHandler::create($handler, [$middleware2], true);
+        $handler->handle($this->request);
+
+        self::assertSame([2, 1], $trace->getArrayCopy());
     }
 
     public function testMiddlewareRemainsAfterExecution() : void
     {
-        $middlewareCallback = static function (Request $request, Handler $handler) {
-            return $handler->handle($request);
-        };
+        $middleware = SpyMiddleware::fromTraceId(1);
 
-        /** @var Middleware $middleware */
-        $middleware = $this->createMock(Middleware::class);
-        $middleware->expects($this->exactly(2))->method('process')->willReturnCallback($middlewareCallback);
-
-        $this->handler->method('handle')->willReturn(TestDoubleFactory::createEmptyResponse());
-
-        $handler = MiddlewareHandler::create($this->handler, $middleware);
+        $handler = MiddlewareHandler::create($this->handler, [$middleware]);
         $handler->handle($this->request);
         $handler->handle($this->request);
+
+        self::assertSame([1, 1], $middleware->getTraceLogArray());
     }
 }
