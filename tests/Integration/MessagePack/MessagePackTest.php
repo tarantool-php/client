@@ -13,15 +13,17 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\MessagePack;
 
-use PHPUnit\Framework\Assert;
 use Tarantool\Client\Packer\PeclPacker;
 use Tarantool\Client\Packer\PurePacker;
 use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\TestCase;
+use Tarantool\Client\Tests\PhpUnitCompat;
 
 final class MessagePackTest extends TestCase
 {
+    use PhpUnitCompat;
+
     /**
      * @dataProvider providePackUnpackData
      */
@@ -64,9 +66,7 @@ final class MessagePackTest extends TestCase
 
         [$result] = $this->client->evaluate('return ...', $array);
 
-        method_exists(Assert::class, 'assertEqualsCanonicalizing')
-            ? self::assertEqualsCanonicalizing($array, $result)
-            : self::assertEquals($array, $result, '', 0.0, 10, true);
+        self::assertEqualsCanonicalizing($array, $result);
     }
 
     /**

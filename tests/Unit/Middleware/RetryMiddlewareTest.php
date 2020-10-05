@@ -43,10 +43,10 @@ final class RetryMiddlewareTest extends TestCase
     {
         $response = TestDoubleFactory::createEmptyResponse();
 
-        $this->handler->expects($this->exactly(3))->method('handle')
-            ->will($this->onConsecutiveCalls(
-                $this->throwException(new \RuntimeException()),
-                $this->throwException(new ConnectionFailed()),
+        $this->handler->expects(self::exactly(3))->method('handle')
+            ->will(self::onConsecutiveCalls(
+                self::throwException(new \RuntimeException()),
+                self::throwException(new ConnectionFailed()),
                 $response
             ));
 
@@ -59,7 +59,7 @@ final class RetryMiddlewareTest extends TestCase
 
     public function testUnsuccessfulRetries() : void
     {
-        $this->handler->expects($this->exactly(4))->method('handle')
+        $this->handler->expects(self::exactly(4))->method('handle')
             ->willThrowException(new ConnectionFailed());
 
         $middleware = RetryMiddleware::custom(static function (int $retries) : ?int {

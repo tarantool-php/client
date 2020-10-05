@@ -41,7 +41,7 @@ final class CustomErrorMiddlewareTest extends TestCase
         $errorMessage = 'Error message';
         $errorCode = 42;
 
-        $this->handler->expects($this->once())->method('handle')
+        $this->handler->expects(self::once())->method('handle')
             ->willThrowException(RequestFailed::fromErrorResponse(
                 TestDoubleFactory::createErrorResponseFromStack([
                     [
@@ -70,7 +70,7 @@ final class CustomErrorMiddlewareTest extends TestCase
         $errorMessage = 'Error message';
         $errorCode = 42;
 
-        $this->handler->expects($this->once())->method('handle')
+        $this->handler->expects(self::once())->method('handle')
             ->willThrowException(RequestFailed::fromErrorResponse(
                 TestDoubleFactory::createErrorResponseFromStack([
                     [
@@ -103,7 +103,7 @@ final class CustomErrorMiddlewareTest extends TestCase
         $errorMessage = 'Error message';
         $errorCode = 42;
 
-        $this->handler->expects($this->once())->method('handle')
+        $this->handler->expects(self::once())->method('handle')
             ->willThrowException(RequestFailed::fromErrorResponse(
                 TestDoubleFactory::createErrorResponseFromStack([
                     [
@@ -134,7 +134,7 @@ final class CustomErrorMiddlewareTest extends TestCase
         $errorMessage = 'Error message';
         $errorCode = 42;
 
-        $this->handler->expects($this->once())->method('handle')
+        $this->handler->expects(self::once())->method('handle')
             ->willThrowException(RequestFailed::fromErrorResponse(
                 TestDoubleFactory::createErrorResponseFromStack([
                     [

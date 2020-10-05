@@ -57,7 +57,7 @@ final class ExamplesTest extends TestCase
     private static function parseFile(string $filename) : ?string
     {
         $content = file_get_contents($filename);
-        if (preg_match('~\/\*\s*?OUTPUT\b(.+?)\*\/~s', $content, $matches)) {
+        if (preg_match('~/\*\s*?OUTPUT\b(.+?)\*/~s', $content, $matches)) {
             return trim($matches[1]);
         }
 
