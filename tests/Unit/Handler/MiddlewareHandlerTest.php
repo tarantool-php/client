@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Unit\Handler;
 
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Tarantool\Client\Handler\Handler;
 use Tarantool\Client\Handler\MiddlewareHandler;
@@ -26,12 +25,12 @@ final class MiddlewareHandlerTest extends TestCase
     use TestDoubleClient;
 
     /**
-     * @var Request|MockObject
+     * @var Request
      */
     private $request;
 
     /**
-     * @var Handler|MockObject
+     * @var Handler
      */
     private $handler;
 
