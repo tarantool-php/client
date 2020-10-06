@@ -192,7 +192,7 @@ The library ships with two handlers:
 ## Middleware
 
 Middleware is the suggested way to extend the client with custom functionality. There are several middleware classes
-implemented to address the common use cases, like authentification, logging and [more](src/Middleware). 
+implemented to address the common use cases, like authentification, logging and [more](src/Middleware).
 The usage is straightforward:
 
 ```php
@@ -221,9 +221,9 @@ $client = Client::fromDefaults()->withMiddleware(
 );
 ```
 
-Please be aware that the order in which you add the middleware does matter. The same middleware, 
-placed in different order, can give very different or sometimes unexpected behavior. 
-To illustrate, consider the following configurations: 
+Please be aware that the order in which you add the middleware does matter. The same middleware,
+placed in different order, can give very different or sometimes unexpected behavior.
+To illustrate, consider the following configurations:
 
 ```php
 $client1 = Client::fromDefaults()->withMiddleware(
@@ -242,16 +242,16 @@ $client3 = Client::fromOptions([
 ])->withMiddleware(RetryMiddleware::linear());
 ```
 
-In this example, `$client1` will retry an unsuccessful operation and in case of connection 
-problems may initiate reconnection with follow-up re-authentication. However, `$client2` 
+In this example, `$client1` will retry an unsuccessful operation and in case of connection
+problems may initiate reconnection with follow-up re-authentication. However, `$client2`
 and `$client3` will perform reconnection *without* doing any re-authentication.
 
-> *You may wonder why `$client3` behaves like `$client2` in this case. This is because 
-> specifying some options (via an array or DSN string) implicitly registers middleware 
-> (in case of `username/password` it's `AuthenticationMiddleware`), so in fact the two 
-> configurations are equivalent.*
+> *You may wonder why `$client3` behaves like `$client2` in this case. This is because
+> specifying some options (via array or DSN string) may implicitly register middleware.
+> Thus, the `username/password` options register the `AuthenticationMiddleware`, which
+> eventually makes the two configurations equal.*
 
-To add your middleware to the top of an existing middleware stack use the 
+To make sure your middleware is always at the top of the middleware stack use the
 `withPrependedMiddleware()` method:
 
 ```php
