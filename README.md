@@ -248,11 +248,10 @@ and `$client3` will perform reconnection *without* doing any re-authentication.
 
 > *You may wonder why `$client3` behaves like `$client2` in this case. This is because
 > specifying some options (via array or DSN string) may implicitly register middleware.
-> Thus, the `username/password` options register the `AuthenticationMiddleware`, which
-> eventually makes the two configurations equal.*
+> Thus, the `username/password` options will be turned into `AuthenticationMiddleware`
+> under the hood, making the two configurations identical.*
 
-To make sure your middleware is always at the top of the middleware stack use the
-`withPrependedMiddleware()` method:
+To make sure your middleware runs first, use the `withPrependedMiddleware()` method:
 
 ```php
 $client = $client->withPrependedMiddleware($myMiddleware);
