@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Middleware;
 
+use Tarantool\Client\Exception\ClientException;
 use Tarantool\Client\Exception\CommunicationFailed;
 use Tarantool\Client\Exception\ConnectionFailed;
 use Tarantool\Client\Exception\UnexpectedResponse;
@@ -77,7 +78,7 @@ final class RetryMiddleware implements Middleware
             } catch (ConnectionFailed | CommunicationFailed $e) {
                 $handler->getConnection()->close();
                 goto retry;
-            } catch (\Throwable $e) {
+            } catch (ClientException $e) {
                 retry:
                 if (self::MAX_RETRIES_LIMIT === $retries) {
                     break;

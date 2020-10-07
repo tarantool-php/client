@@ -13,6 +13,6 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Exception;
 
-final class CommunicationFailed extends \RuntimeException
+final class CommunicationFailed extends \RuntimeException implements ClientException
 {
 }

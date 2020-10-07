@@ -17,7 +17,7 @@ use Tarantool\Client\Error;
 use Tarantool\Client\Keys;
 use Tarantool\Client\Response;
 
-final class RequestFailed extends \RuntimeException
+final class RequestFailed extends \RuntimeException implements ClientException
 {
     /** @var Error|null */
     private $error;

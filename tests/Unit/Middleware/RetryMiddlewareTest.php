@@ -15,6 +15,7 @@ namespace Tarantool\Client\Tests\Unit\Middleware;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Tarantool\Client\Exception\CommunicationFailed;
 use Tarantool\Client\Exception\ConnectionFailed;
 use Tarantool\Client\Handler\Handler;
 use Tarantool\Client\Middleware\RetryMiddleware;
@@ -45,20 +46,16 @@ final class RetryMiddlewareTest extends TestCase
 
         $this->handler->expects(self::exactly(3))->method('handle')
             ->will(self::onConsecutiveCalls(
-                self::throwException(new \RuntimeException()),
-                self::throwException(new ConnectionFailed()),
+                self::throwException(new ConnectionFailed('unsuccessful op #1')),
+                self::throwException(new CommunicationFailed('unsuccessful op #2')),
                 $response
             ));
 
-        $totalRetries = 0;
-        $middleware = RetryMiddleware::custom(static function (int $retries) use (&$totalRetries) : int {
-            $totalRetries = $retries;
-
+        $middleware = RetryMiddleware::custom(static function () : int {
             return 0;
         });
 
         self::assertSame($response, $middleware->process($this->request, $this->handler));
-        self::assertSame(2, $totalRetries);
     }
 
     public function testUnsuccessfulRetries() : void

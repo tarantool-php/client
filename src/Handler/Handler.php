@@ -14,12 +14,16 @@ declare(strict_types=1);
 namespace Tarantool\Client\Handler;
 
 use Tarantool\Client\Connection\Connection;
+use Tarantool\Client\Exception\ClientException;
 use Tarantool\Client\Packer\Packer;
 use Tarantool\Client\Request\Request;
 use Tarantool\Client\Response;
 
 interface Handler
 {
+    /**
+     * @throws ClientException
+     */
     public function handle(Request $request) : Response;
 
     public function getConnection() : Connection;
