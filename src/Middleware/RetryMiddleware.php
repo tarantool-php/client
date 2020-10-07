@@ -23,6 +23,7 @@ use Tarantool\Client\Response;
 final class RetryMiddleware implements Middleware
 {
     private const DEFAULT_MAX_RETRIES = 2;
+    private const MAX_RETRIES_LIMIT = 100;
 
     /** @var \Closure */
     private $getDelayMs;
@@ -78,6 +79,9 @@ final class RetryMiddleware implements Middleware
                 goto retry;
             } catch (\Throwable $e) {
                 retry:
+                if (self::MAX_RETRIES_LIMIT === $retries) {
+                    break;
+                }
                 if (null === $delayMs = ($this->getDelayMs)(++$retries, $e)) {
                     break;
                 }

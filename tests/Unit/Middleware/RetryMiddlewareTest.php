@@ -50,11 +50,15 @@ final class RetryMiddlewareTest extends TestCase
                 $response
             ));
 
-        $middleware = RetryMiddleware::custom(static function (int $retries) : ?int {
+        $totalRetries = 0;
+        $middleware = RetryMiddleware::custom(static function (int $retries) use (&$totalRetries) : int {
+            $totalRetries = $retries;
+
             return 0;
         });
 
         self::assertSame($response, $middleware->process($this->request, $this->handler));
+        self::assertSame(2, $totalRetries);
     }
 
     public function testUnsuccessfulRetries() : void
@@ -68,5 +72,26 @@ final class RetryMiddlewareTest extends TestCase
 
         $this->expectException(ConnectionFailed::class);
         $middleware->process($this->request, $this->handler);
+    }
+
+    public function testInfiniteRetriesBreak() : void
+    {
+        $this->handler->method('handle')
+            ->willThrowException(new ConnectionFailed());
+
+        $totalRetries = 0;
+        $middleware = RetryMiddleware::custom(static function (int $retries) use (&$totalRetries) : int {
+            $totalRetries = $retries;
+            // always returning a value other than null
+            // leads to an infinite retry loop
+            return 0;
+        });
+
+        try {
+            $middleware->process($this->request, $this->handler);
+            self::fail(sprintf('"%s" exception was not thrown', ConnectionFailed::class));
+        } catch (ConnectionFailed $e) {
+            self::assertSame(100, $totalRetries);
+        }
     }
 }
