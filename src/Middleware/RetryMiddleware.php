@@ -24,7 +24,8 @@ use Tarantool\Client\Response;
 final class RetryMiddleware implements Middleware
 {
     private const DEFAULT_MAX_RETRIES = 2;
-    private const MAX_RETRIES_LIMIT = 100;
+    private const MAX_RETRIES_LIMIT = 10;
+    private const MAX_DELAY_MS = 60000;
 
     /** @var \Closure */
     private $getDelayMs;
@@ -86,7 +87,7 @@ final class RetryMiddleware implements Middleware
                 if (null === $delayMs = ($this->getDelayMs)(++$retries, $e)) {
                     break;
                 }
-                \usleep($delayMs * 1000);
+                \usleep(\min($delayMs, self::MAX_DELAY_MS) * 1000);
             }
         } while (true);
 

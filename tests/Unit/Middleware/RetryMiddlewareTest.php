@@ -88,7 +88,7 @@ final class RetryMiddlewareTest extends TestCase
             $middleware->process($this->request, $this->handler);
             self::fail(sprintf('"%s" exception was not thrown', ConnectionFailed::class));
         } catch (ConnectionFailed $e) {
-            self::assertSame(100, $totalRetries);
+            self::assertSame(10, $totalRetries);
         }
     }
 }
