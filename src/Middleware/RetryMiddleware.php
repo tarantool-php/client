@@ -45,7 +45,7 @@ final class RetryMiddleware implements Middleware
         });
     }
 
-    public static function exponential(int $maxRetries = self::DEFAULT_MAX_RETRIES, int $baseMs = 100) : self
+    public static function exponential(int $maxRetries = self::DEFAULT_MAX_RETRIES, int $baseMs = 10) : self
     {
         return new self(static function (int $retries) use ($maxRetries, $baseMs) {
             return $retries > $maxRetries ? null : $baseMs ** $retries;
