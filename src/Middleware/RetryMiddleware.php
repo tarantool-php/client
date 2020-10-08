@@ -87,7 +87,9 @@ final class RetryMiddleware implements Middleware
                 if (null === $delayMs = ($this->getDelayMs)(++$retries, $e)) {
                     break;
                 }
-                \usleep(\min($delayMs, self::MAX_DELAY_MS) * 1000);
+                $delayMs = \min($delayMs, self::MAX_DELAY_MS);
+                $delayMs = $delayMs / 2 + \mt_rand(0, $delayMs / 2);
+                \usleep($delayMs * 1000);
             }
         } while (true);
 

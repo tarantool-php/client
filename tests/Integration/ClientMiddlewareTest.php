@@ -62,7 +62,9 @@ final class ClientMiddlewareTest extends TestCase
         $client = Client::fromOptions([
             'uri' => ClientBuilder::createFromEnv()->getUri(),
             'username' => 'foobar',
-            'max_retries' => 4, // 4 linear retries with a difference of 100 ms give 1 sec in total (> 0.5)
+            'max_retries' => 5,
+            // 5 linear retries with a difference of 100ms and equal jitter give
+            // at worst 100/2 + 200/2 + 300/2 + 400/2 + 800/2 = 900ms in total (> 0.5)
         ]);
 
         $client->ping();
