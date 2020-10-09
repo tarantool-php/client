@@ -27,7 +27,7 @@ interface Connection
     public function open() : Greeting;
 
     /**
-     * Closes an opened connection (including a persistent one).
+     * Closes an opened connection.
      */
     public function close() : void;
 
