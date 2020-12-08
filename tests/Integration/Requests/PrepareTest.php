@@ -95,9 +95,9 @@ final class PrepareTest extends TestCase
     public function testCloseDeallocatesPreparedInLuaSqlStatement() : void
     {
         [$data] = $this->client->evaluate("s = box.prepare('SELECT ?') return {
-            id=s.stmt_id, 
-            bind_metadata=s.params, 
-            metadata=s.metadata, 
+            id=s.stmt_id,
+            bind_metadata=s.params,
+            metadata=s.metadata,
             bind_count=s.param_count
         }");
 

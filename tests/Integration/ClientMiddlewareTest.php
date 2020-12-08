@@ -94,7 +94,7 @@ final class ClientMiddlewareTest extends TestCase
         // Trigger an error only on the first call
         $retryableClient->evaluate($luaCall = '
             if box.space.connection_retry then
-                box.space.connection_retry:drop() 
+                box.space.connection_retry:drop()
                 box.error{code = 42, reason = "Foobar"}
             end
         ');

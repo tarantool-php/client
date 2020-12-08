@@ -24,8 +24,8 @@ $client->evaluate(
     local space = box.schema.space.create(...)
     space:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
     space:format({
-        {name = 'id', type = 'unsigned'}, 
-        {name = 'num', type = 'unsigned'}, 
+        {name = 'id', type = 'unsigned'},
+        {name = 'num', type = 'unsigned'},
         {name = 'name', type = 'string'}
     })
     space:insert({1, 10, 'foo'})
