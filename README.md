@@ -15,7 +15,7 @@ A pure PHP client for [Tarantool](https://www.tarantool.io/en/developers/) 1.7.1
  * Supports SQL protocol
  * Supports user-defined types (decimals and UUIDs are included)
  * Highly customizable
- * [Thoroughly tested](https://travis-ci.org/tarantool-php/client) on PHP 7.1-7.4 and Tarantool 1.7-2.6
+ * [Thoroughly tested](https://travis-ci.org/tarantool-php/client) on PHP 7.1-8.0 and Tarantool 1.7-2.6
  * Being used in a number of projects, including [Queue](https://github.com/tarantool-php/queue), [Mapper](https://github.com/tarantool-php/mapper), [Web Admin](https://github.com/basis-company/tarantool-admin) and [others](https://github.com/tarantool-php).
 
 
@@ -719,7 +719,7 @@ The command above will create a container named `client` with PHP 7.4 runtime.
 You may change the default runtime by defining the `PHP_IMAGE` environment variable:
 
 ```bash
-PHP_IMAGE='php:7.3-cli' ./dockerfile.sh | docker build -t client -
+PHP_IMAGE='php:8.0-cli' ./dockerfile.sh | docker build -t client -
 ```
 
 > *See a list of various images [here](.travis.yml#L10).*

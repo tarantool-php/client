@@ -85,8 +85,12 @@ final class MessagePackTest extends TestCase
             ->build();
 
         // @see https://github.com/msgpack/msgpack-php/issues/137
-        if (PHP_VERSION_ID >= 70400 && $client->getHandler()->getPacker() instanceof PeclPacker) {
-            self::markTestSkipped('The msgpack extension does not pack objects correctly on PHP 7.4');
+        if (
+            PHP_VERSION_ID >= 70400 && PHP_VERSION_ID < 80000 &&
+            $client->getHandler()->getPacker() instanceof PeclPacker &&
+            version_compare((new \ReflectionExtension('msgpack'))->getVersion(), '2.1.0', '<')
+        ) {
+            self::markTestSkipped('The msgpack extension < 2.1.0 does not pack objects correctly on PHP 7.4');
         }
 
         $date = new \DateTimeImmutable();

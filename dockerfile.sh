@@ -17,6 +17,11 @@ if [[ -n "$COVERAGE_FILE" ]]; then
     RUN_CMDS="$RUN_CMDS && \\\\\n    pecl install pcov && docker-php-ext-enable pcov"
 fi
 
+if [[ -z "$EXT_DISABLE_DECIMAL" || "0" == "$EXT_DISABLE_DECIMAL" || "false" == "$EXT_DISABLE_DECIMAL" ]] ; then
+  RUN_CMDS="$RUN_CMDS && \\\\\n    apt-get install -y libmpdec-dev"
+  RUN_CMDS="$RUN_CMDS && \\\\\n    pecl install decimal && docker-php-ext-enable decimal"
+fi
+
 COMPOSER_REMOVE=''
 if [[ "$PHP_IMAGE" =~ 7.1 ]]; then
   COMPOSER_REMOVE='symfony/uid'
@@ -26,10 +31,9 @@ echo -e "
 FROM $PHP_IMAGE
 
 RUN apt-get update && \\
-    apt-get install -y curl git libmpdec-dev uuid-dev unzip && \\
+    apt-get install -y curl git uuid-dev unzip && \\
     docker-php-ext-install sockets && \\
     pecl install msgpack && docker-php-ext-enable msgpack && \\
-    pecl install decimal && docker-php-ext-enable decimal && \\
     pecl install uuid && docker-php-ext-enable uuid${RUN_CMDS}
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer

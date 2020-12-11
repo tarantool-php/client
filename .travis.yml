@@ -20,6 +20,10 @@ env:
     - PHP_IMAGE='php:7.3-cli' TNT_PACKER=pecl
     - PHP_IMAGE='php:7.3-cli' TNT_LISTEN_URI=/tmp/tarantool_client.sock
 
+    - PHP_IMAGE='php:8.0-cli' EXT_DISABLE_DECIMAL=1
+    - PHP_IMAGE='php:8.0-cli' TNT_PACKER=pecl EXT_DISABLE_DECIMAL=1
+    - PHP_IMAGE='php:8.0-cli' TNT_LISTEN_URI=/tmp/tarantool_client.sock EXT_DISABLE_DECIMAL=1
+
     - COVERAGE_FILE='coverage.clover'
     - COVERAGE_FILE='coverage.clover' TNT_PACKER=pecl
     - COVERAGE_FILE='coverage.clover' TNT_LISTEN_URI=/tmp/tarantool_client.sock

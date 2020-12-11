@@ -11,10 +11,9 @@
         }
     ],
     "require": {
-        "php": "^7.1"
+        "php": "^7.1|^8"
     },
     "require-dev": {
-        "ext-decimal": "*",
         "ext-json": "*",
         "ext-msgpack": "*",
         "ext-sockets": "*",
@@ -24,7 +23,7 @@
         "rybakit/msgpack": "^0.7",
         "symfony/uid": "^5.1",
         "tarantool/phpunit-extras": "^0.1.2",
-        "vimeo/psalm": "^3.9"
+        "vimeo/psalm": "^3.9|^4"
     },
     "suggest": {
         "ext-decimal": "For using decimals with Tarantool 2.3+",
