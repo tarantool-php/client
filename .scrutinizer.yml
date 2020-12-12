@@ -1,0 +1,27 @@
+checks:
+  php: true
+
+tools:
+  php_mess_detector: true
+  php_cpd: true
+  php_loc:
+    excluded_dirs: [vendor]
+  php_pdepend:
+    excluded_dirs: [vendor]
+  external_code_coverage:
+    runs: 3
+
+build:
+  environment:
+    apt_packages:
+      - libmpdec-dev
+    php:
+      version: 7.4
+      pecl_extensions:
+        - decimal
+        - msgpack
+  nodes:
+    analysis:
+      tests:
+        override:
+          - php-scrutinizer-run
