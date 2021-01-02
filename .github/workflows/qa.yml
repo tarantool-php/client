@@ -8,7 +8,7 @@ on:
 jobs:
   tests:
     env:
-      TNT_IMAGE: tarantool/tarantool:2.6.0
+      TNT_IMAGE: tarantool/tarantool:2.7
       PHP_IMAGE: php:7.4-cli
     strategy:
       matrix:
@@ -56,6 +56,7 @@ jobs:
           - TNT_IMAGE: tarantool/tarantool:2.3
           - TNT_IMAGE: tarantool/tarantool:2.4
           - TNT_IMAGE: tarantool/tarantool:2.5
+          - TNT_IMAGE: tarantool/tarantool:2.6
 
     runs-on: ${{ matrix.operating-system }}
     steps:
