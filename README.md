@@ -1,6 +1,6 @@
 # PHP client for Tarantool
 
-[![Build Status](https://travis-ci.com/tarantool-php/client.svg?branch=master)](https://travis-ci.com/tarantool-php/client)
+[![Quality Assurance](https://github.com/tarantool-php/client/workflows/QA/badge.svg)](https://github.com/tarantool-php/client/actions?query=workflow%3AQA)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/tarantool-php/client/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/tarantool-php/client/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/tarantool-php/client/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/tarantool-php/client/?branch=master)
 [![Telegram](https://img.shields.io/badge/Telegram-join%20chat-blue.svg)](https://t.me/tarantool_php)
@@ -15,7 +15,7 @@ A pure PHP client for [Tarantool](https://www.tarantool.io/en/developers/) 1.7.1
  * Supports SQL protocol
  * Supports user-defined types (decimals and UUIDs are included)
  * Highly customizable
- * [Thoroughly tested](https://travis-ci.org/tarantool-php/client) on PHP 7.1-8.0 and Tarantool 1.7-2.6
+ * [Thoroughly tested](https://github.com/tarantool-php/client/actions?query=workflow%3AQA) on PHP 7.1-8.0 and Tarantool 1.7-2.6
  * Being used in a number of projects, including [Queue](https://github.com/tarantool-php/queue), [Mapper](https://github.com/tarantool-php/mapper), [Web Admin](https://github.com/basis-company/tarantool-admin) and [others](https://github.com/tarantool-php).
 
 
@@ -722,7 +722,7 @@ You may change the default runtime by defining the `PHP_IMAGE` environment varia
 PHP_IMAGE='php:8.0-cli' ./dockerfile.sh | docker build -t client -
 ```
 
-> *See a list of various images [here](.travis.yml#L10).*
+> *See a list of various images [here](https://hub.docker.com/_/php).*
 
 
 Then run a Tarantool instance (needed for integration tests):
