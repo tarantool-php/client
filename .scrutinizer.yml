@@ -13,6 +13,8 @@ tools:
 
 build:
   environment:
+    variables:
+      COMPOSER_ROOT_VERSION: dev-master
     apt_packages:
       - libmpdec-dev
     php:
