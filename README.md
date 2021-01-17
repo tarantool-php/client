@@ -15,7 +15,7 @@ A pure PHP client for [Tarantool](https://www.tarantool.io/en/developers/) 1.7.1
  * Supports SQL protocol
  * Supports user-defined types (decimals and UUIDs are included)
  * Highly customizable
- * [Thoroughly tested](https://github.com/tarantool-php/client/actions?query=workflow%3AQA) on PHP 7.1-8.0 and Tarantool 1.7-2.7
+ * [Thoroughly tested](https://github.com/tarantool-php/client/actions?query=workflow%3AQA) on PHP 7.1-8.0 and Tarantool 1.7-2.8
  * Being used in a number of projects, including [Queue](https://github.com/tarantool-php/queue), [Mapper](https://github.com/tarantool-php/mapper), [Web Admin](https://github.com/basis-company/tarantool-admin) and [others](https://github.com/tarantool-php).
 
 
