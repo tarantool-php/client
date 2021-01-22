@@ -19,7 +19,7 @@ use Tarantool\Client\Middleware\LoggingMiddleware;
 $loader = require __DIR__.'/../bootstrap.php';
 $loader->addPsr4('App\\', __DIR__);
 
-$stream = new StreamHandler('php://stdout' /*, Logger::WARNING */ );
+$stream = new StreamHandler('php://stdout' /*, Logger::WARNING */);
 
 $logger = new Logger('example');
 $logger->pushHandler($stream);
