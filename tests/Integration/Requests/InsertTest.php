@@ -84,7 +84,7 @@ final class InsertTest extends TestCase
         $space = $this->client->getSpace('request_insert_dup_key');
 
         $this->expectException(RequestFailed::class);
-        $this->expectExceptionMessage("Duplicate key exists in unique index 'primary' in space 'request_insert_dup_key'");
+        $this->expectExceptionMessageMatches('/^Duplicate key exists in unique index ("|\')primary\1 in space ("|\')request_insert_dup_key\2/');
 
         $space->insert([1, 'bazqux']);
     }
