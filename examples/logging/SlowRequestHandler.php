@@ -29,6 +29,10 @@ final class SlowRequestHandler extends HandlerWrapper
     /** @var string */
     private $levelName;
 
+    /**
+     * @param positive-int $thresholdMs
+     * @param Logger::DEBUG|Logger::INFO|Logger::NOTICE|Logger::WARNING|Logger::ERROR|Logger::CRITICAL|Logger::ALERT|Logger::EMERGENCY $level
+     */
     public function __construct(HandlerInterface $handler, int $thresholdMs, int $level = Logger::WARNING)
     {
         parent::__construct($handler);
