@@ -106,7 +106,13 @@ final class StreamConnection implements Connection
         }
 
         $this->stream = $stream;
-        \stream_set_timeout($this->stream, $this->options['socket_timeout']);
+        $socketTimeoutMicroseconds = 0;
+        if (is_float($this->options['socket_timeout'])) {
+            $socketTimeoutMicroseconds = (int)($this->options['socket_timeout'] * 1000000);
+            $this->options['socket_timeout'] = (int)($this->options['socket_timeout']);
+            $socketTimeoutMicroseconds -= $this->options['socket_timeout'] * 1000000;
+        }
+        \stream_set_timeout($this->stream, $this->options['socket_timeout'], $socketTimeoutMicroseconds);
 
         if ($this->options['persistent'] && \ftell($this->stream)) {
             return $this->greeting = Greeting::unknown();
