@@ -216,10 +216,10 @@ final class DsnTest extends TestCase
     public function provideFloatOptions() : iterable
     {
         return [
-            ['tcp://host/?foo=42.1', 'foo', 42.1],
+            ['tcp://host/?foo=4.2', 'foo', 4.2],
             ['tcp://host/?foo=0', 'foo', 0.0],
             ['tcp://host', 'foo', null],
-            ['unix:///socket.sock/?foo=42.1', 'foo', 42.1],
+            ['unix:///socket.sock/?foo=4.2', 'foo', 4.2],
             ['unix:///socket.sock/?foo=0', 'foo', 0.0],
             ['unix:///socket.sock', 'foo', null],
         ];
@@ -228,7 +228,7 @@ final class DsnTest extends TestCase
     public function testGetFloatDefault() : void
     {
         $dsn = Dsn::parse('tcp://host/?foo=2.2');
-        self::assertSame(42.1, $dsn->getFloat('baz', 42.1));
+        self::assertSame(4.2, $dsn->getFloat('baz', 4.2));
     }
 
     /**
