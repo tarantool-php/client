@@ -89,10 +89,10 @@ final class Client
         $dsn = Dsn::parse($dsn);
 
         $connectionOptions = [];
-        if (null !== $timeout = $dsn->getInt('connect_timeout')) {
+        if (null !== $timeout = $dsn->getFloat('connect_timeout')) {
             $connectionOptions['connect_timeout'] = $timeout;
         }
-        if (null !== $timeout = $dsn->getInt('socket_timeout')) {
+        if (null !== $timeout = $dsn->getFloat('socket_timeout')) {
             $connectionOptions['socket_timeout'] = $timeout;
         }
         if (null !== $tcpNoDelay = $dsn->getBool('tcp_nodelay')) {

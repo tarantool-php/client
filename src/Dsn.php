@@ -181,6 +181,19 @@ final class Dsn
         return $value;
     }
 
+    public function getFloat(string $name, ?float $default = null) : ?float
+    {
+        if (!isset($this->options[$name])) {
+            return $default;
+        }
+
+        if (false === $value = \filter_var($this->options[$name], \FILTER_VALIDATE_FLOAT)) {
+            throw new \TypeError(\sprintf('DSN option "%s" must be of the type float', $name));
+        }
+
+        return $value;
+    }
+
     /**
      * @psalm-return never-returns
      */
