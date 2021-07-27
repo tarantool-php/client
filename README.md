@@ -122,8 +122,8 @@ The following options are available:
 Name | Type | Default | Description
 --- | :---: | :---: | ---
 *uri* | string | 'tcp://127.0.0.1:3301' | The connection uri that is used to create a `StreamConnection` object.
-*connect_timeout* | integer | 5 | The number of seconds that the client waits for a connect to a Tarantool server before throwing a `ConnectionFailed` exception.
-*socket_timeout* | integer | 5 | The number of seconds that the client waits for a respond from a Tarantool server before throwing a `CommunicationFailed` exception.
+*connect_timeout* | float | 5 | The number of seconds that the client waits for a connect to a Tarantool server before throwing a `ConnectionFailed` exception.
+*socket_timeout* | float | 5 | The number of seconds that the client waits for a respond from a Tarantool server before throwing a `CommunicationFailed` exception.
 *tcp_nodelay* | boolean | true | Whether the Nagle algorithm is disabled on a TCP connection.
 *persistent* | boolean | false | Whether to use a persistent connection.
 *username* | string | | The username for the user being authenticated.

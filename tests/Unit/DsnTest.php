@@ -205,6 +205,33 @@ final class DsnTest extends TestCase
     }
 
     /**
+     * @dataProvider provideFloatOptions
+     */
+    public function testGetFloat(string $dsn, string $option, $expectedValue) : void
+    {
+        $dsn = Dsn::parse($dsn);
+        self::assertSame($expectedValue, $dsn->getFloat($option));
+    }
+
+    public function provideFloatOptions() : iterable
+    {
+        return [
+            ['tcp://host/?foo=42.1', 'foo', 42.1],
+            ['tcp://host/?foo=0', 'foo', 0.0],
+            ['tcp://host', 'foo', null],
+            ['unix:///socket.sock/?foo=42.1', 'foo', 42.1],
+            ['unix:///socket.sock/?foo=0', 'foo', 0.0],
+            ['unix:///socket.sock', 'foo', null],
+        ];
+    }
+
+    public function testGetFloatDefault() : void
+    {
+        $dsn = Dsn::parse('tcp://host/?foo=2.2');
+        self::assertSame(42.1, $dsn->getFloat('baz', 42.1));
+    }
+
+    /**
      * @dataProvider provideBoolOptions
      */
     public function testGetBool(string $dsn, string $option, ?bool $expectedValue) : void
