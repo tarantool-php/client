@@ -107,9 +107,9 @@ final class StreamConnection implements Connection
 
         $this->stream = $stream;
         $socketTimeoutMicroseconds = 0;
-        $socketTimeoutSeconds = (int)($this->options['socket_timeout']);
-        if (is_float($this->options['socket_timeout'])) {
-            $socketTimeoutMicroseconds = (int)($this->options['socket_timeout'] * 1000000);
+        $socketTimeoutSeconds = (int) ($this->options['socket_timeout']);
+        if (\is_float($this->options['socket_timeout'])) {
+            $socketTimeoutMicroseconds = (int) ($this->options['socket_timeout'] * 1000000);
             $socketTimeoutMicroseconds -= $socketTimeoutSeconds * 1000000;
         }
         \stream_set_timeout($this->stream, $socketTimeoutSeconds, $socketTimeoutMicroseconds);
