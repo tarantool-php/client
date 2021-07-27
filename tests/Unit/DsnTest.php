@@ -232,6 +232,30 @@ final class DsnTest extends TestCase
     }
 
     /**
+     * @dataProvider provideNonFloatOptions
+     */
+    public function testGetNonFloat(string $dsn, string $option) : void
+    {
+        $dsn = Dsn::parse($dsn);
+
+        $this->expectException(\TypeError::class);
+        $this->expectExceptionMessage('DSN option "foo" must be of the type float');
+        $dsn->getFloat($option);
+    }
+
+    public function provideNonFloatOptions() : iterable
+    {
+        return [
+            ['tcp://host/?foo=bar', 'foo'],
+            ['tcp://host/?foo=true', 'foo'],
+            ['tcp://host/?foo=', 'foo'],
+            ['unix:///socket.sock/?foo=bar', 'foo'],
+            ['unix:///socket.sock/?foo=true', 'foo'],
+            ['unix:///socket.sock/?foo=', 'foo'],
+        ];
+    }
+
+    /**
      * @dataProvider provideBoolOptions
      */
     public function testGetBool(string $dsn, string $option, ?bool $expectedValue) : void
