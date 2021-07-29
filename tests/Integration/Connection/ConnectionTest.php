@@ -144,7 +144,7 @@ final class ConnectionTest extends TestCase
 
         // @see http://stackoverflow.com/q/100841/1160901
         $host = '8.8.8.8';
-        $connectTimeout = 2;
+        $connectTimeout = 1.125;
 
         $client = $clientBuilder->setConnectionOptions(['connect_timeout' => $connectTimeout])
             ->setHost($host)
@@ -163,7 +163,7 @@ final class ConnectionTest extends TestCase
             $time = microtime(true) - $start;
             self::assertMatchesRegularExpression('/Failed to connect to .+?: (Connection|Operation) timed out/', $e->getMessage());
             self::assertGreaterThanOrEqual($connectTimeout, $time);
-            self::assertLessThanOrEqual($connectTimeout + 0.1, $time);
+            self::assertLessThan($connectTimeout + 0.005, $time);
 
             return;
         }

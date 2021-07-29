@@ -109,7 +109,7 @@ final class ReadTest extends TestCase
 
     public function testSocketReadTimedOut() : void
     {
-        $socketTimeout = 1;
+        $socketTimeout = 1.125;
 
         $client = ClientBuilder::createFromEnv()
             ->setConnectionOptions(['socket_timeout' => $socketTimeout])
@@ -123,7 +123,7 @@ final class ReadTest extends TestCase
             $time = microtime(true) - $start;
             self::assertSame('Read timed out', $e->getMessage());
             self::assertGreaterThanOrEqual($socketTimeout, $time);
-            self::assertLessThanOrEqual($socketTimeout + 0.1, $time);
+            self::assertLessThan($socketTimeout + 0.005, $time);
 
             return;
         }

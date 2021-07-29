@@ -92,7 +92,7 @@ use Tarantool\Client\Client;
 $client = Client::fromDsn('tcp://127.0.0.1');
 $client = Client::fromDsn('tcp://[fe80::1]:3301');
 $client = Client::fromDsn('tcp://user:pass@example.com:3301');
-$client = Client::fromDsn('tcp://user@example.com/?connect_timeout=5&max_retries=3');
+$client = Client::fromDsn('tcp://user@example.com/?connect_timeout=5.0&max_retries=3');
 $client = Client::fromDsn('unix:///var/run/tarantool/my_instance.sock');
 $client = Client::fromDsn('unix://user:pass@/var/run/tarantool/my_instance.sock?max_retries=3');
 ```
@@ -122,8 +122,8 @@ The following options are available:
 Name | Type | Default | Description
 --- | :---: | :---: | ---
 *uri* | string | 'tcp://127.0.0.1:3301' | The connection uri that is used to create a `StreamConnection` object.
-*connect_timeout* | integer | 5 | The number of seconds that the client waits for a connect to a Tarantool server before throwing a `ConnectionFailed` exception.
-*socket_timeout* | integer | 5 | The number of seconds that the client waits for a respond from a Tarantool server before throwing a `CommunicationFailed` exception.
+*connect_timeout* | float | 5.0 | The number of seconds that the client waits for a connect to a Tarantool server before throwing a `ConnectionFailed` exception.
+*socket_timeout* | float | 5.0 | The number of seconds that the client waits for a respond from a Tarantool server before throwing a `CommunicationFailed` exception.
 *tcp_nodelay* | boolean | true | Whether the Nagle algorithm is disabled on a TCP connection.
 *persistent* | boolean | false | Whether to use a persistent connection.
 *username* | string | | The username for the user being authenticated.
@@ -147,8 +147,8 @@ use Tarantool\Client\Middleware\RetryMiddleware;
 use Tarantool\Client\Packer\PurePacker;
 
 $connection = StreamConnection::createTcp('tcp://127.0.0.1:3301', [
-    'socket_timeout' => 5,
-    'connect_timeout' => 5,
+    'socket_timeout' => 5.0,
+    'connect_timeout' => 5.0,
     // ...
 ]);
 
@@ -182,7 +182,7 @@ $request = new CallRequest('box.stat');
 $response = $handler->handle($request);
 $data = $response->getBodyField(Keys::DATA);
 ```
-  
+
 The library ships with two handlers:
 
  * `DefaultHandler` is used for handling low-level communication with a Tarantool server
