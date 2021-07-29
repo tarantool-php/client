@@ -76,7 +76,10 @@ final class Client
             $middleware[] = new AuthenticationMiddleware($options['username'], $options['password'] ?? '');
         }
 
-        $connection = StreamConnection::create($options['uri'] ?? StreamConnection::DEFAULT_URI, $connectionOptions);
+        $connection = isset($options['uri'])
+            ? StreamConnection::create($options['uri'], $connectionOptions)
+            : StreamConnection::createTcp(StreamConnection::DEFAULT_TCP_URI, $connectionOptions);
+
         $handler = new DefaultHandler($connection, $packer ?? PackerFactory::create());
 
         return $middleware
@@ -89,10 +92,10 @@ final class Client
         $dsn = Dsn::parse($dsn);
 
         $connectionOptions = [];
-        if (null !== $timeout = $dsn->getInt('connect_timeout')) {
+        if (null !== $timeout = $dsn->getFloat('connect_timeout')) {
             $connectionOptions['connect_timeout'] = $timeout;
         }
-        if (null !== $timeout = $dsn->getInt('socket_timeout')) {
+        if (null !== $timeout = $dsn->getFloat('socket_timeout')) {
             $connectionOptions['socket_timeout'] = $timeout;
         }
         if (null !== $tcpNoDelay = $dsn->getBool('tcp_nodelay')) {
