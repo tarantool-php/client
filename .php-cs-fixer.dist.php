@@ -65,7 +65,7 @@ For the full copyright and license information, please view the LICENSE
 file that was distributed with this source code.
 EOF;
 
-return (new Config)
+return (new Config())
     ->setUsingCache(false)
     ->setRiskyAllowed(true)
     ->registerCustomFixers([
