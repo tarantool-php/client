@@ -3,4 +3,4 @@
 /composer.lock
 /coverage*
 /phpunit.xml
-/.idea
+/.php-cs-fixer.php
