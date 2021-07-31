@@ -186,7 +186,7 @@ final class DsnTest extends TestCase
         $dsn = Dsn::parse($dsn);
 
         $this->expectException(\TypeError::class);
-        $this->expectExceptionMessage('DSN option "foo" must be of the type int');
+        $this->expectExceptionMessage('DSN option "foo" must be of type int');
         $dsn->getInt($option);
     }
 
@@ -199,6 +199,59 @@ final class DsnTest extends TestCase
             ['tcp://host/?foo=', 'foo'],
             ['unix:///socket.sock/?foo=bar', 'foo'],
             ['unix:///socket.sock/?foo=4.2', 'foo'],
+            ['unix:///socket.sock/?foo=true', 'foo'],
+            ['unix:///socket.sock/?foo=', 'foo'],
+        ];
+    }
+
+    /**
+     * @dataProvider provideFloatOptions
+     */
+    public function testGetFloat(string $dsn, string $option, $expectedValue) : void
+    {
+        $dsn = Dsn::parse($dsn);
+        self::assertSame($expectedValue, $dsn->getFloat($option));
+    }
+
+    public function provideFloatOptions() : iterable
+    {
+        return [
+            ['tcp://host/?foo=42', 'foo', 42.0],
+            ['tcp://host/?foo=42.3', 'foo', 42.3],
+            ['tcp://host/?foo=0', 'foo', 0.0],
+            ['tcp://host', 'foo', null],
+            ['unix:///socket.sock/?foo=42', 'foo', 42.0],
+            ['unix:///socket.sock/?foo=0', 'foo', 0.0],
+            ['unix:///socket.sock/?foo=0.1', 'foo', 0.1],
+            ['unix:///socket.sock', 'foo', null],
+        ];
+    }
+
+    public function testGetFloatDefault() : void
+    {
+        $dsn = Dsn::parse('tcp://host/?foo=2');
+        self::assertSame(42.3, $dsn->getFloat('baz', 42.3));
+    }
+
+    /**
+     * @dataProvider provideNonFloatOptions
+     */
+    public function testGetNonFloat(string $dsn, string $option) : void
+    {
+        $dsn = Dsn::parse($dsn);
+
+        $this->expectException(\TypeError::class);
+        $this->expectExceptionMessage('DSN option "foo" must be of type float');
+        $dsn->getFloat($option);
+    }
+
+    public function provideNonFloatOptions() : iterable
+    {
+        return [
+            ['tcp://host/?foo=bar', 'foo'],
+            ['tcp://host/?foo=true', 'foo'],
+            ['tcp://host/?foo=', 'foo'],
+            ['unix:///socket.sock/?foo=bar', 'foo'],
             ['unix:///socket.sock/?foo=true', 'foo'],
             ['unix:///socket.sock/?foo=', 'foo'],
         ];
@@ -249,7 +302,7 @@ final class DsnTest extends TestCase
         $dsn = Dsn::parse($dsn);
 
         $this->expectException(\TypeError::class);
-        $this->expectExceptionMessage('DSN option "foo" must be of the type bool');
+        $this->expectExceptionMessage('DSN option "foo" must be of type bool');
         $dsn->getBool($option);
     }
 

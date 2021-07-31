@@ -19,54 +19,62 @@ use Tarantool\Client\Packer\PacketLength;
 
 final class StreamConnection implements Connection
 {
-    public const DEFAULT_URI = 'tcp://127.0.0.1:3301';
-
-    private const DEFAULT_OPTIONS = [
-        'connect_timeout' => 5,
-        'socket_timeout' => 5,
-        'tcp_nodelay' => true,
-        'persistent' => false,
-    ];
-
-    /** @var resource|null */
-    private $stream;
-
-    /** @var resource|null */
-    private $streamContext;
+    public const DEFAULT_TCP_URI = 'tcp://127.0.0.1:3301';
 
     /** @var string */
     private $uri;
 
-    /** @var non-empty-array<string, mixed> */
-    private $options;
+    /** @var float */
+    private $connectTimeout;
+
+    /** @var float */
+    private $socketTimeout;
+
+    /** @var bool */
+    private $persistent;
+
+    /** @var resource|null */
+    private $streamContext;
+
+    /** @var resource|null */
+    private $stream;
 
     /** @var Greeting|null */
     private $greeting;
 
     /**
      * @param string $uri
-     * @param array<string, mixed> $options
      */
-    private function __construct($uri, $options)
+    private function __construct($uri, float $connectTimeout, float $socketTimeout, bool $persistent, bool $tcpNoDelay)
     {
         $this->uri = $uri;
-        $this->options = $options + self::DEFAULT_OPTIONS;
+        $this->connectTimeout = $connectTimeout;
+        $this->socketTimeout = $socketTimeout;
+        $this->persistent = $persistent;
+
+        if ($tcpNoDelay) {
+            $this->streamContext = \stream_context_create(['socket' => ['tcp_nodelay' => true]]);
+        }
     }
 
-    public static function createTcp(string $uri = self::DEFAULT_URI, array $options = []) : self
+    public static function createTcp(string $uri = self::DEFAULT_TCP_URI, array $options = []) : self
     {
-        $self = new self($uri, $options);
-
-        if ($self->options['tcp_nodelay'] ?? false) {
-            $self->streamContext = \stream_context_create(['socket' => ['tcp_nodelay' => true]]);
-        }
-
-        return $self;
+        return new self($uri,
+            $options['connect_timeout'] ?? 5.0,
+            $options['socket_timeout'] ?? 5.0,
+            $options['persistent'] ?? false,
+            $options['tcp_nodelay'] ?? false
+        );
     }
 
     public static function createUds(string $uri, array $options = []) : self
     {
-        return new self($uri, $options);
+        return new self($uri,
+            $options['connect_timeout'] ?? 5.0,
+            $options['socket_timeout'] ?? 5.0,
+            $options['persistent'] ?? false,
+            false
+        );
     }
 
     public static function create(string $uri, array $options = []) : self
@@ -82,7 +90,7 @@ final class StreamConnection implements Connection
             return $this->greeting;
         }
 
-        $flags = $this->options['persistent']
+        $flags = $this->persistent
             ? \STREAM_CLIENT_CONNECT | \STREAM_CLIENT_PERSISTENT
             : \STREAM_CLIENT_CONNECT;
 
@@ -90,14 +98,14 @@ final class StreamConnection implements Connection
             $this->uri,
             $errorCode,
             $errorMessage,
-            (float) $this->options['connect_timeout'],
+            $this->connectTimeout,
             $flags,
             $this->streamContext
         ) : @\stream_socket_client(
             $this->uri,
             $errorCode,
             $errorMessage,
-            (float) $this->options['connect_timeout'],
+            $this->connectTimeout,
             $flags
         );
 
@@ -105,10 +113,13 @@ final class StreamConnection implements Connection
             throw ConnectionFailed::fromUriAndReason($this->uri, $errorMessage);
         }
 
-        $this->stream = $stream;
-        \stream_set_timeout($this->stream, $this->options['socket_timeout']);
+        $socketTimeoutSeconds = (int) $this->socketTimeout;
+        $socketTimeoutMicroSeconds = (int) (($this->socketTimeout - $socketTimeoutSeconds) * 1000000);
+        \stream_set_timeout($stream, $socketTimeoutSeconds, $socketTimeoutMicroSeconds);
 
-        if ($this->options['persistent'] && \ftell($this->stream)) {
+        $this->stream = $stream;
+
+        if ($this->persistent && \ftell($stream)) {
             return $this->greeting = Greeting::unknown();
         }
 
