@@ -123,7 +123,7 @@ final class ReadTest extends TestCase
             $time = microtime(true) - $start;
             self::assertSame('Read timed out', $e->getMessage());
             self::assertGreaterThanOrEqual($socketTimeout, $time);
-            self::assertLessThan($socketTimeout + 0.005, $time);
+            self::assertLessThan($socketTimeout + 0.01, $time);
 
             return;
         }
