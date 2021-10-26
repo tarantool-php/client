@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace Tarantool\Client\Tests\Integration\MessagePack;
 
 use MessagePack\BufferUnpacker;
+use MessagePack\Extension;
 use MessagePack\Packer;
-use MessagePack\TypeTransformer\Extension;
 
 class DateTimeExtension implements Extension
 {

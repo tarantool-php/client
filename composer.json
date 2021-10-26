@@ -20,7 +20,7 @@
         "friendsofphp/php-cs-fixer": "^2.19",
         "monolog/monolog": "^1.24|^2.0",
         "psr/log": "^1.1",
-        "rybakit/msgpack": "^0.8",
+        "rybakit/msgpack": "^0.9",
         "symfony/uid": "^5.1",
         "tarantool/phpunit-extras": "^0.1.2",
         "vimeo/psalm": "^3.9|^4"

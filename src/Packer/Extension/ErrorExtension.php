@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace Tarantool\Client\Packer\Extension;
 
 use MessagePack\BufferUnpacker;
+use MessagePack\Extension;
 use MessagePack\Packer;
-use MessagePack\TypeTransformer\Extension;
 use Tarantool\Client\Error;
 use Tarantool\Client\Keys;
 

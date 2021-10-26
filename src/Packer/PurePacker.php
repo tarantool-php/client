@@ -14,9 +14,9 @@ declare(strict_types=1);
 namespace Tarantool\Client\Packer;
 
 use MessagePack\BufferUnpacker;
+use MessagePack\Extension;
 use MessagePack\Packer;
 use MessagePack\PackOptions;
-use MessagePack\TypeTransformer\Extension;
 use MessagePack\UnpackOptions;
 use Symfony\Component\Uid\Uuid;
 use Tarantool\Client\Keys;

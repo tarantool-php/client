@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace App;
 
 use MessagePack\BufferUnpacker;
+use MessagePack\Extension;
 use MessagePack\Packer;
-use MessagePack\TypeTransformer\Extension;
 
 final class EmailExtension implements Extension
 {

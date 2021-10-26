@@ -15,8 +15,8 @@ namespace Tarantool\Client\Packer\Extension;
 
 use Decimal\Decimal;
 use MessagePack\BufferUnpacker;
+use MessagePack\Extension;
 use MessagePack\Packer;
-use MessagePack\TypeTransformer\Extension;
 
 final class DecimalExtension implements Extension
 {
