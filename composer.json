@@ -29,7 +29,7 @@
         "ext-decimal": "For using decimals with Tarantool 2.3+",
         "ext-msgpack": "For using Pecl packer",
         "psr/log": "For using LoggingMiddleware",
-        "rybakit/msgpack": "For using Pure packer (version 0.7 or above is required)",
+        "rybakit/msgpack": "For using Pure packer (version 0.9 or above is required)",
         "symfony/uid": "For using UUIDs with Tarantool 2.4+"
     },
     "autoload": {
