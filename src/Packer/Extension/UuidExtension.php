@@ -27,9 +27,6 @@ final class UuidExtension implements Extension
         return self::TYPE;
     }
 
-    /**
-     * @param object $value
-     */
     public function pack(Packer $packer, $value) : ?string
     {
         if (!$value instanceof Uuid) {
