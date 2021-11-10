@@ -1,4 +1,4 @@
-# PHP client for Tarantool
+# PHP client for Tarantool!
 
 [![Quality Assurance](https://github.com/tarantool-php/client/workflows/QA/badge.svg)](https://github.com/tarantool-php/client/actions?query=workflow%3AQA)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/tarantool-php/client/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/tarantool-php/client/?branch=master)
