@@ -9,7 +9,7 @@ on:
 jobs:
   tests:
     env:
-      TNT_IMAGE: tarantool/tarantool:2.9.0
+      TNT_IMAGE: tarantool/tarantool:2.10.0-beta1
       PHP_IMAGE: php:7.4-cli
     strategy:
       matrix:
