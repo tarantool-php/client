@@ -20,11 +20,14 @@ use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\TestCase;
 
 /**
- * @requires Tarantool >=2.4.1
  * @requires clientPacker pure
  */
 final class ErrorExtensionTest extends TestCase
 {
+    /**
+     * @requires Tarantool >=2.4.1 <2.10
+     * @see https://github.com/tarantool/tarantool/issues/6428
+     */
     public function testPackingAndUnpacking() : void
     {
         $client = ClientBuilder::createFromEnv()
