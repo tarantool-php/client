@@ -12,6 +12,7 @@ jobs:
       TNT_IMAGE: tarantool/tarantool:2.8
       PHP_IMAGE: php:7.4-cli
     strategy:
+      fail-fast: false
       matrix:
         operating-system: [ubuntu-latest]
         env:
@@ -56,7 +57,7 @@ jobs:
           - TNT_IMAGE: tarantool/tarantool:2.5
           - TNT_IMAGE: tarantool/tarantool:2.6
           - TNT_IMAGE: tarantool/tarantool:2.7
-          - TNT_IMAGE: tarantool/tarantool:2.10.0-beta1
+          - TNT_IMAGE: tarantool/tarantool:2.10.0-beta2
 
     runs-on: ${{ matrix.operating-system }}
     steps:

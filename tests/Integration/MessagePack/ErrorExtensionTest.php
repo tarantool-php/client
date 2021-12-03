@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\MessagePack;
 
+use Tarantool\Client\Client;
 use Tarantool\Client\Error;
 use Tarantool\Client\Packer\Extension\ErrorExtension;
 use Tarantool\Client\Packer\PurePacker;
@@ -28,13 +29,9 @@ final class ErrorExtensionTest extends TestCase
      * @requires Tarantool >=2.4.1 <2.10
      * @see https://github.com/tarantool/tarantool/issues/6428
      */
-    public function testPackingAndUnpacking() : void
+    public function testLuaPackingAndUnpacking() : void
     {
-        $client = ClientBuilder::createFromEnv()
-            ->setPackerPureFactory(static function () {
-                return PurePacker::fromExtensions(new ErrorExtension());
-            })
-            ->build();
+        $client = self::createClientWithExtendedErrorSupport();
 
         /** @var Error $error */
         $error = $client->evaluate('
@@ -70,5 +67,14 @@ final class ErrorExtensionTest extends TestCase
         ', $error)[0];
 
         self::assertTrue($isEqual);
+    }
+
+    private static function createClientWithExtendedErrorSupport() : Client
+    {
+        return ClientBuilder::createFromEnv()
+            ->setPackerPureFactory(static function () {
+                return PurePacker::fromExtensions(new ErrorExtension());
+            })
+            ->build();
     }
 }
