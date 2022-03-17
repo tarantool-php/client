@@ -83,7 +83,7 @@ final class Client
         $handler = new DefaultHandler($connection, $packer ?? PackerFactory::create());
 
         return $middleware
-            ? new self(MiddlewareHandler::create($handler, $middleware))
+            ? new self(MiddlewareHandler::append($handler, $middleware))
             : new self($handler);
     }
 
@@ -120,14 +120,14 @@ final class Client
         $handler = new DefaultHandler($connection, $packer ?? PackerFactory::create());
 
         return $middleware
-            ? new self(MiddlewareHandler::create($handler, $middleware))
+            ? new self(MiddlewareHandler::append($handler, $middleware))
             : new self($handler);
     }
 
     public function withMiddleware(Middleware ...$middleware) : self
     {
         $new = clone $this;
-        $new->handler = MiddlewareHandler::create($new->handler, $middleware);
+        $new->handler = MiddlewareHandler::append($new->handler, $middleware);
 
         return $new;
     }
@@ -135,7 +135,7 @@ final class Client
     public function withPrependedMiddleware(Middleware ...$middleware) : self
     {
         $new = clone $this;
-        $new->handler = MiddlewareHandler::create($new->handler, $middleware, true);
+        $new->handler = MiddlewareHandler::prepend($new->handler, $middleware);
 
         return $new;
     }

@@ -157,7 +157,7 @@ $pureMsgpackUnpacker = new BufferUnpacker();
 $packer = new PurePacker($pureMsgpackPacker, $pureMsgpackUnpacker);
 
 $handler = new DefaultHandler($connection, $packer);
-$handler = MiddlewareHandler::create($handler, [
+$handler = MiddlewareHandler::append($handler, [
     RetryMiddleware::exponential(3),
     new AuthenticationMiddleware('<username>', '<password>'),
     // ...

@@ -43,16 +43,29 @@ final class MiddlewareHandler implements Handler
     /**
      * @param Middleware[] $middleware
      */
-    public static function create(Handler $handler, array $middleware, bool $prepend = false) : Handler
+    public static function append(Handler $handler, array $middleware) : Handler
     {
         if (!$handler instanceof self) {
             return new self($handler, $middleware);
         }
 
         $handler = clone $handler;
-        $handler->middleware = $prepend
-            ? \array_merge($middleware, $handler->middleware)
-            : \array_merge($handler->middleware, $middleware);
+        $handler->middleware = \array_merge($handler->middleware, $middleware);
+
+        return $handler;
+    }
+
+    /**
+     * @param Middleware[] $middleware
+     */
+    public static function prepend(Handler $handler, array $middleware) : Handler
+    {
+        if (!$handler instanceof self) {
+            return new self($handler, $middleware);
+        }
+
+        $handler = clone $handler;
+        $handler->middleware = \array_merge($middleware, $handler->middleware);
 
         return $handler;
     }

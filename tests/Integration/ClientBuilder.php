@@ -131,7 +131,7 @@ final class ClientBuilder
             $middlewares[] = new AuthenticationMiddleware($this->options['username'], $this->options['password'] ?? '');
         }
         if ($middlewares) {
-            $handler = MiddlewareHandler::create($handler, $middlewares);
+            $handler = MiddlewareHandler::append($handler, $middlewares);
         }
 
         return new Client($handler);

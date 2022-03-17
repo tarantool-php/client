@@ -40,39 +40,39 @@ final class MiddlewareHandlerTest extends TestCase
         $this->handler = $this->createDummyClient()->getHandler();
     }
 
-    public function testCreateMiddlewareExecutesInFifoOrder() : void
+    public function testAppendedMiddlewareAreExecutedInFifoOrder() : void
     {
         $trace = new \ArrayObject();
         $middleware1 = SpyMiddleware::fromTraceId(1, $trace);
         $middleware2 = SpyMiddleware::fromTraceId(2, $trace);
 
-        $handler = MiddlewareHandler::create($this->handler, [$middleware1, $middleware2]);
+        $handler = MiddlewareHandler::append($this->handler, [$middleware1, $middleware2]);
         $handler->handle($this->request);
 
         self::assertSame([1, 2], $trace->getArrayCopy());
     }
 
-    public function testCreateAppendsMiddleware() : void
+    public function testAppendAppendsMiddleware() : void
     {
         $trace = new \ArrayObject();
         $middleware1 = SpyMiddleware::fromTraceId(1, $trace);
         $middleware2 = SpyMiddleware::fromTraceId(2, $trace);
 
-        $handler = MiddlewareHandler::create($this->handler, [$middleware1]);
-        $handler = MiddlewareHandler::create($handler, [$middleware2]);
+        $handler = MiddlewareHandler::append($this->handler, [$middleware1]);
+        $handler = MiddlewareHandler::append($handler, [$middleware2]);
         $handler->handle($this->request);
 
         self::assertSame([1, 2], $trace->getArrayCopy());
     }
 
-    public function testCreatePrependsMiddleware() : void
+    public function testPrependPrependsMiddleware() : void
     {
         $trace = new \ArrayObject();
         $middleware1 = SpyMiddleware::fromTraceId(1, $trace);
         $middleware2 = SpyMiddleware::fromTraceId(2, $trace);
 
-        $handler = MiddlewareHandler::create($this->handler, [$middleware1]);
-        $handler = MiddlewareHandler::create($handler, [$middleware2], true);
+        $handler = MiddlewareHandler::append($this->handler, [$middleware1]);
+        $handler = MiddlewareHandler::prepend($handler, [$middleware2]);
         $handler->handle($this->request);
 
         self::assertSame([2, 1], $trace->getArrayCopy());
@@ -82,7 +82,7 @@ final class MiddlewareHandlerTest extends TestCase
     {
         $middleware = SpyMiddleware::fromTraceId(1);
 
-        $handler = MiddlewareHandler::create($this->handler, [$middleware]);
+        $handler = MiddlewareHandler::append($this->handler, [$middleware]);
         $handler->handle($this->request);
         $handler->handle($this->request);
 
