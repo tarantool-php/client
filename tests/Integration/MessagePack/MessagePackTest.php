@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\MessagePack;
 
-use Tarantool\Client\Packer\PeclPacker;
 use Tarantool\Client\Packer\PurePacker;
 use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
@@ -76,22 +75,10 @@ final class MessagePackTest extends TestCase
     public function testCustomType() : void
     {
         $client = ClientBuilder::createFromEnv()
-            ->setPackerPureFactory(static function () {
+            ->setPackerFactory(static function () {
                 return PurePacker::fromExtensions(new DateTimeExtension(42));
             })
-            ->setPackerPeclFactory(static function () {
-                return new PeclPacker(true);
-            })
             ->build();
-
-        // @see https://github.com/msgpack/msgpack-php/issues/137
-        if (
-            PHP_VERSION_ID >= 70400 && PHP_VERSION_ID < 80000 &&
-            $client->getHandler()->getPacker() instanceof PeclPacker &&
-            version_compare((new \ReflectionExtension('msgpack'))->getVersion(), '2.1.0', '<')
-        ) {
-            self::markTestSkipped('The msgpack extension < 2.1.0 does not pack objects correctly on PHP 7.4');
-        }
 
         $date = new \DateTimeImmutable();
         $space = $client->getSpace('custom_type');
@@ -102,12 +89,18 @@ final class MessagePackTest extends TestCase
     }
 
     /**
-     * @requires clientPacker pure
+     * @requires condition env.EXT_DISABLE_DECIMAL
+     *
+     * @dataProvider \Tarantool\Client\Tests\PackerDataProvider::providePurePackerWithDefaultSettings()
      */
-    public function testUnpackingBigIntegerAsString() : void
+    public function testPurePackerUnpacksBigIntToString(PurePacker $packer) : void
     {
-        [$number] = $this->client->evaluate('return 18446744073709551615ULL');
+        $client = ClientBuilder::createFromEnv()
+            ->setPackerFactory(static function () use ($packer) { return $packer; })
+            ->build();
 
-        self::assertSame('18446744073709551615', $number);
+        [$number] = $client->evaluate(sprintf('return %sULL', DecimalExtensionTest::DECIMAL_BIG_INT));
+
+        self::assertSame(DecimalExtensionTest::DECIMAL_BIG_INT, $number);
     }
 }

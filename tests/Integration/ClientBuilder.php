@@ -21,41 +21,21 @@ use Tarantool\Client\Handler\MiddlewareHandler;
 use Tarantool\Client\Middleware\AuthenticationMiddleware;
 use Tarantool\Client\Middleware\RetryMiddleware;
 use Tarantool\Client\Packer\Packer;
-use Tarantool\Client\Packer\PeclPacker;
 use Tarantool\Client\Packer\PurePacker;
 
 final class ClientBuilder
 {
-    private const PACKER_PURE = 'pure';
-    private const PACKER_PECL = 'pecl';
-
     private const DEFAULT_TCP_HOST = '127.0.0.1';
     private const DEFAULT_TCP_PORT = 3301;
 
-    private $packerType;
-    private $packerPureFactory;
-    private $packerPeclFactory;
+    private $packerFactory;
     private $uri;
     private $options = [];
     private $connectionOptions = [];
 
-    public function setPackerType(string $packerType) : self
+    public function setPackerFactory(\Closure $factory) : self
     {
-        $this->packerType = $packerType;
-
-        return $this;
-    }
-
-    public function setPackerPureFactory(\Closure $factory) : self
-    {
-        $this->packerPureFactory = $factory;
-
-        return $this;
-    }
-
-    public function setPackerPeclFactory(\Closure $factory) : self
-    {
-        $this->packerPeclFactory = $factory;
+        $this->packerFactory = $factory;
 
         return $this;
     }
@@ -140,7 +120,6 @@ final class ClientBuilder
     public static function createFromEnv() : self
     {
         return (new self())
-            ->setPackerType(getenv('TNT_PACKER'))
             ->setUri(getenv('TNT_LISTEN_URI'));
     }
 
@@ -169,15 +148,7 @@ final class ClientBuilder
 
     public function createPacker() : Packer
     {
-        if (self::PACKER_PURE === $this->packerType) {
-            return $this->packerPureFactory ? ($this->packerPureFactory)() : new PurePacker();
-        }
-
-        if (self::PACKER_PECL === $this->packerType) {
-            return $this->packerPeclFactory ? ($this->packerPeclFactory)() : new PeclPacker();
-        }
-
-        throw new \UnexpectedValueException(sprintf('"%s" packer is not supported', $this->packerType));
+        return $this->packerFactory ? ($this->packerFactory)() : new PurePacker();
     }
 
     private static function findAvailableTcpPort(int $min) : int

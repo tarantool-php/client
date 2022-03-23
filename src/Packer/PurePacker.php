@@ -18,7 +18,6 @@ use MessagePack\Extension;
 use MessagePack\Packer;
 use MessagePack\PackOptions;
 use MessagePack\UnpackOptions;
-use Symfony\Component\Uid\Uuid;
 use Tarantool\Client\Keys;
 use Tarantool\Client\Packer\Extension\DecimalExtension;
 use Tarantool\Client\Packer\Extension\ErrorExtension;
@@ -38,7 +37,7 @@ final class PurePacker implements ClientPacker
     public function __construct(?Packer $packer = null, ?BufferUnpacker $unpacker = null)
     {
         $this->packer = $packer ?: new Packer(PackOptions::FORCE_STR);
-        $this->unpacker = $unpacker ?: new BufferUnpacker();
+        $this->unpacker = $unpacker ?: new BufferUnpacker('', \extension_loaded('decimal') ? UnpackOptions::BIGINT_AS_DEC : null);
     }
 
     public static function fromExtensions(Extension $extension, Extension ...$extensions) : self
@@ -53,10 +52,7 @@ final class PurePacker implements ClientPacker
 
     public static function fromAvailableExtensions() : self
     {
-        $extensions = [new ErrorExtension()];
-        if (\class_exists(Uuid::class)) {
-            $extensions[] = new UuidExtension();
-        }
+        $extensions = [new UuidExtension(), new ErrorExtension()];
         if (\extension_loaded('decimal')) {
             $extensions[] = new DecimalExtension();
 

@@ -15,9 +15,7 @@ namespace Tarantool\Client\Tests\Integration\MessagePack;
 
 use Decimal\Decimal;
 use Tarantool\Client\Client;
-use Tarantool\Client\Handler\DefaultHandler;
 use Tarantool\Client\Packer\Extension\DecimalExtension;
-use Tarantool\Client\Packer\PackerFactory;
 use Tarantool\Client\Packer\PurePacker;
 use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
@@ -26,7 +24,6 @@ use Tarantool\Client\Tests\Integration\TestCase;
 /**
  * @requires Tarantool >=2.3
  * @requires extension decimal
- * @requires clientPacker pure
  *
  * @lua dec = require('decimal').new('18446744073709551615')
  * @lua space = create_space('decimal_primary')
@@ -36,7 +33,7 @@ use Tarantool\Client\Tests\Integration\TestCase;
  */
 final class DecimalExtensionTest extends TestCase
 {
-    private const DECIMAL_BIG_INT = '18446744073709551615';
+    public const DECIMAL_BIG_INT = '18446744073709551615';
     private const TARANTOOL_DECIMAL_PRECISION = 38;
 
     public function testBinarySelectByDecimalKeySucceeds() : void
@@ -115,22 +112,25 @@ final class DecimalExtensionTest extends TestCase
         self::assertTrue((new Decimal('18446744073709551615'))->equals($number));
     }
 
-    public function testPackerFactorySetsBigIntAsDecUnpackOption() : void
+    /**
+     * @dataProvider \Tarantool\Client\Tests\PackerDataProvider::providePurePackerWithDefaultSettings()
+     */
+    public function testPurePackerUnpacksBigIntToDecimal(PurePacker $packer) : void
     {
-        $client = new Client(new DefaultHandler(
-            ClientBuilder::createFromEnv()->createConnection(),
-            PackerFactory::create()
-        ));
+        $client = ClientBuilder::createFromEnv()
+            ->setPackerFactory(static function () use ($packer) { return $packer; })
+            ->build();
 
         [$number] = $client->evaluate(sprintf('return %sULL', self::DECIMAL_BIG_INT));
 
+        self::assertInstanceOf(Decimal::class, $number);
         self::assertTrue((new Decimal(self::DECIMAL_BIG_INT))->equals($number));
     }
 
     private static function createClientWithDecimalSupport() : Client
     {
         return ClientBuilder::createFromEnv()
-            ->setPackerPureFactory(static function () {
+            ->setPackerFactory(static function () {
                 return PurePacker::fromExtensions(new DecimalExtension());
             })
             ->build();

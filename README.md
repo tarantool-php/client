@@ -15,8 +15,10 @@ A pure PHP client for [Tarantool](https://www.tarantool.io/en/developers/) 1.7.1
  * Supports SQL protocol
  * Supports user-defined types (decimals and UUIDs are included)
  * Highly customizable
- * [Thoroughly tested](https://github.com/tarantool-php/client/actions?query=workflow%3AQA) on PHP 7.1-8.0 and Tarantool 1.7-2.8
- * Being used in a number of projects, including [Queue](https://github.com/tarantool-php/queue), [Mapper](https://github.com/tarantool-php/mapper), [Web Admin](https://github.com/basis-company/tarantool-admin) and [others](https://github.com/tarantool-php).
+ * [Thoroughly tested](https://github.com/tarantool-php/client/actions?query=workflow%3AQA)
+ * Being used in a number of projects, including [Queue](https://github.com/tarantool-php/queue), 
+   [Mapper](https://github.com/tarantool-php/mapper), [Web Admin](https://github.com/basis-company/tarantool-admin) 
+   and [others](https://github.com/tarantool-php).
 
 
 ## Table of contents
@@ -42,23 +44,10 @@ The recommended way to install the library is through [Composer](http://getcompo
 composer require tarantool/client
 ```
 
-In addition, you need to install one of the supported msgpack packages
-(either [rybakit/msgpack.php](https://github.com/rybakit/msgpack.php#installation) 
-or [msgpack/msgpack-php](https://github.com/msgpack/msgpack-php#install)).
- 
-Note that the [Decimal](https://www.tarantool.io/en/doc/latest/dev_guide/internals/msgpack_extensions/#the-decimal-type) type 
-that was added in Tarantool 2.3 is only supported by the `rybakit/msgpack.php` package. In order to use decimals with 
-this package, you additionally need to install the [decimal](http://php-decimal.io/#installation) extension. The same 
-applies to the [UUID](https://www.tarantool.io/en/doc/latest/dev_guide/internals/msgpack_extensions/#the-uuid-type) type that 
-is available since Tarantool 2.4, install the [symfony/uid](https://symfony.com/doc/master/components/uid.html#installation) 
-package to be able to work with this type (for better performance you can additionally install 
-the [uuid](https://pecl.php.net/package/uuid) extension).
-
-> *Although it is recommended to use pecl extensions for such complex MessagePack data structures,
-> this is not mandatory, and their support can be relatively easily implemented in pure php
-> using well-established pure php libraries, or by writing your own implementation.
-> See the section "[User-defined types](https://github.com/tarantool-php/client#user-defined-types)" 
-> for more information.*
+In order to use the [Decimal](https://www.tarantool.io/en/doc/latest/dev_guide/internals/msgpack_extensions/#the-decimal-type) 
+type that was added in Tarantool 2.3, you additionally need to install the [decimal](http://php-decimal.io/#installation) 
+extension. Also, to improve performance when working with the [UUID](https://www.tarantool.io/en/doc/latest/dev_guide/internals/msgpack_extensions/#the-uuid-type) 
+type, which is available since Tarantool 2.4, it is recommended to additionally install the [uuid](https://pecl.php.net/package/uuid) extension. 
 
 
 ## Creating a client
@@ -669,21 +658,17 @@ $space->insert([42, Money::EUR(500)]);
 [[$id, $money]] = $space->select(Criteria::key([42]));
 ```
 
-The [PeclPacker](src/Packer/PeclPacker.php) supports object serialization out of the box, no extra configuration
-is needed (however, please note that it does not support [MessagePack extensions](https://github.com/msgpack/msgpack/blob/master/spec.md#ext-format-family)
-which are required, for example, to handle decimal numbers or UUIDs).
-
-For the [PurePacker](src/Packer/PurePacker.php) you will need to write an extension that converts your objects to
-and from MessagePack structures (for more details, read the  msgpack.php's [README](https://github.com/rybakit/msgpack.php#type-transformers)). 
-Once you have implemented your extension, you should register it with the packer object:
+This can be achieved by extending the MessagePack type system with your own types. To do this, you need to write 
+a MessagePack extension that converts your objects into MessagePack structures and back (for more details, read 
+the msgpack.php's [README](https://github.com/rybakit/msgpack.php#custom-types)). Once you have implemented 
+your extension, you should register it with the packer object:
 
 ```php
 $packer = PurePacker::fromExtensions(new MoneyExtension());
 $client = new Client(new DefaultHandler($connection, $packer));
 ```
 
-> *A working example of using the user-defined types can be found in the [examples](examples/user_defined_type) folder.* 
-
+> *A working example of using the user-defined types can be found in the [examples](examples/user_defined_type) folder.*
 
 
 ## Tests

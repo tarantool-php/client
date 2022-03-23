@@ -23,8 +23,6 @@ use Tarantool\Client\Tests\Integration\TestCase;
 
 /**
  * @requires Tarantool >=2.4
- * @requires package symfony/uid
- * @requires clientPacker pure
  *
  * @lua uuid = require('uuid').fromstr('64d22e4d-ac92-4a23-899a-e59f34af5479')
  * @lua space = create_space('uuid_primary')
@@ -80,7 +78,7 @@ final class UuidExtensionTest extends TestCase
     private static function createClientWithUuidSupport() : Client
     {
         return ClientBuilder::createFromEnv()
-            ->setPackerPureFactory(static function () {
+            ->setPackerFactory(static function () {
                 return PurePacker::fromExtensions(new UuidExtension());
             })
             ->build();
