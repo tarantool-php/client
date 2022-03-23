@@ -11,26 +11,23 @@
         }
     ],
     "require": {
-        "php": "^7.1|^8"
+        "php": "^7.2.5|^8",
+        "rybakit/msgpack": "^0.9",
+        "symfony/uid": "^5.1|^6"
     },
     "require-dev": {
         "ext-json": "*",
-        "ext-msgpack": "*",
         "ext-sockets": "*",
         "friendsofphp/php-cs-fixer": "^2.19",
         "monolog/monolog": "^1.24|^2.0",
         "psr/log": "^1.1",
-        "rybakit/msgpack": "^0.9",
-        "symfony/uid": "^5.1",
-        "tarantool/phpunit-extras": "^0.1.2",
+        "tarantool/phpunit-extras": "^0.1.9",
         "vimeo/psalm": "^3.9|^4"
     },
     "suggest": {
         "ext-decimal": "For using decimals with Tarantool 2.3+",
-        "ext-msgpack": "For using Pecl packer",
-        "psr/log": "For using LoggingMiddleware",
-        "rybakit/msgpack": "For using Pure packer (version 0.9 or above is required)",
-        "symfony/uid": "For using UUIDs with Tarantool 2.4+"
+        "ext-uuid": "For better performance when using UUIDs with Tarantool 2.4+",
+        "psr/log": "For using LoggingMiddleware"
     },
     "autoload": {
         "psr-4": {

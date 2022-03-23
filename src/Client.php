@@ -22,7 +22,7 @@ use Tarantool\Client\Middleware\AuthenticationMiddleware;
 use Tarantool\Client\Middleware\Middleware;
 use Tarantool\Client\Middleware\RetryMiddleware;
 use Tarantool\Client\Packer\Packer;
-use Tarantool\Client\Packer\PackerFactory;
+use Tarantool\Client\Packer\PurePacker;
 use Tarantool\Client\Request\CallRequest;
 use Tarantool\Client\Request\EvaluateRequest;
 use Tarantool\Client\Request\ExecuteRequest;
@@ -48,7 +48,7 @@ final class Client
     {
         return new self(new DefaultHandler(
             StreamConnection::createTcp(),
-            PackerFactory::create()
+            PurePacker::fromAvailableExtensions()
         ));
     }
 
@@ -80,7 +80,7 @@ final class Client
             ? StreamConnection::create($options['uri'], $connectionOptions)
             : StreamConnection::createTcp(StreamConnection::DEFAULT_TCP_URI, $connectionOptions);
 
-        $handler = new DefaultHandler($connection, $packer ?? PackerFactory::create());
+        $handler = new DefaultHandler($connection, $packer ?? PurePacker::fromAvailableExtensions());
 
         return $middleware
             ? new self(MiddlewareHandler::append($handler, $middleware))
@@ -117,7 +117,7 @@ final class Client
             ? StreamConnection::createTcp($dsn->getConnectionUri(), $connectionOptions)
             : StreamConnection::createUds($dsn->getConnectionUri(), $connectionOptions);
 
-        $handler = new DefaultHandler($connection, $packer ?? PackerFactory::create());
+        $handler = new DefaultHandler($connection, $packer ?? PurePacker::fromAvailableExtensions());
 
         return $middleware
             ? new self(MiddlewareHandler::append($handler, $middleware))

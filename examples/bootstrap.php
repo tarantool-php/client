@@ -15,7 +15,6 @@ use Tarantool\Client\Client;
 use Tarantool\Client\Connection\StreamConnection;
 use Tarantool\Client\Handler\DefaultHandler;
 use Tarantool\Client\Packer\Packer;
-use Tarantool\Client\Packer\PackerFactory;
 use Tarantool\Client\Packer\PurePacker;
 
 return require __DIR__.'/../vendor/autoload.php';
@@ -26,7 +25,7 @@ function create_client(?Packer $packer = null) : Client
         ? StreamConnection::create($_SERVER['argv'][1])
         : StreamConnection::createTcp();
 
-    return new Client(new DefaultHandler($connection, $packer ?? PackerFactory::create()));
+    return new Client(new DefaultHandler($connection, $packer ?? PurePacker::fromAvailableExtensions()));
 }
 
 function server_version_at_least(string $version, Client $client) : bool

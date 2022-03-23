@@ -21,7 +21,6 @@ build:
       version: 7.4
       pecl_extensions:
         - decimal
-        - msgpack
   nodes:
     analysis:
       tests:

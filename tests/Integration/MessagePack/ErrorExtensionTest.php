@@ -20,9 +20,6 @@ use Tarantool\Client\Packer\PurePacker;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\TestCase;
 
-/**
- * @requires clientPacker pure
- */
 final class ErrorExtensionTest extends TestCase
 {
     /**
@@ -72,7 +69,7 @@ final class ErrorExtensionTest extends TestCase
     private static function createClientWithExtendedErrorSupport() : Client
     {
         return ClientBuilder::createFromEnv()
-            ->setPackerPureFactory(static function () {
+            ->setPackerFactory(static function () {
                 return PurePacker::fromExtensions(new ErrorExtension());
             })
             ->build();
