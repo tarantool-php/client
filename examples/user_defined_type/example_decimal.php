@@ -19,7 +19,6 @@ require __DIR__.'/../bootstrap.php';
 $client = create_client();
 ensure_server_version_at_least('2.3', $client);
 ensure_extension('decimal');
-ensure_pure_packer($client);
 
 $spaceName = 'example';
 

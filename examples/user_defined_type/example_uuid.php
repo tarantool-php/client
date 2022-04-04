@@ -18,8 +18,6 @@ require __DIR__.'/../bootstrap.php';
 
 $client = create_client();
 ensure_server_version_at_least('2.4', $client);
-ensure_class(Uuid::class, 'Composer package "symfony/uid" is required');
-ensure_pure_packer($client);
 
 $spaceName = 'example';
 

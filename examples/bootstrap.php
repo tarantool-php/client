@@ -54,27 +54,6 @@ function ensure_extension(string $name) : void
     requirement_exit('PHP extension "%s" is required to run "%s"', $name, $_SERVER['SCRIPT_FILENAME']);
 }
 
-function ensure_class(string $className, string $requireMessage = '') : void
-{
-    if (class_exists($className)) {
-        return;
-    }
-
-    $errorMessage = $requireMessage ?: sprintf('Class "%s" is required', $className);
-
-    requirement_exit('%s to run "%s"', $errorMessage, $_SERVER['SCRIPT_FILENAME']);
-}
-
-function ensure_pure_packer(Client $client) : void
-{
-    $packer = $client->getHandler()->getPacker();
-    if ($packer instanceof PurePacker) {
-        return;
-    }
-
-    requirement_exit('Client needs to be configured to use pure packer to run "%s"', $_SERVER['SCRIPT_FILENAME']);
-}
-
 function requirement_exit(string $message, ...$args) : void
 {
     echo "Unfulfilled requirement:\n";

@@ -19,7 +19,6 @@ $loader->addPsr4('App\\', __DIR__);
 
 $client = create_client();
 ensure_server_version_at_least('2.4.1', $client);
-ensure_pure_packer($client);
 
 // CustomErrorMiddleware::fromNamespace('App') will map Lua errors to "App\<lua_error.custom_type>" classes.
 // For more options, see the CustomErrorMiddleware class source.
