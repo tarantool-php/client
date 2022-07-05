@@ -9,7 +9,7 @@ tools:
   php_pdepend:
     excluded_dirs: [vendor]
   external_code_coverage:
-    runs: 3
+    runs: 4
 
 build:
   environment:
