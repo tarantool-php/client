@@ -21,7 +21,7 @@
         "friendsofphp/php-cs-fixer": "^2.19",
         "monolog/monolog": "^1.24|^2.0",
         "psr/log": "^1.1",
-        "tarantool/phpunit-extras": "^0.1.10",
+        "tarantool/phpunit-extras": "^0.2.0",
         "vimeo/psalm": "^3.9|^4"
     },
     "suggest": {
