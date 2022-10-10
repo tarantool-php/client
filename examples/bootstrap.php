@@ -42,6 +42,7 @@ function ensure_server_version_at_least(string $version, Client $client) : void
         return;
     }
 
+    /** @psalm-suppress PossiblyUndefinedArrayOffset */
     requirement_exit('Tarantool version >= %s is required to run "%s"', $version, $_SERVER['SCRIPT_FILENAME']);
 }
 
@@ -51,6 +52,7 @@ function ensure_extension(string $name) : void
         return;
     }
 
+    /** @psalm-suppress PossiblyUndefinedArrayOffset */
     requirement_exit('PHP extension "%s" is required to run "%s"', $name, $_SERVER['SCRIPT_FILENAME']);
 }
 
