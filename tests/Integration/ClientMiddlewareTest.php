@@ -79,7 +79,7 @@ final class ClientMiddlewareTest extends TestCase
         ]);
 
         $this->expectException(RequestFailed::class);
-        $this->expectExceptionMessage("User 'ghost' is not found");
+        $this->expectExceptionMessageMatches("/(User 'ghost' is not found|User not found or supplied credentials are invalid)/");
 
         $client->ping();
     }
