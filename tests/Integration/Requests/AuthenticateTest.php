@@ -50,7 +50,7 @@ final class AuthenticateTest extends TestCase
     /**
      * @dataProvider provideInvalidCredentials
      */
-    public function testAuthenticateWithInvalidCredentials(string $errorMessage, int $errorCode, $username, $password) : void
+    public function testAuthenticateWithInvalidCredentials(string $errorMessagePattern, $username, $password) : void
     {
         $client = ClientBuilder::createFromEnv()->setOptions([
             'username' => $username,
@@ -61,16 +61,15 @@ final class AuthenticateTest extends TestCase
             $client->ping();
             self::fail(sprintf('Client must throw an exception on authenticating "%s" with the password "%s"', $username, $password));
         } catch (RequestFailed $e) {
-            self::assertSame($errorMessage, $e->getMessage());
-            self::assertSame($errorCode, $e->getCode());
+            self::assertMatchesRegularExpression($errorMessagePattern, $e->getMessage());
         }
     }
 
     public function provideInvalidCredentials() : iterable
     {
         return [
-            ["User 'non_existing_user' is not found", 45, 'non_existing_user', 'password'],
-            ["Incorrect password supplied for user 'guest'", 47, 'guest', 'password'],
+            ["/(User 'non_existing_user' is not found|User not found or supplied credentials are invalid)/", 'non_existing_user', 'password'],
+            ["/(Incorrect password supplied for user 'guest'|User not found or supplied credentials are invalid)/", 'guest', 'password'],
         ];
     }
 
