@@ -23,7 +23,7 @@ trait PhpUnitCompat
      */
     public function expectExceptionMessageMatches(string $regularExpression) : void
     {
-        is_callable('parent::expectExceptionMessageMatches')
+        is_callable(parent::class.'::expectExceptionMessageMatches')
             ? parent::expectExceptionMessageMatches(...func_get_args())
             : parent::expectExceptionMessageRegExp(...func_get_args());
     }
@@ -33,7 +33,7 @@ trait PhpUnitCompat
      */
     public static function assertEqualsCanonicalizing($expected, $actual, string $message = '') : void
     {
-        is_callable('parent::assertEqualsCanonicalizing')
+        is_callable(parent::class.'::assertEqualsCanonicalizing')
             ? parent::assertEqualsCanonicalizing($expected, $actual, $message)
             : parent::assertEquals($expected, $actual, $message, 0.0, 10, true);
     }
@@ -43,7 +43,7 @@ trait PhpUnitCompat
      */
     public static function assertMatchesRegularExpression(string $pattern, string $string, string $message = '') : void
     {
-        is_callable('parent::assertMatchesRegularExpression')
+        is_callable(parent::class.'::assertMatchesRegularExpression')
             ? parent::assertMatchesRegularExpression(...func_get_args())
             : parent::assertRegExp(...func_get_args());
     }
