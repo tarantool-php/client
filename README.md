@@ -700,11 +700,11 @@ First, create a container:
 ./dockerfile.sh | docker build -t client -
 ```
 
-The command above will create a container named `client` with PHP 7.4 runtime.
+The command above will create a container named `client` with PHP 8.2 runtime.
 You may change the default runtime by defining the `PHP_IMAGE` environment variable:
 
 ```bash
-PHP_IMAGE='php:8.0-cli' ./dockerfile.sh | docker build -t client -
+PHP_IMAGE='php:8.1-cli' ./dockerfile.sh | docker build -t client -
 ```
 
 > *See a list of various images [here](https://hub.docker.com/_/php).*
