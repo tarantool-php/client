@@ -23,6 +23,7 @@ FROM $PHP_IMAGE
 
 RUN apt-get update && \\
     apt-get install -y curl git uuid-dev unzip && \\
+    git config --global --add safe.directory '*' && \\
     docker-php-ext-install sockets && \\
     pecl install uuid && docker-php-ext-enable uuid${RUN_CMDS}
 
