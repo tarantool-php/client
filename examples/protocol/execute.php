@@ -29,7 +29,15 @@ $result2 = $client->executeUpdate('
     [':email2' => 'bar@example.com']
 );
 
-$result3 = $client->executeQuery('SELECT * FROM users WHERE "email" = ?', 'foo@example.com');
+/**
+ * SEQSCAN keyword is explicitly allowing to use seqscan:
+ * https://github.com/tarantool/tarantool/commit/77648827326ad268ec0ffbcd620c2371b65ef2b4
+ * It was introduced in Tarantool 2.11.0-rc1. If compat.sql_seq_scan_default set to "new"
+ * (default value since 3.0), query returns error when trying to scan without keyword.
+ */
+$seqScan = server_version_at_least('2.11.0-rc1', $client) ? 'SEQSCAN' : '';
+$result3 = $client->executeQuery("SELECT * FROM $seqScan users WHERE \"email\" = ?", 'foo@example.com');
+
 $result4 = $client->executeQuery('SELECT * FROM users WHERE "id" IN (?, ?)', 1, 2);
 
 printf("Result 1: %s\n", json_encode([$result1->count(), $result1->getAutoincrementIds()]));

@@ -26,6 +26,17 @@ use Tarantool\Client\Tests\Integration\TestCase;
  */
 final class ExecuteTest extends TestCase
 {
+    private function provideSeqScan() : string
+    {
+        /**
+         * SEQSCAN keyword is explicitly allowing to use seqscan:
+         * https://github.com/tarantool/tarantool/commit/77648827326ad268ec0ffbcd620c2371b65ef2b4
+         * It was introduced in Tarantool 2.11.0-rc1. If compat.sql_seq_scan_default set to "new"
+         * (default value since 3.0), query returns error when trying to scan without keyword.
+         */
+        return $this->tarantoolVersionSatisfies('>=2.11.0-rc1') ? 'SEQSCAN' : '';
+    }
+
     /**
      * @sql DROP TABLE IF EXISTS exec_update
      * @sql CREATE TABLE exec_update (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(50))
@@ -47,7 +58,8 @@ final class ExecuteTest extends TestCase
 
     public function testExecuteFetchesAllRows() : void
     {
-        $response = $this->client->execute('SELECT * FROM exec_query');
+        $seqScan = self::provideSeqScan();
+        $response = $this->client->execute("SELECT * FROM $seqScan exec_query");
 
         self::assertSame([[1, 'A'], [2, 'B']], $response->getBodyField(Keys::DATA));
     }
@@ -94,7 +106,8 @@ final class ExecuteTest extends TestCase
 
     public function testExecuteQueryFetchesAllRows() : void
     {
-        $result = $this->client->executeQuery('SELECT * FROM exec_query');
+        $seqScan = self::provideSeqScan();
+        $result = $this->client->executeQuery("SELECT * FROM $seqScan exec_query");
 
         self::assertSame([[1, 'A'], [2, 'B']], $result->getData());
         self::assertSame(2, $result->count());
@@ -155,7 +168,8 @@ final class ExecuteTest extends TestCase
     {
         $client = ClientBuilder::createFromEnv()->build();
 
-        $response = $client->executeQuery('SELECT * FROM exec_query');
+        $seqScan = self::provideSeqScan();
+        $response = $client->executeQuery("SELECT * FROM $seqScan exec_query");
 
         self::assertSame([[
             Keys::METADATA_FIELD_NAME => 'ID',
@@ -178,7 +192,9 @@ final class ExecuteTest extends TestCase
         $client->execute('SET SESSION "sql_full_metadata" = true');
 
         $tableName = $this->resolvePlaceholders('%target_method%');
-        $response = $client->executeQuery("SELECT id, name as full_name FROM $tableName");
+
+        $seqScan = self::provideSeqScan();
+        $response = $client->executeQuery("SELECT id, name as full_name FROM $seqScan $tableName");
 
         self::assertSame([[
             Keys::METADATA_FIELD_NAME => 'ID',
