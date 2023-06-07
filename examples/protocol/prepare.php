@@ -27,7 +27,14 @@ for ($i = 1; $i <= 100; ++$i) {
 }
 $stmt->close();
 
-$result = $client->executeQuery('SELECT COUNT("id") AS "cnt" FROM users');
+/**
+ * SEQSCAN keyword is explicitly allowing to use seqscan:
+ * https://github.com/tarantool/tarantool/commit/77648827326ad268ec0ffbcd620c2371b65ef2b4
+ * It was introduced in Tarantool 2.11.0-rc1. If compat.sql_seq_scan_default set to "new"
+ * (default value since 3.0), query returns error when trying to scan without keyword.
+ */
+$seqScan = server_version_at_least('2.11.0-rc1', $client) ? 'SEQSCAN' : '';
+$result = $client->executeQuery("SELECT COUNT(\"id\") AS \"cnt\" FROM $seqScan users");
 
 printf("Result: %s\n", json_encode($result[0]));
 

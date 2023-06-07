@@ -22,6 +22,17 @@ use Tarantool\Client\Tests\Integration\TestCase;
  */
 final class PrepareTest extends TestCase
 {
+    private function provideSeqScan() : string
+    {
+        /**
+         * SEQSCAN keyword is explicitly allowing to use seqscan:
+         * https://github.com/tarantool/tarantool/commit/77648827326ad268ec0ffbcd620c2371b65ef2b4
+         * It was introduced in Tarantool 2.11.0-rc1. If compat.sql_seq_scan_default set to "new"
+         * (default value since 3.0), query returns error when trying to scan without keyword.
+         */
+        return $this->tarantoolVersionSatisfies('>=2.11.0-rc1') ? 'SEQSCAN' : '';
+    }
+
     public function testPreparePreparesSqlStatement() : void
     {
         [$preparedCountBefore] = $this->client->evaluate('return box.info.sql().cache.stmt_count');
@@ -73,7 +84,8 @@ final class PrepareTest extends TestCase
         $insertResult1 = $stmt->executeUpdate(1, 'foo');
         $insertResult2 = $stmt->executeUpdate([':name' => 'bar'], [':id' => 2]);
 
-        $selectResult = $this->client->executeQuery('SELECT * FROM prepare_execute ORDER BY id');
+        $seqScan = self::provideSeqScan();
+        $selectResult = $this->client->executeQuery("SELECT * FROM $seqScan prepare_execute ORDER BY id");
 
         try {
             self::assertSame(1, $insertResult1->count());
