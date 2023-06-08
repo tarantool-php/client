@@ -33,8 +33,10 @@ $stmt->close();
  * It was introduced in Tarantool 2.11.0-rc1. If compat.sql_seq_scan_default set to "new"
  * (default value since 3.0), query returns error when trying to scan without keyword.
  */
-$seqScan = server_version_at_least('2.11.0-rc1', $client) ? 'SEQSCAN' : '';
-$result = $client->executeQuery("SELECT COUNT(\"id\") AS \"cnt\" FROM $seqScan users");
+$scanQuery = server_version_at_least('2.11.0-rc1', $client)
+    ? 'SELECT COUNT("id") AS "cnt" FROM SEQSCAN users'
+    : 'SELECT COUNT("id") AS "cnt" FROM users';
+$result = $client->executeQuery($scanQuery);
 
 printf("Result: %s\n", json_encode($result[0]));
 

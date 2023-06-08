@@ -35,8 +35,10 @@ $result2 = $client->executeUpdate('
  * It was introduced in Tarantool 2.11.0-rc1. If compat.sql_seq_scan_default set to "new"
  * (default value since 3.0), query returns error when trying to scan without keyword.
  */
-$seqScan = server_version_at_least('2.11.0-rc1', $client) ? 'SEQSCAN' : '';
-$result3 = $client->executeQuery("SELECT * FROM $seqScan users WHERE \"email\" = ?", 'foo@example.com');
+$scanQuery = server_version_at_least('2.11.0-rc1', $client)
+    ? 'SELECT * FROM SEQSCAN users WHERE "email" = ?'
+    : 'SELECT * FROM users WHERE "email" = ?';
+$result3 = $client->executeQuery($scanQuery, 'foo@example.com');
 
 $result4 = $client->executeQuery('SELECT * FROM users WHERE "id" IN (?, ?)', 1, 2);
 
