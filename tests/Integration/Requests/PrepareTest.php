@@ -84,7 +84,7 @@ final class PrepareTest extends TestCase
         $insertResult1 = $stmt->executeUpdate(1, 'foo');
         $insertResult2 = $stmt->executeUpdate([':name' => 'bar'], [':id' => 2]);
 
-        $seqScan = self::provideSeqScan();
+        $seqScan = $this->provideSeqScan();
         $selectResult = $this->client->executeQuery("SELECT * FROM $seqScan prepare_execute ORDER BY id");
 
         try {
@@ -141,7 +141,7 @@ final class PrepareTest extends TestCase
     {
         $stmt = $this->client->prepare('SELECT :a, :b');
 
-        // Bind parameters to the current statement
+        // Bind parameters to the current statement.
         $stmt->execute([':a' => 1], [':b' => 2]);
 
         $result = $stmt->executeQuery([':a' => 1]);

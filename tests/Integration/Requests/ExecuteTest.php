@@ -58,7 +58,7 @@ final class ExecuteTest extends TestCase
 
     public function testExecuteFetchesAllRows() : void
     {
-        $seqScan = self::provideSeqScan();
+        $seqScan = $this->provideSeqScan();
         $response = $this->client->execute("SELECT * FROM $seqScan exec_query");
 
         self::assertSame([[1, 'A'], [2, 'B']], $response->getBodyField(Keys::DATA));
@@ -106,7 +106,7 @@ final class ExecuteTest extends TestCase
 
     public function testExecuteQueryFetchesAllRows() : void
     {
-        $seqScan = self::provideSeqScan();
+        $seqScan = $this->provideSeqScan();
         $result = $this->client->executeQuery("SELECT * FROM $seqScan exec_query");
 
         self::assertSame([[1, 'A'], [2, 'B']], $result->getData());
@@ -168,7 +168,7 @@ final class ExecuteTest extends TestCase
     {
         $client = ClientBuilder::createFromEnv()->build();
 
-        $seqScan = self::provideSeqScan();
+        $seqScan = $this->provideSeqScan();
         $response = $client->executeQuery("SELECT * FROM $seqScan exec_query");
 
         self::assertSame([[
@@ -193,8 +193,8 @@ final class ExecuteTest extends TestCase
 
         $tableName = $this->resolvePlaceholders('%target_method%');
 
-        $seqScan = self::provideSeqScan();
-        $response = $client->executeQuery("SELECT id, name as full_name FROM $seqScan $tableName");
+        $seqScan = $this->provideSeqScan();
+        $response = $client->executeQuery("SELECT id, name AS full_name FROM $seqScan $tableName");
 
         self::assertSame([[
             Keys::METADATA_FIELD_NAME => 'ID',
