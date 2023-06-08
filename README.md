@@ -623,7 +623,7 @@ if ($resultSet === null) {
 <details>
 <summary><strong>Prepare</strong></summary><br />
 
-*Note that the `prepare` request is supported only as of Tarantool 2.3.2.
+*Note that the `prepare` request is supported only as of Tarantool 2.3.2.*
 
 *Code*
 
