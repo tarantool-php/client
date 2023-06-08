@@ -584,7 +584,9 @@ $result2 = $client->executeUpdate('
     [':email2' => 'bar@example.com']
 );
 
-$result3 = $client->executeQuery('SELECT * FROM users WHERE "email" = ?', 'foo@example.com');
+// Note the SEQSCAN keyword in the query. It is mandatory as of Tarantool 2.11. 
+// If you are using an older version of Tarantool, omit this keyword.
+$result3 = $client->executeQuery('SELECT * FROM SEQSCAN users WHERE "email" = ?', 'foo@example.com');
 $result4 = $client->executeQuery('SELECT * FROM users WHERE "id" IN (?, ?)', 1, 2);
 
 printf("Result 1: %s\n", json_encode([$result1->count(), $result1->getAutoincrementIds()]));
@@ -621,7 +623,7 @@ if ($resultSet === null) {
 <details>
 <summary><strong>Prepare</strong></summary><br />
 
-*Note that the `prepare` request is supported only as of Tarantool 2.3.2.*
+*Note that the `prepare` request is supported only as of Tarantool 2.3.2.
 
 *Code*
 
@@ -636,7 +638,9 @@ for ($i = 1; $i <= 100; ++$i) {
 }
 $stmt->close();
 
-$result = $client->executeQuery('SELECT COUNT("id") AS "cnt" FROM users');
+// Note the SEQSCAN keyword in the query. It is mandatory as of Tarantool 2.11. 
+// If you are using an older version of Tarantool, omit this keyword.
+$result = $client->executeQuery('SELECT COUNT("id") AS "cnt" FROM SEQSCAN users');
 
 printf("Result: %s\n", json_encode($result[0]));
 ```
