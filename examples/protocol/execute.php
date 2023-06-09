@@ -17,10 +17,9 @@ $client = create_client();
 ensure_server_version_at_least('2', $client);
 
 $client->execute('DROP TABLE IF EXISTS users');
+$client->execute('CREATE TABLE users ("id" INTEGER PRIMARY KEY AUTOINCREMENT, "email" VARCHAR(255))');
 
-$result1 = $client->executeUpdate('
-    CREATE TABLE users ("id" INTEGER PRIMARY KEY AUTOINCREMENT, "email" VARCHAR(255))
-');
+$result1 = $client->executeUpdate('CREATE UNIQUE INDEX email ON users ("email")');
 
 $result2 = $client->executeUpdate('
     INSERT INTO users VALUES (null, :email1), (null, :email2)
@@ -29,17 +28,7 @@ $result2 = $client->executeUpdate('
     [':email2' => 'bar@example.com']
 );
 
-/**
- * SEQSCAN keyword is explicitly allowing to use seqscan:
- * https://github.com/tarantool/tarantool/commit/77648827326ad268ec0ffbcd620c2371b65ef2b4
- * It was introduced in Tarantool 2.11.0-rc1. If compat.sql_seq_scan_default set to "new"
- * (default value since 3.0), query returns error when trying to scan without keyword.
- */
-$scanQuery = server_version_at_least('2.11.0-rc1', $client)
-    ? 'SELECT * FROM SEQSCAN users WHERE "email" = ?'
-    : 'SELECT * FROM users WHERE "email" = ?';
-$result3 = $client->executeQuery($scanQuery, 'foo@example.com');
-
+$result3 = $client->executeQuery('SELECT * FROM users WHERE "email" = ?', 'foo@example.com');
 $result4 = $client->executeQuery('SELECT * FROM users WHERE "id" IN (?, ?)', 1, 2);
 
 printf("Result 1: %s\n", json_encode([$result1->count(), $result1->getAutoincrementIds()]));

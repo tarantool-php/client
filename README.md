@@ -573,9 +573,9 @@ the [official documentation](https://www.tarantool.io/en/doc/latest/reference/re
 *Code*
 
 ```php
-$result1 = $client->executeUpdate('
-    CREATE TABLE users ("id" INTEGER PRIMARY KEY AUTOINCREMENT, "email" VARCHAR(255))
-');
+$client->execute('CREATE TABLE users ("id" INTEGER PRIMARY KEY AUTOINCREMENT, "email" VARCHAR(255))');
+
+$result1 = $client->executeUpdate('CREATE UNIQUE INDEX email ON users ("email")');
 
 $result2 = $client->executeUpdate('
     INSERT INTO users VALUES (null, :email1), (null, :email2)
@@ -584,9 +584,7 @@ $result2 = $client->executeUpdate('
     [':email2' => 'bar@example.com']
 );
 
-// Note the SEQSCAN keyword in the query. It is mandatory as of Tarantool 2.11. 
-// If you are using an older version of Tarantool, omit this keyword.
-$result3 = $client->executeQuery('SELECT * FROM SEQSCAN users WHERE "email" = ?', 'foo@example.com');
+$result3 = $client->executeQuery('SELECT * FROM users WHERE "email" = ?', 'foo@example.com');
 $result4 = $client->executeQuery('SELECT * FROM users WHERE "id" IN (?, ?)', 1, 2);
 
 printf("Result 1: %s\n", json_encode([$result1->count(), $result1->getAutoincrementIds()]));
@@ -638,7 +636,7 @@ for ($i = 1; $i <= 100; ++$i) {
 }
 $stmt->close();
 
-// Note the SEQSCAN keyword in the query. It is mandatory as of Tarantool 2.11. 
+// Note the SEQSCAN keyword in the query. It is available as of Tarantool 2.11.
 // If you are using an older version of Tarantool, omit this keyword.
 $result = $client->executeQuery('SELECT COUNT("id") AS "cnt" FROM SEQSCAN users');
 
