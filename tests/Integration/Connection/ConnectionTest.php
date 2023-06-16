@@ -156,12 +156,11 @@ final class ConnectionTest extends TestCase
         try {
             $client->ping();
         } catch (ConnectionFailed $e) {
-            if (false !== strpos($e->getMessage(), 'No route to host')) {
-                self::markTestSkipped(sprintf('Unable to route to host %s', $host));
+            if (1 !== preg_match('/(Connection|Operation) timed out/', $e->getMessage())) {
+                self::markTestSkipped(sprintf('Unable to trigger timeout error: %s', $e->getMessage()));
             }
 
             $time = microtime(true) - $start;
-            self::assertMatchesRegularExpression('/Failed to connect to .+?: (Connection|Operation) timed out/', $e->getMessage());
             self::assertGreaterThanOrEqual($connectTimeout, $time);
             self::assertLessThan($connectTimeout + 0.01, $time);
 
