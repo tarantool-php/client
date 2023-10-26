@@ -151,11 +151,17 @@ final class ExecuteTest extends TestCase
         self::assertSame(1, $result->count());
     }
 
+    /**
+     * @sql DROP TABLE IF EXISTS %target_method%
+     * @sql CREATE TABLE %target_method% (ID INTEGER PRIMARY KEY, NAME VARCHAR(50))
+     * @sql INSERT INTO %target_method% VALUES (1, 'A'), (2, 'B')
+     */
     public function testSqlQueryResultHoldsMetadata() : void
     {
         $client = ClientBuilder::createFromEnv()->build();
 
-        $response = $client->executeQuery('SELECT * FROM exec_query WHERE id > 0');
+        $tableName = $this->resolvePlaceholders('%target_method%');
+        $response = $client->executeQuery("SELECT * FROM $tableName WHERE ID > 0");
 
         self::assertSame([[
             Keys::METADATA_FIELD_NAME => 'ID',
@@ -170,7 +176,7 @@ final class ExecuteTest extends TestCase
      * @requires Tarantool >=2.6
      *
      * @sql DROP TABLE IF EXISTS %target_method%
-     * @sql CREATE TABLE %target_method% (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(50) COLLATE "unicode_ci")
+     * @sql CREATE TABLE %target_method% (ID INTEGER PRIMARY KEY AUTOINCREMENT, NAME VARCHAR(50) COLLATE "unicode_ci")
      */
     public function testSqlQueryResultHoldsExtendedMetadata() : void
     {
@@ -178,20 +184,20 @@ final class ExecuteTest extends TestCase
         $client->execute('SET SESSION "sql_full_metadata" = true');
 
         $tableName = $this->resolvePlaceholders('%target_method%');
-        $response = $client->executeQuery("SELECT id, name AS full_name FROM $tableName WHERE id > 0");
+        $response = $client->executeQuery("SELECT ID, NAME AS FULL_NAME FROM $tableName WHERE ID > 0");
 
         self::assertSame([[
             Keys::METADATA_FIELD_NAME => 'ID',
             Keys::METADATA_FIELD_TYPE => 'integer',
             Keys::METADATA_FIELD_IS_NULLABLE => false,
             Keys::METADATA_FIELD_IS_AUTOINCREMENT => true,
-            Keys::METADATA_FIELD_SPAN => 'id',
+            Keys::METADATA_FIELD_SPAN => 'ID',
         ], [
             Keys::METADATA_FIELD_NAME => 'FULL_NAME',
             Keys::METADATA_FIELD_TYPE => 'string',
             Keys::METADATA_FIELD_COLL => 'unicode_ci',
             Keys::METADATA_FIELD_IS_NULLABLE => true,
-            Keys::METADATA_FIELD_SPAN => 'name',
+            Keys::METADATA_FIELD_SPAN => 'NAME',
         ]], $response->getMetadata());
     }
 }
