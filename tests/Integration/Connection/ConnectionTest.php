@@ -190,12 +190,13 @@ final class ConnectionTest extends TestCase
     public function testOpenConnectionHandlesTheMissingGreetingCorrectly() : void
     {
         $clientBuilder = ClientBuilder::createForFakeServer();
+        $uri = $clientBuilder->getUri();
 
         FakeServerBuilder::create(
             new AtConnectionHandler(1, new WriteHandler('')),
             new AtConnectionHandler(2, new WriteHandler(GreetingDataProvider::generateGreeting()))
         )
-            ->setUri($clientBuilder->getUri())
+            ->setUri($uri)
             ->start();
 
         $client = $clientBuilder->build();
@@ -205,7 +206,11 @@ final class ConnectionTest extends TestCase
             $connection->open();
             self::fail('Connection not established');
         } catch (CommunicationFailed $e) {
-            self::assertSame('Unable to read greeting', $e->getMessage());
+            self::assertSame(
+                sprintf('Error reading greeting: ' .
+                    'stream_socket_client(): Unable to connect to %s ' .
+                    '(Connection refused)', $uri)
+                , $e->getMessage());
             // At that point the connection was successfully established,
             // but the greeting message was not read
         }

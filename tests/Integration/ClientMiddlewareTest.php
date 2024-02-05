@@ -140,7 +140,7 @@ final class ClientMiddlewareTest extends TestCase
         $client->ping();
 
         $this->expectException(CommunicationFailed::class);
-        $this->expectExceptionMessage('Unable to write request');
+        $this->expectExceptionMessage('Error writing request: fwrite(): Send of 15 bytes failed with errno=32 Broken pipe');
         $client->ping();
     }
 

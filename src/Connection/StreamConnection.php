@@ -123,7 +123,7 @@ final class StreamConnection implements Connection
             return $this->greeting = Greeting::unknown();
         }
 
-        $greeting = $this->read(Greeting::SIZE_BYTES, 'Unable to read greeting');
+        $greeting = $this->read(Greeting::SIZE_BYTES, 'Error reading greeting');
 
         return $this->greeting = Greeting::parse($greeting);
     }
@@ -146,14 +146,18 @@ final class StreamConnection implements Connection
 
     public function send(string $data) : string
     {
-        if (!$this->stream || !\fwrite($this->stream, $data)) {
-            throw new CommunicationFailed('Unable to write request');
+        if (!$this->stream) {
+            throw new CommunicationFailed('Error writing request: connection closed');
         }
 
-        $length = $this->read(PacketLength::SIZE_BYTES, 'Unable to read response length');
+        if (!\fwrite($this->stream, $data)) {
+            throw CommunicationFailed::withLastPhpError("Error writing request");
+        }
+
+        $length = $this->read(PacketLength::SIZE_BYTES, 'Error reading response length');
         $length = PacketLength::unpack($length);
 
-        return $this->read($length, 'Unable to read response');
+        return $this->read($length, 'Error reading response');
     }
 
     private function read(int $length, string $errorMessage) : string
@@ -165,6 +169,11 @@ final class StreamConnection implements Connection
 
         /** @psalm-suppress PossiblyNullArgument */
         $meta = \stream_get_meta_data($this->stream);
-        throw new CommunicationFailed($meta['timed_out'] ? 'Read timed out' : $errorMessage);
+        if ($meta['timed_out']) {
+            throw new CommunicationFailed('Read timed out');
+        }
+
+
+        throw CommunicationFailed::withLastPhpError($errorMessage);
     }
 }
