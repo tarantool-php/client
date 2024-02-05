@@ -15,4 +15,10 @@ namespace Tarantool\Client\Exception;
 
 final class CommunicationFailed extends \RuntimeException implements ClientException
 {
+    public static function withLastPhpError(string $errorMessage): self
+    {
+        $error = error_get_last();
+
+        return new self($error ? \sprintf("%s: %s", $errorMessage, $error['message']) : $errorMessage);
+    }
 }
