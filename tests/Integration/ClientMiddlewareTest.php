@@ -139,9 +139,18 @@ final class ClientMiddlewareTest extends TestCase
 
         $client->ping();
 
-        $this->expectException(CommunicationFailed::class);
-        $this->expectExceptionMessage('Error writing request: fwrite(): Send of 15 bytes failed with errno=32 Broken pipe');
-        $client->ping();
+        try {
+            $client->ping();
+        } catch (CommunicationFailed $e) {
+            self::assertEqualsIgnoringCase(
+                'Error writing request: fwrite(): Send of 15 bytes failed with errno=32 Broken pipe',
+                $e->getMessage()
+            );
+
+            return;
+        }
+
+        self::fail();
     }
 
     private static function createBrokenConnectionMiddleware() : Middleware

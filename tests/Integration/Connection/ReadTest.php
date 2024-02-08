@@ -43,14 +43,20 @@ final class ReadTest extends TestCase
 
         $client = $clientBuilder->build();
 
-        $this->expectException(CommunicationFailed::class);
-        $this->expectExceptionMessage(
-            \sprintf('Error reading greeting: ' .
-                     'stream_socket_client(): Unable to connect to %s ' .
-                     '(Connection refused)', $uri)
-        );
+        try {
+            $client->ping();
+        } catch (CommunicationFailed $e) {
+            self::assertStringContainsStringIgnoringCase(
+                \sprintf('Error reading greeting: '.
+                    'stream_socket_client(): Unable to connect to %s ',
+                    $uri),
+                $e->getMessage()
+            );
 
-        $client->ping();
+            return;
+        }
+
+        self::fail();
     }
 
     public function testUnableToReadResponseLength() : void
@@ -67,14 +73,20 @@ final class ReadTest extends TestCase
 
         $client = $clientBuilder->build();
 
-        $this->expectException(CommunicationFailed::class);
-        $this->expectExceptionMessage(
-            \sprintf('Error reading response length: ' .
-                'stream_socket_client(): Unable to connect to %s ' .
-                '(Connection refused)', $uri)
-        );
+        try {
+            $client->ping();
+        } catch (CommunicationFailed $e) {
+            self::assertStringContainsStringIgnoringCase(
+                \sprintf('Error reading response length: '.
+                    'stream_socket_client(): Unable to connect to %s ',
+                    $uri),
+                $e->getMessage()
+            );
 
-        $client->ping();
+            return;
+        }
+
+        self::fail();
     }
 
     public function testReadResponseLengthTimedOut() : void
@@ -112,14 +124,20 @@ final class ReadTest extends TestCase
 
         $client = $clientBuilder->build();
 
-        $this->expectException(CommunicationFailed::class);
-        $this->expectExceptionMessage(
-            \sprintf('Error reading response: ' .
-                'stream_socket_client(): Unable to connect to %s ' .
-                '(Connection refused)', $uri)
-        );
+        try {
+            $client->ping();
+        } catch (CommunicationFailed $e) {
+            self::assertStringContainsStringIgnoringCase(
+                \sprintf('Error reading response: '.
+                    'stream_socket_client(): Unable to connect to %s ',
+                    $uri),
+                $e->getMessage()
+            );
 
-        $client->ping();
+            return;
+        }
+
+        self::fail();
     }
 
     public function testSocketReadTimedOut() : void

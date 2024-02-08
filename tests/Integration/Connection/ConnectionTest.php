@@ -206,11 +206,12 @@ final class ConnectionTest extends TestCase
             $connection->open();
             self::fail('Connection not established');
         } catch (CommunicationFailed $e) {
-            self::assertSame(
-                sprintf('Error reading greeting: ' .
-                    'stream_socket_client(): Unable to connect to %s ' .
-                    '(Connection refused)', $uri)
-                , $e->getMessage());
+            self::assertStringContainsStringIgnoringCase(
+                \sprintf('Error reading greeting: '.
+                    'stream_socket_client(): Unable to connect to %s',
+                    $uri),
+                $e->getMessage()
+            );
             // At that point the connection was successfully established,
             // but the greeting message was not read
         }

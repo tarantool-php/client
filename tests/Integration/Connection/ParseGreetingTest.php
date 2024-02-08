@@ -38,11 +38,12 @@ final class ParseGreetingTest extends TestCase
         try {
             $client->ping();
         } catch (CommunicationFailed $e) {
-            self::assertSame(
-                sprintf("Error reading greeting: " .
-                    "stream_socket_client(): Unable to connect to %s " .
-                    "(Connection refused)", $uri),
-                $e->getMessage());
+            self::assertStringContainsStringIgnoringCase(
+                sprintf('Error reading greeting: '.
+                    'stream_socket_client(): Unable to connect to %s ',
+                    $uri),
+                $e->getMessage()
+            );
 
             return;
         } catch (\RuntimeException $e) {

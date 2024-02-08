@@ -151,7 +151,7 @@ final class StreamConnection implements Connection
         }
 
         if (!\fwrite($this->stream, $data)) {
-            throw CommunicationFailed::withLastPhpError("Error writing request");
+            throw CommunicationFailed::withLastPhpError('Error writing request');
         }
 
         $length = $this->read(PacketLength::SIZE_BYTES, 'Error reading response length');
@@ -172,7 +172,6 @@ final class StreamConnection implements Connection
         if ($meta['timed_out']) {
             throw new CommunicationFailed('Read timed out');
         }
-
 
         throw CommunicationFailed::withLastPhpError($errorMessage);
     }
