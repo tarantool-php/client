@@ -74,7 +74,7 @@ jobs:
     runs-on: ${{ matrix.operating-system }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2
+        uses: actions/checkout@v4
 
       - name: Build docker image
         env: ${{ matrix.env }}
