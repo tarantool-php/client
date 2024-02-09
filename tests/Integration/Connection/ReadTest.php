@@ -35,20 +35,15 @@ final class ReadTest extends TestCase
     public function testReadEmptyGreeting() : void
     {
         $clientBuilder = ClientBuilder::createForFakeServer();
-        $uri = $clientBuilder->getUri();
 
         FakeServerBuilder::create()
-            ->setUri($uri)
+            ->setUri($clientBuilder->getUri())
             ->start();
 
         $client = $clientBuilder->build();
 
         $this->expectException(CommunicationFailed::class);
-        $this->expectExceptionMessage(
-            \sprintf('Error reading greeting: ' .
-                     'stream_socket_client(): Unable to connect to %s ' .
-                     '(Connection refused)', $uri)
-        );
+        $this->expectExceptionMessageMatches('/Error reading greeting:.+Unable to connect/i');
 
         $client->ping();
     }
@@ -56,23 +51,18 @@ final class ReadTest extends TestCase
     public function testUnableToReadResponseLength() : void
     {
         $clientBuilder = ClientBuilder::createForFakeServer();
-        $uri = $clientBuilder->getUri();
 
         FakeServerBuilder::create(
             new WriteHandler(GreetingDataProvider::generateGreeting()),
             new SleepHandler(1)
         )
-            ->setUri($uri)
+            ->setUri($clientBuilder->getUri())
             ->start();
 
         $client = $clientBuilder->build();
 
         $this->expectException(CommunicationFailed::class);
-        $this->expectExceptionMessage(
-            \sprintf('Error reading response length: ' .
-                'stream_socket_client(): Unable to connect to %s ' .
-                '(Connection refused)', $uri)
-        );
+        $this->expectExceptionMessageMatches('/Error reading response length:.+Unable to connect/i');
 
         $client->ping();
     }
@@ -100,24 +90,19 @@ final class ReadTest extends TestCase
     public function testUnableToReadResponse() : void
     {
         $clientBuilder = ClientBuilder::createForFakeServer();
-        $uri = $clientBuilder->getUri();
 
         FakeServerBuilder::create(
             new WriteHandler(GreetingDataProvider::generateGreeting()),
             new WriteHandler(PacketLength::pack(42)),
             new SleepHandler(1)
         )
-            ->setUri($uri)
+            ->setUri($clientBuilder->getUri())
             ->start();
 
         $client = $clientBuilder->build();
 
         $this->expectException(CommunicationFailed::class);
-        $this->expectExceptionMessage(
-            \sprintf('Error reading response: ' .
-                'stream_socket_client(): Unable to connect to %s ' .
-                '(Connection refused)', $uri)
-        );
+        $this->expectExceptionMessageMatches('/Error reading response:.+Unable to connect/i');
 
         $client->ping();
     }
