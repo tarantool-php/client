@@ -35,7 +35,7 @@ final class BoxErrorTest extends TestCase
         try {
             /*
              * Triggers "AccessDeniedError", which includes the fields
-             * "object_type", "object_name" and "access_type".
+             * "object_type", "object_name", "access_type", "user" (since 3.1).
              * See https://www.tarantool.io/en/doc/2.4/dev_guide/internals/box_protocol/#binary-protocol-responses-for-errors-extra.
              */
             $this->client->evaluate("
@@ -58,11 +58,16 @@ final class BoxErrorTest extends TestCase
             self::assertSame('AccessDeniedError', $error->getType());
             self::assertSame("Write access to space '_priv' is denied for user 'user_with_no_privileges'", $error->getMessage());
             self::assertSame(42, $error->getCode());
-            self::assertEquals([
+            $expectedFields = [
                 'object_type' => 'space',
                 'object_name' => '_priv',
                 'access_type' => 'Write',
-            ], $error->getFields());
+                'user' => 'user_with_no_privileges',
+            ];
+            if ($this->tarantoolVersionSatisfies('<= 3.0')) {
+                unset($expectedFields['user']);
+            }
+            self::assertEquals($expectedFields, $error->getFields());
             self::assertNull($error->getPrevious());
         }
     }
