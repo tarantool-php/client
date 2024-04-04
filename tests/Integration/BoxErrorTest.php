@@ -64,7 +64,7 @@ final class BoxErrorTest extends TestCase
                 'access_type' => 'Write',
                 'user' => 'user_with_no_privileges',
             ];
-            if ($this->tarantoolVersionSatisfies('<= 3.0')) {
+            if ($this->tarantoolVersionSatisfies('< 3.1')) {
                 unset($expectedFields['user']);
             }
             self::assertEquals($expectedFields, $error->getFields());
