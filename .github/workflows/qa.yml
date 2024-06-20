@@ -9,15 +9,45 @@ on:
 jobs:
   tests:
     env:
-      TNT_IMAGE: tarantool/tarantool:2.11
-      PHP_IMAGE: php:8.2-cli
+      TNT_IMAGE: tarantool/tarantool:3.1
+      PHP_IMAGE: php:8.3-cli
     strategy:
       fail-fast: false
       matrix:
         operating-system: [ubuntu-latest]
         env:
-          - PHP_IMAGE: php:7.2-cli
-          - PHP_IMAGE: php:7.2-cli
+          - TNT_IMAGE: tarantool/tarantool:3.0
+          - TNT_IMAGE: tarantool/tarantool:2.11
+          - TNT_IMAGE: tarantool/tarantool:2.10
+          - TNT_IMAGE: tarantool/tarantool:2.8
+          - TNT_IMAGE: tarantool/tarantool:2.7
+          - TNT_IMAGE: tarantool/tarantool:2.6
+          - TNT_IMAGE: tarantool/tarantool:2.5
+          - TNT_IMAGE: tarantool/tarantool:2.4
+          - TNT_IMAGE: tarantool/tarantool:2.3
+          - TNT_IMAGE: tarantool/tarantool:2.2
+          - TNT_IMAGE: tarantool/tarantool:2.1
+          - TNT_IMAGE: tarantool/tarantool:1
+          - TNT_IMAGE: tarantool/tarantool:1.9
+          - TNT_IMAGE: tarantool/tarantool:1.7
+
+          - PHP_IMAGE: php:8.3-cli
+            TNT_LISTEN_URI: /tmp/tarantool_client.sock
+
+          - PHP_IMAGE: php:8.2-cli
+          - PHP_IMAGE: php:8.2-cli
+            TNT_LISTEN_URI: /tmp/tarantool_client.sock
+
+          - PHP_IMAGE: php:8.1-cli
+          - PHP_IMAGE: php:8.1-cli
+            TNT_LISTEN_URI: /tmp/tarantool_client.sock
+
+          - PHP_IMAGE: php:8.0-cli
+          - PHP_IMAGE: php:8.0-cli
+            TNT_LISTEN_URI: /tmp/tarantool_client.sock
+
+          - PHP_IMAGE: php:7.4-cli
+          - PHP_IMAGE: php:7.4-cli
             TNT_LISTEN_URI: /tmp/tarantool_client.sock
 
           - PHP_IMAGE: php:7.3-cli
@@ -25,20 +55,8 @@ jobs:
           - PHP_IMAGE: php:7.3-cli
             TNT_LISTEN_URI: /tmp/tarantool_client.sock
 
-          - PHP_IMAGE: php:7.4-cli
-          - PHP_IMAGE: php:7.4-cli
-            TNT_LISTEN_URI: /tmp/tarantool_client.sock
-
-          - PHP_IMAGE: php:8.0-cli
-          - PHP_IMAGE: php:8.0-cli
-            TNT_LISTEN_URI: /tmp/tarantool_client.sock
-
-          - PHP_IMAGE: php:8.1-cli
-          - PHP_IMAGE: php:8.1-cli
-            TNT_LISTEN_URI: /tmp/tarantool_client.sock
-
-          - PHP_IMAGE: php:8.3-cli
-          - PHP_IMAGE: php:8.3-cli
+          - PHP_IMAGE: php:7.2-cli
+          - PHP_IMAGE: php:7.2-cli
             TNT_LISTEN_URI: /tmp/tarantool_client.sock
 
           - COVERAGE_FILE: coverage.clover
@@ -58,19 +76,6 @@ jobs:
             # some tests are skipped on Tarantool > 2.8
             TNT_IMAGE: tarantool/tarantool:2.8
 
-          - TNT_IMAGE: tarantool/tarantool:1.7
-          - TNT_IMAGE: tarantool/tarantool:1.9
-          - TNT_IMAGE: tarantool/tarantool:1
-          - TNT_IMAGE: tarantool/tarantool:2.1
-          - TNT_IMAGE: tarantool/tarantool:2.2
-          - TNT_IMAGE: tarantool/tarantool:2.3
-          - TNT_IMAGE: tarantool/tarantool:2.4
-          - TNT_IMAGE: tarantool/tarantool:2.5
-          - TNT_IMAGE: tarantool/tarantool:2.6
-          - TNT_IMAGE: tarantool/tarantool:2.7
-          - TNT_IMAGE: tarantool/tarantool:2.8
-          - TNT_IMAGE: tarantool/tarantool:2.10
-
     runs-on: ${{ matrix.operating-system }}
     steps:
       - name: Checkout
@@ -78,13 +83,13 @@ jobs:
 
       - name: Build docker image
         env: ${{ matrix.env }}
-        run: ./dockerfile.sh | tee /dev/tty | docker build -t client -
+        run: ./dockerfile.sh | docker build -t client -
 
       - name: Test
         env: ${{ matrix.env }}
         run: |
           docker network create tarantool-php
-          docker run --net=tarantool-php --rm $TNT_IMAGE /usr/local/bin/tarantool --version
+          docker run --net=tarantool-php --rm $TNT_IMAGE sh -c "tarantool --version"
           docker run --net=tarantool-php -d --name=tarantool -v /tmp:/tmp -v $PWD/tests/Integration/client.lua:/client.lua -e TNT_LISTEN_URI=$TNT_LISTEN_URI $TNT_IMAGE tarantool /client.lua
           docker run --net=tarantool-php --rm -v /tmp:/tmp -v $PWD:/client -w /client -e COMPOSER_ROOT_VERSION=dev-master client
 

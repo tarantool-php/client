@@ -29,7 +29,7 @@ jobs:
         run: sudo dpkg -i tarantool*.deb
 
       - name: Build docker image with connector setup
-        run: ./dockerfile.sh | tee /dev/tty | docker build -t client -
+        run: ./dockerfile.sh | docker build -t client -
         env:
           TNT_LISTEN_URI: localhost:3301
 
