@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [[ -z "$PHP_IMAGE" ]]; then
-    PHP_IMAGE='php:8.2-cli'
+    PHP_IMAGE='php:8.3-cli'
 fi
 
 if [[ -z "$TNT_LISTEN_URI" ]]; then
