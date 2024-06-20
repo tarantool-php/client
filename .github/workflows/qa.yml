@@ -9,7 +9,7 @@ on:
 jobs:
   tests:
     env:
-      TNT_IMAGE: tarantool/tarantool:2.11
+      TNT_IMAGE: tarantool/tarantool:3.1
       PHP_IMAGE: php:8.2-cli
     strategy:
       fail-fast: false
@@ -70,6 +70,8 @@ jobs:
           - TNT_IMAGE: tarantool/tarantool:2.7
           - TNT_IMAGE: tarantool/tarantool:2.8
           - TNT_IMAGE: tarantool/tarantool:2.10
+          - TNT_IMAGE: tarantool/tarantool:2.11
+          - TNT_IMAGE: tarantool/tarantool:3.0
 
     runs-on: ${{ matrix.operating-system }}
     steps:
