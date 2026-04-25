@@ -11,8 +11,8 @@
         }
     ],
     "require": {
-        "php": "^7.2.5|^8",
-        "rybakit/msgpack": "^0.9",
+        "php": "^8.2",
+        "rybakit/msgpack": "^0.10",
         "symfony/uid": "^5.1|^6|^7"
     },
     "require-dev": {

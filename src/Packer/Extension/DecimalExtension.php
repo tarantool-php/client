@@ -80,6 +80,6 @@ final class DecimalExtension implements Extension
                 : \substr_replace($dec, '.', -$scale, 0);
         }
 
-        return new Decimal($sign.$dec, self::PRECISION);
+        return Decimal::valueOf($sign.$dec, self::PRECISION);
     }
 }
