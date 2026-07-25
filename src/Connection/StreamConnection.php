@@ -53,7 +53,7 @@ final class StreamConnection implements Connection
         $this->persistent = $persistent;
 
         if ($tcpNoDelay) {
-            $this->streamContext = \stream_context_create(['socket' => ['tcp_nodelay' => true]]);
+            $this->streamContext = stream_context_create(['socket' => ['tcp_nodelay' => true]]);
         }
     }
 
@@ -79,7 +79,7 @@ final class StreamConnection implements Connection
 
     public static function create(string $uri, array $options = []) : self
     {
-        return 0 === \strpos($uri, 'unix://')
+        return str_starts_with($uri, 'unix://')
             ? self::createUds($uri, $options)
             : self::createTcp($uri, $options);
     }
@@ -95,14 +95,14 @@ final class StreamConnection implements Connection
             ? \STREAM_CLIENT_CONNECT | \STREAM_CLIENT_PERSISTENT
             : \STREAM_CLIENT_CONNECT;
 
-        $stream = $this->streamContext ? @\stream_socket_client(
+        $stream = $this->streamContext ? @stream_socket_client(
             $this->uri,
             $errorCode,
             $errorMessage,
             $this->connectTimeout,
             $flags,
             $this->streamContext
-        ) : @\stream_socket_client(
+        ) : @stream_socket_client(
             $this->uri,
             $errorCode,
             $errorMessage,
@@ -116,11 +116,11 @@ final class StreamConnection implements Connection
 
         $socketTimeoutSeconds = (int) $this->socketTimeout;
         $socketTimeoutMicroSeconds = (int) (($this->socketTimeout - $socketTimeoutSeconds) * 1000000);
-        \stream_set_timeout($stream, $socketTimeoutSeconds, $socketTimeoutMicroSeconds);
+        stream_set_timeout($stream, $socketTimeoutSeconds, $socketTimeoutMicroSeconds);
 
         $this->stream = $stream;
 
-        if ($this->persistent && \ftell($stream)) {
+        if ($this->persistent && ftell($stream)) {
             return $this->greeting = Greeting::unknown();
         }
 
@@ -134,7 +134,7 @@ final class StreamConnection implements Connection
     {
         if ($this->stream) {
             /** @psalm-suppress InvalidPropertyAssignmentValue */
-            \fclose($this->stream);
+            fclose($this->stream);
         }
 
         $this->stream = null;
@@ -154,7 +154,7 @@ final class StreamConnection implements Connection
             throw new CommunicationFailed('Error writing request: connection closed');
         }
 
-        if (!\fwrite($this->stream, $data)) {
+        if (!fwrite($this->stream, $data)) {
             throw CommunicationFailed::withLastPhpError('Error writing request');
         }
 
@@ -167,12 +167,12 @@ final class StreamConnection implements Connection
     private function read(int $length, string $errorMessage) : string
     {
         /** @psalm-suppress PossiblyNullArgument */
-        if ($data = \stream_get_contents($this->stream, $length)) {
+        if ($data = stream_get_contents($this->stream, $length)) {
             return $data;
         }
 
         /** @psalm-suppress PossiblyNullArgument */
-        $meta = \stream_get_meta_data($this->stream);
+        $meta = stream_get_meta_data($this->stream);
         if ($meta['timed_out']) {
             throw new CommunicationFailed('Read timed out');
         }

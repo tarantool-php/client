@@ -46,6 +46,11 @@ final class FilterableFixer implements FixerInterface
         return $this->fixer->getPriority();
     }
 
+    public function getDefinition() : \PhpCsFixer\FixerDefinition\FixerDefinitionInterface
+    {
+        return $this->fixer->getDefinition();
+    }
+
     public function supports(\SplFileInfo $file) : bool
     {
         if (1 !== preg_match($this->pathRegex, $file->getRealPath())) {

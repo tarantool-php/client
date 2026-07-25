@@ -88,8 +88,8 @@ final class Space
     }
 
     /**
-     * @psalm-param non-empty-array<int, mixed> $key
      * @param int|string $index
+     * @psalm-param non-empty-array<int, mixed> $key
      */
     public function update(array $key, Operations $operations, $index = 0) : array
     {
@@ -113,8 +113,8 @@ final class Space
     }
 
     /**
-     * @psalm-param non-empty-array<int, mixed> $key
      * @param int|string $index
+     * @psalm-param non-empty-array<int, mixed> $key
      */
     public function delete(array $key, $index = 0) : array
     {

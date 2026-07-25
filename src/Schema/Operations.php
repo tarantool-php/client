@@ -180,7 +180,6 @@ final class Operations
 
     /**
      * @param int|string $field
-     * @param mixed $value
      */
     public static function set($field, $value) : self
     {
@@ -189,7 +188,6 @@ final class Operations
 
     /**
      * @param int|string $field
-     * @param mixed $value
      */
     public function andSet($field, $value) : self
     {

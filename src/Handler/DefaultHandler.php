@@ -34,7 +34,7 @@ final class DefaultHandler implements Handler
     #[\Override]
     public function handle(Request $request) : Response
     {
-        $packet = $this->packer->pack($request, $sync = \mt_rand());
+        $packet = $this->packer->pack($request, $sync = mt_rand());
         $this->connection->open();
         $packet = $this->connection->send($packet);
 

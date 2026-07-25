@@ -23,11 +23,11 @@ final class AuthenticateRequest implements Request
 
     public function __construct(string $salt, string $username, string $password = '')
     {
-        $hash1 = \sha1($password, true);
-        $hash2 = \sha1($hash1, true);
+        $hash1 = sha1($password, true);
+        $hash2 = sha1($hash1, true);
 
         $this->body = [
-            Keys::TUPLE => ['chap-sha1', $hash1 ^ \sha1($salt.$hash2, true)],
+            Keys::TUPLE => ['chap-sha1', $hash1 ^ sha1($salt.$hash2, true)],
             Keys::USER_NAME => $username,
         ];
     }

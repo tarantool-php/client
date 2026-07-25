@@ -41,7 +41,7 @@ final class Greeting
 
     public static function parse(string $greeting) : self
     {
-        if (0 === \strpos($greeting, 'Tarantool')) {
+        if (str_starts_with($greeting, 'Tarantool')) {
             return new self($greeting);
         }
 
@@ -66,11 +66,11 @@ final class Greeting
             throw new \BadMethodCallException('Salt is unknown for persistent connections');
         }
 
-        if (false === $salt = \base64_decode(\substr($this->greeting, 64, 44), true)) {
+        if (false === $salt = base64_decode(substr($this->greeting, 64, 44), true)) {
             throw new UnexpectedResponse('Unable to decode salt');
         }
 
-        $salt = \substr($salt, 0, 20);
+        $salt = substr($salt, 0, 20);
 
         if (isset($salt[19])) {
             return $this->salt = $salt;
@@ -89,7 +89,7 @@ final class Greeting
             throw new \BadMethodCallException('Server version is unknown for persistent connections');
         }
 
-        return $this->serverVersion = \substr($this->greeting, 10, \strspn($this->greeting, '0123456789.', 10));
+        return $this->serverVersion = substr($this->greeting, 10, strspn($this->greeting, '0123456789.', 10));
     }
 
     public function equals(?self $greeting) : bool

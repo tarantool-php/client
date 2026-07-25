@@ -25,7 +25,7 @@ final class ExamplesTest extends TestCase
         exec("php $filename $uri", $output, $exitCode);
 
         $flattenOutput = implode("\n", $output);
-        if (0 === strpos($flattenOutput, 'Unfulfilled requirement:')) {
+        if (str_starts_with($flattenOutput, 'Unfulfilled requirement:')) {
             self::markTestSkipped($flattenOutput);
         }
 

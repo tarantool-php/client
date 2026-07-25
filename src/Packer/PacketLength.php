@@ -23,7 +23,7 @@ final class PacketLength
 
     public static function pack(int $length) : string
     {
-        return \pack('CN', 0xce, $length);
+        return pack('CN', 0xCE, $length);
     }
 
     public static function unpack(string $data) : int

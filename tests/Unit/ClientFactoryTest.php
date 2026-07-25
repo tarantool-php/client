@@ -17,12 +17,9 @@ use PHPUnit\Framework\TestCase;
 use Tarantool\Client\Client;
 use Tarantool\Client\Packer\Packer;
 use Tarantool\Client\Packer\PurePacker;
-use Tarantool\Client\Tests\PhpUnitCompat;
 
 final class ClientFactoryTest extends TestCase
 {
-
-
     public function testFromDefaultsCreatesClientWithPurePacker() : void
     {
         $client = Client::fromDefaults();

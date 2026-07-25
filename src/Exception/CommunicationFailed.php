@@ -17,7 +17,7 @@ final class CommunicationFailed extends \RuntimeException implements ClientExcep
 {
     public static function withLastPhpError(string $errorMessage) : self
     {
-        $error = \error_get_last();
+        $error = error_get_last();
 
         return new self($error ? \sprintf('%s: %s', $errorMessage, $error['message']) : $errorMessage);
     }

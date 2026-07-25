@@ -71,13 +71,13 @@ final class RetryMiddleware implements Middleware
     {
         $retries = 0;
 
-        do {
+        while (true) {
             try {
                 return $handler->handle($request);
             } catch (UnexpectedResponse $e) {
                 $handler->getConnection()->close();
                 break;
-            } catch (ConnectionFailed | CommunicationFailed $e) {
+            } catch (ConnectionFailed|CommunicationFailed $e) {
                 $handler->getConnection()->close();
                 goto retry;
             } catch (ClientException $e) {
@@ -88,11 +88,11 @@ final class RetryMiddleware implements Middleware
                 if (null === $delayMs = ($this->getDelayMs)(++$retries, $e)) {
                     break;
                 }
-                $delayMs = \min($delayMs, self::MAX_DELAY_MS) / 2;
-                $delayMs += \mt_rand(0, $delayMs);
-                \usleep($delayMs * 1000);
+                $delayMs = min($delayMs, self::MAX_DELAY_MS) / 2;
+                $delayMs += mt_rand(0, $delayMs);
+                usleep($delayMs * 1000);
             }
-        } while (true);
+        }
 
         throw $e;
     }

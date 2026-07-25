@@ -48,9 +48,6 @@ final class Response
         return $this->header[Keys::SCHEMA_ID];
     }
 
-    /**
-     * @return mixed
-     */
     public function getBodyField(int $key)
     {
         if (\array_key_exists($key, $this->body)) {
@@ -60,11 +57,6 @@ final class Response
         throw new \OutOfRangeException(\sprintf('The body key 0x%x does not exist', $key));
     }
 
-    /**
-     * @param mixed $default
-     *
-     * @return mixed
-     */
     public function tryGetBodyField(int $key, $default = null)
     {
         return \array_key_exists($key, $this->body) ? $this->body[$key] : $default;

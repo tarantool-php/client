@@ -79,6 +79,7 @@ final class RetryMiddlewareTest extends TestCase
         $totalRetries = 0;
         $middleware = RetryMiddleware::custom(static function (int $retries) use (&$totalRetries) : int {
             $totalRetries = $retries;
+
             // always returning a value other than null
             // leads to an infinite retry loop
             return 0;

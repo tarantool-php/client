@@ -31,7 +31,7 @@ try {
         reason = "User #99 not found",
     })');
 } catch (UserNotFound $e) {
-    printf("%s: [%d] %s\n", get_class($e), $e->getCode(), $e->getMessage());
+    printf("%s: [%d] %s\n", $e::class, $e->getCode(), $e->getMessage());
 }
 
 /* OUTPUT

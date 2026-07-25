@@ -19,7 +19,7 @@ $client = create_client();
 $spaceName = 'cars';
 
 $client->evaluate(
-<<<LUA
+    <<<LUA
     if box.space[...] then box.space[...]:drop() end
     local space = box.schema.space.create(...)
     space:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
@@ -29,8 +29,7 @@ $client->evaluate(
     space:insert({3, 'Ferrari SF90 Stradale', 625})
     space:insert({4, 'Maserati MC20', 200})
     space:insert({5, 'Rolls Royce Ghost', 315})
-LUA
-, $spaceName);
+LUA, $spaceName);
 
 $cars = $client->getSpace($spaceName);
 

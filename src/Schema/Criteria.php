@@ -22,12 +22,12 @@ final class Criteria
     private $key = [];
 
     /** @var int */
-    private $limit = \PHP_INT_MAX & 0xffffffff;
+    private $limit = \PHP_INT_MAX & 0xFFFFFFFF;
 
     /** @var int */
     private $offset = 0;
 
-    /** @psalm-var null|IteratorTypes::* */
+    /** @psalm-var IteratorTypes::*|null */
     private $iteratorType;
 
     private function __construct()

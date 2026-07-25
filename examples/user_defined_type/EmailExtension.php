@@ -32,9 +32,6 @@ final class EmailExtension implements Extension
         return $this->type;
     }
 
-    /**
-     * @param mixed $value
-     */
     #[\Override]
     public function pack(Packer $packer, $value) : ?string
     {

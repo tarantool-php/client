@@ -17,12 +17,9 @@ use Tarantool\Client\Packer\PurePacker;
 use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\TestCase;
-use Tarantool\Client\Tests\PhpUnitCompat;
 
 final class MessagePackTest extends TestCase
 {
-
-
     /**
      * @dataProvider providePackUnpackData
      */

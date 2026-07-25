@@ -19,14 +19,11 @@ use Tarantool\Client\Connection\StreamConnection;
 use Tarantool\Client\Exception\CommunicationFailed;
 use Tarantool\Client\Handler\Handler;
 use Tarantool\Client\Request\Request;
-use Tarantool\Client\Tests\PhpUnitCompat;
 use Tarantool\PhpUnit\Annotation\Requirement\TarantoolVersionRequirement;
 use Tarantool\PhpUnit\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
-
-
     /** @var Client|null */
     protected $client;
 

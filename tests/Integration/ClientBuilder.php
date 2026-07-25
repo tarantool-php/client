@@ -56,7 +56,7 @@ final class ClientBuilder
 
     public function isTcpConnection() : bool
     {
-        return 0 === strpos($this->uri, 'tcp:');
+        return str_starts_with($this->uri, 'tcp:');
     }
 
     public function setHost(string $host) : self
@@ -77,13 +77,13 @@ final class ClientBuilder
 
     public function setUri(string $uri) : self
     {
-        if (0 === strpos($uri, '/')) {
+        if (str_starts_with($uri, '/')) {
             $uri = 'unix://'.$uri;
-        } elseif (0 === strpos($uri, 'unix/:')) {
+        } elseif (str_starts_with($uri, 'unix/:')) {
             $uri = 'unix://'.substr($uri, 6);
         } elseif (!preg_match('/[\D]/', $uri)) {
             $uri = 'tcp://127.0.0.1:'.$uri;
-        } elseif (0 !== strpos($uri, 'tcp://') && (0 !== strpos($uri, 'unix://'))) {
+        } elseif (!str_starts_with($uri, 'tcp://') && (!str_starts_with($uri, 'unix://'))) {
             $uri = 'tcp://'.$uri;
         }
 

@@ -146,7 +146,7 @@ final class ClientMiddlewareTest extends TestCase
 
     private static function createBrokenConnectionMiddleware() : Middleware
     {
-        return new class() implements Middleware {
+        return new class implements Middleware {
             private $count = 0;
 
             public function process(Request $request, Handler $handler) : Response

@@ -50,7 +50,7 @@ final class MiddlewareHandler implements Handler
         }
 
         $handler = clone $handler;
-        $handler->middleware = \array_merge($handler->middleware, $middleware);
+        $handler->middleware = array_merge($handler->middleware, $middleware);
 
         return $handler;
     }
@@ -65,7 +65,7 @@ final class MiddlewareHandler implements Handler
         }
 
         $handler = clone $handler;
-        $handler->middleware = \array_merge($middleware, $handler->middleware);
+        $handler->middleware = array_merge($middleware, $handler->middleware);
 
         return $handler;
     }

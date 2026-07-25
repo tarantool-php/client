@@ -104,7 +104,7 @@ final class CustomErrorMiddleware implements Middleware
      */
     public static function fromNamespace(string $namespace) : self
     {
-        $namespace = \rtrim($namespace, '\\').'\\';
+        $namespace = rtrim($namespace, '\\').'\\';
 
         return new self(
             static function (Error $err, RequestFailed $ex) use ($namespace) : \Exception {
@@ -116,7 +116,7 @@ final class CustomErrorMiddleware implements Middleware
                 $className = $namespace.$customType;
 
                 /** @psalm-suppress UnsafeInstantiation */
-                return \class_exists($className)
+                return class_exists($className)
                     ? new $className($err->getMessage(), $err->getCode())
                     : $ex;
             }

@@ -41,13 +41,13 @@ final class DecimalExtension implements Extension
 
         if ('-' === $data[0]) {
             $nibble = 'd';
-            $data = \substr($data, 1);
+            $data = substr($data, 1);
         } else {
             $nibble = 'c';
         }
 
-        $pieces = \explode('.', $data, 2);
-        $pieces[1] = \rtrim($pieces[1], '0');
+        $pieces = explode('.', $data, 2);
+        $pieces[1] = rtrim($pieces[1], '0');
 
         $data = "{$pieces[0]}{$pieces[1]}{$nibble}";
         if (0 !== \strlen($data) % 2) {
@@ -55,7 +55,7 @@ final class DecimalExtension implements Extension
         }
 
         return $packer->packExt(self::TYPE,
-            $packer->packInt('' === $pieces[1] ? 0 : \strlen($pieces[1])).\hex2bin($data)
+            $packer->packInt('' === $pieces[1] ? 0 : \strlen($pieces[1])).hex2bin($data)
         );
     }
 
@@ -71,16 +71,16 @@ final class DecimalExtension implements Extension
          */
         $scale = $unpacker->unpackInt();
         $data = $unpacker->read($extLength - 1);
-        $data = \bin2hex($data);
+        $data = bin2hex($data);
 
         $sign = 'd' === $data[-1] ? '-' : '';
-        $dec = \substr($data, 0, -1);
+        $dec = substr($data, 0, -1);
 
         if (0 !== $scale) {
             $length = \strlen($dec);
             $dec = ($length <= $scale)
-                ? \substr_replace($dec, '0.'.\str_repeat('0', $scale - $length), -$scale, 0)
-                : \substr_replace($dec, '.', -$scale, 0);
+                ? substr_replace($dec, '0.'.str_repeat('0', $scale - $length), -$scale, 0)
+                : substr_replace($dec, '.', -$scale, 0);
         }
 
         return new Decimal($sign.$dec, self::PRECISION);

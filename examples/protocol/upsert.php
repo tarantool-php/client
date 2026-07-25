@@ -20,7 +20,7 @@ $client = create_client();
 $spaceName = 'example';
 
 $client->evaluate(
-<<<LUA
+    <<<LUA
     if box.space[...] then box.space[...]:drop() end
     local space = box.schema.space.create(...)
     space:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
@@ -29,8 +29,7 @@ $client->evaluate(
         {name = 'name1', type = 'string'},
         {name = 'name2', type = 'string'}
     })
-LUA
-, $spaceName);
+LUA, $spaceName);
 
 $space = $client->getSpace($spaceName);
 $space->upsert([1, 'foo', 'bar'], Operations::set(1, 'baz'));

@@ -15,12 +15,9 @@ namespace Tarantool\Client\Tests\Unit\Connection;
 
 use PHPUnit\Framework\TestCase;
 use Tarantool\Client\Connection\StreamConnection;
-use Tarantool\Client\Tests\PhpUnitCompat;
 
 final class StreamConnectionTest extends TestCase
 {
-
-
     /**
      * @dataProvider \Tarantool\Client\Tests\Unit\OptionsProvider::provideConnectionArrayOptionsOfValidTypes
      * @dataProvider \Tarantool\Client\Tests\Unit\OptionsProvider::provideTcpExtraConnectionArrayOptionsOfValidTypes
