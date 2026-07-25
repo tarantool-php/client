@@ -51,11 +51,13 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/rybakit/phpunit-extras"
+            "url": "https://github.com/rybakit/phpunit-extras",
+            "no-api": true
         },
         {
             "type": "vcs",
-            "url": "https://github.com/tarantool-php/phpunit-extras"
+            "url": "https://github.com/tarantool-php/phpunit-extras",
+            "no-api": true
         }
     ],
     "extra": {
