@@ -28,6 +28,7 @@ final class LoggingMiddleware implements Middleware
         $this->logger = $logger;
     }
 
+    #[\Override]
     public function process(Request $request, Handler $handler) : Response
     {
         $requestName = RequestTypes::getName($request->getType());

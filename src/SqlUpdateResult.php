@@ -22,6 +22,7 @@ final class SqlUpdateResult implements \Countable
         $this->info = $info;
     }
 
+    #[\Override]
     public function count() : int
     {
         return $this->info[Keys::SQL_INFO_ROW_COUNT];

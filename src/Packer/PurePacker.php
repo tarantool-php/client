@@ -68,6 +68,7 @@ final class PurePacker implements ClientPacker
         );
     }
 
+    #[\Override]
     public function pack(Request $request, int $sync) : string
     {
         // Hot path optimization
@@ -78,6 +79,7 @@ final class PurePacker implements ClientPacker
         return PacketLength::pack(\strlen($packet)).$packet;
     }
 
+    #[\Override]
     public function unpack(string $packet) : Response
     {
         $this->unpacker->reset($packet);

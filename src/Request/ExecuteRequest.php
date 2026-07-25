@@ -49,11 +49,13 @@ final class ExecuteRequest implements Request
         ]);
     }
 
+    #[\Override]
     public function getType() : int
     {
         return RequestTypes::EXECUTE;
     }
 
+    #[\Override]
     public function getBody() : array
     {
         return $this->body;

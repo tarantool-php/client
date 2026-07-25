@@ -33,6 +33,7 @@ final class AuthenticationMiddleware implements Middleware
         $this->password = $password;
     }
 
+    #[\Override]
     public function process(Request $request, Handler $handler) : Response
     {
         $greeting = $handler->getConnection()->open();

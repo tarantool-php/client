@@ -84,6 +84,7 @@ final class StreamConnection implements Connection
             : self::createTcp($uri, $options);
     }
 
+    #[\Override]
     public function open() : Greeting
     {
         if ($this->greeting) {
@@ -128,6 +129,7 @@ final class StreamConnection implements Connection
         return $this->greeting = Greeting::parse($greeting);
     }
 
+    #[\Override]
     public function close() : void
     {
         if ($this->stream) {
@@ -139,11 +141,13 @@ final class StreamConnection implements Connection
         $this->greeting = null;
     }
 
+    #[\Override]
     public function isClosed() : bool
     {
         return !$this->stream;
     }
 
+    #[\Override]
     public function send(string $data) : string
     {
         if (!$this->stream) {

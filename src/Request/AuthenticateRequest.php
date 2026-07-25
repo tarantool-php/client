@@ -32,11 +32,13 @@ final class AuthenticateRequest implements Request
         ];
     }
 
+    #[\Override]
     public function getType() : int
     {
         return RequestTypes::AUTHENTICATE;
     }
 
+    #[\Override]
     public function getBody() : array
     {
         return $this->body;

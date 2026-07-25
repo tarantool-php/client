@@ -29,11 +29,13 @@ final class EvaluateRequest implements Request
         ];
     }
 
+    #[\Override]
     public function getType() : int
     {
         return RequestTypes::EVALUATE;
     }
 
+    #[\Override]
     public function getBody() : array
     {
         return $this->body;

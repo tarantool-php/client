@@ -36,11 +36,13 @@ final class LegacyCallRequest implements Request
         return new self($request->getBody());
     }
 
+    #[\Override]
     public function getType() : int
     {
         return self::TYPE;
     }
 
+    #[\Override]
     public function getBody() : array
     {
         return $this->body;

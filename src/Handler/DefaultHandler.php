@@ -31,6 +31,7 @@ final class DefaultHandler implements Handler
         $this->packer = $packer;
     }
 
+    #[\Override]
     public function handle(Request $request) : Response
     {
         $packet = $this->packer->pack($request, $sync = \mt_rand());
@@ -51,11 +52,13 @@ final class DefaultHandler implements Handler
         return $response;
     }
 
+    #[\Override]
     public function getConnection() : Connection
     {
         return $this->connection;
     }
 
+    #[\Override]
     public function getPacker() : Packer
     {
         return $this->packer;

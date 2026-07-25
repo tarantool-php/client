@@ -123,6 +123,7 @@ final class CustomErrorMiddleware implements Middleware
         );
     }
 
+    #[\Override]
     public function process(Request $request, Handler $handler) : Response
     {
         try {

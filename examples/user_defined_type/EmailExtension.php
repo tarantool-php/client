@@ -26,6 +26,7 @@ final class EmailExtension implements Extension
         $this->type = $type;
     }
 
+    #[\Override]
     public function getType() : int
     {
         return $this->type;
@@ -34,6 +35,7 @@ final class EmailExtension implements Extension
     /**
      * @param mixed $value
      */
+    #[\Override]
     public function pack(Packer $packer, $value) : ?string
     {
         if (!$value instanceof Email) {
@@ -45,6 +47,7 @@ final class EmailExtension implements Extension
         );
     }
 
+    #[\Override]
     public function unpackExt(BufferUnpacker $unpacker, int $extLength) : Email
     {
         return new Email($unpacker->unpackStr());

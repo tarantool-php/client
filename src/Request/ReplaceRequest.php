@@ -29,11 +29,13 @@ final class ReplaceRequest implements Request
         ];
     }
 
+    #[\Override]
     public function getType() : int
     {
         return RequestTypes::REPLACE;
     }
 
+    #[\Override]
     public function getBody() : array
     {
         return $this->body;

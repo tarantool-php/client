@@ -31,11 +31,13 @@ final class UpdateRequest implements Request
         ];
     }
 
+    #[\Override]
     public function getType() : int
     {
         return RequestTypes::UPDATE;
     }
 
+    #[\Override]
     public function getBody() : array
     {
         return $this->body;

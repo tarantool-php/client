@@ -70,6 +70,7 @@ final class MiddlewareHandler implements Handler
         return $handler;
     }
 
+    #[\Override]
     public function handle(Request $request) : Response
     {
         if (!isset($this->middleware[$this->index])) {
@@ -82,11 +83,13 @@ final class MiddlewareHandler implements Handler
         return $this->middleware[$this->index]->process($request, $new);
     }
 
+    #[\Override]
     public function getConnection() : Connection
     {
         return $this->handler->getConnection();
     }
 
+    #[\Override]
     public function getPacker() : Packer
     {
         return $this->handler->getPacker();

@@ -30,11 +30,13 @@ final class DeleteRequest implements Request
         ];
     }
 
+    #[\Override]
     public function getType() : int
     {
         return RequestTypes::DELETE;
     }
 
+    #[\Override]
     public function getBody() : array
     {
         return $this->body;

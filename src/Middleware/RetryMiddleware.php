@@ -66,6 +66,7 @@ final class RetryMiddleware implements Middleware
         });
     }
 
+    #[\Override]
     public function process(Request $request, Handler $handler) : Response
     {
         $retries = 0;

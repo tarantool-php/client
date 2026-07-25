@@ -21,6 +21,7 @@ use Tarantool\Client\Response;
 
 final class LegacyCallMiddleware implements Middleware
 {
+    #[\Override]
     public function process(Request $request, Handler $handler) : Response
     {
         if (!$request instanceof CallRequest) {

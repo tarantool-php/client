@@ -39,11 +39,13 @@ final class PrepareRequest implements Request
         return new self([Keys::STMT_ID => $statementId]);
     }
 
+    #[\Override]
     public function getType() : int
     {
         return RequestTypes::PREPARE;
     }
 
+    #[\Override]
     public function getBody() : array
     {
         return $this->body;

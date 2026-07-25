@@ -23,11 +23,13 @@ final class ErrorExtension implements Extension
 {
     private const TYPE = 3;
 
+    #[\Override]
     public function getType() : int
     {
         return self::TYPE;
     }
 
+    #[\Override]
     public function pack(Packer $packer, $value) : ?string
     {
         if (!$value instanceof Error) {
@@ -49,6 +51,7 @@ final class ErrorExtension implements Extension
     /**
      * @return Error
      */
+    #[\Override]
     public function unpackExt(BufferUnpacker $unpacker, int $extLength)
     {
         return Error::fromMap($unpacker->unpackMap());

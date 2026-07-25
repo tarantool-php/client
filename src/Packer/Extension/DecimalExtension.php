@@ -23,11 +23,13 @@ final class DecimalExtension implements Extension
     private const TYPE = 1;
     private const PRECISION = 38;
 
+    #[\Override]
     public function getType() : int
     {
         return self::TYPE;
     }
 
+    #[\Override]
     public function pack(Packer $packer, $value) : ?string
     {
         if (!$value instanceof Decimal) {
@@ -60,6 +62,7 @@ final class DecimalExtension implements Extension
     /**
      * @return Decimal
      */
+    #[\Override]
     public function unpackExt(BufferUnpacker $unpacker, int $extLength)
     {
         /**

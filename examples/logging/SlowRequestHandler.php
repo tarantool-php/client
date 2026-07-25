@@ -42,12 +42,14 @@ final class SlowRequestHandler extends HandlerWrapper
         $this->levelName = Logger::getLevelName($this->level);
     }
 
+    #[\Override]
     public function isHandling(array $record) : bool
     {
         // Handle all levels
         return true;
     }
 
+    #[\Override]
     public function handle(array $record) : bool
     {
         if (!isset($record['context']['duration_ms'], $record['context']['request'])) {

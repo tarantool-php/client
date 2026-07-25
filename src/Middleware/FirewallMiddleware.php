@@ -99,6 +99,7 @@ final class FirewallMiddleware implements Middleware
         return $new;
     }
 
+    #[\Override]
     public function process(Request $request, Handler $handler) : Response
     {
         $requestType = $request->getType();
