@@ -21,7 +21,7 @@ use Tarantool\Client\Tests\PhpUnitCompat;
 
 final class ClientFactoryTest extends TestCase
 {
-    use PhpUnitCompat;
+
 
     public function testFromDefaultsCreatesClientWithPurePacker() : void
     {

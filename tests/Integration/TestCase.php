@@ -25,7 +25,7 @@ use Tarantool\PhpUnit\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
-    use PhpUnitCompat;
+
 
     /** @var Client|null */
     protected $client;

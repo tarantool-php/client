@@ -21,7 +21,7 @@ use Tarantool\Client\Tests\PhpUnitCompat;
 
 final class MessagePackTest extends TestCase
 {
-    use PhpUnitCompat;
+
 
     /**
      * @dataProvider providePackUnpackData

@@ -19,7 +19,7 @@ use Tarantool\Client\Tests\PhpUnitCompat;
 
 final class StreamConnectionTest extends TestCase
 {
-    use PhpUnitCompat;
+
 
     /**
      * @dataProvider \Tarantool\Client\Tests\Unit\OptionsProvider::provideConnectionArrayOptionsOfValidTypes
