@@ -25,15 +25,15 @@ use Tarantool\Client\Tests\Integration\FakeServer\FakeServerBuilder;
 use Tarantool\Client\Tests\Integration\FakeServer\Handler\AtConnectionHandler;
 use Tarantool\Client\Tests\Integration\FakeServer\Handler\WriteHandler;
 use Tarantool\Client\Tests\Integration\TestCase;
+use Tarantool\PhpUnit\Annotation\Attribute\Lua;
 
 final class ConnectionTest extends TestCase
 {
     /**
      * @dataProvider provideAutoConnectData
      * @doesNotPerformAssertions
-     *
-     * @lua create_space('test_auto_connect'):create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
      */
+    #[Lua('create_space(\'test_auto_connect\'):create_index(\'primary\', {type = \'tree\', parts = {1, \'unsigned\'}})')]
     public function testAutoConnect(string $methodName, array $methodArgs, ?string $space = null) : void
     {
         $object = $space ? $this->client->getSpace($space) : $this->client;

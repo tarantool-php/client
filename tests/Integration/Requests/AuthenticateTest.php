@@ -16,17 +16,17 @@ namespace Tarantool\Client\Tests\Integration\Requests;
 use Tarantool\Client\Exception\RequestFailed;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\TestCase;
+use Tarantool\PhpUnit\Annotation\Attribute\Lua;
 
 final class AuthenticateTest extends TestCase
 {
     /**
      * @doesNotPerformAssertions
      * @dataProvider provideValidCredentials
-     *
-     * @lua create_user('user_foo', 'foo')
-     * @lua create_user('user_empty', '')
-     * @lua create_user('user_big', '123456789012345678901234567890123456789012345678901234567890')
      */
+    #[Lua('create_user(\'user_foo\', \'foo\')')]
+    #[Lua('create_user(\'user_empty\', \'\')')]
+    #[Lua('create_user(\'user_big\', \'123456789012345678901234567890123456789012345678901234567890\')')]
     public function testAuthenticateWithValidCredentials(string $username, string $password) : void
     {
         $client = ClientBuilder::createFromEnv()->setOptions([
@@ -73,10 +73,8 @@ final class AuthenticateTest extends TestCase
         ];
     }
 
-    /**
-     * @lua create_user('user_foo', 'foo')
-     * @lua create_space('test_auth_reconnect'):create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
-     */
+    #[Lua('create_user(\'user_foo\', \'foo\')')]
+    #[Lua('create_space(\'test_auth_reconnect\'):create_index(\'primary\', {type = \'tree\', parts = {1, \'unsigned\'}})')]
     public function testUseCredentialsAfterReconnect() : void
     {
         $client = ClientBuilder::createFromEnv()->setOptions([

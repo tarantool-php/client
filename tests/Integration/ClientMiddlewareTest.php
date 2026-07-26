@@ -26,6 +26,7 @@ use Tarantool\Client\Response;
 use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Schema\Space;
 use Tarantool\Client\Tests\SpyMiddleware;
+use Tarantool\PhpUnit\Annotation\Attribute\Lua;
 
 final class ClientMiddlewareTest extends TestCase
 {
@@ -52,11 +53,10 @@ final class ClientMiddlewareTest extends TestCase
 
     /**
      * @doesNotPerformAssertions
-     *
-     * @lua fiber = require('fiber')
-     * @lua function test() try_drop_user('foobar') fiber.sleep(.5) create_user('foobar', '') end
-     * @lua fiber.create(test)
      */
+    #[Lua('fiber = require(\'fiber\')')]
+    #[Lua('function test() try_drop_user(\'foobar\') fiber.sleep(.5) create_user(\'foobar\', \'\') end')]
+    #[Lua('fiber.create(test)')]
     public function testAuthenticationRetrySucceeds() : void
     {
         $client = Client::fromOptions([

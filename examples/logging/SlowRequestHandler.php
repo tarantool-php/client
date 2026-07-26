@@ -15,7 +15,6 @@ namespace App;
 
 use Monolog\Handler\HandlerInterface;
 use Monolog\Handler\HandlerWrapper;
-use Monolog\Logger;
 use Tarantool\Client\RequestTypes;
 
 final class SlowRequestHandler extends HandlerWrapper
@@ -23,34 +22,26 @@ final class SlowRequestHandler extends HandlerWrapper
     /** @var int */
     private $thresholdMs;
 
-    /** @var int */
+    /** @var \Monolog\Level */
     private $level;
 
-    /** @var string */
-    private $levelName;
-
-    /**
-     * @param positive-int $thresholdMs
-     * @param Logger::DEBUG|Logger::INFO|Logger::NOTICE|Logger::WARNING|Logger::ERROR|Logger::CRITICAL|Logger::ALERT|Logger::EMERGENCY $level
-     */
-    public function __construct(HandlerInterface $handler, int $thresholdMs, int $level = Logger::WARNING)
+    public function __construct(HandlerInterface $handler, int $thresholdMs, \Monolog\Level|int $level = \Monolog\Level::Warning)
     {
         parent::__construct($handler);
 
         $this->thresholdMs = $thresholdMs;
-        $this->level = $level;
-        $this->levelName = Logger::getLevelName($this->level);
+        $this->level = $level instanceof \Monolog\Level ? $level : \Monolog\Level::from($level);
     }
 
     #[\Override]
-    public function isHandling(array $record) : bool
+    public function isHandling(\Monolog\LogRecord $record) : bool
     {
         // Handle all levels
         return true;
     }
 
     #[\Override]
-    public function handle(array $record) : bool
+    public function handle(\Monolog\LogRecord $record) : bool
     {
         if (!isset($record['context']['duration_ms'], $record['context']['request'])) {
             return false;
@@ -62,11 +53,12 @@ final class SlowRequestHandler extends HandlerWrapper
 
         $request = $record['context']['request'];
 
-        return $this->handler->handle([
-            'level' => $this->level,
-            'level_name' => $this->levelName,
-            'message' => sprintf('Slow %s request detected (%d ms)', RequestTypes::getName($request->getType()), $record['context']['duration_ms']),
-            'context' => ['request_body' => $request->getBody()],
-        ] + $record);
+        $newRecord = $record->with(
+            level: $this->level,
+            message: sprintf('Slow %s request detected (%d ms)', RequestTypes::getName($request->getType()), $record['context']['duration_ms']),
+            context: ['request_body' => $request->getBody()] + $record['context']
+        );
+
+        return $this->handler->handle($newRecord);
     }
 }

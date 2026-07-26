@@ -13,23 +13,20 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\Requests;
 
+use PHPUnitExtras\Annotation\Attribute\Requires;
 use Tarantool\Client\Keys;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\TestCase;
+use Tarantool\PhpUnit\Annotation\Attribute\Sql;
 
-/**
- * @requires Tarantool >=2
- *
- * @sql DROP TABLE IF EXISTS exec_query
- * @sql CREATE TABLE exec_query (id INTEGER PRIMARY KEY, name VARCHAR(50))
- * @sql INSERT INTO exec_query VALUES (1, 'A'), (2, 'B')
- */
+#[Sql('DROP TABLE IF EXISTS exec_query')]
+#[Sql('CREATE TABLE exec_query (id INTEGER PRIMARY KEY, name VARCHAR(50))')]
+#[Sql('INSERT INTO exec_query VALUES (1, \'A\'), (2, \'B\')')]
+#[Requires('Tarantool', '>=2')]
 final class ExecuteTest extends TestCase
 {
-    /**
-     * @sql DROP TABLE IF EXISTS exec_update
-     * @sql CREATE TABLE exec_update (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(50))
-     */
+    #[Sql('DROP TABLE IF EXISTS exec_update')]
+    #[Sql('CREATE TABLE exec_update (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(50))')]
     public function testExecuteInsertsRows() : void
     {
         $response = $this->client->execute(
@@ -52,10 +49,8 @@ final class ExecuteTest extends TestCase
         self::assertSame([[1, 'A'], [2, 'B']], $response->getBodyField(Keys::DATA));
     }
 
-    /**
-     * @sql DROP TABLE IF EXISTS exec_update
-     * @sql CREATE TABLE exec_update (id INTEGER PRIMARY KEY, name VARCHAR(50))
-     */
+    #[Sql('DROP TABLE IF EXISTS exec_update')]
+    #[Sql('CREATE TABLE exec_update (id INTEGER PRIMARY KEY, name VARCHAR(50))')]
     public function testExecuteUpdateInsertsRows() : void
     {
         $result = $this->client->executeUpdate(
@@ -67,10 +62,8 @@ final class ExecuteTest extends TestCase
         self::assertSame(2, $result->count());
     }
 
-    /**
-     * @sql DROP TABLE IF EXISTS exec_update
-     * @sql CREATE TABLE exec_update (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(50))
-     */
+    #[Sql('DROP TABLE IF EXISTS exec_update')]
+    #[Sql('CREATE TABLE exec_update (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(50))')]
     public function testExecuteUpdateInsertsRowsWithAutoIncrementedIds() : void
     {
         $result = $this->client->executeUpdate("INSERT INTO exec_update VALUES (100, 'A'), (null, 'B'), (120, 'C'), (null, 'D')");
@@ -79,11 +72,9 @@ final class ExecuteTest extends TestCase
         self::assertSame(4, $result->count());
     }
 
-    /**
-     * @sql DROP TABLE IF EXISTS exec_update
-     * @sql CREATE TABLE exec_update (id INTEGER PRIMARY KEY, name VARCHAR(50))
-     * @sql INSERT INTO exec_update VALUES (1, 'A'), (2, 'B')
-     */
+    #[Sql('DROP TABLE IF EXISTS exec_update')]
+    #[Sql('CREATE TABLE exec_update (id INTEGER PRIMARY KEY, name VARCHAR(50))')]
+    #[Sql('INSERT INTO exec_update VALUES (1, \'A\'), (2, \'B\')')]
     public function testExecuteUpdateUpdatesRow() : void
     {
         $result = $this->client->executeUpdate('UPDATE exec_update SET name = ? WHERE id = ?', 'BB', 2);
@@ -151,11 +142,9 @@ final class ExecuteTest extends TestCase
         self::assertSame(1, $result->count());
     }
 
-    /**
-     * @sql DROP TABLE IF EXISTS %target_method%
-     * @sql CREATE TABLE %target_method% (ID INTEGER PRIMARY KEY, NAME VARCHAR(50))
-     * @sql INSERT INTO %target_method% VALUES (1, 'A'), (2, 'B')
-     */
+    #[Sql('DROP TABLE IF EXISTS %target_method%')]
+    #[Sql('CREATE TABLE %target_method% (ID INTEGER PRIMARY KEY, NAME VARCHAR(50))')]
+    #[Sql('INSERT INTO %target_method% VALUES (1, \'A\'), (2, \'B\')')]
     public function testSqlQueryResultHoldsMetadata() : void
     {
         $client = ClientBuilder::createFromEnv()->build();
@@ -172,12 +161,9 @@ final class ExecuteTest extends TestCase
         ]], $response->getMetadata());
     }
 
-    /**
-     * @requires Tarantool >=2.6
-     *
-     * @sql DROP TABLE IF EXISTS %target_method%
-     * @sql CREATE TABLE %target_method% (ID INTEGER PRIMARY KEY AUTOINCREMENT, NAME VARCHAR(50) COLLATE "unicode_ci")
-     */
+    #[Sql('DROP TABLE IF EXISTS %target_method%')]
+    #[Sql('CREATE TABLE %target_method% (ID INTEGER PRIMARY KEY AUTOINCREMENT, NAME VARCHAR(50) COLLATE "unicode_ci")')]
+    #[Requires('Tarantool', '>=2.6')]
     public function testSqlQueryResultHoldsExtendedMetadata() : void
     {
         $client = ClientBuilder::createFromEnv()->build();

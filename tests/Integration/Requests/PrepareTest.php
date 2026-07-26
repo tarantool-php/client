@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\Requests;
 
+use PHPUnitExtras\Annotation\Attribute\Requires;
 use Tarantool\Client\Exception\RequestFailed;
 use Tarantool\Client\PreparedStatement;
 use Tarantool\Client\Tests\Integration\TestCase;
+use Tarantool\PhpUnit\Annotation\Attribute\Sql;
 
-/**
- * @requires Tarantool >=2.3.2
- */
+#[Requires('Tarantool', '>=2.3.2')]
 final class PrepareTest extends TestCase
 {
     public function testPreparePreparesSqlStatement() : void
@@ -62,10 +62,8 @@ final class PrepareTest extends TestCase
         }
     }
 
-    /**
-     * @sql DROP TABLE IF EXISTS prepare_execute
-     * @sql CREATE TABLE prepare_execute (id INTEGER PRIMARY KEY, name VARCHAR(50))
-     */
+    #[Sql('DROP TABLE IF EXISTS prepare_execute')]
+    #[Sql('CREATE TABLE prepare_execute (id INTEGER PRIMARY KEY, name VARCHAR(50))')]
     public function testExecuteUpdateUpdatesRows() : void
     {
         $stmt = $this->client->prepare('INSERT INTO prepare_execute VALUES(:id, :name)');

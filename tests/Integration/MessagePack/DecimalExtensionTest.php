@@ -14,23 +14,23 @@ declare(strict_types=1);
 namespace Tarantool\Client\Tests\Integration\MessagePack;
 
 use Decimal\Decimal;
+use PHPUnit\Framework\Attributes\RequiresPhpExtension;
+use PHPUnitExtras\Annotation\Attribute\Requires;
 use Tarantool\Client\Client;
 use Tarantool\Client\Packer\Extension\DecimalExtension;
 use Tarantool\Client\Packer\PurePacker;
 use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\TestCase;
+use Tarantool\PhpUnit\Annotation\Attribute\Lua;
 
-/**
- * @requires Tarantool >=2.3
- * @requires extension decimal
- *
- * @lua dec = require('decimal').new('18446744073709551615')
- * @lua space = create_space('decimal_primary')
- * @lua space:format({{name = 'id', type = 'decimal'}})
- * @lua space:create_index("primary", {parts = {1, 'decimal'}})
- * @lua space:insert({dec})
- */
+#[Lua('dec = require(\'decimal\').new(\'18446744073709551615\')')]
+#[Lua('space = create_space(\'decimal_primary\')')]
+#[Lua('space:format({{name = \'id\', type = \'decimal\'}})')]
+#[Lua('space:create_index("primary", {parts = {1, \'decimal\'}})')]
+#[Lua('space:insert({dec})')]
+#[Requires('Tarantool', '>=2.3')]
+#[RequiresPhpExtension('decimal')]
 final class DecimalExtensionTest extends TestCase
 {
     public const DECIMAL_BIG_INT = '18446744073709551615';
@@ -48,9 +48,7 @@ final class DecimalExtensionTest extends TestCase
         self::assertTrue($decimal->equals($result[0][0]));
     }
 
-    /**
-     * @requires Tarantool >=2.10-stable
-     */
+    #[Requires('Tarantool', '>=2.10-stable')]
     public function testSqlSelectByDecimalKeySucceeds() : void
     {
         $client = self::createClientWithDecimalSupport();

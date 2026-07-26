@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\MessagePack;
 
+use PHPUnitExtras\Annotation\Attribute\Requires;
 use Symfony\Component\Uid\Uuid;
 use Tarantool\Client\Client;
 use Tarantool\Client\Packer\Extension\UuidExtension;
@@ -20,16 +21,14 @@ use Tarantool\Client\Packer\PurePacker;
 use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\TestCase;
+use Tarantool\PhpUnit\Annotation\Attribute\Lua;
 
-/**
- * @requires Tarantool >=2.4
- *
- * @lua uuid = require('uuid').fromstr('64d22e4d-ac92-4a23-899a-e59f34af5479')
- * @lua space = create_space('uuid_primary')
- * @lua space:format({{name = 'id', type = 'uuid'}})
- * @lua space:create_index("primary", {parts = {1, 'uuid'}})
- * @lua space:insert({uuid})
- */
+#[Lua('uuid = require(\'uuid\').fromstr(\'64d22e4d-ac92-4a23-899a-e59f34af5479\')')]
+#[Lua('space = create_space(\'uuid_primary\')')]
+#[Lua('space:format({{name = \'id\', type = \'uuid\'}})')]
+#[Lua('space:create_index("primary", {parts = {1, \'uuid\'}})')]
+#[Lua('space:insert({uuid})')]
+#[Requires('Tarantool', '>=2.4')]
 final class UuidExtensionTest extends TestCase
 {
     private const UUID_RFC4122 = '64d22e4d-ac92-4a23-899a-e59f34af5479';
@@ -46,9 +45,7 @@ final class UuidExtensionTest extends TestCase
         self::assertTrue($uuid->equals($result[0][0]));
     }
 
-    /**
-     * @requires Tarantool >=2.10-stable
-     */
+    #[Requires('Tarantool', '>=2.10-stable')]
     public function testSqlSelectByUuidKeySucceeds() : void
     {
         $client = self::createClientWithUuidSupport();
