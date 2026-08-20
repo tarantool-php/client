@@ -13,23 +13,25 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\MessagePack;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\DataProviderExternal;
+use PHPUnitExtras\Annotation\Attribute\Requires;
 use Tarantool\Client\Packer\PurePacker;
 use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\TestCase;
+use Tarantool\Client\Tests\PackerDataProvider;
 use Tarantool\PhpUnit\Annotation\Attribute\Lua;
 
 final class MessagePackTest extends TestCase
 {
-    /**
-     * @dataProvider providePackUnpackData
-     */
+    #[DataProvider('providePackUnpackData')]
     public function testPackUnpack($arg) : void
     {
         self::assertSame([$arg], $this->client->evaluate('return ...', $arg));
     }
 
-    public function providePackUnpackData() : iterable
+    public static function providePackUnpackData() : iterable
     {
         return [
             [[]],
@@ -84,11 +86,8 @@ final class MessagePackTest extends TestCase
         self::assertEquals($date, $space->select(Criteria::key([100]))[0][1]);
     }
 
-    /**
-     * @requires condition env.EXT_DISABLE_DECIMAL
-     *
-     * @dataProvider \Tarantool\Client\Tests\PackerDataProvider::providePurePackerWithDefaultSettings()
-     */
+    #[Requires('luaCondition', 'os.getenv("EXT_DISABLE_DECIMAL")')]
+    #[DataProviderExternal(PackerDataProvider::class, 'providePurePackerWithDefaultSettings')]
     public function testPurePackerUnpacksBigIntToString(PurePacker $packer) : void
     {
         $client = ClientBuilder::createFromEnv()

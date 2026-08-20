@@ -51,9 +51,7 @@ final class ClientMiddlewareTest extends TestCase
         self::assertSame([1, 1, 1], $middleware->getTraceLogArray());
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
+    #[\PHPUnit\Framework\Attributes\DoesNotPerformAssertions]
     #[Lua('fiber = require(\'fiber\')')]
     #[Lua('function test() try_drop_user(\'foobar\') fiber.sleep(.5) create_user(\'foobar\', \'\') end')]
     #[Lua('fiber.create(test)')]
@@ -115,9 +113,7 @@ final class ClientMiddlewareTest extends TestCase
         $client->ping();
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
+    #[\PHPUnit\Framework\Attributes\DoesNotPerformAssertions]
     public function testReconnectOnBrokenConnection() : void
     {
         $clientBuilder = ClientBuilder::createFromEnv();

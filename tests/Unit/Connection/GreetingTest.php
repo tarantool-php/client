@@ -19,17 +19,13 @@ use Tarantool\Client\Tests\GreetingDataProvider;
 
 final class GreetingTest extends TestCase
 {
-    /**
-     * @dataProvider \Tarantool\Client\Tests\GreetingDataProvider::provideValidGreetings
-     */
+    #[\PHPUnit\Framework\Attributes\DataProviderExternal(GreetingDataProvider::class, 'provideValidGreetings')]
     public function testGetSalt(string $greeting, string $salt) : void
     {
         self::assertSame($salt, Greeting::parse($greeting)->getSalt());
     }
 
-    /**
-     * @dataProvider provideServerVersionData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideServerVersionData')]
     public function testGetServerVersion(string $greeting, string $expectedVersion) : void
     {
         $greeting = Greeting::parse($greeting);
@@ -37,7 +33,7 @@ final class GreetingTest extends TestCase
         self::assertSame($expectedVersion, $greeting->getServerVersion());
     }
 
-    public function provideServerVersionData() : iterable
+    public static function provideServerVersionData() : iterable
     {
         return [
             [GreetingDataProvider::generateGreeting('foobar'), ''],

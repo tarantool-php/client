@@ -168,9 +168,7 @@ final class FirewallMiddlewareTest extends TestCase
         $middleware->process(new CallRequest('foo'), $this->handler);
     }
 
-    /**
-     * @dataProvider provideBlacklistPriorityData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideBlacklistPriorityData')]
     public function testDenyHasPriority(Middleware $middleware) : void
     {
         $this->expectException(RequestDenied::class);
@@ -179,7 +177,7 @@ final class FirewallMiddlewareTest extends TestCase
         $middleware->process(new PingRequest(), $this->handler);
     }
 
-    public function provideBlacklistPriorityData() : iterable
+    public static function provideBlacklistPriorityData() : iterable
     {
         yield [FirewallMiddleware::allow(RequestTypes::PING)->andDeny(RequestTypes::PING)];
         yield [FirewallMiddleware::deny(RequestTypes::PING)->andAllow(RequestTypes::PING)];

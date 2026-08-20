@@ -19,9 +19,7 @@ use Tarantool\PhpUnit\Annotation\Attribute\Lua;
 
 final class InsertTest extends TestCase
 {
-    /**
-     * @dataProvider provideInsertData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideInsertData')]
     #[Lua('create_space(\'request_insert_str\'):create_index(\'primary\', {type = \'hash\', parts = {1, \'str\'}})')]
     #[Lua('create_space(\'request_insert_num\'):create_index(\'primary\', {type = \'hash\', parts = {1, \'unsigned\'}})')]
     public function testInsert(string $spaceName, array $values) : void
@@ -32,7 +30,7 @@ final class InsertTest extends TestCase
         self::assertSame([$values], $result);
     }
 
-    public function provideInsertData() : iterable
+    public static function provideInsertData() : iterable
     {
         return [
             ['request_insert_str', ['']],
@@ -45,9 +43,7 @@ final class InsertTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideInsertDataWithMismatchedTypes
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideInsertDataWithMismatchedTypes')]
     #[Lua('create_space(\'request_insert_str\'):create_index(\'primary\', {type = \'hash\', parts = {1, \'str\'}})')]
     #[Lua('create_space(\'request_insert_num\'):create_index(\'primary\', {type = \'hash\', parts = {1, \'unsigned\'}})')]
     public function testInsertTypeMismatchedValues(string $spaceName, array $values) : void
@@ -60,7 +56,7 @@ final class InsertTest extends TestCase
         $space->insert($values);
     }
 
-    public function provideInsertDataWithMismatchedTypes() : iterable
+    public static function provideInsertDataWithMismatchedTypes() : iterable
     {
         return [
             ['request_insert_str', [null]],

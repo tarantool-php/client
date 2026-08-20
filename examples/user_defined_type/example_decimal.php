@@ -31,7 +31,7 @@ LUA, $spaceName);
 
 $space = $client->getSpace($spaceName);
 
-$result1 = $space->insert([3, new Decimal('1.000000099')]);
+$result1 = $space->insert([3, Decimal::valueOf('1.000000099')]);
 $result2 = $space->select(Criteria::key([3]));
 
 printf("Result 1: %s\n", $result1[0][1]->toString());

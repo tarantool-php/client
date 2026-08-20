@@ -26,18 +26,16 @@ use Tarantool\PhpUnit\Annotation\Attribute\Lua;
 #[Lua('space:replace{2, 4, \'tuple_2\'}')]
 final class UpdateTest extends TestCase
 {
-    /**
-     * @dataProvider provideUpdateData
-     */
-    public function testUpdate(Operations $operations, array $expectedResult) : void
+    public function testUpdate() : void
     {
         $space = $this->client->getSpace('request_update');
-        $result = $space->update([1], $operations);
 
-        self::assertSame($expectedResult, $result);
+        foreach (self::provideUpdateData() as [$operations, $expectedResult]) {
+            self::assertSame($expectedResult, $space->update([1], $operations));
+        }
     }
 
-    public function provideUpdateData() : iterable
+    public static function provideUpdateData() : iterable
     {
         return [
             [

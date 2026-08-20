@@ -75,6 +75,9 @@ final class DecimalExtension implements Extension
 
         $sign = 'd' === $data[-1] ? '-' : '';
         $dec = substr($data, 0, -1);
+        if (\strlen($dec) > 1 && 1 === \strlen($dec) % 2 && '0' === $dec[0]) {
+            $dec = substr($dec, 1);
+        }
 
         if (0 !== $scale) {
             $length = \strlen($dec);
@@ -83,6 +86,6 @@ final class DecimalExtension implements Extension
                 : substr_replace($dec, '.', -$scale, 0);
         }
 
-        return new Decimal($sign.$dec, self::PRECISION);
+        return Decimal::valueOf($sign.$dec, self::PRECISION);
     }
 }

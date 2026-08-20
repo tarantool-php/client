@@ -15,9 +15,7 @@ namespace Tarantool\Client\Tests\Integration;
 
 final class ExamplesTest extends TestCase
 {
-    /**
-     * @dataProvider provideExampleData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideExampleData')]
     public function testExample(string $filename) : void
     {
         $uri = ClientBuilder::createFromEnv()->getUri();
@@ -37,7 +35,7 @@ final class ExamplesTest extends TestCase
         }
     }
 
-    public function provideExampleData() : iterable
+    public static function provideExampleData() : iterable
     {
         $dir = dirname(__DIR__, 2).'/examples';
         foreach (glob("$dir/{**/*,*}.php", GLOB_BRACE) as $filename) {

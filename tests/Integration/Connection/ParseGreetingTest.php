@@ -21,9 +21,7 @@ use Tarantool\Client\Tests\Integration\TestCase;
 
 final class ParseGreetingTest extends TestCase
 {
-    /**
-     * @dataProvider \Tarantool\Client\Tests\GreetingDataProvider::provideGreetingsWithInvalidServerName
-     */
+    #[\PHPUnit\Framework\Attributes\DataProviderExternal(\Tarantool\Client\Tests\GreetingDataProvider::class, 'provideGreetingsWithInvalidServerName')]
     public function testParseGreetingWithInvalidServerName(string $greeting) : void
     {
         $clientBuilder = ClientBuilder::createForFakeServer();
@@ -52,9 +50,7 @@ final class ParseGreetingTest extends TestCase
         self::fail();
     }
 
-    /**
-     * @dataProvider \Tarantool\Client\Tests\GreetingDataProvider::provideGreetingsWithInvalidSalt
-     */
+    #[\PHPUnit\Framework\Attributes\DataProviderExternal(\Tarantool\Client\Tests\GreetingDataProvider::class, 'provideGreetingsWithInvalidSalt')]
     public function testParseGreetingWithInvalidSalt(string $greeting) : void
     {
         $clientBuilder = ClientBuilder::createForFakeServer();

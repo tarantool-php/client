@@ -27,9 +27,7 @@ abstract class TestCase extends BaseTestCase
     /** @var Client|null */
     protected $client;
 
-    /**
-     * @before
-     */
+    #[\PHPUnit\Framework\Attributes\Before]
     protected function getClient() : Client
     {
         return $this->client
@@ -59,7 +57,6 @@ abstract class TestCase extends BaseTestCase
     final public static function getRawStream(StreamConnection $connection)
     {
         $prop = (new \ReflectionObject($connection))->getProperty('stream');
-        $prop->setAccessible(true);
 
         return $prop->getValue($connection);
     }

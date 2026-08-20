@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace Tarantool\Client\Tests\Integration\MessagePack;
 
 use Decimal\Decimal;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\DataProviderExternal;
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use PHPUnitExtras\Annotation\Attribute\Requires;
 use Tarantool\Client\Client;
@@ -22,6 +24,7 @@ use Tarantool\Client\Packer\PurePacker;
 use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\TestCase;
+use Tarantool\Client\Tests\PackerDataProvider;
 use Tarantool\PhpUnit\Annotation\Attribute\Lua;
 
 #[Lua('dec = require(\'decimal\').new(\'18446744073709551615\')')]
@@ -40,12 +43,12 @@ final class DecimalExtensionTest extends TestCase
     {
         $client = self::createClientWithDecimalSupport();
 
-        $decimal = new Decimal(self::DECIMAL_BIG_INT, self::TARANTOOL_DECIMAL_PRECISION);
+        $decimal = Decimal::valueOf(self::DECIMAL_BIG_INT, self::TARANTOOL_DECIMAL_PRECISION);
         $space = $client->getSpace('decimal_primary');
         $result = $space->select(Criteria::key([$decimal]));
 
         self::assertTrue(isset($result[0][0]));
-        self::assertTrue($decimal->equals($result[0][0]));
+        self::assertEquals($decimal, $result[0][0]);
     }
 
     #[Requires('Tarantool', '>=2.10-stable')]
@@ -53,31 +56,32 @@ final class DecimalExtensionTest extends TestCase
     {
         $client = self::createClientWithDecimalSupport();
 
-        $decimal = new Decimal(self::DECIMAL_BIG_INT, self::TARANTOOL_DECIMAL_PRECISION);
+        $decimal = Decimal::valueOf(self::DECIMAL_BIG_INT, self::TARANTOOL_DECIMAL_PRECISION);
         $result = $client->executeQuery('SELECT * FROM "decimal_primary" WHERE "id" = ?', $decimal);
 
         self::assertFalse($result->isEmpty());
-        self::assertTrue($decimal->equals($result->getFirst()['id']));
+        self::assertEquals($decimal, $result->getFirst()['id']);
     }
 
-    /**
-     * @dataProvider provideDecimalStrings
-     */
+    #[DataProvider('provideDecimalStrings')]
     public function testLuaPackingAndUnpacking(string $decimalString) : void
     {
         $client = self::createClientWithDecimalSupport();
 
         [$decimal] = $client->evaluate('return require("decimal").new(...)', $decimalString);
-        self::assertTrue($decimal->equals($decimalString));
+        self::assertSame(
+            self::normalizeDecimalString($decimalString),
+            $decimal->toFixed(self::TARANTOOL_DECIMAL_PRECISION)
+        );
 
         [$isEqual] = $client->evaluate(
             sprintf("return require('decimal').new('%s') == ...", $decimalString),
-            new Decimal($decimalString, self::TARANTOOL_DECIMAL_PRECISION)
+            Decimal::valueOf($decimalString, self::TARANTOOL_DECIMAL_PRECISION)
         );
         self::assertTrue($isEqual);
     }
 
-    public function provideDecimalStrings() : iterable
+    public static function provideDecimalStrings() : iterable
     {
         return [
             ['0'],
@@ -107,12 +111,10 @@ final class DecimalExtensionTest extends TestCase
         [$number] = $client->evaluate('return 18446744073709551615ULL');
 
         self::assertInstanceOf(Decimal::class, $number);
-        self::assertTrue((new Decimal('18446744073709551615'))->equals($number));
+        self::assertEquals(Decimal::valueOf('18446744073709551615'), $number);
     }
 
-    /**
-     * @dataProvider \Tarantool\Client\Tests\PackerDataProvider::providePurePackerWithDefaultSettings()
-     */
+    #[DataProviderExternal(PackerDataProvider::class, 'providePurePackerWithDefaultSettings')]
     public function testPurePackerUnpacksBigIntToDecimal(PurePacker $packer) : void
     {
         $client = ClientBuilder::createFromEnv()
@@ -122,7 +124,7 @@ final class DecimalExtensionTest extends TestCase
         [$number] = $client->evaluate(sprintf('return %sULL', self::DECIMAL_BIG_INT));
 
         self::assertInstanceOf(Decimal::class, $number);
-        self::assertTrue((new Decimal(self::DECIMAL_BIG_INT))->equals($number));
+        self::assertEquals(Decimal::valueOf(self::DECIMAL_BIG_INT), $number);
     }
 
     private static function createClientWithDecimalSupport() : Client
@@ -132,5 +134,10 @@ final class DecimalExtensionTest extends TestCase
                 return PurePacker::fromExtensions(new DecimalExtension());
             })
             ->build();
+    }
+
+    private static function normalizeDecimalString(string $decimal) : string
+    {
+        return Decimal::valueOf($decimal, self::TARANTOOL_DECIMAL_PRECISION)->toFixed(self::TARANTOOL_DECIMAL_PRECISION);
     }
 }

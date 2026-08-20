@@ -38,7 +38,7 @@ final class OptionsProvider
         ];
     }
 
-    public function provideTcpExtraConnectionArrayOptionsOfValidTypes() : array
+    public static function provideTcpExtraConnectionArrayOptionsOfValidTypes() : array
     {
         return [
             ['tcp_nodelay', false],

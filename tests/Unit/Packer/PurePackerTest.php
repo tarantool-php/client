@@ -30,9 +30,7 @@ final class PurePackerTest extends TestCase
         $this->packer = new PurePacker();
     }
 
-    /**
-     * @dataProvider provideBadUnpackData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideBadUnpackData')]
     public function testThrowExceptionOnBadUnpackData(string $data) : void
     {
         $this->expectException(UnpackingFailedException::class);
@@ -40,7 +38,7 @@ final class PurePackerTest extends TestCase
         $this->packer->unpack($data)->tryGetBodyField(Keys::DATA);
     }
 
-    public function provideBadUnpackData() : iterable
+    public static function provideBadUnpackData() : iterable
     {
         return [
             [''],

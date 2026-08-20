@@ -20,10 +20,8 @@ use Tarantool\PhpUnit\Annotation\Attribute\Lua;
 
 final class AuthenticateTest extends TestCase
 {
-    /**
-     * @doesNotPerformAssertions
-     * @dataProvider provideValidCredentials
-     */
+    #[\PHPUnit\Framework\Attributes\DoesNotPerformAssertions]
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideValidCredentials')]
     #[Lua('create_user(\'user_foo\', \'foo\')')]
     #[Lua('create_user(\'user_empty\', \'\')')]
     #[Lua('create_user(\'user_big\', \'123456789012345678901234567890123456789012345678901234567890\')')]
@@ -37,7 +35,7 @@ final class AuthenticateTest extends TestCase
         $client->ping();
     }
 
-    public function provideValidCredentials() : iterable
+    public static function provideValidCredentials() : iterable
     {
         return [
             ['guest', ''],
@@ -47,9 +45,7 @@ final class AuthenticateTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideInvalidCredentials
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidCredentials')]
     public function testAuthenticateWithInvalidCredentials(string $errorMessagePattern, $username, $password) : void
     {
         $client = ClientBuilder::createFromEnv()->setOptions([
@@ -65,7 +61,7 @@ final class AuthenticateTest extends TestCase
         }
     }
 
-    public function provideInvalidCredentials() : iterable
+    public static function provideInvalidCredentials() : iterable
     {
         return [
             ["/(User 'non_existing_user' is not found|User not found or supplied credentials are invalid)/", 'non_existing_user', 'password'],

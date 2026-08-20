@@ -17,9 +17,7 @@ use Tarantool\Client\Tests\Integration\TestCase;
 
 final class PingTest extends TestCase
 {
-    /**
-     * @doesNotPerformAssertions
-     */
+    #[\PHPUnit\Framework\Attributes\DoesNotPerformAssertions]
     public function testPing() : void
     {
         $this->client->ping();

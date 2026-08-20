@@ -20,9 +20,7 @@ use Tarantool\PhpUnit\Annotation\Attribute\Lua;
 
 final class SelectTest extends TestCase
 {
-    /**
-     * @dataProvider provideSelectData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideSelectData')]
     #[Lua('space = create_space(\'request_select\')')]
     #[Lua('space:create_index(\'primary\', {type = \'tree\', unique = true, parts = {1, \'unsigned\'}})')]
     #[Lua('space:create_index(\'secondary\', {type = \'tree\', unique = false, parts = {2, \'unsigned\', 3, \'str\'}})')]
@@ -35,7 +33,7 @@ final class SelectTest extends TestCase
         self::assertCount($expectedCount, $result);
     }
 
-    public function provideSelectData() : iterable
+    public static function provideSelectData() : iterable
     {
         return [
             [100, Criteria::key([])],

@@ -17,9 +17,7 @@ use Tarantool\Client\Request\PingRequest;
 
 final class PacketSyncTest extends TestCase
 {
-    /**
-     * @dataProvider provideValidSync
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideValidSync')]
     public function testSameSync(int $sync) : void
     {
         $handler = $this->client->getHandler();
@@ -35,7 +33,7 @@ final class PacketSyncTest extends TestCase
         self::assertSame($sync, $response->getSync());
     }
 
-    public function provideValidSync() : iterable
+    public static function provideValidSync() : iterable
     {
         return [
             [0],
