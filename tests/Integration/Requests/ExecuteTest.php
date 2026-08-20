@@ -19,10 +19,10 @@ use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\TestCase;
 use Tarantool\PhpUnit\Annotation\Attribute\Sql;
 
+#[Requires('Tarantool', '>=2')]
 #[Sql('DROP TABLE IF EXISTS exec_query')]
 #[Sql('CREATE TABLE exec_query (id INTEGER PRIMARY KEY, name VARCHAR(50))')]
 #[Sql('INSERT INTO exec_query VALUES (1, \'A\'), (2, \'B\')')]
-#[Requires('Tarantool', '>=2')]
 final class ExecuteTest extends TestCase
 {
     #[Sql('DROP TABLE IF EXISTS exec_update')]
@@ -161,9 +161,9 @@ final class ExecuteTest extends TestCase
         ]], $response->getMetadata());
     }
 
+    #[Requires('Tarantool', '>=2.6')]
     #[Sql('DROP TABLE IF EXISTS %target_method%')]
     #[Sql('CREATE TABLE %target_method% (ID INTEGER PRIMARY KEY AUTOINCREMENT, NAME VARCHAR(50) COLLATE "unicode_ci")')]
-    #[Requires('Tarantool', '>=2.6')]
     public function testSqlQueryResultHoldsExtendedMetadata() : void
     {
         $client = ClientBuilder::createFromEnv()->build();

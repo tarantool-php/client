@@ -27,13 +27,13 @@ use Tarantool\Client\Tests\Integration\TestCase;
 use Tarantool\Client\Tests\PackerDataProvider;
 use Tarantool\PhpUnit\Annotation\Attribute\Lua;
 
+#[Requires('Tarantool', '>=2.3')]
+#[RequiresPhpExtension('decimal')]
 #[Lua('dec = require(\'decimal\').new(\'18446744073709551615\')')]
 #[Lua('space = create_space(\'decimal_primary\')')]
 #[Lua('space:format({{name = \'id\', type = \'decimal\'}})')]
 #[Lua('space:create_index("primary", {parts = {1, \'decimal\'}})')]
 #[Lua('space:insert({dec})')]
-#[Requires('Tarantool', '>=2.3')]
-#[RequiresPhpExtension('decimal')]
 final class DecimalExtensionTest extends TestCase
 {
     public const DECIMAL_BIG_INT = '18446744073709551615';

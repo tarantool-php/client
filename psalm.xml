@@ -12,6 +12,7 @@
 
     <issueHandlers>
         <LessSpecificReturnType errorLevel="info" />
+        <MissingTemplateParam errorLevel="info" />
 
         <!-- level 3 issues - slightly lazy code writing, but provably low false-negatives -->
 
@@ -32,10 +33,30 @@
         <MissingPropertyType errorLevel="info" />
         <InvalidDocblock errorLevel="info" />
 
+        <InvalidOperand errorLevel="info" />
+        <PossiblyFalseArgument errorLevel="info" />
+        <PossiblyFalseOperand errorLevel="info" />
+        <PossiblyInvalidArgument errorLevel="info" />
+        <PossiblyInvalidArrayAccess errorLevel="info" />
+        <PossiblyInvalidArrayOffset errorLevel="info" />
+        <PossiblyInvalidCast errorLevel="info" />
+        <PossiblyInvalidOperand errorLevel="info" />
+        <PossiblyNullArgument errorLevel="info" />
+        <PossiblyNullArrayAccess errorLevel="info" />
+        <PossiblyNullReference errorLevel="info" />
+        <PossiblyUndefinedArrayOffset errorLevel="info" />
+        <RiskyTruthyFalsyComparison errorLevel="info" />
+        <UndefinedMethod errorLevel="info" />
+
         <PropertyNotSetInConstructor errorLevel="info" />
         <MissingConstructor errorLevel="info" />
         <MissingClosureParamType errorLevel="info" />
         <MissingParamType errorLevel="info" />
+        <PossiblyUnusedMethod errorLevel="info" />
+        <PossiblyUnusedReturnValue errorLevel="info" />
+        <UnusedClass errorLevel="info" />
+        <UnusedConstructor errorLevel="info" />
+        <UnusedVariable errorLevel="info" />
 
         <RedundantCondition errorLevel="info" />
 

@@ -23,12 +23,12 @@ use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\TestCase;
 use Tarantool\PhpUnit\Annotation\Attribute\Lua;
 
+#[Requires('Tarantool', '>=2.4')]
 #[Lua('uuid = require(\'uuid\').fromstr(\'64d22e4d-ac92-4a23-899a-e59f34af5479\')')]
 #[Lua('space = create_space(\'uuid_primary\')')]
 #[Lua('space:format({{name = \'id\', type = \'uuid\'}})')]
 #[Lua('space:create_index("primary", {parts = {1, \'uuid\'}})')]
 #[Lua('space:insert({uuid})')]
-#[Requires('Tarantool', '>=2.4')]
 final class UuidExtensionTest extends TestCase
 {
     private const UUID_RFC4122 = '64d22e4d-ac92-4a23-899a-e59f34af5479';
