@@ -13,7 +13,6 @@ jobs:
     permissions:
       actions: read
       contents: read
-      statuses: write
     env:
       TNT_IMAGE: tarantool/tarantool:3.1
       PHP_IMAGE: php:8.3-cli
@@ -86,14 +85,36 @@ jobs:
           docker run --net=tarantool-php --rm -v $PWD:/client -w /client client php vendor/bin/php-cs-fixer fix --dry-run --diff --verbose .
           docker run --net=tarantool-php --rm -v $PWD:/client -w /client client php vendor/bin/psalm
 
-      - name: Add code coverage report to workflow summary
+      - name: Upload code coverage report
         env: ${{ matrix.env }}
         if: ${{ env.COVERAGE_FILE }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ strategy.job-index }}
+          path: ${{ env.COVERAGE_FILE }}
+
+  coverage:
+    needs: tests
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+      contents: read
+      statuses: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Download coverage reports
+        uses: actions/download-artifact@v4
+        with:
+          pattern: coverage-*
+          path: coverage-reports
+
+      - name: Add combined code coverage report to workflow summary
         uses: getsentry/coverage-action@0.3.8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          files: ${{ env.COVERAGE_FILE }}
+          directory: coverage-reports
           coverage-format: cobertura
-          disable-search: true
           enable-tests: false
-          name: coverage-${{ strategy.job-index }}
+          name: full-test-matrix
