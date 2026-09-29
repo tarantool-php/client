@@ -28,10 +28,10 @@ final class ClientBuilder
     private const DEFAULT_TCP_HOST = '127.0.0.1';
     private const DEFAULT_TCP_PORT = 3301;
 
-    private $packerFactory;
-    private $uri;
-    private $options = [];
-    private $connectionOptions = [];
+    private ?\Closure $packerFactory = null;
+    private ?string $uri = null;
+    private array $options = [];
+    private array $connectionOptions = [];
 
     public function setPackerFactory(\Closure $factory) : self
     {

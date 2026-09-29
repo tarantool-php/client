@@ -25,8 +25,7 @@ use Tarantool\PhpUnit\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
-    /** @var Client|null */
-    protected $client;
+    protected ?Client $client = null;
 
     #[Before]
     protected function getClient() : Client

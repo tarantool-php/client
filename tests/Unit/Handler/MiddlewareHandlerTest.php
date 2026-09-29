@@ -24,15 +24,9 @@ final class MiddlewareHandlerTest extends TestCase
 {
     use TestDoubleClient;
 
-    /**
-     * @var Request
-     */
-    private $request;
+    private Request $request;
 
-    /**
-     * @var Handler
-     */
-    private $handler;
+    private Handler $handler;
 
     protected function setUp() : void
     {

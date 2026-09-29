@@ -23,8 +23,7 @@ use Tarantool\Client\RequestTypes;
 
 final class PurePackerTest extends TestCase
 {
-    /** @var Packer */
-    private $packer;
+    private Packer $packer;
 
     protected function setUp() : void
     {

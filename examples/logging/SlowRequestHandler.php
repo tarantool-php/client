@@ -26,9 +26,8 @@ final class SlowRequestHandler extends HandlerWrapper
     public function __construct(
         HandlerInterface $handler,
         private readonly int $thresholdMs,
-        Level|int $level = Level::Warning
-    )
-    {
+        Level|int $level = Level::Warning,
+    ) {
         parent::__construct($handler);
 
         $this->level = $level instanceof Level ? $level : Level::from($level);
