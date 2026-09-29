@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        operating-system: [ubuntu-latest]
+        operating-system: [ubuntu-24.04]
         env:
           - TNT_IMAGE: tarantool/tarantool:3.7
           - TNT_IMAGE: tarantool/tarantool:3.6
