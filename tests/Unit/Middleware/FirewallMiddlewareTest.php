@@ -171,6 +171,8 @@ final class FirewallMiddlewareTest extends TestCase
         $middleware = FirewallMiddleware::deny(RequestTypes::PING)
             ->andDeny(RequestTypes::CALL, RequestTypes::EVALUATE);
 
+        $middleware->process(new SelectRequest(1, 1, [], 0, 1, IteratorTypes::ALL), $this->handler);
+
         $this->expectException(RequestDenied::class);
         $middleware->process(new EvaluateRequest('return 42'), $this->handler);
     }
