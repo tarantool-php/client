@@ -15,29 +15,23 @@ namespace Tarantool\Client\Schema;
 
 final class Criteria
 {
-    /** @var int|string */
-    private $index = 0;
+    private int|string $index = 0;
 
     /** @var array<int, mixed> */
-    private $key = [];
+    private array $key = [];
 
-    /** @var int */
-    private $limit = \PHP_INT_MAX & 0xFFFFFFFF;
+    private int $limit = \PHP_INT_MAX & 0xFFFFFFFF;
 
-    /** @var int */
-    private $offset = 0;
+    private int $offset = 0;
 
     /** @psalm-var IteratorTypes::*|null */
-    private $iteratorType;
+    private ?int $iteratorType = null;
 
     private function __construct()
     {
     }
 
-    /**
-     * @param int|string $index
-     */
-    public static function index($index) : self
+    public static function index(int|string $index) : self
     {
         $self = new self();
         $self->index = $index;
@@ -45,10 +39,7 @@ final class Criteria
         return $self;
     }
 
-    /**
-     * @param int|string $index
-     */
-    public function andIndex($index) : self
+    public function andIndex(int|string $index) : self
     {
         $new = clone $this;
         $new->index = $index;
@@ -56,10 +47,7 @@ final class Criteria
         return $new;
     }
 
-    /**
-     * @return int|string
-     */
-    public function getIndex()
+    public function getIndex() : int|string
     {
         return $this->index;
     }

@@ -21,20 +21,15 @@ use Tarantool\Client\Response;
 
 final class MiddlewareHandler implements Handler
 {
-    /** @var Handler */
-    private $handler;
+    private Handler $handler;
 
     /** @var Middleware[] */
-    private $middleware;
+    private array $middleware;
 
-    /** @var int */
-    private $index = 0;
+    private int $index = 0;
 
-    /**
-     * @param Handler $handler
-     * @param Middleware[] $middleware
-     */
-    private function __construct($handler, $middleware)
+    /** @param Middleware[] $middleware */
+    private function __construct(Handler $handler, array $middleware)
     {
         $this->handler = $handler;
         $this->middleware = $middleware;

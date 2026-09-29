@@ -19,22 +19,15 @@ final class Greeting
 {
     public const SIZE_BYTES = 128;
 
-    /** @var string */
-    private $greeting;
+    private string $greeting;
 
-    /** @var string|null */
-    private $salt;
+    private ?string $salt = null;
 
-    /** @var string|null */
-    private $serverVersion;
+    private ?string $serverVersion = null;
 
-    /** @var bool */
-    private $unknown = false;
+    private bool $unknown = false;
 
-    /**
-     * @param string $greeting
-     */
-    private function __construct($greeting)
+    private function __construct(string $greeting)
     {
         $this->greeting = $greeting;
     }

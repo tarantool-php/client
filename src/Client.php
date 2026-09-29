@@ -33,8 +33,7 @@ use Tarantool\Client\Schema\Space;
 
 final class Client
 {
-    /** @var Handler */
-    private $handler;
+    private Handler $handler;
 
     /** @var array<array-key, Space> */
     private $spaces = [];
