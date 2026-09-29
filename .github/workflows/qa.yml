@@ -49,15 +49,15 @@ jobs:
           - PHP_IMAGE: php:8.2-cli
             QA: 1
 
-          - COVERAGE_FILE: coverage.clover
+          - COVERAGE_FILE: coverage.xml
             PHP_IMAGE: php:8.3-cli
-          - COVERAGE_FILE: coverage.clover
+          - COVERAGE_FILE: coverage.xml
             PHP_IMAGE: php:8.3-cli
             EXT_DISABLE_DECIMAL: true
-          - COVERAGE_FILE: coverage.clover
+          - COVERAGE_FILE: coverage.xml
             PHP_IMAGE: php:8.3-cli
             TNT_LISTEN_URI: /tmp/tarantool_client.sock
-          - COVERAGE_FILE: coverage.clover
+          - COVERAGE_FILE: coverage.xml
             PHP_IMAGE: php:8.3-cli
             # some tests are skipped on Tarantool > 2.8
             TNT_IMAGE: tarantool/tarantool:2.8
@@ -93,7 +93,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           files: ${{ env.COVERAGE_FILE }}
-          coverage-format: clover
+          coverage-format: cobertura
           disable-search: true
           enable-tests: false
           name: coverage-${{ strategy.job-index }}

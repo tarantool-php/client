@@ -51,5 +51,5 @@ ENV PATH=~/.composer/vendor/bin:\$PATH
 ENV TNT_LISTEN_URI=$TNT_LISTEN_URI
 
 CMD if [ ! -f composer.lock ]; then composer install; fi && \\
-    vendor/bin/phpunit ${COVERAGE_FILE:+ --coverage-text --coverage-clover=}$COVERAGE_FILE
+    vendor/bin/phpunit ${COVERAGE_FILE:+ --coverage-text --coverage-cobertura=}$COVERAGE_FILE
 "
