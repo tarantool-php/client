@@ -1,8 +1,6 @@
 # PHP client for Tarantool
 
 [![Quality Assurance](https://github.com/tarantool-php/client/workflows/QA/badge.svg)](https://github.com/tarantool-php/client/actions?query=workflow%3AQA)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/tarantool-php/client/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/tarantool-php/client/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/tarantool-php/client/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/tarantool-php/client/?branch=master)
 [![Telegram](https://img.shields.io/badge/Telegram-join%20chat-blue.svg)](https://t.me/tarantool_php)
 
 A pure PHP client for [Tarantool](https://www.tarantool.io/en/developers/) 1.7.1 and later, including the 2.x and 3.x series.

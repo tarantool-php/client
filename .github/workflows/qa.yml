@@ -10,6 +10,10 @@ on:
 
 jobs:
   tests:
+    permissions:
+      actions: read
+      contents: read
+      statuses: write
     env:
       TNT_IMAGE: tarantool/tarantool:3.1
       PHP_IMAGE: php:8.3-cli
@@ -86,9 +90,14 @@ jobs:
           docker run --net=tarantool-php --rm -v $PWD:/client -w /client client php vendor/bin/php-cs-fixer fix --dry-run --diff --verbose .
           docker run --net=tarantool-php --rm -v $PWD:/client -w /client client php vendor/bin/psalm
 
-      - name: Upload code coverage to Scrutinizer
+      - name: Add code coverage report to workflow summary
         env: ${{ matrix.env }}
         if: ${{ env.COVERAGE_FILE }}
-        run: |
-          curl -sSOL https://scrutinizer-ci.com/ocular.phar
-          docker run --net=tarantool-php --rm -v $PWD:/client -w /client client php ocular.phar code-coverage:upload --format=php-clover "$COVERAGE_FILE"
+        uses: getsentry/coverage-action@0.3.8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          files: ${{ env.COVERAGE_FILE }}
+          coverage-format: clover
+          disable-search: true
+          enable-tests: false
+          name: coverage-${{ strategy.job-index }}
