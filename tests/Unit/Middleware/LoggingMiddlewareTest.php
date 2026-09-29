@@ -15,7 +15,6 @@ namespace Tarantool\Client\Tests\Unit\Middleware;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
-use RuntimeException;
 use Tarantool\Client\Handler\Handler;
 use Tarantool\Client\Middleware\LoggingMiddleware;
 use Tarantool\Client\Request\PingRequest;
@@ -52,7 +51,7 @@ final class LoggingMiddlewareTest extends TestCase
     public function testLogsAndRethrowsHandlerException() : void
     {
         $request = new PingRequest();
-        $exception = new RuntimeException('handler failed');
+        $exception = new \RuntimeException('handler failed');
         $handler = $this->createMock(Handler::class);
         $handler->expects(self::once())->method('handle')->with($request)->willThrowException($exception);
 
@@ -70,7 +69,7 @@ final class LoggingMiddlewareTest extends TestCase
         try {
             (new LoggingMiddleware($logger))->process($request, $handler);
             self::fail('Expected the handler exception to be rethrown');
-        } catch (RuntimeException $actual) {
+        } catch (\RuntimeException $actual) {
             self::assertSame($exception, $actual);
         }
     }
