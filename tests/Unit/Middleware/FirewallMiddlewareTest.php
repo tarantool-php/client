@@ -76,6 +76,18 @@ final class FirewallMiddlewareTest extends TestCase
         $middleware->process(new PingRequest(), $this->handler);
     }
 
+    public function testAndAllowMultipleRequestTypes() : void
+    {
+        $this->handler->expects(self::exactly(2))->method('handle')
+            ->willReturn(TestDoubleFactory::createEmptyResponse());
+
+        $middleware = FirewallMiddleware::deny(RequestTypes::CALL)
+            ->andAllow(RequestTypes::PING, RequestTypes::SELECT);
+
+        $middleware->process(new PingRequest(), $this->handler);
+        $middleware->process(new SelectRequest(1, 1, [], 0, 1, IteratorTypes::ALL), $this->handler);
+    }
+
     public function testAndAllowForbids() : void
     {
         $middleware = FirewallMiddleware::deny(RequestTypes::CALL)->andAllow(RequestTypes::PING);
@@ -94,6 +106,21 @@ final class FirewallMiddlewareTest extends TestCase
         $middleware = FirewallMiddleware::allow(RequestTypes::CALL)->andAllowOnly(RequestTypes::PING);
 
         $middleware->process(new PingRequest(), $this->handler);
+    }
+
+    public function testAndAllowOnlyMultipleRequestTypes() : void
+    {
+        $this->handler->expects(self::exactly(2))->method('handle')
+            ->willReturn(TestDoubleFactory::createEmptyResponse());
+
+        $middleware = FirewallMiddleware::allow(RequestTypes::CALL)
+            ->andAllowOnly(RequestTypes::PING, RequestTypes::SELECT);
+
+        $middleware->process(new PingRequest(), $this->handler);
+        $middleware->process(new SelectRequest(1, 1, [], 0, 1, IteratorTypes::ALL), $this->handler);
+
+        $this->expectException(RequestDenied::class);
+        $middleware->process(new CallRequest('foo'), $this->handler);
     }
 
     public function testAndAllowOnlyForbids() : void
@@ -136,6 +163,18 @@ final class FirewallMiddlewareTest extends TestCase
         $middleware->process(new PingRequest(), $this->handler);
     }
 
+    public function testAndDenyMultipleRequestTypes() : void
+    {
+        $this->handler->expects(self::once())->method('handle')
+            ->willReturn(TestDoubleFactory::createEmptyResponse());
+
+        $middleware = FirewallMiddleware::deny(RequestTypes::PING)
+            ->andDeny(RequestTypes::CALL, RequestTypes::EVALUATE);
+
+        $this->expectException(RequestDenied::class);
+        $middleware->process(new EvaluateRequest('return 42'), $this->handler);
+    }
+
     public function testAndDenyForbids() : void
     {
         $middleware = FirewallMiddleware::allow(RequestTypes::PING)->andDeny(RequestTypes::CALL);
@@ -154,6 +193,20 @@ final class FirewallMiddlewareTest extends TestCase
         $middleware = FirewallMiddleware::deny(RequestTypes::PING)->andDenyOnly(RequestTypes::CALL);
 
         $middleware->process(new PingRequest(), $this->handler);
+    }
+
+    public function testAndDenyOnlyMultipleRequestTypes() : void
+    {
+        $this->handler->expects(self::once())->method('handle')
+            ->willReturn(TestDoubleFactory::createEmptyResponse());
+
+        $middleware = FirewallMiddleware::deny(RequestTypes::PING)
+            ->andDenyOnly(RequestTypes::CALL, RequestTypes::EVALUATE);
+
+        $middleware->process(new PingRequest(), $this->handler);
+
+        $this->expectException(RequestDenied::class);
+        $middleware->process(new EvaluateRequest('return 42'), $this->handler);
     }
 
     public function testAndDenyOnlyForbids() : void
