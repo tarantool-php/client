@@ -13,9 +13,11 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+
 final class ExamplesTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideExampleData')]
+    #[DataProvider('provideExampleData')]
     public function testExample(string $filename) : void
     {
         $uri = ClientBuilder::createFromEnv()->getUri();

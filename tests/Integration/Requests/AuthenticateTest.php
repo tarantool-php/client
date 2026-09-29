@@ -13,15 +13,17 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\Requests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use Tarantool\Client\Exception\RequestFailed;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\TestCase;
-use Tarantool\PhpUnit\Annotation\Attribute\Lua;
+use Tarantool\PhpUnit\Attribute\Lua;
 
 final class AuthenticateTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\DoesNotPerformAssertions]
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideValidCredentials')]
+    #[DoesNotPerformAssertions]
+    #[DataProvider('provideValidCredentials')]
     #[Lua('create_user(\'user_foo\', \'foo\')')]
     #[Lua('create_user(\'user_empty\', \'\')')]
     #[Lua('create_user(\'user_big\', \'123456789012345678901234567890123456789012345678901234567890\')')]
@@ -45,7 +47,7 @@ final class AuthenticateTest extends TestCase
         ];
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidCredentials')]
+    #[DataProvider('provideInvalidCredentials')]
     public function testAuthenticateWithInvalidCredentials(string $errorMessagePattern, $username, $password) : void
     {
         $client = ClientBuilder::createFromEnv()->setOptions([

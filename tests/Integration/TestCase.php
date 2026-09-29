@@ -13,13 +13,14 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration;
 
+use Composer\Semver\Semver;
+use PHPUnit\Framework\Attributes\Before;
 use Tarantool\Client\Client;
 use Tarantool\Client\Connection\Connection;
 use Tarantool\Client\Connection\StreamConnection;
 use Tarantool\Client\Exception\CommunicationFailed;
 use Tarantool\Client\Handler\Handler;
 use Tarantool\Client\Request\Request;
-use Tarantool\PhpUnit\Annotation\Requirement\TarantoolVersionRequirement;
 use Tarantool\PhpUnit\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
@@ -27,7 +28,7 @@ abstract class TestCase extends BaseTestCase
     /** @var Client|null */
     protected $client;
 
-    #[\PHPUnit\Framework\Attributes\Before]
+    #[Before]
     protected function getClient() : Client
     {
         return $this->client
@@ -36,7 +37,19 @@ abstract class TestCase extends BaseTestCase
 
     final protected function tarantoolVersionSatisfies(string $constraints) : bool
     {
-        return null === (new TarantoolVersionRequirement($this->getClient()))->check($constraints);
+        $version = $this->getClient()->call('box.info')[0]['version'];
+        if (!\is_string($version)) {
+            throw new \UnexpectedValueException('Tarantool version must be a string');
+        }
+
+        // Normalize 2.2.1-3-g878e2a42c to 2.2.1.3.
+        $version = (string) preg_replace('/-(\d+)-[^-]+$/', '.$1', $version);
+
+        // Treat "entrypoint" versions as "dev",
+        // so 2.11.0-entrypoint.8 becomes 2.11.0-dev+entrypoint.8.
+        $version = (string) preg_replace('/(\d)-entrypoint/', '$1-dev+entrypoint', $version);
+
+        return Semver::satisfies($version, $constraints);
     }
 
     final protected static function triggerUnexpectedResponse(Handler $handler, Request $initialRequest, int $sync = 0) : Connection

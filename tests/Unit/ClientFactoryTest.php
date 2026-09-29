@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Unit;
 
+use PHPUnit\Framework\Attributes\DataProviderExternal;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use PHPUnit\Framework\TestCase;
 use Tarantool\Client\Client;
 use Tarantool\Client\Packer\Packer;
@@ -57,16 +59,16 @@ final class ClientFactoryTest extends TestCase
         self::assertSame($packer, $client->getHandler()->getPacker());
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProviderExternal(OptionsProvider::class, 'provideClientArrayOptionsOfValidTypes')]
-    #[\PHPUnit\Framework\Attributes\DataProviderExternal(OptionsProvider::class, 'provideTcpExtraConnectionArrayOptionsOfValidTypes')]
-    #[\PHPUnit\Framework\Attributes\DoesNotPerformAssertions]
+    #[DataProviderExternal(OptionsProvider::class, 'provideClientArrayOptionsOfValidTypes')]
+    #[DataProviderExternal(OptionsProvider::class, 'provideTcpExtraConnectionArrayOptionsOfValidTypes')]
+    #[DoesNotPerformAssertions]
     public function testFromOptionsAcceptsOptionOfValidType(string $optionName, $optionValue, array $extraOptions = []) : void
     {
         Client::fromOptions([$optionName => $optionValue] + $extraOptions);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProviderExternal(OptionsProvider::class, 'provideClientArrayOptionsOfInvalidTypes')]
-    #[\PHPUnit\Framework\Attributes\DataProviderExternal(OptionsProvider::class, 'provideTcpExtraConnectionArrayOptionsOfInvalidTypes')]
+    #[DataProviderExternal(OptionsProvider::class, 'provideClientArrayOptionsOfInvalidTypes')]
+    #[DataProviderExternal(OptionsProvider::class, 'provideTcpExtraConnectionArrayOptionsOfInvalidTypes')]
     public function testFromOptionsRejectsOptionOfInvalidType(string $optionName, $optionValue, string $expectedType, array $extraOptions = []) : void
     {
         $this->expectException(\TypeError::class);
@@ -75,14 +77,14 @@ final class ClientFactoryTest extends TestCase
         Client::fromOptions([$optionName => $optionValue] + $extraOptions);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProviderExternal(OptionsProvider::class, 'provideClientDsnOptionsOfValidTypes')]
-    #[\PHPUnit\Framework\Attributes\DoesNotPerformAssertions]
+    #[DataProviderExternal(OptionsProvider::class, 'provideClientDsnOptionsOfValidTypes')]
+    #[DoesNotPerformAssertions]
     public function testFromDsnAcceptsOptionOfValidType(string $query) : void
     {
         Client::fromDsn("tcp://tnt/?$query");
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProviderExternal(OptionsProvider::class, 'provideClientDsnOptionsOfInvalidTypes')]
+    #[DataProviderExternal(OptionsProvider::class, 'provideClientDsnOptionsOfInvalidTypes')]
     public function testFromDsnRejectsOptionOfInvalidType(string $query, string $optionName, string $expectedType) : void
     {
         $this->expectException(\TypeError::class);

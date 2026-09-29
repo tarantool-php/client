@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration;
 
-use PHPUnitExtras\Annotation\Attribute\Requires;
 use Tarantool\Client\Error;
 use Tarantool\Client\Exception\RequestFailed;
+use Tarantool\PhpUnit\Attribute\RequiresTarantool;
 
 final class BoxErrorTest extends TestCase
 {
@@ -28,7 +28,7 @@ final class BoxErrorTest extends TestCase
         $this->client->evaluate('box.error({code = 42, reason = "Because I can"})');
     }
 
-    #[Requires('Tarantool', '>=2.4.1')]
+    #[RequiresTarantool('>=2.4.1')]
     public function testExceptionWithErrorIsThrown() : void
     {
         try {
@@ -71,7 +71,7 @@ final class BoxErrorTest extends TestCase
         }
     }
 
-    #[Requires('Tarantool', '>=2.4.1')]
+    #[RequiresTarantool('>=2.4.1')]
     public function testExceptionWithNestedErrorIsThrown() : void
     {
         try {

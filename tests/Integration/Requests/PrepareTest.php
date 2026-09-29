@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\Requests;
 
-use PHPUnitExtras\Annotation\Attribute\Requires;
 use Tarantool\Client\Exception\RequestFailed;
 use Tarantool\Client\PreparedStatement;
 use Tarantool\Client\Tests\Integration\TestCase;
-use Tarantool\PhpUnit\Annotation\Attribute\Sql;
+use Tarantool\PhpUnit\Attribute\RequiresTarantool;
+use Tarantool\PhpUnit\Attribute\Sql;
 
-#[Requires('Tarantool', '>=2.3.2')]
+#[RequiresTarantool('>=2.3.2')]
 final class PrepareTest extends TestCase
 {
     public function testPreparePreparesSqlStatement() : void

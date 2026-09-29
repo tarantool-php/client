@@ -13,20 +13,20 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\MessagePack;
 
-use PHPUnitExtras\Annotation\Attribute\Requires;
 use Tarantool\Client\Client;
 use Tarantool\Client\Error;
 use Tarantool\Client\Packer\Extension\ErrorExtension;
 use Tarantool\Client\Packer\PurePacker;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\TestCase;
+use Tarantool\PhpUnit\Attribute\RequiresTarantool;
 
 final class ErrorExtensionTest extends TestCase
 {
     /**
      * @see https://github.com/tarantool/tarantool/issues/6428
      */
-    #[Requires('Tarantool', '>=2.4.1 <2.10')]
+    #[RequiresTarantool('>=2.4.1 <2.10')]
     public function testLuaPackingAndUnpacking() : void
     {
         $client = self::createClientWithExtendedErrorSupport();

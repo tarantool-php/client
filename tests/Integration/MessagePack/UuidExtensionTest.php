@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\MessagePack;
 
-use PHPUnitExtras\Annotation\Attribute\Requires;
 use Symfony\Component\Uid\Uuid;
 use Tarantool\Client\Client;
 use Tarantool\Client\Packer\Extension\UuidExtension;
@@ -21,9 +20,10 @@ use Tarantool\Client\Packer\PurePacker;
 use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\TestCase;
-use Tarantool\PhpUnit\Annotation\Attribute\Lua;
+use Tarantool\PhpUnit\Attribute\Lua;
+use Tarantool\PhpUnit\Attribute\RequiresTarantool;
 
-#[Requires('Tarantool', '>=2.4')]
+#[RequiresTarantool('>=2.4')]
 #[Lua('uuid = require(\'uuid\').fromstr(\'64d22e4d-ac92-4a23-899a-e59f34af5479\')')]
 #[Lua('space = create_space(\'uuid_primary\')')]
 #[Lua('space:format({{name = \'id\', type = \'uuid\'}})')]
@@ -45,7 +45,7 @@ final class UuidExtensionTest extends TestCase
         self::assertTrue($uuid->equals($result[0][0]));
     }
 
-    #[Requires('Tarantool', '>=2.10-stable')]
+    #[RequiresTarantool('>=2.10-stable')]
     public function testSqlSelectByUuidKeySucceeds() : void
     {
         $client = self::createClientWithUuidSupport();

@@ -15,7 +15,7 @@ namespace Tarantool\Client\Tests\Integration;
 
 use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Schema\Operations;
-use Tarantool\PhpUnit\Annotation\Attribute\Lua;
+use Tarantool\PhpUnit\Attribute\Lua;
 
 #[Lua('space = create_space(\'composite_key\')')]
 #[Lua('space:create_index(\'primary\', {type = \'tree\', unique = true, parts = {1, \'unsigned\', 2, \'unsigned\'}})')]

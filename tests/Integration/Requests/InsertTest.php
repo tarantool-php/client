@@ -13,13 +13,14 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\Requests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tarantool\Client\Exception\RequestFailed;
 use Tarantool\Client\Tests\Integration\TestCase;
-use Tarantool\PhpUnit\Annotation\Attribute\Lua;
+use Tarantool\PhpUnit\Attribute\Lua;
 
 final class InsertTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideInsertData')]
+    #[DataProvider('provideInsertData')]
     #[Lua('create_space(\'request_insert_str\'):create_index(\'primary\', {type = \'hash\', parts = {1, \'str\'}})')]
     #[Lua('create_space(\'request_insert_num\'):create_index(\'primary\', {type = \'hash\', parts = {1, \'unsigned\'}})')]
     public function testInsert(string $spaceName, array $values) : void
@@ -43,7 +44,7 @@ final class InsertTest extends TestCase
         ];
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideInsertDataWithMismatchedTypes')]
+    #[DataProvider('provideInsertDataWithMismatchedTypes')]
     #[Lua('create_space(\'request_insert_str\'):create_index(\'primary\', {type = \'hash\', parts = {1, \'str\'}})')]
     #[Lua('create_space(\'request_insert_num\'):create_index(\'primary\', {type = \'hash\', parts = {1, \'unsigned\'}})')]
     public function testInsertTypeMismatchedValues(string $spaceName, array $values) : void

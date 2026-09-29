@@ -13,11 +13,12 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tarantool\Client\Request\PingRequest;
 
 final class PacketSyncTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideValidSync')]
+    #[DataProvider('provideValidSync')]
     public function testSameSync(int $sync) : void
     {
         $handler = $this->client->getHandler();

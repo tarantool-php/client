@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Tarantool\Client\Tests\Integration;
 
 use Tarantool\Client\Schema\Criteria;
-use Tarantool\PhpUnit\Annotation\Attribute\Lua;
+use Tarantool\PhpUnit\Attribute\Lua;
 
 #[Lua('create_space(\'test_space_caching\'):create_index(\'primary\', {type = \'tree\', parts = {1, \'unsigned\'}})')]
 final class ClientSpaceCachingTest extends TestCase

@@ -13,14 +13,15 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\Requests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tarantool\Client\Exception\RequestFailed;
 use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Tests\Integration\TestCase;
-use Tarantool\PhpUnit\Annotation\Attribute\Lua;
+use Tarantool\PhpUnit\Attribute\Lua;
 
 final class SelectTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideSelectData')]
+    #[DataProvider('provideSelectData')]
     #[Lua('space = create_space(\'request_select\')')]
     #[Lua('space:create_index(\'primary\', {type = \'tree\', unique = true, parts = {1, \'unsigned\'}})')]
     #[Lua('space:create_index(\'secondary\', {type = \'tree\', unique = false, parts = {2, \'unsigned\', 3, \'str\'}})')]

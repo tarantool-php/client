@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\Requests;
 
-use PHPUnitExtras\Annotation\Attribute\Requires;
 use Tarantool\Client\Keys;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\TestCase;
-use Tarantool\PhpUnit\Annotation\Attribute\Sql;
+use Tarantool\PhpUnit\Attribute\RequiresTarantool;
+use Tarantool\PhpUnit\Attribute\Sql;
 
-#[Requires('Tarantool', '>=2')]
+#[RequiresTarantool('>=2')]
 #[Sql('DROP TABLE IF EXISTS exec_query')]
 #[Sql('CREATE TABLE exec_query (id INTEGER PRIMARY KEY, name VARCHAR(50))')]
 #[Sql('INSERT INTO exec_query VALUES (1, \'A\'), (2, \'B\')')]
@@ -161,7 +161,7 @@ final class ExecuteTest extends TestCase
         ]], $response->getMetadata());
     }
 
-    #[Requires('Tarantool', '>=2.6')]
+    #[RequiresTarantool('>=2.6')]
     #[Sql('DROP TABLE IF EXISTS %target_method%')]
     #[Sql('CREATE TABLE %target_method% (ID INTEGER PRIMARY KEY AUTOINCREMENT, NAME VARCHAR(50) COLLATE "unicode_ci")')]
     public function testSqlQueryResultHoldsExtendedMetadata() : void

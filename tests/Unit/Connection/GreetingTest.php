@@ -13,19 +13,21 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Unit\Connection;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\DataProviderExternal;
 use PHPUnit\Framework\TestCase;
 use Tarantool\Client\Connection\Greeting;
 use Tarantool\Client\Tests\GreetingDataProvider;
 
 final class GreetingTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProviderExternal(GreetingDataProvider::class, 'provideValidGreetings')]
+    #[DataProviderExternal(GreetingDataProvider::class, 'provideValidGreetings')]
     public function testGetSalt(string $greeting, string $salt) : void
     {
         self::assertSame($salt, Greeting::parse($greeting)->getSalt());
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideServerVersionData')]
+    #[DataProvider('provideServerVersionData')]
     public function testGetServerVersion(string $greeting, string $expectedVersion) : void
     {
         $greeting = Greeting::parse($greeting);

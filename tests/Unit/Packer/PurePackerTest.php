@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Tarantool\Client\Tests\Unit\Packer;
 
 use MessagePack\Exception\UnpackingFailedException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Tarantool\Client\Keys;
 use Tarantool\Client\Packer\Packer;
@@ -30,7 +31,7 @@ final class PurePackerTest extends TestCase
         $this->packer = new PurePacker();
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideBadUnpackData')]
+    #[DataProvider('provideBadUnpackData')]
     public function testThrowExceptionOnBadUnpackData(string $data) : void
     {
         $this->expectException(UnpackingFailedException::class);

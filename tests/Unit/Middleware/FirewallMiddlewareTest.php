@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Unit\Middleware;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Tarantool\Client\Exception\RequestDenied;
@@ -168,7 +169,7 @@ final class FirewallMiddlewareTest extends TestCase
         $middleware->process(new CallRequest('foo'), $this->handler);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideBlacklistPriorityData')]
+    #[DataProvider('provideBlacklistPriorityData')]
     public function testDenyHasPriority(Middleware $middleware) : void
     {
         $this->expectException(RequestDenied::class);

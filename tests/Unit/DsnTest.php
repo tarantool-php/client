@@ -13,12 +13,13 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Unit;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Tarantool\Client\Dsn;
 
 final class DsnTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideValidTcpDsns')]
+    #[DataProvider('provideValidTcpDsns')]
     public function testParseValidTcpDsn(string $dsn, array $expectedResult) : void
     {
         $dsn = Dsn::parse($dsn);
@@ -51,7 +52,7 @@ final class DsnTest extends TestCase
         ];
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideValidUdsDsns')]
+    #[DataProvider('provideValidUdsDsns')]
     public function testParseValidUdsDsn(string $dsn, array $expected) : void
     {
         $dsn = Dsn::parse($dsn);
@@ -79,7 +80,7 @@ final class DsnTest extends TestCase
         ];
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidDsns')]
+    #[DataProvider('provideInvalidDsns')]
     public function testParseInvalidDsn(string $nonDsn) : void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -110,7 +111,7 @@ final class DsnTest extends TestCase
         ];
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideStringOptions')]
+    #[DataProvider('provideStringOptions')]
     public function testGetString(string $dsn, string $option, ?string $expectedValue) : void
     {
         $dsn = Dsn::parse($dsn);
@@ -143,7 +144,7 @@ final class DsnTest extends TestCase
         self::assertSame('qux', $dsn->getString('baz', 'qux'));
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideIntOptions')]
+    #[DataProvider('provideIntOptions')]
     public function testGetInt(string $dsn, string $option, $expectedValue) : void
     {
         $dsn = Dsn::parse($dsn);
@@ -168,7 +169,7 @@ final class DsnTest extends TestCase
         self::assertSame(42, $dsn->getInt('baz', 42));
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideNonIntOptions')]
+    #[DataProvider('provideNonIntOptions')]
     public function testGetNonInt(string $dsn, string $option) : void
     {
         $dsn = Dsn::parse($dsn);
@@ -192,7 +193,7 @@ final class DsnTest extends TestCase
         ];
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideFloatOptions')]
+    #[DataProvider('provideFloatOptions')]
     public function testGetFloat(string $dsn, string $option, $expectedValue) : void
     {
         $dsn = Dsn::parse($dsn);
@@ -219,7 +220,7 @@ final class DsnTest extends TestCase
         self::assertSame(42.3, $dsn->getFloat('baz', 42.3));
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideNonFloatOptions')]
+    #[DataProvider('provideNonFloatOptions')]
     public function testGetNonFloat(string $dsn, string $option) : void
     {
         $dsn = Dsn::parse($dsn);
@@ -241,7 +242,7 @@ final class DsnTest extends TestCase
         ];
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideBoolOptions')]
+    #[DataProvider('provideBoolOptions')]
     public function testGetBool(string $dsn, string $option, ?bool $expectedValue) : void
     {
         $dsn = Dsn::parse($dsn);
@@ -276,7 +277,7 @@ final class DsnTest extends TestCase
         self::assertTrue($dsn->getBool('baz', true));
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideNonBoolOptions')]
+    #[DataProvider('provideNonBoolOptions')]
     public function testGetNonBool(string $dsn, string $option) : void
     {
         $dsn = Dsn::parse($dsn);

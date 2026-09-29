@@ -17,7 +17,7 @@ use Tarantool\Client\Exception\RequestFailed;
 use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Schema\Operations;
 use Tarantool\Client\Tests\Integration\TestCase;
-use Tarantool\PhpUnit\Annotation\Attribute\Lua;
+use Tarantool\PhpUnit\Attribute\Lua;
 
 #[Lua('space = create_space(\'request_update\')')]
 #[Lua('space:create_index(\'primary\', {type = \'tree\', unique = true, parts = {1, \'unsigned\'}})')]

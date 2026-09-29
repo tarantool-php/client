@@ -17,7 +17,6 @@ use Decimal\Decimal;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\DataProviderExternal;
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;
-use PHPUnitExtras\Annotation\Attribute\Requires;
 use Tarantool\Client\Client;
 use Tarantool\Client\Packer\Extension\DecimalExtension;
 use Tarantool\Client\Packer\PurePacker;
@@ -25,9 +24,10 @@ use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\TestCase;
 use Tarantool\Client\Tests\PackerDataProvider;
-use Tarantool\PhpUnit\Annotation\Attribute\Lua;
+use Tarantool\PhpUnit\Attribute\Lua;
+use Tarantool\PhpUnit\Attribute\RequiresTarantool;
 
-#[Requires('Tarantool', '>=2.3')]
+#[RequiresTarantool('>=2.3')]
 #[RequiresPhpExtension('decimal')]
 #[Lua('dec = require(\'decimal\').new(\'18446744073709551615\')')]
 #[Lua('space = create_space(\'decimal_primary\')')]
@@ -51,7 +51,7 @@ final class DecimalExtensionTest extends TestCase
         self::assertEquals($decimal, $result[0][0]);
     }
 
-    #[Requires('Tarantool', '>=2.10-stable')]
+    #[RequiresTarantool('>=2.10-stable')]
     public function testSqlSelectByDecimalKeySucceeds() : void
     {
         $client = self::createClientWithDecimalSupport();

@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration;
 
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use Tarantool\Client\Client;
 use Tarantool\Client\Exception\CommunicationFailed;
 use Tarantool\Client\Exception\RequestFailed;
@@ -26,7 +27,7 @@ use Tarantool\Client\Response;
 use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Schema\Space;
 use Tarantool\Client\Tests\SpyMiddleware;
-use Tarantool\PhpUnit\Annotation\Attribute\Lua;
+use Tarantool\PhpUnit\Attribute\Lua;
 
 final class ClientMiddlewareTest extends TestCase
 {
@@ -51,7 +52,7 @@ final class ClientMiddlewareTest extends TestCase
         self::assertSame([1, 1, 1], $middleware->getTraceLogArray());
     }
 
-    #[\PHPUnit\Framework\Attributes\DoesNotPerformAssertions]
+    #[DoesNotPerformAssertions]
     #[Lua('fiber = require(\'fiber\')')]
     #[Lua('function test() try_drop_user(\'foobar\') fiber.sleep(.5) create_user(\'foobar\', \'\') end')]
     #[Lua('fiber.create(test)')]
@@ -113,7 +114,7 @@ final class ClientMiddlewareTest extends TestCase
         $client->ping();
     }
 
-    #[\PHPUnit\Framework\Attributes\DoesNotPerformAssertions]
+    #[DoesNotPerformAssertions]
     public function testReconnectOnBrokenConnection() : void
     {
         $clientBuilder = ClientBuilder::createFromEnv();

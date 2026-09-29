@@ -13,28 +13,31 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Unit\Connection;
 
+use PHPUnit\Framework\Attributes\DataProviderExternal;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use PHPUnit\Framework\TestCase;
 use Tarantool\Client\Connection\StreamConnection;
+use Tarantool\Client\Tests\Unit\OptionsProvider;
 
 final class StreamConnectionTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProviderExternal(\Tarantool\Client\Tests\Unit\OptionsProvider::class, 'provideConnectionArrayOptionsOfValidTypes')]
-    #[\PHPUnit\Framework\Attributes\DataProviderExternal(\Tarantool\Client\Tests\Unit\OptionsProvider::class, 'provideTcpExtraConnectionArrayOptionsOfValidTypes')]
-    #[\PHPUnit\Framework\Attributes\DoesNotPerformAssertions]
+    #[DataProviderExternal(OptionsProvider::class, 'provideConnectionArrayOptionsOfValidTypes')]
+    #[DataProviderExternal(OptionsProvider::class, 'provideTcpExtraConnectionArrayOptionsOfValidTypes')]
+    #[DoesNotPerformAssertions]
     public function testCreateTcpAcceptsOptionOfValidType(string $optionName, $optionValue) : void
     {
         StreamConnection::createTcp(StreamConnection::DEFAULT_TCP_URI, [$optionName => $optionValue]);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProviderExternal(\Tarantool\Client\Tests\Unit\OptionsProvider::class, 'provideConnectionArrayOptionsOfValidTypes')]
-    #[\PHPUnit\Framework\Attributes\DoesNotPerformAssertions]
+    #[DataProviderExternal(OptionsProvider::class, 'provideConnectionArrayOptionsOfValidTypes')]
+    #[DoesNotPerformAssertions]
     public function testCreateUdsAcceptsOptionOfValidType(string $optionName, $optionValue) : void
     {
         StreamConnection::createUds('unix:///socket.sock', [$optionName => $optionValue]);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProviderExternal(\Tarantool\Client\Tests\Unit\OptionsProvider::class, 'provideConnectionArrayOptionsOfInvalidTypes')]
-    #[\PHPUnit\Framework\Attributes\DataProviderExternal(\Tarantool\Client\Tests\Unit\OptionsProvider::class, 'provideTcpExtraConnectionArrayOptionsOfInvalidTypes')]
+    #[DataProviderExternal(OptionsProvider::class, 'provideConnectionArrayOptionsOfInvalidTypes')]
+    #[DataProviderExternal(OptionsProvider::class, 'provideTcpExtraConnectionArrayOptionsOfInvalidTypes')]
     public function testCreateTcpRejectsOptionOfInvalidType(string $optionName, $optionValue, string $expectedType) : void
     {
         $this->expectException(\TypeError::class);
@@ -43,7 +46,7 @@ final class StreamConnectionTest extends TestCase
         StreamConnection::createTcp(StreamConnection::DEFAULT_TCP_URI, [$optionName => $optionValue]);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProviderExternal(\Tarantool\Client\Tests\Unit\OptionsProvider::class, 'provideConnectionArrayOptionsOfInvalidTypes')]
+    #[DataProviderExternal(OptionsProvider::class, 'provideConnectionArrayOptionsOfInvalidTypes')]
     public function testCreateUdsRejectsOptionOfInvalidType(string $optionName, $optionValue, string $expectedType) : void
     {
         $this->expectException(\TypeError::class);

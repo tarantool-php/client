@@ -12,17 +12,18 @@
     ],
     "require": {
         "php": "^8.2",
-        "rybakit/msgpack": "^0.10",
+        "rybakit/msgpack": "^0.11.2",
         "symfony/uid": "^5.1|^6|^7"
     },
     "require-dev": {
         "ext-json": "*",
         "ext-sockets": "*",
+        "composer/semver": "^3.3",
         "friendsofphp/php-cs-fixer": "^3.0",
         "monolog/monolog": "^3.0",
         "phpunit/phpunit": "^10.5",
         "psr/log": "^3.0",
-        "tarantool/phpunit-extras": "dev-feature/php82-phpunit10-attributes-migration",
+        "tarantool/phpunit-extras": "^0.3.0",
         "vimeo/psalm": "^5.23|^6"
     },
     "suggest": {
@@ -46,20 +47,7 @@
         },
         "sort-packages": true
     },
-    "minimum-stability": "dev",
     "prefer-stable": true,
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/rybakit/phpunit-extras",
-            "no-api": true
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/tarantool-php/phpunit-extras",
-            "no-api": true
-        }
-    ],
     "extra": {
         "branch-alias": {
             "dev-master": "0.10.x-dev"

@@ -15,7 +15,7 @@ namespace Tarantool\Client\Tests\Integration\Requests;
 
 use Tarantool\Client\Exception\RequestFailed;
 use Tarantool\Client\Tests\Integration\TestCase;
-use Tarantool\PhpUnit\Annotation\Attribute\Lua;
+use Tarantool\PhpUnit\Attribute\Lua;
 
 #[Lua('space = create_space(\'request_delete\')')]
 #[Lua('space:create_index(\'primary\', {type = \'hash\', parts = {1, \'unsigned\'}})')]

@@ -38,6 +38,8 @@ A pure PHP client for [Tarantool](https://www.tarantool.io/en/developers/) 1.7.1
 
 ## Installation
 
+This release requires PHP 8.2 or newer and `rybakit/msgpack` 0.11.2 or newer.
+
 The recommended way to install the library is through [Composer](http://getcomposer.org):
 
 ```bash
