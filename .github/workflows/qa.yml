@@ -18,6 +18,12 @@ jobs:
       matrix:
         operating-system: [ubuntu-latest]
         env:
+          - TNT_IMAGE: tarantool/tarantool:3.7
+          - TNT_IMAGE: tarantool/tarantool:3.6
+          - TNT_IMAGE: tarantool/tarantool:3.5
+          - TNT_IMAGE: tarantool/tarantool:3.4
+          - TNT_IMAGE: tarantool/tarantool:3.3
+          - TNT_IMAGE: tarantool/tarantool:3.2
           - TNT_IMAGE: tarantool/tarantool:3.0
           - TNT_IMAGE: tarantool/tarantool:2.11
           - TNT_IMAGE: tarantool/tarantool:2.10
@@ -33,6 +39,8 @@ jobs:
           - TNT_IMAGE: tarantool/tarantool:1.9
           - TNT_IMAGE: tarantool/tarantool:1.7
 
+          - PHP_IMAGE: php:8.5-cli
+          - PHP_IMAGE: php:8.4-cli
           - PHP_IMAGE: php:8.3-cli
             TNT_LISTEN_URI: /tmp/tarantool_client.sock
 
