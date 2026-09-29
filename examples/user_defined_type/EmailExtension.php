@@ -19,11 +19,8 @@ use MessagePack\Packer;
 
 final class EmailExtension implements Extension
 {
-    private $type;
-
-    public function __construct(int $type)
+    public function __construct(private readonly int $type)
     {
-        $this->type = $type;
     }
 
     #[\Override]
@@ -33,7 +30,7 @@ final class EmailExtension implements Extension
     }
 
     #[\Override]
-    public function pack(Packer $packer, $value) : ?string
+    public function pack(Packer $packer, mixed $value) : ?string
     {
         if (!$value instanceof Email) {
             return null;

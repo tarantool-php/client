@@ -15,33 +15,34 @@ namespace App;
 
 use Monolog\Handler\HandlerInterface;
 use Monolog\Handler\HandlerWrapper;
+use Monolog\Level;
+use Monolog\LogRecord;
 use Tarantool\Client\RequestTypes;
 
 final class SlowRequestHandler extends HandlerWrapper
 {
-    /** @var int */
-    private $thresholdMs;
+    private readonly Level $level;
 
-    /** @var \Monolog\Level */
-    private $level;
-
-    public function __construct(HandlerInterface $handler, int $thresholdMs, \Monolog\Level|int $level = \Monolog\Level::Warning)
+    public function __construct(
+        HandlerInterface $handler,
+        private readonly int $thresholdMs,
+        Level|int $level = Level::Warning
+    )
     {
         parent::__construct($handler);
 
-        $this->thresholdMs = $thresholdMs;
-        $this->level = $level instanceof \Monolog\Level ? $level : \Monolog\Level::from($level);
+        $this->level = $level instanceof Level ? $level : Level::from($level);
     }
 
     #[\Override]
-    public function isHandling(\Monolog\LogRecord $record) : bool
+    public function isHandling(LogRecord $record) : bool
     {
         // Handle all levels
         return true;
     }
 
     #[\Override]
-    public function handle(\Monolog\LogRecord $record) : bool
+    public function handle(LogRecord $record) : bool
     {
         if (!isset($record['context']['duration_ms'], $record['context']['request'])) {
             return false;

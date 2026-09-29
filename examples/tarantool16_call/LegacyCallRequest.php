@@ -21,12 +21,12 @@ final class LegacyCallRequest implements Request
     private const TYPE = 6;
 
     /** @var non-empty-array<int, string|array> */
-    private $body;
+    private readonly array $body;
 
     /**
      * @param non-empty-array<int, string|array> $body
      */
-    private function __construct($body)
+    private function __construct(array $body)
     {
         $this->body = $body;
     }
