@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Tarantool\Client\Tests\Unit\Packer;
 
 use MessagePack\Exception\UnpackingFailedException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Tarantool\Client\Keys;
 use Tarantool\Client\Packer\Packer;
@@ -22,17 +23,14 @@ use Tarantool\Client\RequestTypes;
 
 final class PurePackerTest extends TestCase
 {
-    /** @var Packer */
-    private $packer;
+    private Packer $packer;
 
     protected function setUp() : void
     {
         $this->packer = new PurePacker();
     }
 
-    /**
-     * @dataProvider provideBadUnpackData
-     */
+    #[DataProvider('provideBadUnpackData')]
     public function testThrowExceptionOnBadUnpackData(string $data) : void
     {
         $this->expectException(UnpackingFailedException::class);
@@ -40,7 +38,7 @@ final class PurePackerTest extends TestCase
         $this->packer->unpack($data)->tryGetBodyField(Keys::DATA);
     }
 
-    public function provideBadUnpackData() : iterable
+    public static function provideBadUnpackData() : iterable
     {
         return [
             [''],

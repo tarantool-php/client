@@ -22,12 +22,12 @@ use Tarantool\Client\Response;
 final class CustomErrorMiddleware implements Middleware
 {
     /** @var \Closure(Error, RequestFailed) : \Exception */
-    private $factory;
+    private \Closure $factory;
 
     /**
      * @param \Closure(Error, RequestFailed) : \Exception $factory
      */
-    private function __construct($factory)
+    private function __construct(\Closure $factory)
     {
         $this->factory = $factory;
     }
@@ -123,6 +123,7 @@ final class CustomErrorMiddleware implements Middleware
         );
     }
 
+    #[\Override]
     public function process(Request $request, Handler $handler) : Response
     {
         try {

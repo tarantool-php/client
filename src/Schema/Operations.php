@@ -16,28 +16,22 @@ namespace Tarantool\Client\Schema;
 final class Operations
 {
     /** @var non-empty-array<int, array> */
-    private $operations;
+    private array $operations;
 
     /**
      * @param non-empty-array<int, mixed> $operation
      */
-    private function __construct($operation)
+    private function __construct(array $operation)
     {
         $this->operations = [$operation];
     }
 
-    /**
-     * @param int|string $field
-     */
-    public static function add($field, int $value) : self
+    public static function add(int|string $field, int $value) : self
     {
         return new self(['+', $field, $value]);
     }
 
-    /**
-     * @param int|string $field
-     */
-    public function andAdd($field, int $value) : self
+    public function andAdd(int|string $field, int $value) : self
     {
         $new = clone $this;
         $new->operations[] = ['+', $field, $value];
@@ -45,18 +39,12 @@ final class Operations
         return $new;
     }
 
-    /**
-     * @param int|string $field
-     */
-    public static function subtract($field, int $value) : self
+    public static function subtract(int|string $field, int $value) : self
     {
         return new self(['-', $field, $value]);
     }
 
-    /**
-     * @param int|string $field
-     */
-    public function andSubtract($field, int $value) : self
+    public function andSubtract(int|string $field, int $value) : self
     {
         $new = clone $this;
         $new->operations[] = ['-', $field, $value];
@@ -64,18 +52,12 @@ final class Operations
         return $new;
     }
 
-    /**
-     * @param int|string $field
-     */
-    public static function bitwiseAnd($field, int $value) : self
+    public static function bitwiseAnd(int|string $field, int $value) : self
     {
         return new self(['&', $field, $value]);
     }
 
-    /**
-     * @param int|string $field
-     */
-    public function andBitwiseAnd($field, int $value) : self
+    public function andBitwiseAnd(int|string $field, int $value) : self
     {
         $new = clone $this;
         $new->operations[] = ['&', $field, $value];
@@ -83,18 +65,12 @@ final class Operations
         return $new;
     }
 
-    /**
-     * @param int|string $field
-     */
-    public static function bitwiseOr($field, int $value) : self
+    public static function bitwiseOr(int|string $field, int $value) : self
     {
         return new self(['|', $field, $value]);
     }
 
-    /**
-     * @param int|string $field
-     */
-    public function andBitwiseOr($field, int $value) : self
+    public function andBitwiseOr(int|string $field, int $value) : self
     {
         $new = clone $this;
         $new->operations[] = ['|', $field, $value];
@@ -102,18 +78,12 @@ final class Operations
         return $new;
     }
 
-    /**
-     * @param int|string $field
-     */
-    public static function bitwiseXor($field, int $value) : self
+    public static function bitwiseXor(int|string $field, int $value) : self
     {
         return new self(['^', $field, $value]);
     }
 
-    /**
-     * @param int|string $field
-     */
-    public function andBitwiseXor($field, int $value) : self
+    public function andBitwiseXor(int|string $field, int $value) : self
     {
         $new = clone $this;
         $new->operations[] = ['^', $field, $value];
@@ -121,18 +91,12 @@ final class Operations
         return $new;
     }
 
-    /**
-     * @param int|string $field
-     */
-    public static function splice($field, int $offset, int $length, string $replacement) : self
+    public static function splice(int|string $field, int $offset, int $length, string $replacement) : self
     {
         return new self([':', $field, $offset, $length, $replacement]);
     }
 
-    /**
-     * @param int|string $field
-     */
-    public function andSplice($field, int $offset, int $length, string $replacement) : self
+    public function andSplice(int|string $field, int $offset, int $length, string $replacement) : self
     {
         $new = clone $this;
         $new->operations[] = [':', $field, $offset, $length, $replacement];
@@ -140,18 +104,12 @@ final class Operations
         return $new;
     }
 
-    /**
-     * @param int|string $field
-     */
-    public static function insert($field, int $value) : self
+    public static function insert(int|string $field, int $value) : self
     {
         return new self(['!', $field, $value]);
     }
 
-    /**
-     * @param int|string $field
-     */
-    public function andInsert($field, int $value) : self
+    public function andInsert(int|string $field, int $value) : self
     {
         $new = clone $this;
         $new->operations[] = ['!', $field, $value];
@@ -159,18 +117,12 @@ final class Operations
         return $new;
     }
 
-    /**
-     * @param int|string $field
-     */
-    public static function delete($field, int $value) : self
+    public static function delete(int|string $field, int $value) : self
     {
         return new self(['#', $field, $value]);
     }
 
-    /**
-     * @param int|string $field
-     */
-    public function andDelete($field, int $value) : self
+    public function andDelete(int|string $field, int $value) : self
     {
         $new = clone $this;
         $new->operations[] = ['#', $field, $value];
@@ -178,20 +130,12 @@ final class Operations
         return $new;
     }
 
-    /**
-     * @param int|string $field
-     * @param mixed $value
-     */
-    public static function set($field, $value) : self
+    public static function set(int|string $field, $value) : self
     {
         return new self(['=', $field, $value]);
     }
 
-    /**
-     * @param int|string $field
-     * @param mixed $value
-     */
-    public function andSet($field, $value) : self
+    public function andSet(int|string $field, $value) : self
     {
         $new = clone $this;
         $new->operations[] = ['=', $field, $value];

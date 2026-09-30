@@ -14,20 +14,19 @@ declare(strict_types=1);
 namespace Tarantool\Client\Tests\Integration;
 
 use Tarantool\Client\Schema\Criteria;
+use Tarantool\PhpUnit\Attribute\Lua;
 
 final class BoxNullTest extends TestCase
 {
-    /**
-     * @lua format = {}
-     * @lua format[1] = {name = 'foo', type = 'unsigned'}
-     * @lua format[2] = {name = 'bar', type = 'map', is_nullable = true}
-     * @lua format[3] = {name = 'baz', type = 'unsigned', is_nullable = true}
-     * @lua space = create_space('box_null', {format = format})
-     * @lua space:create_index('pk')
-     * @lua space:insert{1, {a = 1}}
-     * @lua space:insert{2, {b = 2}, box.NULL}
-     * @lua space:insert{3, box.NULL, 300}
-     */
+    #[Lua('format = {}')]
+    #[Lua('format[1] = {name = "foo", type = "unsigned"}')]
+    #[Lua('format[2] = {name = "bar", type = "map", is_nullable = true}')]
+    #[Lua('format[3] = {name = "baz", type = "unsigned", is_nullable = true}')]
+    #[Lua('space = create_space("box_null", {format = format})')]
+    #[Lua('space:create_index("pk")')]
+    #[Lua('space:insert{1, {a = 1}}')]
+    #[Lua('space:insert{2, {b = 2}, box.NULL}')]
+    #[Lua('space:insert{3, box.NULL, 300}')]
     public function testNull() : void
     {
         $space = $this->client->getSpace('box_null');

@@ -19,7 +19,7 @@ use Tarantool\Client\RequestTypes;
 final class EvaluateRequest implements Request
 {
     /** @var non-empty-array<int, string|array> */
-    private $body;
+    private array $body;
 
     public function __construct(string $expr, array $args = [])
     {
@@ -29,11 +29,13 @@ final class EvaluateRequest implements Request
         ];
     }
 
+    #[\Override]
     public function getType() : int
     {
         return RequestTypes::EVALUATE;
     }
 
+    #[\Override]
     public function getBody() : array
     {
         return $this->body;

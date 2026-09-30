@@ -1,11 +1,9 @@
 # PHP client for Tarantool
 
 [![Quality Assurance](https://github.com/tarantool-php/client/workflows/QA/badge.svg)](https://github.com/tarantool-php/client/actions?query=workflow%3AQA)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/tarantool-php/client/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/tarantool-php/client/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/tarantool-php/client/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/tarantool-php/client/?branch=master)
 [![Telegram](https://img.shields.io/badge/Telegram-join%20chat-blue.svg)](https://t.me/tarantool_php)
 
-A pure PHP client for [Tarantool](https://www.tarantool.io/en/developers/) 1.7.1 or above.
+A pure PHP client for [Tarantool](https://www.tarantool.io/en/developers/) 1.7.1 and later, including the 2.x and 3.x series.
 
 
 ## Features
@@ -38,16 +36,18 @@ A pure PHP client for [Tarantool](https://www.tarantool.io/en/developers/) 1.7.1
 
 ## Installation
 
+This release requires PHP 8.2 or newer and `rybakit/msgpack` 0.11.2 or newer.
+
 The recommended way to install the library is through [Composer](http://getcomposer.org):
 
 ```bash
 composer require tarantool/client
 ```
 
-In order to use the [Decimal](https://www.tarantool.io/en/doc/latest/dev_guide/internals/msgpack_extensions/#the-decimal-type) 
-type that was added in Tarantool 2.3, you additionally need to install the [decimal](http://php-decimal.io/#installation) 
-extension. Also, to improve performance when working with the [UUID](https://www.tarantool.io/en/doc/latest/dev_guide/internals/msgpack_extensions/#the-uuid-type) 
-type, which is available since Tarantool 2.4, it is recommended to additionally install the [uuid](https://pecl.php.net/package/uuid) extension. 
+To use the [Decimal](https://www.tarantool.io/en/doc/latest/dev_guide/internals/msgpack_extensions/#the-decimal-type)
+type added in Tarantool 2.3, install the [decimal](http://php-decimal.io/#installation)
+extension. To improve performance when working with the [UUID](https://www.tarantool.io/en/doc/latest/dev_guide/internals/msgpack_extensions/#the-uuid-type)
+type, available since Tarantool 2.4, you can also install the [uuid](https://pecl.php.net/package/uuid) extension.
 
 
 ## Creating a client
@@ -60,9 +60,9 @@ use Tarantool\Client\Client;
 $client = Client::fromDefaults();
 ```
 
-The client will be configured to connect to `127.0.0.1` on port `3301` with the default stream connection options.
-Also, the best available msgpack package will be chosen automatically. A custom configuration can be accomplished
-by one of several methods listed.
+The client connects to `127.0.0.1` on port `3301` using the default stream connection options.
+It also selects the best available MessagePack package automatically. You can configure the client in several ways,
+as described below.
 
 #### DSN string
 
@@ -111,18 +111,18 @@ The following options are available:
 Name | Type | Default | Description
 --- | :---: | :---: | ---
 *uri* | string | 'tcp://127.0.0.1:3301' | The connection uri that is used to create a `StreamConnection` object.
-*connect_timeout* | float | 5.0 | The number of seconds that the client waits for a connect to a Tarantool server before throwing a `ConnectionFailed` exception.
-*socket_timeout* | float | 5.0 | The number of seconds that the client waits for a respond from a Tarantool server before throwing a `CommunicationFailed` exception.
+*connect_timeout* | float | 5.0 | The number of seconds that the client waits to connect to a Tarantool server before throwing a `ConnectionFailed` exception.
+*socket_timeout* | float | 5.0 | The number of seconds that the client waits for a response from a Tarantool server before throwing a `CommunicationFailed` exception.
 *tcp_nodelay* | boolean | true | Whether the Nagle algorithm is disabled on a TCP connection.
 *persistent* | boolean | false | Whether to use a persistent connection.
 *username* | string | | The username for the user being authenticated.
 *password* | string | '' | The password for the user being authenticated. If the username is not set, this option will be ignored.
-*max_retries* | integer | 0 | The number of times the client retries unsuccessful request. If set to 0, the client does not try to resend the request after the initial unsuccessful attempt.
+*max_retries* | integer | 0 | The number of times the client retries an unsuccessful request. If set to 0, the client does not retry after the initial unsuccessful attempt.
 
 
 #### Custom build
 
-For more deep customisation, you can build a client from the ground up:
+For more extensive customization, you can build a client from the ground up:
 
 ```php
 use MessagePack\BufferUnpacker;
@@ -158,8 +158,8 @@ $client = new Client($handler);
 
 ## Handlers
 
-A handler is a function which transforms a request into a response. Once you have created a handler object,
-you can make requests to Tarantool, for example:
+A handler transforms a request into a response. Once you have created a handler object,
+you can use it to send requests to Tarantool, for example:
 
 ```php
 use Tarantool\Client\Keys;
@@ -180,9 +180,9 @@ The library ships with two handlers:
 
 ## Middleware
 
-Middleware is the suggested way to extend the client with custom functionality. There are several middleware classes
-implemented to address the common use cases, like authentification, logging and [more](src/Middleware).
-The usage is straightforward:
+Middleware is the recommended way to extend the client with custom functionality. The library includes middleware
+for common use cases, such as authentication and logging. See the full list in [`src/Middleware`](src/Middleware).
+Usage is straightforward:
 
 ```php
 use Tarantool\Client\Client;
@@ -193,7 +193,7 @@ $client = Client::fromDefaults()->withMiddleware(
 );
 ```
 
-You may also assign multiple middleware to the client (they will be executed in [FIFO](https://en.wikipedia.org/wiki/FIFO_(computing_and_electronics)) order):
+You can also add multiple middleware components to the client. They execute in [FIFO](https://en.wikipedia.org/wiki/FIFO_(computing_and_electronics)) order:
 
 ```php
 use Tarantool\Client\Client;
@@ -210,8 +210,8 @@ $client = Client::fromDefaults()->withMiddleware(
 );
 ```
 
-Please be aware that the order in which you add the middleware does matter. The same middleware,
-placed in different order, can give very different or sometimes unexpected behavior.
+The order in which you add middleware matters. The same middleware,
+placed in a different order, can produce different or sometimes unexpected behavior.
 To illustrate, consider the following configurations:
 
 ```php
@@ -404,7 +404,7 @@ $space->upsert([1, 'foo', 'bar'], Operations::set(2, 'qux'));
 
 // Since Tarantool 2.3 you can refer to tuple fields by name:
 // $space->upsert([1, 'foo', 'bar'], Operations::set('name1', 'baz'));
-// $space->upsert([1, 'foo', 'bar'], Operations::set('name2'', 'qux'));
+// $space->upsert([1, 'foo', 'bar'], Operations::set('name2', 'qux'));
 ```
 
 *Space data*
@@ -563,9 +563,9 @@ Result 3: [3]
 
 ### SQL protocol
 
-The following are examples of SQL protocol requests. For more detailed information and examples please see
+The following are examples of SQL protocol requests. For more detailed information and examples, please see
 the [official documentation](https://www.tarantool.io/en/doc/latest/reference/reference_sql/sql/). 
-*Note that SQL is supported only as of Tarantool 2.0.*
+*SQL is supported starting with Tarantool 2.0.*
 
 <details>
 <summary><strong>Execute</strong></summary><br />
@@ -602,8 +602,8 @@ Result 3: [1,{"id":1,"email":"foo@example.com"}]
 Result 4: [{"id":1,"email":"foo@example.com"},{"id":2,"email":"bar@example.com"}]
 ```
 
-If you need to execute a dynamic SQL statement whose type you don't know, you can use the generic method `execute()`. 
-This method returns a Response object with the body containing either an array of result set rows or an array
+If you need to execute a dynamic SQL statement and do not know its type, use the generic `execute()` method.
+It returns a `Response` object whose body contains either an array of result-set rows or an array
 with information about the changed rows:
 
 ```php
@@ -660,10 +660,9 @@ $space->insert([42, Money::EUR(500)]);
 [[$id, $money]] = $space->select(Criteria::key([42]));
 ```
 
-This can be achieved by extending the MessagePack type system with your own types. To do this, you need to write 
-a MessagePack extension that converts your objects into MessagePack structures and back (for more details, read 
-the msgpack.php's [README](https://github.com/rybakit/msgpack.php#custom-types)). Once you have implemented 
-your extension, you should register it with the packer object:
+You can do this by extending the MessagePack type system with your own types. Write a MessagePack extension
+that converts your objects to and from MessagePack structures (see the msgpack.php [README](https://github.com/rybakit/msgpack.php#custom-types) for details).
+Once you have implemented the extension, register it with the packer object:
 
 ```php
 $packer = PurePacker::fromExtensions(new MoneyExtension());
@@ -695,14 +694,14 @@ To run all tests:
 vendor/bin/phpunit
 ```
 
-If you already have Docker installed, you can run the tests in a docker container.
-First, create a container:
+If you already have Docker installed, you can run the tests in a Docker container.
+First, build the Docker image:
 
 ```bash
 ./dockerfile.sh | docker build -t client -
 ```
 
-The command above will create a container named `client` with PHP 8.3 runtime.
+The command above builds an image named `client` with the PHP 8.3 runtime.
 You may change the default runtime by defining the `PHP_IMAGE` environment variable:
 
 ```bash

@@ -19,22 +19,18 @@ use MessagePack\Packer;
 
 final class EmailExtension implements Extension
 {
-    private $type;
-
-    public function __construct(int $type)
+    public function __construct(private readonly int $type)
     {
-        $this->type = $type;
     }
 
+    #[\Override]
     public function getType() : int
     {
         return $this->type;
     }
 
-    /**
-     * @param mixed $value
-     */
-    public function pack(Packer $packer, $value) : ?string
+    #[\Override]
+    public function pack(Packer $packer, mixed $value) : ?string
     {
         if (!$value instanceof Email) {
             return null;
@@ -45,6 +41,7 @@ final class EmailExtension implements Extension
         );
     }
 
+    #[\Override]
     public function unpackExt(BufferUnpacker $unpacker, int $extLength) : Email
     {
         return new Email($unpacker->unpackStr());

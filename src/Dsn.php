@@ -15,44 +15,28 @@ namespace Tarantool\Client;
 
 final class Dsn
 {
-    /** @var string|null */
-    private $host;
-
-    /** @var int|null */
-    private $port;
-
-    /** @var string|null */
-    private $path;
-
-    /** @var string */
-    private $connectionUri;
-
-    /** @var string|null */
-    private $username;
-
-    /** @var string|null */
-    private $password;
-
-    /** @var bool */
-    private $isTcp = false;
+    private ?string $host = null;
+    private ?int $port = null;
+    private ?string $path = null;
+    private string $connectionUri;
+    private ?string $username = null;
+    private ?string $password = null;
+    private bool $isTcp = false;
 
     /**
      * @var array<string, string>
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    private $options;
+    private array $options = [];
 
-    /**
-     * @param string $connectionUri
-     */
-    private function __construct($connectionUri)
+    private function __construct(string $connectionUri)
     {
         $this->connectionUri = $connectionUri;
     }
 
     public static function parse(string $dsn) : self
     {
-        if (0 === \strpos($dsn, 'unix://') && isset($dsn[7])) {
+        if (\str_starts_with($dsn, 'unix://') && isset($dsn[7])) {
             return self::parseUds($dsn);
         }
 

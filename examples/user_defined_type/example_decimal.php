@@ -22,17 +22,15 @@ ensure_extension('decimal');
 
 $spaceName = 'example';
 
-$client->evaluate(
-<<<LUA
+$client->evaluate(<<<LUA
     if box.space[...] then box.space[...]:drop() end
     local space = box.schema.space.create(...)
     space:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
-LUA
-, $spaceName);
+LUA, $spaceName);
 
 $space = $client->getSpace($spaceName);
 
-$result1 = $space->insert([3, new Decimal('1.000000099')]);
+$result1 = $space->insert([3, Decimal::valueOf('1.000000099')]);
 $result2 = $space->select(Criteria::key([3]));
 
 printf("Result 1: %s\n", $result1[0][1]->toString());

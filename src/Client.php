@@ -33,11 +33,10 @@ use Tarantool\Client\Schema\Space;
 
 final class Client
 {
-    /** @var Handler */
-    private $handler;
+    private Handler $handler;
 
     /** @var array<array-key, Space> */
-    private $spaces = [];
+    private array $spaces = [];
 
     public function __construct(Handler $handler)
     {
@@ -170,35 +169,23 @@ final class Client
         $this->handler->handle(new PingRequest());
     }
 
-    /**
-     * @param mixed ...$args
-     */
     public function call(string $funcName, ...$args) : array
     {
         return $this->handler->handle(new CallRequest($funcName, $args))
             ->getBodyField(Keys::DATA);
     }
 
-    /**
-     * @param mixed ...$args
-     */
     public function evaluate(string $expr, ...$args) : array
     {
         return $this->handler->handle(new EvaluateRequest($expr, $args))
             ->getBodyField(Keys::DATA);
     }
 
-    /**
-     * @param mixed ...$params
-     */
     public function execute(string $sql, ...$params) : Response
     {
         return $this->handler->handle(ExecuteRequest::fromSql($sql, $params));
     }
 
-    /**
-     * @param mixed ...$params
-     */
     public function executeQuery(string $sql, ...$params) : SqlQueryResult
     {
         $response = $this->handler->handle(ExecuteRequest::fromSql($sql, $params));
@@ -209,9 +196,6 @@ final class Client
         );
     }
 
-    /**
-     * @param mixed ...$params
-     */
     public function executeUpdate(string $sql, ...$params) : SqlUpdateResult
     {
         $response = $this->handler->handle(ExecuteRequest::fromSql($sql, $params));

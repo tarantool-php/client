@@ -20,16 +20,16 @@ use Tarantool\Client\Response;
 
 final class SpyMiddleware implements Middleware
 {
-    private $traceLog;
-    private $getTraceValue;
+    private \ArrayObject $traceLog;
+    private \Closure $getTraceValue;
 
     private function __construct(\Closure $getTraceValue, ?\ArrayObject $traceLog = null)
     {
         $this->getTraceValue = $getTraceValue;
-        $this->traceLog = $traceLog ?: new \ArrayObject();
+        $this->traceLog = $traceLog ?? new \ArrayObject();
     }
 
-    public static function fromTraceId($traceId, ?\ArrayObject $traceLog = null) : self
+    public static function fromTraceId(mixed $traceId, ?\ArrayObject $traceLog = null) : self
     {
         return new self(static function () use ($traceId) {
             return $traceId;

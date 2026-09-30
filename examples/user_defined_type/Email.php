@@ -15,11 +15,8 @@ namespace App;
 
 final class Email
 {
-    private $value;
-
-    public function __construct(string $value)
+    public function __construct(private readonly string $value)
     {
-        $this->value = $value;
     }
 
     public function equals(self $email) : bool

@@ -19,7 +19,7 @@ use MessagePack\Packer;
 
 class DateTimeExtension implements Extension
 {
-    private $type;
+    private readonly int $type;
 
     public function __construct(int $type)
     {

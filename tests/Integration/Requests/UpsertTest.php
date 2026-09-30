@@ -17,11 +17,10 @@ use Tarantool\Client\Exception\RequestFailed;
 use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Schema\Operations;
 use Tarantool\Client\Tests\Integration\TestCase;
+use Tarantool\PhpUnit\Attribute\Lua;
 
-/**
- * @lua space = create_space('request_upsert')
- * @lua space:create_index('primary', {type = 'hash', parts = {1, 'unsigned'}})
- */
+#[Lua('space = create_space("request_upsert")')]
+#[Lua('space:create_index("primary", {type = "hash", parts = {1, "unsigned"}})')]
 final class UpsertTest extends TestCase
 {
     public function testUpsert() : void

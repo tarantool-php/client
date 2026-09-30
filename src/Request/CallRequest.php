@@ -19,7 +19,7 @@ use Tarantool\Client\RequestTypes;
 final class CallRequest implements Request
 {
     /** @var non-empty-array<int, string|array> */
-    private $body;
+    private array $body;
 
     public function __construct(string $funcName, array $args = [])
     {
@@ -29,11 +29,13 @@ final class CallRequest implements Request
         ];
     }
 
+    #[\Override]
     public function getType() : int
     {
         return RequestTypes::CALL;
     }
 
+    #[\Override]
     public function getBody() : array
     {
         return $this->body;

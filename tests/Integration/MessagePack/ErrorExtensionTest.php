@@ -19,13 +19,14 @@ use Tarantool\Client\Packer\Extension\ErrorExtension;
 use Tarantool\Client\Packer\PurePacker;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\TestCase;
+use Tarantool\PhpUnit\Attribute\RequiresTarantool;
 
 final class ErrorExtensionTest extends TestCase
 {
     /**
-     * @requires Tarantool >=2.4.1 <2.10
      * @see https://github.com/tarantool/tarantool/issues/6428
      */
+    #[RequiresTarantool('>=2.4.1 <2.10')]
     public function testLuaPackingAndUnpacking() : void
     {
         $client = self::createClientWithExtendedErrorSupport();

@@ -19,11 +19,11 @@ use Tarantool\Client\Request\PrepareRequest;
 
 final class PreparedStatement
 {
-    private $handler;
-    private $id;
-    private $bindCount;
-    private $bindMetadata;
-    private $metadata;
+    private Handler $handler;
+    private int $id;
+    private int $bindCount;
+    private array $bindMetadata;
+    private array $metadata;
 
     public function __construct(Handler $handler, int $id, int $bindCount, array $bindMetadata, array $metadata)
     {
@@ -34,9 +34,6 @@ final class PreparedStatement
         $this->metadata = $metadata;
     }
 
-    /**
-     * @param mixed ...$params
-     */
     public function execute(...$params) : Response
     {
         return $this->handler->handle(
@@ -44,9 +41,6 @@ final class PreparedStatement
         );
     }
 
-    /**
-     * @param mixed ...$params
-     */
     public function executeQuery(...$params) : SqlQueryResult
     {
         $response = $this->handler->handle(
@@ -59,9 +53,6 @@ final class PreparedStatement
         );
     }
 
-    /**
-     * @param mixed ...$params
-     */
     public function executeUpdate(...$params) : SqlUpdateResult
     {
         $response = $this->handler->handle(

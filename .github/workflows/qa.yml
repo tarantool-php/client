@@ -1,6 +1,8 @@
 name: QA
 on:
   push:
+    branches:
+      - master
   pull_request:
   workflow_dispatch:
   schedule:
@@ -8,14 +10,23 @@ on:
 
 jobs:
   tests:
+    permissions:
+      actions: read
+      contents: read
     env:
       TNT_IMAGE: tarantool/tarantool:3.1
       PHP_IMAGE: php:8.3-cli
     strategy:
       fail-fast: false
       matrix:
-        operating-system: [ubuntu-latest]
+        operating-system: [ubuntu-24.04]
         env:
+          - TNT_IMAGE: tarantool/tarantool:3.7
+          - TNT_IMAGE: tarantool/tarantool:3.6
+          - TNT_IMAGE: tarantool/tarantool:3.5
+          - TNT_IMAGE: tarantool/tarantool:3.4
+          - TNT_IMAGE: tarantool/tarantool:3.3
+          - TNT_IMAGE: tarantool/tarantool:3.2
           - TNT_IMAGE: tarantool/tarantool:3.0
           - TNT_IMAGE: tarantool/tarantool:2.11
           - TNT_IMAGE: tarantool/tarantool:2.10
@@ -31,55 +42,30 @@ jobs:
           - TNT_IMAGE: tarantool/tarantool:1.9
           - TNT_IMAGE: tarantool/tarantool:1.7
 
-          - PHP_IMAGE: php:8.3-cli
-            TNT_LISTEN_URI: /tmp/tarantool_client.sock
+          - PHP_IMAGE: php:8.5-cli
+          - PHP_IMAGE: php:8.4-cli
 
           - PHP_IMAGE: php:8.2-cli
-          - PHP_IMAGE: php:8.2-cli
-            TNT_LISTEN_URI: /tmp/tarantool_client.sock
-
-          - PHP_IMAGE: php:8.1-cli
-          - PHP_IMAGE: php:8.1-cli
-            TNT_LISTEN_URI: /tmp/tarantool_client.sock
-
-          - PHP_IMAGE: php:8.0-cli
-          - PHP_IMAGE: php:8.0-cli
-            TNT_LISTEN_URI: /tmp/tarantool_client.sock
-
-          - PHP_IMAGE: php:7.4-cli
-          - PHP_IMAGE: php:7.4-cli
-            TNT_LISTEN_URI: /tmp/tarantool_client.sock
-
-          - PHP_IMAGE: php:7.3-cli
             QA: 1
-          - PHP_IMAGE: php:7.3-cli
-            TNT_LISTEN_URI: /tmp/tarantool_client.sock
 
-          - PHP_IMAGE: php:7.2-cli
-          - PHP_IMAGE: php:7.2-cli
-            TNT_LISTEN_URI: /tmp/tarantool_client.sock
-
-          - COVERAGE_FILE: coverage.clover
-            # scrutinizer doesn't support PHP 8
-            PHP_IMAGE: php:7.4-cli
-          - COVERAGE_FILE: coverage.clover
-            # scrutinizer doesn't support PHP 8
-            PHP_IMAGE: php:7.4-cli
+          - COVERAGE_FILE: coverage.xml
+            PHP_IMAGE: php:8.3-cli
+          - COVERAGE_FILE: coverage.xml
+            PHP_IMAGE: php:8.3-cli
             EXT_DISABLE_DECIMAL: true
-          - COVERAGE_FILE: coverage.clover
-            # scrutinizer doesn't support PHP 8
-            PHP_IMAGE: php:7.4-cli
+          - COVERAGE_FILE: coverage.xml
+            PHP_IMAGE: php:8.3-cli
             TNT_LISTEN_URI: /tmp/tarantool_client.sock
-          - COVERAGE_FILE: coverage.clover
-            # scrutinizer doesn't support PHP 8
-            PHP_IMAGE: php:7.4-cli
+          - COVERAGE_FILE: coverage.xml
+            PHP_IMAGE: php:8.3-cli
             # some tests are skipped on Tarantool > 2.8
             TNT_IMAGE: tarantool/tarantool:2.8
 
+    name: ${{ matrix.env.PHP_IMAGE || 'php:8.3-cli' }}, ${{ matrix.env.TNT_IMAGE || 'tarantool/tarantool:3.1' }}${{ matrix.env.QA && ', qa' || '' }}${{ matrix.env.COVERAGE_FILE && ', coverage' || '' }}${{ matrix.env.EXT_DISABLE_DECIMAL && ', decimal disabled' || '' }}${{ matrix.env.TNT_LISTEN_URI && ', unix socket' || '' }}
     runs-on: ${{ matrix.operating-system }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Build docker image
         env: ${{ matrix.env }}
@@ -91,7 +77,7 @@ jobs:
           docker network create tarantool-php
           docker run --net=tarantool-php --rm $TNT_IMAGE sh -c "tarantool --version"
           docker run --net=tarantool-php -d --name=tarantool -v /tmp:/tmp -v $PWD/tests/Integration/client.lua:/client.lua -e TNT_LISTEN_URI=$TNT_LISTEN_URI $TNT_IMAGE tarantool /client.lua
-          docker run --net=tarantool-php --rm -v /tmp:/tmp -v $PWD:/client -w /client -e COMPOSER_ROOT_VERSION=dev-master client
+          docker run --net=tarantool-php --rm -v /tmp:/tmp -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" -e COMPOSER_ROOT_VERSION=dev-master client
 
       - name: Check code quality
         env: ${{ matrix.env }}
@@ -100,9 +86,36 @@ jobs:
           docker run --net=tarantool-php --rm -v $PWD:/client -w /client client php vendor/bin/php-cs-fixer fix --dry-run --diff --verbose .
           docker run --net=tarantool-php --rm -v $PWD:/client -w /client client php vendor/bin/psalm
 
-      - name: Upload code coverage to Scrutinizer
+      - name: Upload code coverage report
         env: ${{ matrix.env }}
         if: ${{ env.COVERAGE_FILE }}
-        run: |
-          curl -sSOL https://scrutinizer-ci.com/ocular.phar
-          docker run --net=tarantool-php --rm -v $PWD:/client -w /client client php ocular.phar code-coverage:upload --format=php-clover "$COVERAGE_FILE"
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-${{ strategy.job-index }}
+          path: ${{ env.COVERAGE_FILE }}
+
+  coverage:
+    needs: tests
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+      contents: read
+      statuses: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Download coverage reports
+        uses: actions/download-artifact@v8
+        with:
+          pattern: coverage-*
+          path: coverage-reports
+
+      - name: Add combined code coverage report to workflow summary
+        uses: getsentry/coverage-action@0.3.8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          directory: coverage-reports
+          coverage-format: cobertura
+          enable-tests: false
+          name: full-test-matrix

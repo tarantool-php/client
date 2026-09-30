@@ -15,14 +15,14 @@ namespace Tarantool\Client;
 
 final class Error
 {
-    private $type;
-    private $file;
-    private $line;
-    private $message;
-    private $number;
-    private $code;
-    private $fields;
-    private $previous;
+    private string $type;
+    private string $file;
+    private int $line;
+    private string $message;
+    private int $number;
+    private int $code;
+    private array $fields;
+    private ?self $previous;
 
     public function __construct(
         string $type,
@@ -32,7 +32,7 @@ final class Error
         int $number,
         int $code,
         array $fields = [],
-        ?self $previous = null
+        ?self $previous = null,
     ) {
         $this->type = $type;
         $this->file = $file;
@@ -138,9 +138,6 @@ final class Error
         return $this->fields;
     }
 
-    /**
-     * @return mixed
-     */
     public function getField(string $name)
     {
         if (\array_key_exists($name, $this->fields)) {
@@ -150,10 +147,6 @@ final class Error
         throw new \OutOfRangeException(\sprintf('The field "%s" does not exist', $name));
     }
 
-    /**
-     * @param mixed $default
-     * @return mixed
-     */
     public function tryGetField(string $name, $default = null)
     {
         return \array_key_exists($name, $this->fields) ? $this->fields[$name] : $default;

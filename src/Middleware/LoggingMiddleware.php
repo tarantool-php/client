@@ -21,13 +21,14 @@ use Tarantool\Client\Response;
 
 final class LoggingMiddleware implements Middleware
 {
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }
 
+    #[\Override]
     public function process(Request $request, Handler $handler) : Response
     {
         $requestName = RequestTypes::getName($request->getType());

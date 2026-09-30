@@ -11,18 +11,20 @@
         }
     ],
     "require": {
-        "php": "^7.2.5|^8",
-        "rybakit/msgpack": "^0.9",
-        "symfony/uid": "^5.1|^6|^7"
+        "php": "^8.2",
+        "rybakit/msgpack": "^0.11.2",
+        "symfony/uid": "^5.1|^6|^7|^8"
     },
     "require-dev": {
         "ext-json": "*",
         "ext-sockets": "*",
-        "friendsofphp/php-cs-fixer": "^2.19",
-        "monolog/monolog": "^1.24|^2.0",
-        "psr/log": "^1.1",
-        "tarantool/phpunit-extras": "^0.2.0",
-        "vimeo/psalm": "^3.9|^4"
+        "composer/semver": "^3.3",
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "monolog/monolog": "^3.0",
+        "phpunit/phpunit": "^10.5",
+        "psr/log": "^3.0",
+        "tarantool/phpunit-extras": "^0.3.0",
+        "vimeo/psalm": "^5.23|^6"
     },
     "suggest": {
         "ext-decimal": "For using decimals with Tarantool 2.3+",
@@ -45,6 +47,7 @@
         },
         "sort-packages": true
     },
+    "prefer-stable": true,
     "extra": {
         "branch-alias": {
             "dev-master": "0.10.x-dev"

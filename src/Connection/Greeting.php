@@ -19,29 +19,19 @@ final class Greeting
 {
     public const SIZE_BYTES = 128;
 
-    /** @var string */
-    private $greeting;
+    private string $greeting;
+    private ?string $salt = null;
+    private ?string $serverVersion = null;
+    private bool $unknown = false;
 
-    /** @var string|null */
-    private $salt;
-
-    /** @var string|null */
-    private $serverVersion;
-
-    /** @var bool */
-    private $unknown = false;
-
-    /**
-     * @param string $greeting
-     */
-    private function __construct($greeting)
+    private function __construct(string $greeting)
     {
         $this->greeting = $greeting;
     }
 
     public static function parse(string $greeting) : self
     {
-        if (0 === \strpos($greeting, 'Tarantool')) {
+        if (\str_starts_with($greeting, 'Tarantool')) {
             return new self($greeting);
         }
 

@@ -13,16 +13,15 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Unit;
 
+use PHPUnit\Framework\Attributes\DataProviderExternal;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use PHPUnit\Framework\TestCase;
 use Tarantool\Client\Client;
 use Tarantool\Client\Packer\Packer;
 use Tarantool\Client\Packer\PurePacker;
-use Tarantool\Client\Tests\PhpUnitCompat;
 
 final class ClientFactoryTest extends TestCase
 {
-    use PhpUnitCompat;
-
     public function testFromDefaultsCreatesClientWithPurePacker() : void
     {
         $client = Client::fromDefaults();
@@ -60,20 +59,16 @@ final class ClientFactoryTest extends TestCase
         self::assertSame($packer, $client->getHandler()->getPacker());
     }
 
-    /**
-     * @dataProvider \Tarantool\Client\Tests\Unit\OptionsProvider::provideClientArrayOptionsOfValidTypes
-     * @dataProvider \Tarantool\Client\Tests\Unit\OptionsProvider::provideTcpExtraConnectionArrayOptionsOfValidTypes
-     * @doesNotPerformAssertions
-     */
+    #[DataProviderExternal(OptionsProvider::class, 'provideClientArrayOptionsOfValidTypes')]
+    #[DataProviderExternal(OptionsProvider::class, 'provideTcpExtraConnectionArrayOptionsOfValidTypes')]
+    #[DoesNotPerformAssertions]
     public function testFromOptionsAcceptsOptionOfValidType(string $optionName, $optionValue, array $extraOptions = []) : void
     {
         Client::fromOptions([$optionName => $optionValue] + $extraOptions);
     }
 
-    /**
-     * @dataProvider \Tarantool\Client\Tests\Unit\OptionsProvider::provideClientArrayOptionsOfInvalidTypes
-     * @dataProvider \Tarantool\Client\Tests\Unit\OptionsProvider::provideTcpExtraConnectionArrayOptionsOfInvalidTypes
-     */
+    #[DataProviderExternal(OptionsProvider::class, 'provideClientArrayOptionsOfInvalidTypes')]
+    #[DataProviderExternal(OptionsProvider::class, 'provideTcpExtraConnectionArrayOptionsOfInvalidTypes')]
     public function testFromOptionsRejectsOptionOfInvalidType(string $optionName, $optionValue, string $expectedType, array $extraOptions = []) : void
     {
         $this->expectException(\TypeError::class);
@@ -82,18 +77,14 @@ final class ClientFactoryTest extends TestCase
         Client::fromOptions([$optionName => $optionValue] + $extraOptions);
     }
 
-    /**
-     * @dataProvider \Tarantool\Client\Tests\Unit\OptionsProvider::provideClientDsnOptionsOfValidTypes
-     * @doesNotPerformAssertions
-     */
+    #[DataProviderExternal(OptionsProvider::class, 'provideClientDsnOptionsOfValidTypes')]
+    #[DoesNotPerformAssertions]
     public function testFromDsnAcceptsOptionOfValidType(string $query) : void
     {
         Client::fromDsn("tcp://tnt/?$query");
     }
 
-    /**
-     * @dataProvider \Tarantool\Client\Tests\Unit\OptionsProvider::provideClientDsnOptionsOfInvalidTypes
-     */
+    #[DataProviderExternal(OptionsProvider::class, 'provideClientDsnOptionsOfInvalidTypes')]
     public function testFromDsnRejectsOptionOfInvalidType(string $query, string $optionName, string $expectedType) : void
     {
         $this->expectException(\TypeError::class);

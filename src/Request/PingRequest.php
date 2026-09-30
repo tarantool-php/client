@@ -17,11 +17,13 @@ use Tarantool\Client\RequestTypes;
 
 final class PingRequest implements Request
 {
+    #[\Override]
     public function getType() : int
     {
         return RequestTypes::PING;
     }
 
+    #[\Override]
     public function getBody() : array
     {
         return [];

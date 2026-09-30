@@ -13,20 +13,20 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\Requests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use Tarantool\Client\Exception\RequestFailed;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\TestCase;
+use Tarantool\PhpUnit\Attribute\Lua;
 
 final class AuthenticateTest extends TestCase
 {
-    /**
-     * @doesNotPerformAssertions
-     * @dataProvider provideValidCredentials
-     *
-     * @lua create_user('user_foo', 'foo')
-     * @lua create_user('user_empty', '')
-     * @lua create_user('user_big', '123456789012345678901234567890123456789012345678901234567890')
-     */
+    #[DoesNotPerformAssertions]
+    #[DataProvider('provideValidCredentials')]
+    #[Lua('create_user("user_foo", "foo")')]
+    #[Lua('create_user("user_empty", "")')]
+    #[Lua('create_user("user_big", "123456789012345678901234567890123456789012345678901234567890")')]
     public function testAuthenticateWithValidCredentials(string $username, string $password) : void
     {
         $client = ClientBuilder::createFromEnv()->setOptions([
@@ -37,7 +37,7 @@ final class AuthenticateTest extends TestCase
         $client->ping();
     }
 
-    public function provideValidCredentials() : iterable
+    public static function provideValidCredentials() : iterable
     {
         return [
             ['guest', ''],
@@ -47,9 +47,7 @@ final class AuthenticateTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideInvalidCredentials
-     */
+    #[DataProvider('provideInvalidCredentials')]
     public function testAuthenticateWithInvalidCredentials(string $errorMessagePattern, $username, $password) : void
     {
         $client = ClientBuilder::createFromEnv()->setOptions([
@@ -65,7 +63,7 @@ final class AuthenticateTest extends TestCase
         }
     }
 
-    public function provideInvalidCredentials() : iterable
+    public static function provideInvalidCredentials() : iterable
     {
         return [
             ["/(User 'non_existing_user' is not found|User not found or supplied credentials are invalid)/", 'non_existing_user', 'password'],
@@ -73,10 +71,8 @@ final class AuthenticateTest extends TestCase
         ];
     }
 
-    /**
-     * @lua create_user('user_foo', 'foo')
-     * @lua create_space('test_auth_reconnect'):create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
-     */
+    #[Lua('create_user("user_foo", "foo")')]
+    #[Lua('create_space("test_auth_reconnect"):create_index("primary", {type = "tree", parts = {1, "unsigned"}})')]
     public function testUseCredentialsAfterReconnect() : void
     {
         $client = ClientBuilder::createFromEnv()->setOptions([

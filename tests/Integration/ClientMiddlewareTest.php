@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration;
 
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use Tarantool\Client\Client;
 use Tarantool\Client\Exception\CommunicationFailed;
 use Tarantool\Client\Exception\RequestFailed;
@@ -26,6 +27,7 @@ use Tarantool\Client\Response;
 use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Schema\Space;
 use Tarantool\Client\Tests\SpyMiddleware;
+use Tarantool\PhpUnit\Attribute\Lua;
 
 final class ClientMiddlewareTest extends TestCase
 {
@@ -50,13 +52,10 @@ final class ClientMiddlewareTest extends TestCase
         self::assertSame([1, 1, 1], $middleware->getTraceLogArray());
     }
 
-    /**
-     * @doesNotPerformAssertions
-     *
-     * @lua fiber = require('fiber')
-     * @lua function test() try_drop_user('foobar') fiber.sleep(.5) create_user('foobar', '') end
-     * @lua fiber.create(test)
-     */
+    #[DoesNotPerformAssertions]
+    #[Lua('fiber = require("fiber")')]
+    #[Lua('function test() try_drop_user("foobar") fiber.sleep(.5) create_user("foobar", "") end')]
+    #[Lua('fiber.create(test)')]
     public function testAuthenticationRetrySucceeds() : void
     {
         $client = Client::fromOptions([
@@ -115,9 +114,7 @@ final class ClientMiddlewareTest extends TestCase
         $client->ping();
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
+    #[DoesNotPerformAssertions]
     public function testReconnectOnBrokenConnection() : void
     {
         $clientBuilder = ClientBuilder::createFromEnv();
@@ -146,7 +143,7 @@ final class ClientMiddlewareTest extends TestCase
 
     private static function createBrokenConnectionMiddleware() : Middleware
     {
-        return new class() implements Middleware {
+        return new class implements Middleware {
             private $count = 0;
 
             public function process(Request $request, Handler $handler) : Response

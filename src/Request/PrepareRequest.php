@@ -19,12 +19,12 @@ use Tarantool\Client\RequestTypes;
 final class PrepareRequest implements Request
 {
     /** @var non-empty-array<int, int|string> */
-    private $body;
+    private array $body;
 
     /**
      * @param non-empty-array<int, int|string> $body
      */
-    private function __construct($body)
+    private function __construct(array $body)
     {
         $this->body = $body;
     }
@@ -39,11 +39,13 @@ final class PrepareRequest implements Request
         return new self([Keys::STMT_ID => $statementId]);
     }
 
+    #[\Override]
     public function getType() : int
     {
         return RequestTypes::PREPARE;
     }
 
+    #[\Override]
     public function getBody() : array
     {
         return $this->body;

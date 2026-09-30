@@ -15,13 +15,14 @@ namespace Tarantool\Client;
 
 final class SqlUpdateResult implements \Countable
 {
-    private $info;
+    private array $info;
 
     public function __construct(array $info)
     {
         $this->info = $info;
     }
 
+    #[\Override]
     public function count() : int
     {
         return $this->info[Keys::SQL_INFO_ROW_COUNT];

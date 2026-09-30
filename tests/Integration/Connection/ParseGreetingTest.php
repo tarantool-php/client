@@ -13,7 +13,9 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\Connection;
 
+use PHPUnit\Framework\Attributes\DataProviderExternal;
 use Tarantool\Client\Exception\CommunicationFailed;
+use Tarantool\Client\Tests\GreetingDataProvider;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\FakeServer\FakeServerBuilder;
 use Tarantool\Client\Tests\Integration\FakeServer\Handler\WriteHandler;
@@ -21,9 +23,7 @@ use Tarantool\Client\Tests\Integration\TestCase;
 
 final class ParseGreetingTest extends TestCase
 {
-    /**
-     * @dataProvider \Tarantool\Client\Tests\GreetingDataProvider::provideGreetingsWithInvalidServerName
-     */
+    #[DataProviderExternal(GreetingDataProvider::class, 'provideGreetingsWithInvalidServerName')]
     public function testParseGreetingWithInvalidServerName(string $greeting) : void
     {
         $clientBuilder = ClientBuilder::createForFakeServer();
@@ -52,9 +52,7 @@ final class ParseGreetingTest extends TestCase
         self::fail();
     }
 
-    /**
-     * @dataProvider \Tarantool\Client\Tests\GreetingDataProvider::provideGreetingsWithInvalidSalt
-     */
+    #[DataProviderExternal(GreetingDataProvider::class, 'provideGreetingsWithInvalidSalt')]
     public function testParseGreetingWithInvalidSalt(string $greeting) : void
     {
         $clientBuilder = ClientBuilder::createForFakeServer();

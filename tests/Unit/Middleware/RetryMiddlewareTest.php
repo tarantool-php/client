@@ -24,15 +24,8 @@ use Tarantool\PhpUnit\Client\TestDoubleFactory;
 
 final class RetryMiddlewareTest extends TestCase
 {
-    /**
-     * @var Request|MockObject
-     */
-    private $request;
-
-    /**
-     * @var Handler|MockObject
-     */
-    private $handler;
+    private Request&MockObject $request;
+    private Handler&MockObject $handler;
 
     protected function setUp() : void
     {
@@ -79,6 +72,7 @@ final class RetryMiddlewareTest extends TestCase
         $totalRetries = 0;
         $middleware = RetryMiddleware::custom(static function (int $retries) use (&$totalRetries) : int {
             $totalRetries = $retries;
+
             // always returning a value other than null
             // leads to an infinite retry loop
             return 0;

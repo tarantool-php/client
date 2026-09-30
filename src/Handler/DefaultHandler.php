@@ -22,8 +22,8 @@ use Tarantool\Client\Response;
 
 final class DefaultHandler implements Handler
 {
-    private $connection;
-    private $packer;
+    private Connection $connection;
+    private Packer $packer;
 
     public function __construct(Connection $connection, Packer $packer)
     {
@@ -31,6 +31,7 @@ final class DefaultHandler implements Handler
         $this->packer = $packer;
     }
 
+    #[\Override]
     public function handle(Request $request) : Response
     {
         $packet = $this->packer->pack($request, $sync = \mt_rand());
@@ -51,11 +52,13 @@ final class DefaultHandler implements Handler
         return $response;
     }
 
+    #[\Override]
     public function getConnection() : Connection
     {
         return $this->connection;
     }
 
+    #[\Override]
     public function getPacker() : Packer
     {
         return $this->packer;

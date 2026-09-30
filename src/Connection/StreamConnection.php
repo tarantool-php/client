@@ -21,17 +21,10 @@ final class StreamConnection implements Connection
 {
     public const DEFAULT_TCP_URI = 'tcp://127.0.0.1:3301';
 
-    /** @var string */
-    private $uri;
-
-    /** @var float */
-    private $connectTimeout;
-
-    /** @var float */
-    private $socketTimeout;
-
-    /** @var bool */
-    private $persistent;
+    private string $uri;
+    private float $connectTimeout;
+    private float $socketTimeout;
+    private bool $persistent;
 
     /** @var resource|null */
     private $streamContext;
@@ -39,13 +32,9 @@ final class StreamConnection implements Connection
     /** @var resource|null */
     private $stream;
 
-    /** @var Greeting|null */
-    private $greeting;
+    private ?Greeting $greeting = null;
 
-    /**
-     * @param string $uri
-     */
-    private function __construct($uri, float $connectTimeout, float $socketTimeout, bool $persistent, bool $tcpNoDelay)
+    private function __construct(string $uri, float $connectTimeout, float $socketTimeout, bool $persistent, bool $tcpNoDelay)
     {
         $this->uri = $uri;
         $this->connectTimeout = $connectTimeout;
@@ -79,11 +68,12 @@ final class StreamConnection implements Connection
 
     public static function create(string $uri, array $options = []) : self
     {
-        return 0 === \strpos($uri, 'unix://')
+        return \str_starts_with($uri, 'unix://')
             ? self::createUds($uri, $options)
             : self::createTcp($uri, $options);
     }
 
+    #[\Override]
     public function open() : Greeting
     {
         if ($this->greeting) {
@@ -128,6 +118,7 @@ final class StreamConnection implements Connection
         return $this->greeting = Greeting::parse($greeting);
     }
 
+    #[\Override]
     public function close() : void
     {
         if ($this->stream) {
@@ -139,11 +130,13 @@ final class StreamConnection implements Connection
         $this->greeting = null;
     }
 
+    #[\Override]
     public function isClosed() : bool
     {
         return !$this->stream;
     }
 
+    #[\Override]
     public function send(string $data) : string
     {
         if (!$this->stream) {

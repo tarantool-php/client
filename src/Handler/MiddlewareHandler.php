@@ -21,20 +21,15 @@ use Tarantool\Client\Response;
 
 final class MiddlewareHandler implements Handler
 {
-    /** @var Handler */
-    private $handler;
+    private Handler $handler;
 
     /** @var Middleware[] */
-    private $middleware;
+    private array $middleware;
 
-    /** @var int */
-    private $index = 0;
+    private int $index = 0;
 
-    /**
-     * @param Handler $handler
-     * @param Middleware[] $middleware
-     */
-    private function __construct($handler, $middleware)
+    /** @param Middleware[] $middleware */
+    private function __construct(Handler $handler, array $middleware)
     {
         $this->handler = $handler;
         $this->middleware = $middleware;
@@ -70,6 +65,7 @@ final class MiddlewareHandler implements Handler
         return $handler;
     }
 
+    #[\Override]
     public function handle(Request $request) : Response
     {
         if (!isset($this->middleware[$this->index])) {
@@ -82,11 +78,13 @@ final class MiddlewareHandler implements Handler
         return $this->middleware[$this->index]->process($request, $new);
     }
 
+    #[\Override]
     public function getConnection() : Connection
     {
         return $this->handler->getConnection();
     }
 
+    #[\Override]
     public function getPacker() : Packer
     {
         return $this->handler->getPacker();

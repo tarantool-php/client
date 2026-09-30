@@ -21,11 +21,9 @@ use Tarantool\Client\Response;
 
 final class AuthenticationMiddleware implements Middleware
 {
-    private $username;
-    private $password;
-
-    /** @var Greeting|null */
-    private $greeting;
+    private string $username;
+    private string $password;
+    private ?Greeting $greeting = null;
 
     public function __construct(string $username, string $password = '')
     {
@@ -33,6 +31,7 @@ final class AuthenticationMiddleware implements Middleware
         $this->password = $password;
     }
 
+    #[\Override]
     public function process(Request $request, Handler $handler) : Response
     {
         $greeting = $handler->getConnection()->open();

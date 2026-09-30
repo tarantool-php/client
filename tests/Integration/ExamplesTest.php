@@ -13,11 +13,11 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+
 final class ExamplesTest extends TestCase
 {
-    /**
-     * @dataProvider provideExampleData
-     */
+    #[DataProvider('provideExampleData')]
     public function testExample(string $filename) : void
     {
         $uri = ClientBuilder::createFromEnv()->getUri();
@@ -25,7 +25,7 @@ final class ExamplesTest extends TestCase
         exec("php $filename $uri", $output, $exitCode);
 
         $flattenOutput = implode("\n", $output);
-        if (0 === strpos($flattenOutput, 'Unfulfilled requirement:')) {
+        if (str_starts_with($flattenOutput, 'Unfulfilled requirement:')) {
             self::markTestSkipped($flattenOutput);
         }
 
@@ -37,7 +37,7 @@ final class ExamplesTest extends TestCase
         }
     }
 
-    public function provideExampleData() : iterable
+    public static function provideExampleData() : iterable
     {
         $dir = dirname(__DIR__, 2).'/examples';
         foreach (glob("$dir/{**/*,*}.php", GLOB_BRACE) as $filename) {

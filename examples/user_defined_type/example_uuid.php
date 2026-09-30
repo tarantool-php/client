@@ -21,15 +21,13 @@ ensure_server_version_at_least('2.4', $client);
 
 $spaceName = 'example';
 
-$client->evaluate(
-<<<LUA
+$client->evaluate(<<<LUA
     if box.space[...] then box.space[...]:drop() end
     local space = box.schema.space.create(...)
     space:create_index("primary", {parts = {1, 'uuid'}})
     local uuid = require('uuid')
     space:insert({uuid.fromstr('64d22e4d-ac92-4a23-899a-e59f34af5479'), 'foo'})
-LUA
-, $spaceName);
+LUA, $spaceName);
 
 $space = $client->getSpace($spaceName);
 

@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Unit\Schema;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Schema\IteratorTypes;
@@ -79,9 +80,7 @@ final class CriteriaTest extends TestCase
         self::assertSame(IteratorTypes::GE, Criteria::iterator(IteratorTypes::ALL)->andIterator(IteratorTypes::GE)->getIterator());
     }
 
-    /**
-     * @dataProvider provideIteratorTypes
-     */
+    #[DataProvider('provideIteratorTypes')]
     public function testIteratorTypeByName(string $name) : void
     {
         $method = str_replace('_', '', $name).'iterator';
@@ -90,9 +89,7 @@ final class CriteriaTest extends TestCase
         self::assertSame(constant(IteratorTypes::class.'::'.$name), $criteria->getIterator());
     }
 
-    /**
-     * @dataProvider provideIteratorTypes
-     */
+    #[DataProvider('provideIteratorTypes')]
     public function testAndIteratorTypeByName(string $name) : void
     {
         // Make sure we don't assign the same iterator twice
@@ -103,7 +100,7 @@ final class CriteriaTest extends TestCase
         self::assertSame(constant(IteratorTypes::class.'::'.$name), $criteria->$andMethod()->getIterator());
     }
 
-    public function provideIteratorTypes() : iterable
+    public static function provideIteratorTypes() : iterable
     {
         return [
             ['EQ'],

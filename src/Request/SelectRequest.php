@@ -19,7 +19,7 @@ use Tarantool\Client\RequestTypes;
 final class SelectRequest implements Request
 {
     /** @var non-empty-array<int, int|array> */
-    private $body;
+    private array $body;
 
     public function __construct(int $spaceId, int $indexId, array $key, int $offset, int $limit, int $iteratorType)
     {
@@ -33,11 +33,13 @@ final class SelectRequest implements Request
         ];
     }
 
+    #[\Override]
     public function getType() : int
     {
         return RequestTypes::SELECT;
     }
 
+    #[\Override]
     public function getBody() : array
     {
         return $this->body;

@@ -17,28 +17,25 @@ use Tarantool\Client\Exception\RequestFailed;
 use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Schema\Operations;
 use Tarantool\Client\Tests\Integration\TestCase;
+use Tarantool\PhpUnit\Attribute\Lua;
 
-/**
- * @lua space = create_space('request_update')
- * @lua space:create_index('primary', {type = 'tree', unique = true, parts = {1, 'unsigned'}})
- * @lua space:create_index('secondary', {type = 'tree', unique = false, parts = {2, 'unsigned', 3, 'str'}})
- * @lua space:replace{1, 2, 'tuple_1'}
- * @lua space:replace{2, 4, 'tuple_2'}
- */
+#[Lua('space = create_space("request_update")')]
+#[Lua('space:create_index("primary", {type = "tree", unique = true, parts = {1, "unsigned"}})')]
+#[Lua('space:create_index("secondary", {type = "tree", unique = false, parts = {2, "unsigned", 3, "str"}})')]
+#[Lua('space:replace{1, 2, "tuple_1"}')]
+#[Lua('space:replace{2, 4, "tuple_2"}')]
 final class UpdateTest extends TestCase
 {
-    /**
-     * @dataProvider provideUpdateData
-     */
-    public function testUpdate(Operations $operations, array $expectedResult) : void
+    public function testUpdate() : void
     {
         $space = $this->client->getSpace('request_update');
-        $result = $space->update([1], $operations);
 
-        self::assertSame($expectedResult, $result);
+        foreach (self::provideUpdateData() as [$operations, $expectedResult]) {
+            self::assertSame($expectedResult, $space->update([1], $operations));
+        }
     }
 
-    public function provideUpdateData() : iterable
+    public static function provideUpdateData() : iterable
     {
         return [
             [

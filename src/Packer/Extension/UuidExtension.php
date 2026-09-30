@@ -22,11 +22,13 @@ final class UuidExtension implements Extension
 {
     private const TYPE = 2;
 
+    #[\Override]
     public function getType() : int
     {
         return self::TYPE;
     }
 
+    #[\Override]
     public function pack(Packer $packer, $value) : ?string
     {
         if (!$value instanceof Uuid) {
@@ -39,6 +41,7 @@ final class UuidExtension implements Extension
     /**
      * @return Uuid
      */
+    #[\Override]
     public function unpackExt(BufferUnpacker $unpacker, int $extLength)
     {
         return Uuid::fromString($unpacker->read($extLength));

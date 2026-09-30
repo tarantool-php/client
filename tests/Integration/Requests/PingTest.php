@@ -13,13 +13,12 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\Requests;
 
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use Tarantool\Client\Tests\Integration\TestCase;
 
 final class PingTest extends TestCase
 {
-    /**
-     * @doesNotPerformAssertions
-     */
+    #[DoesNotPerformAssertions]
     public function testPing() : void
     {
         $this->client->ping();

@@ -19,7 +19,7 @@ use Tarantool\Client\RequestTypes;
 final class AuthenticateRequest implements Request
 {
     /** @var non-empty-array<int, string|array> */
-    private $body;
+    private array $body;
 
     public function __construct(string $salt, string $username, string $password = '')
     {
@@ -32,11 +32,13 @@ final class AuthenticateRequest implements Request
         ];
     }
 
+    #[\Override]
     public function getType() : int
     {
         return RequestTypes::AUTHENTICATE;
     }
 
+    #[\Override]
     public function getBody() : array
     {
         return $this->body;

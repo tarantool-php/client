@@ -30,11 +30,11 @@ final class Space
     public const VINDEX_ID = 289;
     public const VINDEX_NAME_INDEX = 2;
 
-    private $handler;
-    private $id;
+    private Handler $handler;
+    private int $id;
 
     /** @var array<string, int> */
-    private $indexes = [];
+    private array $indexes = [];
 
     public function __construct(Handler $handler, int $id)
     {
@@ -89,9 +89,8 @@ final class Space
 
     /**
      * @psalm-param non-empty-array<int, mixed> $key
-     * @param int|string $index
      */
-    public function update(array $key, Operations $operations, $index = 0) : array
+    public function update(array $key, Operations $operations, int|string $index = 0) : array
     {
         if (\is_string($index)) {
             $index = $this->getIndexIdByName($index);
@@ -114,9 +113,8 @@ final class Space
 
     /**
      * @psalm-param non-empty-array<int, mixed> $key
-     * @param int|string $index
      */
-    public function delete(array $key, $index = 0) : array
+    public function delete(array $key, int|string $index = 0) : array
     {
         if (\is_string($index)) {
             $index = $this->getIndexIdByName($index);

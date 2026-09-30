@@ -13,14 +13,13 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Unit;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Tarantool\Client\Dsn;
 
 final class DsnTest extends TestCase
 {
-    /**
-     * @dataProvider provideValidTcpDsns
-     */
+    #[DataProvider('provideValidTcpDsns')]
     public function testParseValidTcpDsn(string $dsn, array $expectedResult) : void
     {
         $dsn = Dsn::parse($dsn);
@@ -36,7 +35,7 @@ final class DsnTest extends TestCase
         }
     }
 
-    public function provideValidTcpDsns() : iterable
+    public static function provideValidTcpDsns() : iterable
     {
         return [
             ['tcp://127.0.0.1', ['uri' => 'tcp://127.0.0.1:3301', 'host' => '127.0.0.1', 'port' => 3301]],
@@ -53,9 +52,7 @@ final class DsnTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideValidUdsDsns
-     */
+    #[DataProvider('provideValidUdsDsns')]
     public function testParseValidUdsDsn(string $dsn, array $expected) : void
     {
         $dsn = Dsn::parse($dsn);
@@ -71,7 +68,7 @@ final class DsnTest extends TestCase
         }
     }
 
-    public function provideValidUdsDsns() : iterable
+    public static function provideValidUdsDsns() : iterable
     {
         return [
             ['unix:///path/to/socket.sock', ['uri' => 'unix:///path/to/socket.sock', 'path' => '/path/to/socket.sock']],
@@ -83,9 +80,7 @@ final class DsnTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideInvalidDsns
-     */
+    #[DataProvider('provideInvalidDsns')]
     public function testParseInvalidDsn(string $nonDsn) : void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -93,7 +88,7 @@ final class DsnTest extends TestCase
         Dsn::parse($nonDsn);
     }
 
-    public function provideInvalidDsns() : iterable
+    public static function provideInvalidDsns() : iterable
     {
         return [
             [''],
@@ -116,16 +111,14 @@ final class DsnTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideStringOptions
-     */
+    #[DataProvider('provideStringOptions')]
     public function testGetString(string $dsn, string $option, ?string $expectedValue) : void
     {
         $dsn = Dsn::parse($dsn);
         self::assertSame($expectedValue, $dsn->getString($option));
     }
 
-    public function provideStringOptions() : iterable
+    public static function provideStringOptions() : iterable
     {
         return [
             ['tcp://host/?foo=bar', 'foo', 'bar'],
@@ -151,16 +144,14 @@ final class DsnTest extends TestCase
         self::assertSame('qux', $dsn->getString('baz', 'qux'));
     }
 
-    /**
-     * @dataProvider provideIntOptions
-     */
+    #[DataProvider('provideIntOptions')]
     public function testGetInt(string $dsn, string $option, $expectedValue) : void
     {
         $dsn = Dsn::parse($dsn);
         self::assertSame($expectedValue, $dsn->getInt($option));
     }
 
-    public function provideIntOptions() : iterable
+    public static function provideIntOptions() : iterable
     {
         return [
             ['tcp://host/?foo=42', 'foo', 42],
@@ -178,9 +169,7 @@ final class DsnTest extends TestCase
         self::assertSame(42, $dsn->getInt('baz', 42));
     }
 
-    /**
-     * @dataProvider provideNonIntOptions
-     */
+    #[DataProvider('provideNonIntOptions')]
     public function testGetNonInt(string $dsn, string $option) : void
     {
         $dsn = Dsn::parse($dsn);
@@ -190,7 +179,7 @@ final class DsnTest extends TestCase
         $dsn->getInt($option);
     }
 
-    public function provideNonIntOptions() : iterable
+    public static function provideNonIntOptions() : iterable
     {
         return [
             ['tcp://host/?foo=bar', 'foo'],
@@ -204,16 +193,14 @@ final class DsnTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideFloatOptions
-     */
+    #[DataProvider('provideFloatOptions')]
     public function testGetFloat(string $dsn, string $option, $expectedValue) : void
     {
         $dsn = Dsn::parse($dsn);
         self::assertSame($expectedValue, $dsn->getFloat($option));
     }
 
-    public function provideFloatOptions() : iterable
+    public static function provideFloatOptions() : iterable
     {
         return [
             ['tcp://host/?foo=42', 'foo', 42.0],
@@ -233,9 +220,7 @@ final class DsnTest extends TestCase
         self::assertSame(42.3, $dsn->getFloat('baz', 42.3));
     }
 
-    /**
-     * @dataProvider provideNonFloatOptions
-     */
+    #[DataProvider('provideNonFloatOptions')]
     public function testGetNonFloat(string $dsn, string $option) : void
     {
         $dsn = Dsn::parse($dsn);
@@ -245,7 +230,7 @@ final class DsnTest extends TestCase
         $dsn->getFloat($option);
     }
 
-    public function provideNonFloatOptions() : iterable
+    public static function provideNonFloatOptions() : iterable
     {
         return [
             ['tcp://host/?foo=bar', 'foo'],
@@ -257,16 +242,14 @@ final class DsnTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideBoolOptions
-     */
+    #[DataProvider('provideBoolOptions')]
     public function testGetBool(string $dsn, string $option, ?bool $expectedValue) : void
     {
         $dsn = Dsn::parse($dsn);
         self::assertSame($expectedValue, $dsn->getBool($option));
     }
 
-    public function provideBoolOptions() : iterable
+    public static function provideBoolOptions() : iterable
     {
         return [
             ['tcp://host/?foo=true', 'foo', true],
@@ -294,9 +277,7 @@ final class DsnTest extends TestCase
         self::assertTrue($dsn->getBool('baz', true));
     }
 
-    /**
-     * @dataProvider provideNonBoolOptions
-     */
+    #[DataProvider('provideNonBoolOptions')]
     public function testGetNonBool(string $dsn, string $option) : void
     {
         $dsn = Dsn::parse($dsn);
@@ -306,7 +287,7 @@ final class DsnTest extends TestCase
         $dsn->getBool($option);
     }
 
-    public function provideNonBoolOptions() : iterable
+    public static function provideNonBoolOptions() : iterable
     {
         return [
             ['tcp://host/?foo=bar', 'foo'],

@@ -21,12 +21,12 @@ final class LegacyCallRequest implements Request
     private const TYPE = 6;
 
     /** @var non-empty-array<int, string|array> */
-    private $body;
+    private readonly array $body;
 
     /**
      * @param non-empty-array<int, string|array> $body
      */
-    private function __construct($body)
+    private function __construct(array $body)
     {
         $this->body = $body;
     }
@@ -36,11 +36,13 @@ final class LegacyCallRequest implements Request
         return new self($request->getBody());
     }
 
+    #[\Override]
     public function getType() : int
     {
         return self::TYPE;
     }
 
+    #[\Override]
     public function getBody() : array
     {
         return $this->body;

@@ -13,16 +13,20 @@ declare(strict_types=1);
 
 namespace Tarantool\Client;
 
+/**
+ * @implements \ArrayAccess<array-key, array>
+ * @implements \IteratorAggregate<array-key, array>
+ */
 final class SqlQueryResult implements \ArrayAccess, \Countable, \IteratorAggregate
 {
     /** @var array<int, mixed> */
-    private $data;
+    private array $data;
 
     /** @var array<int, array<int, string>> */
-    private $metadata;
+    private array $metadata;
 
     /** @var array<int, string> */
-    private $keys;
+    private array $keys;
 
     public function __construct(array $data, array $metadata)
     {
@@ -56,6 +60,7 @@ final class SqlQueryResult implements \ArrayAccess, \Countable, \IteratorAggrega
         return $this->data ? \array_combine($this->keys, \end($this->data)) : null;
     }
 
+    #[\Override]
     public function getIterator() : \Generator
     {
         foreach ($this->data as $item) {
@@ -63,16 +68,19 @@ final class SqlQueryResult implements \ArrayAccess, \Countable, \IteratorAggrega
         }
     }
 
+    #[\Override]
     public function count() : int
     {
         return \count($this->data);
     }
 
+    #[\Override]
     public function offsetExists($offset) : bool
     {
         return isset($this->data[$offset]);
     }
 
+    #[\Override]
     public function offsetGet($offset) : array
     {
         if (!isset($this->data[$offset])) {
@@ -82,11 +90,13 @@ final class SqlQueryResult implements \ArrayAccess, \Countable, \IteratorAggrega
         return \array_combine($this->keys, $this->data[$offset]);
     }
 
+    #[\Override]
     public function offsetSet($offset, $value) : void
     {
         throw new \BadMethodCallException(self::class.' object cannot be modified');
     }
 
+    #[\Override]
     public function offsetUnset($offset) : void
     {
         throw new \BadMethodCallException(self::class.' object cannot be modified');

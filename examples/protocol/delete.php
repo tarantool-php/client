@@ -16,8 +16,7 @@ require __DIR__.'/../bootstrap.php';
 $client = create_client();
 $spaceName = 'example';
 
-$client->evaluate(
-<<<LUA
+$client->evaluate(<<<LUA
     if box.space[...] then box.space[...]:drop() end
     local space = box.schema.space.create(...)
     space:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
@@ -26,8 +25,7 @@ $client->evaluate(
     space:insert({2, 'bar'})
     space:insert({3, 'baz'})
     space:insert({4, 'qux'})
-LUA
-, $spaceName);
+LUA, $spaceName);
 
 $space = $client->getSpace($spaceName);
 $result1 = $space->delete([2]);

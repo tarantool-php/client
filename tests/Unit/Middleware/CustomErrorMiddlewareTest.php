@@ -26,10 +26,7 @@ use Tarantool\PhpUnit\Client\TestDoubleFactory;
 
 final class CustomErrorMiddlewareTest extends TestCase
 {
-    /**
-     * @var Handler|MockObject
-     */
-    private $handler;
+    private Handler&MockObject $handler;
 
     protected function setUp() : void
     {

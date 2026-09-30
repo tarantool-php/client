@@ -27,13 +27,13 @@ final class RetryMiddleware implements Middleware
     private const MAX_RETRIES_LIMIT = 10;
     private const MAX_DELAY_MS = 60000;
 
-    /** @var \Closure */
-    private $getDelayMs;
+    /** @var \Closure(int, \Throwable) : ?int */
+    private \Closure $getDelayMs;
 
     /**
-     * @param \Closure $getDelayMs
+     * @param \Closure(int, \Throwable) : ?int $getDelayMs
      */
-    private function __construct($getDelayMs)
+    private function __construct(\Closure $getDelayMs)
     {
         $this->getDelayMs = $getDelayMs;
     }
@@ -59,6 +59,9 @@ final class RetryMiddleware implements Middleware
         });
     }
 
+    /**
+     * @param \Closure(int, \Throwable) : ?int $getDelayMs
+     */
     public static function custom(\Closure $getDelayMs) : self
     {
         return new self(static function (int $retries, \Throwable $e) use ($getDelayMs) : ?int {
@@ -66,17 +69,18 @@ final class RetryMiddleware implements Middleware
         });
     }
 
+    #[\Override]
     public function process(Request $request, Handler $handler) : Response
     {
         $retries = 0;
 
-        do {
+        while (true) {
             try {
                 return $handler->handle($request);
             } catch (UnexpectedResponse $e) {
                 $handler->getConnection()->close();
                 break;
-            } catch (ConnectionFailed | CommunicationFailed $e) {
+            } catch (ConnectionFailed|CommunicationFailed $e) {
                 $handler->getConnection()->close();
                 goto retry;
             } catch (ClientException $e) {
@@ -91,7 +95,7 @@ final class RetryMiddleware implements Middleware
                 $delayMs += \mt_rand(0, $delayMs);
                 \usleep($delayMs * 1000);
             }
-        } while (true);
+        }
 
         throw $e;
     }

@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Tests\Integration\Connection;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use Tarantool\Client\Exception\CommunicationFailed;
 use Tarantool\Client\Exception\ConnectionFailed;
 use Tarantool\Client\Exception\UnexpectedResponse;
@@ -25,15 +27,13 @@ use Tarantool\Client\Tests\Integration\FakeServer\FakeServerBuilder;
 use Tarantool\Client\Tests\Integration\FakeServer\Handler\AtConnectionHandler;
 use Tarantool\Client\Tests\Integration\FakeServer\Handler\WriteHandler;
 use Tarantool\Client\Tests\Integration\TestCase;
+use Tarantool\PhpUnit\Attribute\Lua;
 
 final class ConnectionTest extends TestCase
 {
-    /**
-     * @dataProvider provideAutoConnectData
-     * @doesNotPerformAssertions
-     *
-     * @lua create_space('test_auto_connect'):create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
-     */
+    #[DataProvider('provideAutoConnectData')]
+    #[DoesNotPerformAssertions]
+    #[Lua('create_space("test_auto_connect"):create_index("primary", {type = "tree", parts = {1, "unsigned"}})')]
     public function testAutoConnect(string $methodName, array $methodArgs, ?string $space = null) : void
     {
         $object = $space ? $this->client->getSpace($space) : $this->client;
@@ -42,7 +42,7 @@ final class ConnectionTest extends TestCase
         $object->$methodName(...$methodArgs);
     }
 
-    public function provideAutoConnectData() : iterable
+    public static function provideAutoConnectData() : iterable
     {
         return [
             ['ping', []],

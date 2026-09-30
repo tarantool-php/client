@@ -19,7 +19,7 @@ use Tarantool\Client\RequestTypes;
 final class UpsertRequest implements Request
 {
     /** @var non-empty-array<int, int|array> */
-    private $body;
+    private array $body;
 
     public function __construct(int $spaceId, array $tuple, array $operations)
     {
@@ -30,11 +30,13 @@ final class UpsertRequest implements Request
         ];
     }
 
+    #[\Override]
     public function getType() : int
     {
         return RequestTypes::UPSERT;
     }
 
+    #[\Override]
     public function getBody() : array
     {
         return $this->body;
