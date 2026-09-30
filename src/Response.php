@@ -17,8 +17,8 @@ final class Response
 {
     public const TYPE_ERROR = 0x8000;
 
-    private $header;
-    private $body;
+    private array $header;
+    private array $body;
 
     public function __construct(array $header, array $body)
     {

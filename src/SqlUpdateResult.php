@@ -15,7 +15,7 @@ namespace Tarantool\Client;
 
 final class SqlUpdateResult implements \Countable
 {
-    private $info;
+    private array $info;
 
     public function __construct(array $info)
     {

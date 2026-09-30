@@ -19,8 +19,7 @@ use Tarantool\Client\Response;
 
 final class RequestFailed extends \RuntimeException implements ClientException
 {
-    /** @var Error|null */
-    private $error;
+    private ?Error $error = null;
 
     public function getError() : ?Error
     {

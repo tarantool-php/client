@@ -22,8 +22,8 @@ use Tarantool\Client\Response;
 
 final class DefaultHandler implements Handler
 {
-    private $connection;
-    private $packer;
+    private Connection $connection;
+    private Packer $packer;
 
     public function __construct(Connection $connection, Packer $packer)
     {

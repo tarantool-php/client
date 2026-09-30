@@ -21,11 +21,10 @@ use Tarantool\Client\Response;
 
 final class AuthenticationMiddleware implements Middleware
 {
-    private $username;
-    private $password;
+    private string $username;
+    private string $password;
 
-    /** @var Greeting|null */
-    private $greeting;
+    private ?Greeting $greeting = null;
 
     public function __construct(string $username, string $password = '')
     {

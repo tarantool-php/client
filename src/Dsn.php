@@ -15,37 +15,27 @@ namespace Tarantool\Client;
 
 final class Dsn
 {
-    /** @var string|null */
-    private $host;
+    private ?string $host = null;
 
-    /** @var int|null */
-    private $port;
+    private ?int $port = null;
 
-    /** @var string|null */
-    private $path;
+    private ?string $path = null;
 
-    /** @var string */
-    private $connectionUri;
+    private string $connectionUri;
 
-    /** @var string|null */
-    private $username;
+    private ?string $username = null;
 
-    /** @var string|null */
-    private $password;
+    private ?string $password = null;
 
-    /** @var bool */
-    private $isTcp = false;
+    private bool $isTcp = false;
 
     /**
      * @var array<string, string>
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    private $options;
+    private array $options = [];
 
-    /**
-     * @param string $connectionUri
-     */
-    private function __construct($connectionUri)
+    private function __construct(string $connectionUri)
     {
         $this->connectionUri = $connectionUri;
     }

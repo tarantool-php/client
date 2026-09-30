@@ -21,7 +21,7 @@ use Tarantool\Client\Response;
 
 final class LoggingMiddleware implements Middleware
 {
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(LoggerInterface $logger)
     {

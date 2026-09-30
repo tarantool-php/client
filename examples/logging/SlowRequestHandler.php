@@ -53,12 +53,10 @@ final class SlowRequestHandler extends HandlerWrapper
 
         $request = $record['context']['request'];
 
-        $newRecord = $record->with(
+        return $this->handler->handle($record->with(
             level: $this->level,
             message: sprintf('Slow %s request detected (%d ms)', RequestTypes::getName($request->getType()), $record['context']['duration_ms']),
             context: ['request_body' => $request->getBody()] + $record['context']
-        );
-
-        return $this->handler->handle($newRecord);
+        ));
     }
 }

@@ -21,17 +21,13 @@ final class StreamConnection implements Connection
 {
     public const DEFAULT_TCP_URI = 'tcp://127.0.0.1:3301';
 
-    /** @var string */
-    private $uri;
+    private string $uri;
 
-    /** @var float */
-    private $connectTimeout;
+    private float $connectTimeout;
 
-    /** @var float */
-    private $socketTimeout;
+    private float $socketTimeout;
 
-    /** @var bool */
-    private $persistent;
+    private bool $persistent;
 
     /** @var resource|null */
     private $streamContext;
@@ -39,13 +35,9 @@ final class StreamConnection implements Connection
     /** @var resource|null */
     private $stream;
 
-    /** @var Greeting|null */
-    private $greeting;
+    private ?Greeting $greeting = null;
 
-    /**
-     * @param string $uri
-     */
-    private function __construct($uri, float $connectTimeout, float $socketTimeout, bool $persistent, bool $tcpNoDelay)
+    private function __construct(string $uri, float $connectTimeout, float $socketTimeout, bool $persistent, bool $tcpNoDelay)
     {
         $this->uri = $uri;
         $this->connectTimeout = $connectTimeout;

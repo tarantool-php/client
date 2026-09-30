@@ -19,7 +19,7 @@ use Tarantool\Client\RequestTypes;
 final class UpdateRequest implements Request
 {
     /** @var non-empty-array<int, int|array> */
-    private $body;
+    private array $body;
 
     public function __construct(int $spaceId, int $indexId, array $key, array $operations)
     {

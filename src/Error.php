@@ -15,14 +15,14 @@ namespace Tarantool\Client;
 
 final class Error
 {
-    private $type;
-    private $file;
-    private $line;
-    private $message;
-    private $number;
-    private $code;
-    private $fields;
-    private $previous;
+    private string $type;
+    private string $file;
+    private int $line;
+    private string $message;
+    private int $number;
+    private int $code;
+    private array $fields;
+    private ?self $previous;
 
     public function __construct(
         string $type,

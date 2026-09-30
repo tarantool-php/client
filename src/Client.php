@@ -36,7 +36,7 @@ final class Client
     private Handler $handler;
 
     /** @var array<array-key, Space> */
-    private $spaces = [];
+    private array $spaces = [];
 
     public function __construct(Handler $handler)
     {

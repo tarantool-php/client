@@ -95,6 +95,7 @@ return (new Config())
         'array_syntax' => ['syntax' => 'short'],
         'binary_operator_spaces' => ['operators' => ['=' => null, '=>' => null]],
         'declare_strict_types' => true,
+        'integer_literal_case' => false,
         'native_constant_invocation' => false,
         'native_function_invocation' => false,
         'FilterableFixer/native_constant_invocation' => true,

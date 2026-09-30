@@ -19,7 +19,7 @@ use Tarantool\Client\RequestTypes;
 final class InsertRequest implements Request
 {
     /** @var non-empty-array<int, int|array> */
-    private $body;
+    private array $body;
 
     public function __construct(int $spaceId, array $tuple)
     {

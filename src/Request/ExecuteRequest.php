@@ -19,12 +19,12 @@ use Tarantool\Client\RequestTypes;
 final class ExecuteRequest implements Request
 {
     /** @var non-empty-array<int, int|string|array> */
-    private $body;
+    private array $body;
 
     /**
      * @param non-empty-array<int, int|string|array> $body
      */
-    private function __construct($body)
+    private function __construct(array $body)
     {
         $this->body = $body;
     }

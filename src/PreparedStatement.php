@@ -19,11 +19,11 @@ use Tarantool\Client\Request\PrepareRequest;
 
 final class PreparedStatement
 {
-    private $handler;
-    private $id;
-    private $bindCount;
-    private $bindMetadata;
-    private $metadata;
+    private Handler $handler;
+    private int $id;
+    private int $bindCount;
+    private array $bindMetadata;
+    private array $metadata;
 
     public function __construct(Handler $handler, int $id, int $bindCount, array $bindMetadata, array $metadata)
     {
