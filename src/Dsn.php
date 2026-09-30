@@ -16,17 +16,11 @@ namespace Tarantool\Client;
 final class Dsn
 {
     private ?string $host = null;
-
     private ?int $port = null;
-
     private ?string $path = null;
-
     private string $connectionUri;
-
     private ?string $username = null;
-
     private ?string $password = null;
-
     private bool $isTcp = false;
 
     /**

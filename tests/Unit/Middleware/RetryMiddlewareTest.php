@@ -25,7 +25,6 @@ use Tarantool\PhpUnit\Client\TestDoubleFactory;
 final class RetryMiddlewareTest extends TestCase
 {
     private Request&MockObject $request;
-
     private Handler&MockObject $handler;
 
     protected function setUp() : void

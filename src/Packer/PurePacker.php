@@ -29,7 +29,6 @@ use Tarantool\Client\Response;
 final class PurePacker implements ClientPacker
 {
     private Packer $packer;
-
     private BufferUnpacker $unpacker;
 
     public function __construct(?Packer $packer = null, ?BufferUnpacker $unpacker = null)

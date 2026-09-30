@@ -20,11 +20,8 @@ final class Greeting
     public const SIZE_BYTES = 128;
 
     private string $greeting;
-
     private ?string $salt = null;
-
     private ?string $serverVersion = null;
-
     private bool $unknown = false;
 
     private function __construct(string $greeting)

@@ -22,11 +22,8 @@ final class StreamConnection implements Connection
     public const DEFAULT_TCP_URI = 'tcp://127.0.0.1:3301';
 
     private string $uri;
-
     private float $connectTimeout;
-
     private float $socketTimeout;
-
     private bool $persistent;
 
     /** @var resource|null */

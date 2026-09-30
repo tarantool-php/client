@@ -23,7 +23,6 @@ final class AuthenticationMiddleware implements Middleware
 {
     private string $username;
     private string $password;
-
     private ?Greeting $greeting = null;
 
     public function __construct(string $username, string $password = '')

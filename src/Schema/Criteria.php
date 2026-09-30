@@ -21,7 +21,6 @@ final class Criteria
     private array $key = [];
 
     private int $limit = \PHP_INT_MAX & 0xFFFFFFFF;
-
     private int $offset = 0;
 
     /** @psalm-var IteratorTypes::*|null */

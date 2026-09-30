@@ -94,6 +94,7 @@ return (new Config())
         '@Symfony:risky' => true,
         'array_syntax' => ['syntax' => 'short'],
         'binary_operator_spaces' => ['operators' => ['=' => null, '=>' => null]],
+        'class_attributes_separation' => ['elements' => ['method' => 'one', 'property' => 'none']],
         'declare_strict_types' => true,
         'integer_literal_case' => false,
         'native_constant_invocation' => false,
