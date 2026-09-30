@@ -61,6 +61,7 @@ jobs:
             # some tests are skipped on Tarantool > 2.8
             TNT_IMAGE: tarantool/tarantool:2.8
 
+    name: ${{ matrix.env.PHP_IMAGE || 'php:8.3-cli' }}, ${{ matrix.env.TNT_IMAGE || 'tarantool/tarantool:3.1' }}${{ matrix.env.QA && ', qa' || '' }}${{ matrix.env.COVERAGE_FILE && ', coverage' || '' }}${{ matrix.env.EXT_DISABLE_DECIMAL && ', decimal disabled' || '' }}${{ matrix.env.TNT_LISTEN_URI && ', unix socket' || '' }}
     runs-on: ${{ matrix.operating-system }}
     steps:
       - name: Checkout
