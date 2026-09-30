@@ -24,9 +24,9 @@ final class AuthenticateTest extends TestCase
 {
     #[DoesNotPerformAssertions]
     #[DataProvider('provideValidCredentials')]
-    #[Lua('create_user(\'user_foo\', \'foo\')')]
-    #[Lua('create_user(\'user_empty\', \'\')')]
-    #[Lua('create_user(\'user_big\', \'123456789012345678901234567890123456789012345678901234567890\')')]
+    #[Lua('create_user("user_foo", "foo")')]
+    #[Lua('create_user("user_empty", "")')]
+    #[Lua('create_user("user_big", "123456789012345678901234567890123456789012345678901234567890")')]
     public function testAuthenticateWithValidCredentials(string $username, string $password) : void
     {
         $client = ClientBuilder::createFromEnv()->setOptions([
@@ -71,8 +71,8 @@ final class AuthenticateTest extends TestCase
         ];
     }
 
-    #[Lua('create_user(\'user_foo\', \'foo\')')]
-    #[Lua('create_space(\'test_auth_reconnect\'):create_index(\'primary\', {type = \'tree\', parts = {1, \'unsigned\'}})')]
+    #[Lua('create_user("user_foo", "foo")')]
+    #[Lua('create_space("test_auth_reconnect"):create_index("primary", {type = "tree", parts = {1, "unsigned"}})')]
     public function testUseCredentialsAfterReconnect() : void
     {
         $client = ClientBuilder::createFromEnv()->setOptions([

@@ -18,10 +18,10 @@ use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Tests\Integration\TestCase;
 use Tarantool\PhpUnit\Attribute\Lua;
 
-#[Lua('space = create_space(\'request_replace\')')]
-#[Lua('space:create_index(\'primary\', {type = \'hash\', parts = {1, \'unsigned\'}})')]
-#[Lua('space:create_index(\'secondary\', {type = \'tree\', parts = {2, \'str\'}})')]
-#[Lua('space:insert{2, \'replace_me\'}')]
+#[Lua('space = create_space("request_replace")')]
+#[Lua('space:create_index("primary", {type = "hash", parts = {1, "unsigned"}})')]
+#[Lua('space:create_index("secondary", {type = "tree", parts = {2, "str"}})')]
+#[Lua('space:insert{2, "replace_me"}')]
 final class ReplaceTest extends TestCase
 {
     public function testReplace() : void

@@ -19,11 +19,11 @@ use Tarantool\Client\Schema\Operations;
 use Tarantool\Client\Tests\Integration\TestCase;
 use Tarantool\PhpUnit\Attribute\Lua;
 
-#[Lua('space = create_space(\'request_update\')')]
-#[Lua('space:create_index(\'primary\', {type = \'tree\', unique = true, parts = {1, \'unsigned\'}})')]
-#[Lua('space:create_index(\'secondary\', {type = \'tree\', unique = false, parts = {2, \'unsigned\', 3, \'str\'}})')]
-#[Lua('space:replace{1, 2, \'tuple_1\'}')]
-#[Lua('space:replace{2, 4, \'tuple_2\'}')]
+#[Lua('space = create_space("request_update")')]
+#[Lua('space:create_index("primary", {type = "tree", unique = true, parts = {1, "unsigned"}})')]
+#[Lua('space:create_index("secondary", {type = "tree", unique = false, parts = {2, "unsigned", 3, "str"}})')]
+#[Lua('space:replace{1, 2, "tuple_1"}')]
+#[Lua('space:replace{2, 4, "tuple_2"}')]
 final class UpdateTest extends TestCase
 {
     public function testUpdate() : void

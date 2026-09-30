@@ -19,8 +19,8 @@ use Tarantool\Client\Schema\Operations;
 use Tarantool\Client\Tests\Integration\TestCase;
 use Tarantool\PhpUnit\Attribute\Lua;
 
-#[Lua('space = create_space(\'request_upsert\')')]
-#[Lua('space:create_index(\'primary\', {type = \'hash\', parts = {1, \'unsigned\'}})')]
+#[Lua('space = create_space("request_upsert")')]
+#[Lua('space:create_index("primary", {type = "hash", parts = {1, "unsigned"}})')]
 final class UpsertTest extends TestCase
 {
     public function testUpsert() : void

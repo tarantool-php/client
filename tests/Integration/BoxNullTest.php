@@ -19,11 +19,11 @@ use Tarantool\PhpUnit\Attribute\Lua;
 final class BoxNullTest extends TestCase
 {
     #[Lua('format = {}')]
-    #[Lua('format[1] = {name = \'foo\', type = \'unsigned\'}')]
-    #[Lua('format[2] = {name = \'bar\', type = \'map\', is_nullable = true}')]
-    #[Lua('format[3] = {name = \'baz\', type = \'unsigned\', is_nullable = true}')]
-    #[Lua('space = create_space(\'box_null\', {format = format})')]
-    #[Lua('space:create_index(\'pk\')')]
+    #[Lua('format[1] = {name = "foo", type = "unsigned"}')]
+    #[Lua('format[2] = {name = "bar", type = "map", is_nullable = true}')]
+    #[Lua('format[3] = {name = "baz", type = "unsigned", is_nullable = true}')]
+    #[Lua('space = create_space("box_null", {format = format})')]
+    #[Lua('space:create_index("pk")')]
     #[Lua('space:insert{1, {a = 1}}')]
     #[Lua('space:insert{2, {b = 2}, box.NULL}')]
     #[Lua('space:insert{3, box.NULL, 300}')]

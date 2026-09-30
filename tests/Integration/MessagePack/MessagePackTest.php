@@ -68,8 +68,8 @@ final class MessagePackTest extends TestCase
         self::assertEqualsCanonicalizing($array, $result);
     }
 
-    #[Lua('space = create_space(\'custom_type\')')]
-    #[Lua('space:create_index(\'primary\', {type = \'hash\', parts = {1, \'unsigned\'}})')]
+    #[Lua('space = create_space("custom_type")')]
+    #[Lua('space:create_index("primary", {type = "hash", parts = {1, "unsigned"}})')]
     public function testCustomType() : void
     {
         $client = ClientBuilder::createFromEnv()

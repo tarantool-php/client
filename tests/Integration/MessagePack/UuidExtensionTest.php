@@ -24,10 +24,10 @@ use Tarantool\PhpUnit\Attribute\Lua;
 use Tarantool\PhpUnit\Attribute\RequiresTarantool;
 
 #[RequiresTarantool('>=2.4')]
-#[Lua('uuid = require(\'uuid\').fromstr(\'64d22e4d-ac92-4a23-899a-e59f34af5479\')')]
-#[Lua('space = create_space(\'uuid_primary\')')]
-#[Lua('space:format({{name = \'id\', type = \'uuid\'}})')]
-#[Lua('space:create_index("primary", {parts = {1, \'uuid\'}})')]
+#[Lua('uuid = require("uuid").fromstr("64d22e4d-ac92-4a23-899a-e59f34af5479")')]
+#[Lua('space = create_space("uuid_primary")')]
+#[Lua('space:format({{name = "id", type = "uuid"}})')]
+#[Lua('space:create_index("primary", {parts = {1, "uuid"}})')]
 #[Lua('space:insert({uuid})')]
 final class UuidExtensionTest extends TestCase
 {

@@ -28,7 +28,7 @@ final class SqlQueryResult implements \ArrayAccess, \Countable, \IteratorAggrega
     {
         $this->data = $data;
         $this->metadata = $metadata;
-        $this->keys = $metadata ? array_column($metadata, 0) : [];
+        $this->keys = $metadata ? \array_column($metadata, 0) : [];
     }
 
     public function getData() : array
@@ -48,19 +48,19 @@ final class SqlQueryResult implements \ArrayAccess, \Countable, \IteratorAggrega
 
     public function getFirst() : ?array
     {
-        return $this->data ? array_combine($this->keys, reset($this->data)) : null;
+        return $this->data ? \array_combine($this->keys, \reset($this->data)) : null;
     }
 
     public function getLast() : ?array
     {
-        return $this->data ? array_combine($this->keys, end($this->data)) : null;
+        return $this->data ? \array_combine($this->keys, \end($this->data)) : null;
     }
 
     #[\Override]
     public function getIterator() : \Generator
     {
         foreach ($this->data as $item) {
-            yield array_combine($this->keys, $item);
+            yield \array_combine($this->keys, $item);
         }
     }
 
@@ -83,7 +83,7 @@ final class SqlQueryResult implements \ArrayAccess, \Countable, \IteratorAggrega
             throw new \OutOfBoundsException(\sprintf('The offset "%s" does not exist', $offset));
         }
 
-        return array_combine($this->keys, $this->data[$offset]);
+        return \array_combine($this->keys, $this->data[$offset]);
     }
 
     #[\Override]

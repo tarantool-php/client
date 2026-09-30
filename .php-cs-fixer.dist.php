@@ -5,20 +5,32 @@ declare(strict_types=1);
 namespace Tarantool\Client;
 
 use PhpCsFixer\Config;
+use PhpCsFixer\Fixer\ConfigurableFixerInterface;
 use PhpCsFixer\Fixer\ConstantNotation\NativeConstantInvocationFixer;
-use PhpCsFixer\Fixer\FixerInterface;
 use PhpCsFixer\Fixer\FunctionNotation\NativeFunctionInvocationFixer;
+use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverInterface;
+use PhpCsFixer\FixerDefinition\FixerDefinitionInterface;
 use PhpCsFixer\Tokenizer\Tokens;
 
-final class FilterableFixer implements FixerInterface
+final class FilterableFixer implements ConfigurableFixerInterface
 {
-    private $fixer;
-    private $pathRegex;
+    private ConfigurableFixerInterface $fixer;
+    private string $pathRegex;
 
-    public function __construct(FixerInterface $fixer, string $pathRegex)
+    public function __construct(ConfigurableFixerInterface $fixer, string $pathRegex)
     {
         $this->fixer = $fixer;
         $this->pathRegex = $pathRegex;
+    }
+
+    public function configure(array $configuration) : void
+    {
+        $this->fixer->configure($configuration);
+    }
+
+    public function getConfigurationDefinition() : FixerConfigurationResolverInterface
+    {
+        return $this->fixer->getConfigurationDefinition();
     }
 
     public function isCandidate(Tokens $tokens) : bool
@@ -46,7 +58,7 @@ final class FilterableFixer implements FixerInterface
         return $this->fixer->getPriority();
     }
 
-    public function getDefinition() : \PhpCsFixer\FixerDefinition\FixerDefinitionInterface
+    public function getDefinition() : FixerDefinitionInterface
     {
         return $this->fixer->getDefinition();
     }
@@ -86,7 +98,7 @@ return (new Config())
         'native_constant_invocation' => false,
         'native_function_invocation' => false,
         'FilterableFixer/native_constant_invocation' => true,
-        'FilterableFixer/native_function_invocation' => true,
+        'FilterableFixer/native_function_invocation' => ['include' => ['@all']],
         'no_useless_else' => true,
         'no_useless_return' => true,
         'ordered_imports' => [

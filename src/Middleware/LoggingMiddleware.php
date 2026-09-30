@@ -37,14 +37,14 @@ final class LoggingMiddleware implements Middleware
             'request' => $request,
         ]);
 
-        $start = microtime(true);
+        $start = \microtime(true);
         try {
             $response = $handler->handle($request);
         } catch (\Throwable $e) {
             $this->logger->error("Request \"$requestName\" failed", [
                 'request' => $request,
                 'exception' => $e,
-                'duration_ms' => round((microtime(true) - $start) * 1000),
+                'duration_ms' => \round((\microtime(true) - $start) * 1000),
             ]);
 
             throw $e;
@@ -53,7 +53,7 @@ final class LoggingMiddleware implements Middleware
         $this->logger->debug("Finished handling request \"$requestName\"", [
             'request' => $request,
             'response' => $response,
-            'duration_ms' => round((microtime(true) - $start) * 1000),
+            'duration_ms' => \round((\microtime(true) - $start) * 1000),
         ]);
 
         return $response;

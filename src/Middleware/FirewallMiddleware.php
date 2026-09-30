@@ -33,8 +33,8 @@ final class FirewallMiddleware implements Middleware
      */
     private function __construct($allowed, $denied)
     {
-        $this->allowed = $allowed ? array_fill_keys($allowed, true) : [];
-        $this->denied = $denied ? array_fill_keys($denied, true) : [];
+        $this->allowed = $allowed ? \array_fill_keys($allowed, true) : [];
+        $this->denied = $denied ? \array_fill_keys($denied, true) : [];
     }
 
     public static function allow(int $requestType, int ...$requestTypes) : self
@@ -63,7 +63,7 @@ final class FirewallMiddleware implements Middleware
     {
         $new = clone $this;
         $new->allowed += $requestTypes
-            ? array_fill_keys([-1 => $requestType] + $requestTypes, true)
+            ? \array_fill_keys([-1 => $requestType] + $requestTypes, true)
             : [$requestType => true];
 
         return $new;
@@ -73,7 +73,7 @@ final class FirewallMiddleware implements Middleware
     {
         $new = clone $this;
         $new->allowed = $requestTypes
-            ? array_fill_keys([-1 => $requestType] + $requestTypes, true)
+            ? \array_fill_keys([-1 => $requestType] + $requestTypes, true)
             : [$requestType => true];
 
         return $new;
@@ -83,7 +83,7 @@ final class FirewallMiddleware implements Middleware
     {
         $new = clone $this;
         $new->denied += $requestTypes
-            ? array_fill_keys([-1 => $requestType] + $requestTypes, true)
+            ? \array_fill_keys([-1 => $requestType] + $requestTypes, true)
             : [$requestType => true];
 
         return $new;
@@ -93,7 +93,7 @@ final class FirewallMiddleware implements Middleware
     {
         $new = clone $this;
         $new->denied = $requestTypes
-            ? array_fill_keys([-1 => $requestType] + $requestTypes, true)
+            ? \array_fill_keys([-1 => $requestType] + $requestTypes, true)
             : [$requestType => true];
 
         return $new;

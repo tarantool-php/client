@@ -17,8 +17,8 @@ use Tarantool\Client\Schema\Criteria;
 use Tarantool\Client\Schema\Operations;
 use Tarantool\PhpUnit\Attribute\Lua;
 
-#[Lua('space = create_space(\'composite_key\')')]
-#[Lua('space:create_index(\'primary\', {type = \'tree\', unique = true, parts = {1, \'unsigned\', 2, \'unsigned\'}})')]
+#[Lua('space = create_space("composite_key")')]
+#[Lua('space:create_index("primary", {type = "tree", unique = true, parts = {1, "unsigned", 2, "unsigned"}})')]
 #[Lua('space:insert{2016, 10, 1}')]
 #[Lua('space:insert{2016, 11, 0}')]
 final class CompositeKeyTest extends TestCase

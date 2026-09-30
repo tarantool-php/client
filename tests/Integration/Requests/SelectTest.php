@@ -22,10 +22,10 @@ use Tarantool\PhpUnit\Attribute\Lua;
 final class SelectTest extends TestCase
 {
     #[DataProvider('provideSelectData')]
-    #[Lua('space = create_space(\'request_select\')')]
-    #[Lua('space:create_index(\'primary\', {type = \'tree\', unique = true, parts = {1, \'unsigned\'}})')]
-    #[Lua('space:create_index(\'secondary\', {type = \'tree\', unique = false, parts = {2, \'unsigned\', 3, \'str\'}})')]
-    #[Lua('for i = 1, 100 do space:replace{i, i * 2 % 5, \'tuple_\' .. i} end')]
+    #[Lua('space = create_space("request_select")')]
+    #[Lua('space:create_index("primary", {type = "tree", unique = true, parts = {1, "unsigned"}})')]
+    #[Lua('space:create_index("secondary", {type = "tree", unique = false, parts = {2, "unsigned", 3, "str"}})')]
+    #[Lua('for i = 1, 100 do space:replace{i, i * 2 % 5, "tuple_" .. i} end')]
     public function testSelect(int $expectedCount, Criteria $criteria) : void
     {
         $space = $this->client->getSpace('request_select');
@@ -54,7 +54,7 @@ final class SelectTest extends TestCase
         ];
     }
 
-    #[Lua('create_space(\'request_select\'):create_index(\'primary\', {type = \'tree\', parts = {1, \'unsigned\'}})')]
+    #[Lua('create_space("request_select"):create_index("primary", {type = "tree", parts = {1, "unsigned"}})')]
     public function testSelectEmpty() : void
     {
         $space = $this->client->getSpace('request_select');
@@ -62,7 +62,7 @@ final class SelectTest extends TestCase
         self::assertEmpty($space->select(Criteria::key([])));
     }
 
-    #[Lua('create_space(\'request_select\'):create_index(\'primary\', {type = \'hash\', parts = {1, \'unsigned\'}})')]
+    #[Lua('create_space("request_select"):create_index("primary", {type = "hash", parts = {1, "unsigned"}})')]
     public function testSelectWithNonExistingIndexName() : void
     {
         $space = $this->client->getSpace('request_select');
@@ -73,7 +73,7 @@ final class SelectTest extends TestCase
         $space->select(Criteria::key([1])->andIndex('non_existing_index'));
     }
 
-    #[Lua('create_space(\'request_select\'):create_index(\'primary\', {type = \'hash\', parts = {1, \'unsigned\'}})')]
+    #[Lua('create_space("request_select"):create_index("primary", {type = "hash", parts = {1, "unsigned"}})')]
     public function testSelectWithNonExistingIndexId() : void
     {
         $space = $this->client->getSpace('request_select');

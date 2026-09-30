@@ -53,8 +53,8 @@ final class ClientMiddlewareTest extends TestCase
     }
 
     #[DoesNotPerformAssertions]
-    #[Lua('fiber = require(\'fiber\')')]
-    #[Lua('function test() try_drop_user(\'foobar\') fiber.sleep(.5) create_user(\'foobar\', \'\') end')]
+    #[Lua('fiber = require("fiber")')]
+    #[Lua('function test() try_drop_user("foobar") fiber.sleep(.5) create_user("foobar", "") end')]
     #[Lua('fiber.create(test)')]
     public function testAuthenticationRetrySucceeds() : void
     {

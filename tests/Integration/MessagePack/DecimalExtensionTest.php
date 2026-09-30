@@ -29,10 +29,10 @@ use Tarantool\PhpUnit\Attribute\RequiresTarantool;
 
 #[RequiresTarantool('>=2.3')]
 #[RequiresPhpExtension('decimal')]
-#[Lua('dec = require(\'decimal\').new(\'18446744073709551615\')')]
-#[Lua('space = create_space(\'decimal_primary\')')]
-#[Lua('space:format({{name = \'id\', type = \'decimal\'}})')]
-#[Lua('space:create_index("primary", {parts = {1, \'decimal\'}})')]
+#[Lua('dec = require("decimal").new("18446744073709551615")')]
+#[Lua('space = create_space("decimal_primary")')]
+#[Lua('space:format({{name = "id", type = "decimal"}})')]
+#[Lua('space:create_index("primary", {parts = {1, "decimal"}})')]
 #[Lua('space:insert({dec})')]
 final class DecimalExtensionTest extends TestCase
 {

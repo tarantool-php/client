@@ -17,12 +17,12 @@ use Tarantool\Client\Exception\RequestFailed;
 use Tarantool\Client\Tests\Integration\TestCase;
 use Tarantool\PhpUnit\Attribute\Lua;
 
-#[Lua('space = create_space(\'request_delete\')')]
-#[Lua('space:create_index(\'primary\', {type = \'hash\', parts = {1, \'unsigned\'}})')]
-#[Lua('space:create_index(\'secondary\', {type = \'tree\', parts = {2, \'str\'}})')]
-#[Lua('space:insert{3, \'delete_me_1\'}')]
-#[Lua('space:insert{4, \'delete_me_2\'}')]
-#[Lua('space:insert{5, \'delete_me_3\'}')]
+#[Lua('space = create_space("request_delete")')]
+#[Lua('space:create_index("primary", {type = "hash", parts = {1, "unsigned"}})')]
+#[Lua('space:create_index("secondary", {type = "tree", parts = {2, "str"}})')]
+#[Lua('space:insert{3, "delete_me_1"}')]
+#[Lua('space:insert{4, "delete_me_2"}')]
+#[Lua('space:insert{5, "delete_me_3"}')]
 final class DeleteTest extends TestCase
 {
     public function testDelete() : void
