@@ -13,6 +13,10 @@ declare(strict_types=1);
 
 namespace Tarantool\Client;
 
+/**
+ * @implements \ArrayAccess<array-key, array>
+ * @implements \IteratorAggregate<array-key, array>
+ */
 final class SqlQueryResult implements \ArrayAccess, \Countable, \IteratorAggregate
 {
     /** @var array<int, mixed> */

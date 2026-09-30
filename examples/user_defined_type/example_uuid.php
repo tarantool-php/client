@@ -21,8 +21,7 @@ ensure_server_version_at_least('2.4', $client);
 
 $spaceName = 'example';
 
-$client->evaluate(
-    <<<LUA
+$client->evaluate(<<<LUA
     if box.space[...] then box.space[...]:drop() end
     local space = box.schema.space.create(...)
     space:create_index("primary", {parts = {1, 'uuid'}})

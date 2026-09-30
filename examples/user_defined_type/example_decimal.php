@@ -22,8 +22,7 @@ ensure_extension('decimal');
 
 $spaceName = 'example';
 
-$client->evaluate(
-    <<<LUA
+$client->evaluate(<<<LUA
     if box.space[...] then box.space[...]:drop() end
     local space = box.schema.space.create(...)
     space:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
