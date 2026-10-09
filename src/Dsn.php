@@ -34,7 +34,17 @@ final class Dsn
         $this->connectionUri = $connectionUri;
     }
 
-    public static function parse(string $dsn) : self
+    public function __serialize() : array
+    {
+        throw new \LogicException('Dsn cannot be serialized');
+    }
+
+    public function __unserialize(array $data) : void
+    {
+        throw new \LogicException('Dsn cannot be unserialized');
+    }
+
+    public static function parse(#[\SensitiveParameter] string $dsn) : self
     {
         if (\str_starts_with($dsn, 'unix://') && isset($dsn[7])) {
             return self::parseUds($dsn);
@@ -67,7 +77,7 @@ final class Dsn
         return $self;
     }
 
-    private static function parseUds(string $dsn) : self
+    private static function parseUds(#[\SensitiveParameter] string $dsn) : self
     {
         $parts = \explode('@', \substr($dsn, 7), 2);
         if (isset($parts[1])) {
@@ -181,8 +191,8 @@ final class Dsn
     /**
      * @psalm-return never-returns
      */
-    private static function throwParseError(string $dsn) : void
+    private static function throwParseError(#[\SensitiveParameter] string $dsn) : void
     {
-        throw new \InvalidArgumentException(\sprintf('Unable to parse DSN "%s"', $dsn));
+        throw new \InvalidArgumentException('Unable to parse DSN');
     }
 }

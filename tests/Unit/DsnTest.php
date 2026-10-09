@@ -84,8 +84,16 @@ final class DsnTest extends TestCase
     public function testParseInvalidDsn(string $nonDsn) : void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage(sprintf('Unable to parse DSN "%s"', $nonDsn));
+        $this->expectExceptionMessageMatches('/^Unable to parse DSN$/');
         Dsn::parse($nonDsn);
+    }
+
+    public function testDsnCannotBeSerialized() : void
+    {
+        $dsn = Dsn::parse('tcp://alice:secret@db');
+
+        $this->expectException(\LogicException::class);
+        \serialize($dsn);
     }
 
     public static function provideInvalidDsns() : iterable
@@ -108,6 +116,7 @@ final class DsnTest extends TestCase
             ['unix:////'],
             ['http://host'],
             ['file:///path'],
+            ['tcp://alice:secret@db/path?password=token'],
         ];
     }
 

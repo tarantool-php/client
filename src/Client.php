@@ -86,7 +86,7 @@ final class Client
             : new self($handler);
     }
 
-    public static function fromDsn(string $dsn, ?Packer $packer = null) : self
+    public static function fromDsn(#[\SensitiveParameter] string $dsn, ?Packer $packer = null) : self
     {
         $dsn = Dsn::parse($dsn);
 

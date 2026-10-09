@@ -31,6 +31,16 @@ final class AuthenticationMiddleware implements Middleware
         $this->password = $password;
     }
 
+    public function __serialize() : array
+    {
+        throw new \LogicException('AuthenticationMiddleware cannot be serialized');
+    }
+
+    public function __unserialize(array $data) : void
+    {
+        throw new \LogicException('AuthenticationMiddleware cannot be unserialized');
+    }
+
     #[\Override]
     public function process(Request $request, Handler $handler) : Response
     {

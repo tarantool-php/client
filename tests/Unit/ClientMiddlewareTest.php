@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Tarantool\Client\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
+use Tarantool\Client\Client;
 use Tarantool\Client\Tests\SpyMiddleware;
 use Tarantool\PhpUnit\Client\TestDoubleClient;
 
@@ -51,5 +52,16 @@ final class ClientMiddlewareTest extends TestCase
         $client->ping();
 
         self::assertSame([3, 4, 1, 2], $trace->getArrayCopy());
+    }
+
+    public function testClientWithAuthenticationCannotBeSerialized() : void
+    {
+        $client = Client::fromOptions([
+            'username' => 'alice',
+            'password' => 'secret',
+        ]);
+
+        $this->expectException(\LogicException::class);
+        \serialize($client);
     }
 }
