@@ -119,6 +119,10 @@ Name | Type | Default | Description
 *password* | string | '' | The password for the user being authenticated. If the username is not set, this option will be ignored.
 *max_retries* | integer | 0 | The number of times the client retries an unsuccessful request. If set to 0, the client does not retry after the initial unsuccessful attempt.
 
+#### Authentication and persistent connections
+
+A persistent connection may reuse a socket opened by a previous client instance. Since authentication is tied to the socket, avoid combining `persistent=true` with `username` when a socket may be reused across client instances.
+
 
 #### Custom build
 
