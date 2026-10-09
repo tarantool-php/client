@@ -18,6 +18,7 @@ jobs:
       PHP_IMAGE: php:8.3-cli
     strategy:
       fail-fast: false
+      max-parallel: 5
       matrix:
         operating-system: [ubuntu-24.04]
         env:
