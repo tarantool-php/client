@@ -15,6 +15,7 @@ namespace Tarantool\Client\Connection;
 
 use Tarantool\Client\Exception\CommunicationFailed;
 use Tarantool\Client\Exception\ConnectionFailed;
+use Tarantool\Client\Exception\UnexpectedResponse;
 use Tarantool\Client\Packer\PacketLength;
 
 final class StreamConnection implements Connection
@@ -148,7 +149,10 @@ final class StreamConnection implements Connection
         }
 
         $length = $this->read(PacketLength::SIZE_BYTES, 'Error reading response length');
-        $length = PacketLength::unpack($length);
+        if (null === $length = PacketLength::tryUnpack($length)) {
+            $this->close();
+            throw new UnexpectedResponse('Unable to unpack response packet length');
+        }
 
         return $this->read($length, 'Error reading response');
     }
@@ -156,12 +160,15 @@ final class StreamConnection implements Connection
     private function read(int $length, string $errorMessage) : string
     {
         /** @psalm-suppress PossiblyNullArgument */
-        if ($data = \stream_get_contents($this->stream, $length)) {
+        $data = \stream_get_contents($this->stream, $length);
+        if (\is_string($data) && $length === \strlen($data)) {
             return $data;
         }
 
         /** @psalm-suppress PossiblyNullArgument */
         $meta = \stream_get_meta_data($this->stream);
+        $this->close();
+
         if ($meta['timed_out']) {
             throw new CommunicationFailed('Read timed out');
         }

@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Tarantool\Client\Packer;
 
+use Tarantool\Client\Exception\UnexpectedResponse;
 use Tarantool\Client\Request\Request;
 use Tarantool\Client\Response;
 
@@ -20,5 +21,8 @@ interface Packer
 {
     public function pack(Request $request, int $sync) : string;
 
+    /**
+     * @throws UnexpectedResponse If the packet is malformed
+     */
     public function unpack(string $packet) : Response;
 }

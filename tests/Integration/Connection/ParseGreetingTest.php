@@ -14,7 +14,9 @@ declare(strict_types=1);
 namespace Tarantool\Client\Tests\Integration\Connection;
 
 use PHPUnit\Framework\Attributes\DataProviderExternal;
+use Tarantool\Client\Connection\Greeting;
 use Tarantool\Client\Exception\CommunicationFailed;
+use Tarantool\Client\Exception\UnexpectedResponse;
 use Tarantool\Client\Tests\GreetingDataProvider;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\FakeServer\FakeServerBuilder;
@@ -62,10 +64,22 @@ final class ParseGreetingTest extends TestCase
             ->start();
 
         $client = $clientBuilder->setOptions(['username' => 'guest'])->build();
+        $connection = $client->getHandler()->getConnection();
 
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageMatches('/(Unable to decode salt|Salt is too short)/');
+        try {
+            $client->ping();
+        } catch (CommunicationFailed $e) {
+            self::assertLessThan(Greeting::SIZE_BYTES, \strlen($greeting));
+            self::assertTrue($connection->isClosed());
 
-        $client->ping();
+            return;
+        } catch (UnexpectedResponse $e) {
+            self::assertGreaterThanOrEqual(Greeting::SIZE_BYTES, \strlen($greeting));
+            self::assertMatchesRegularExpression('/(Unable to decode salt|Salt is too short)/', $e->getMessage());
+
+            return;
+        }
+
+        self::fail();
     }
 }

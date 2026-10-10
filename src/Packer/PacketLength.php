@@ -26,10 +26,10 @@ final class PacketLength
         return \pack('CN', 0xce, $length);
     }
 
-    public static function unpack(string $data) : int
+    public static function tryUnpack(string $data) : ?int
     {
         if (!isset($data[4]) || "\xce" !== $data[0]) {
-            throw new \RuntimeException('Unable to unpack packet length');
+            return null;
         }
 
         return \ord($data[1]) << 24

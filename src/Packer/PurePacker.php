@@ -14,10 +14,12 @@ declare(strict_types=1);
 namespace Tarantool\Client\Packer;
 
 use MessagePack\BufferUnpacker;
+use MessagePack\Exception\UnpackingFailedException;
 use MessagePack\Extension;
 use MessagePack\Packer;
 use MessagePack\PackOptions;
 use MessagePack\UnpackOptions;
+use Tarantool\Client\Exception\UnexpectedResponse;
 use Tarantool\Client\Keys;
 use Tarantool\Client\Packer\Extension\DecimalExtension;
 use Tarantool\Client\Packer\Extension\ErrorExtension;
@@ -81,9 +83,10 @@ final class PurePacker implements ClientPacker
     {
         $this->unpacker->reset($packet);
 
-        return new Response(
-            $this->unpacker->unpackMap(),
-            $this->unpacker->unpackMap()
-        );
+        try {
+            return new Response($this->unpacker->unpackMap(), $this->unpacker->unpackMap());
+        } catch (UnpackingFailedException $e) {
+            throw new UnexpectedResponse('Unable to unpack response', 0, $e);
+        }
     }
 }

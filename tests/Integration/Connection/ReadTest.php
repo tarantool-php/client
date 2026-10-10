@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Tarantool\Client\Tests\Integration\Connection;
 
 use Tarantool\Client\Exception\CommunicationFailed;
+use Tarantool\Client\Exception\UnexpectedResponse;
 use Tarantool\Client\Packer\PacketLength;
 use Tarantool\Client\Tests\GreetingDataProvider;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
@@ -87,6 +88,29 @@ final class ReadTest extends TestCase
         $client->ping();
     }
 
+    public function testMalformedResponseLengthClosesConnection() : void
+    {
+        $clientBuilder = ClientBuilder::createForFakeServer();
+
+        FakeServerBuilder::create(
+            new WriteHandler(GreetingDataProvider::generateGreeting()),
+            new WriteHandler("\x00\x00\x00\x00\x00")
+        )
+            ->setUri($clientBuilder->getUri())
+            ->start();
+
+        $client = $clientBuilder->build();
+        $connection = $client->getHandler()->getConnection();
+
+        try {
+            $client->ping();
+            self::fail('Expected an unexpected response');
+        } catch (UnexpectedResponse $e) {
+            self::assertSame('Unable to unpack response packet length', $e->getMessage());
+            self::assertTrue($connection->isClosed());
+        }
+    }
+
     public function testUnableToReadResponse() : void
     {
         $clientBuilder = ClientBuilder::createForFakeServer();
@@ -94,17 +118,20 @@ final class ReadTest extends TestCase
         FakeServerBuilder::create(
             new WriteHandler(GreetingDataProvider::generateGreeting()),
             new WriteHandler(PacketLength::pack(42)),
-            new SleepHandler(1)
+            new WriteHandler('partial')
         )
             ->setUri($clientBuilder->getUri())
             ->start();
 
         $client = $clientBuilder->build();
+        $connection = $client->getHandler()->getConnection();
 
-        $this->expectException(CommunicationFailed::class);
-        $this->expectExceptionMessageMatches('/Error reading response:.+Unable to connect/i');
-
-        $client->ping();
+        try {
+            $client->ping();
+            self::fail('Expected a communication failure');
+        } catch (CommunicationFailed $e) {
+            self::assertTrue($connection->isClosed());
+        }
     }
 
     public function testSocketReadTimedOut() : void

@@ -23,14 +23,12 @@ final class PacketLengthTest extends TestCase
         $packed = PacketLength::pack(42);
 
         self::assertIsString($packed);
-        self::assertSame(42, PacketLength::unpack($packed));
+        self::assertSame(42, PacketLength::tryUnpack($packed));
     }
 
-    public function testUnpackLengthFromMalformedData() : void
+    public function testTryUnpackLengthReturnsNullForMalformedData() : void
     {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Unable to unpack packet length');
-
-        PacketLength::unpack('foo');
+        self::assertNull(PacketLength::tryUnpack('foo'));
+        self::assertNull(PacketLength::tryUnpack("\x00\x00\x00\x00\x00"));
     }
 }
