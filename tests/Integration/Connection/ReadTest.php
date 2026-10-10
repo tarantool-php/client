@@ -19,6 +19,7 @@ use Tarantool\Client\Packer\PacketLength;
 use Tarantool\Client\Tests\GreetingDataProvider;
 use Tarantool\Client\Tests\Integration\ClientBuilder;
 use Tarantool\Client\Tests\Integration\FakeServer\FakeServerBuilder;
+use Tarantool\Client\Tests\Integration\FakeServer\Handler\ReadRequestHandler;
 use Tarantool\Client\Tests\Integration\FakeServer\Handler\SleepHandler;
 use Tarantool\Client\Tests\Integration\FakeServer\Handler\WriteHandler;
 use Tarantool\Client\Tests\Integration\TestCase;
@@ -55,6 +56,7 @@ final class ReadTest extends TestCase
 
         FakeServerBuilder::create(
             new WriteHandler(GreetingDataProvider::generateGreeting()),
+            new ReadRequestHandler(),
             new SleepHandler(1)
         )
             ->setUri($clientBuilder->getUri())
@@ -75,6 +77,7 @@ final class ReadTest extends TestCase
 
         FakeServerBuilder::create(
             new WriteHandler(GreetingDataProvider::generateGreeting()),
+            new ReadRequestHandler(),
             new SleepHandler(2)
         )
             ->setUri($clientBuilder->getUri())
@@ -94,6 +97,7 @@ final class ReadTest extends TestCase
 
         FakeServerBuilder::create(
             new WriteHandler(GreetingDataProvider::generateGreeting()),
+            new ReadRequestHandler(),
             new WriteHandler("\x00\x00\x00\x00\x00")
         )
             ->setUri($clientBuilder->getUri())
@@ -117,6 +121,7 @@ final class ReadTest extends TestCase
 
         FakeServerBuilder::create(
             new WriteHandler(GreetingDataProvider::generateGreeting()),
+            new ReadRequestHandler(),
             new WriteHandler(PacketLength::pack(42)),
             new WriteHandler('partial')
         )

@@ -75,7 +75,7 @@ final class ParseGreetingTest extends TestCase
             return;
         } catch (UnexpectedResponse $e) {
             self::assertGreaterThanOrEqual(Greeting::SIZE_BYTES, \strlen($greeting));
-            self::assertMatchesRegularExpression('/(Unable to decode salt|Salt is too short)/', $e->getMessage());
+            self::assertContains($e->getMessage(), ['Unable to decode salt', 'Salt is too short']);
 
             return;
         }

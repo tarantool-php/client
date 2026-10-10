@@ -38,6 +38,7 @@ final class GreetingDataProvider
     public static function provideGreetingsWithInvalidSalt() : iterable
     {
         return [
+            [self::generateGreetingFromSalt('short')],
             [str_pad('Tarantool', 63, '1')."\n"],
             [str_pad('Tarantool', 63, '2')."\n2"],
             [str_pad('Tarantool', 63, '3')."\n\n"],
