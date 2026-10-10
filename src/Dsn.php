@@ -39,6 +39,7 @@ final class Dsn
         throw new \LogicException('Dsn cannot be serialized');
     }
 
+    /** @psalm-suppress UnusedParam */
     public function __unserialize(array $data) : void
     {
         throw new \LogicException('Dsn cannot be unserialized');
@@ -51,13 +52,13 @@ final class Dsn
         }
 
         if (false === $parsed = \parse_url($dsn)) {
-            self::throwParseError($dsn);
+            self::throwParseError();
         }
         if (!isset($parsed['scheme'], $parsed['host']) || 'tcp' !== $parsed['scheme']) {
-            self::throwParseError($dsn);
+            self::throwParseError();
         }
         if (isset($parsed['path']) && '/' !== $parsed['path']) {
-            self::throwParseError($dsn);
+            self::throwParseError();
         }
 
         $self = new self('tcp://'.$parsed['host'].':'.($parsed['port'] ?? '3301'));
@@ -88,10 +89,10 @@ final class Dsn
         }
 
         if (false === $parsed) {
-            self::throwParseError($dsn);
+            self::throwParseError();
         }
         if (isset($parsed['host']) || !isset($parsed['path'])) {
-            self::throwParseError($dsn);
+            self::throwParseError();
         }
 
         $self = new self('unix://'.$parsed['path']);
@@ -191,7 +192,7 @@ final class Dsn
     /**
      * @psalm-return never-returns
      */
-    private static function throwParseError(#[\SensitiveParameter] string $dsn) : void
+    private static function throwParseError() : void
     {
         throw new \InvalidArgumentException('Unable to parse DSN');
     }

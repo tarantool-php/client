@@ -36,6 +36,7 @@ final class AuthenticationMiddleware implements Middleware
         throw new \LogicException('AuthenticationMiddleware cannot be serialized');
     }
 
+    /** @psalm-suppress UnusedParam */
     public function __unserialize(array $data) : void
     {
         throw new \LogicException('AuthenticationMiddleware cannot be unserialized');
