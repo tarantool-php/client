@@ -23,7 +23,7 @@
         "monolog/monolog": "^3.0",
         "phpunit/phpunit": "^10.5",
         "psr/log": "^3.0",
-        "tarantool/phpunit-extras": "^0.3.0",
+        "tarantool/phpunit-extras": "^0.3.2",
         "vimeo/psalm": "^5.23|^6"
     },
     "suggest": {

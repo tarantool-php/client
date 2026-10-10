@@ -39,7 +39,7 @@ final class RequestFailed extends \RuntimeException implements ClientException
         }
 
         $message ??= $error?->getMessage();
-        if (!\is_string($message)) {
+        if (null === $message) {
             throw new UnexpectedResponse(\sprintf('Missing response body field 0x%x', Keys::ERROR_24));
         }
 
