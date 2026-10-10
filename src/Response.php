@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Tarantool\Client;
 
+use Tarantool\Client\Exception\UnexpectedResponse;
+
 final class Response
 {
     public const TYPE_ERROR = 0x8000;
@@ -22,15 +24,17 @@ final class Response
 
     public function __construct(array $header, array $body)
     {
+        self::validateHeaderField($header, Keys::CODE);
+        self::validateHeaderField($header, Keys::SYNC);
+        self::validateHeaderField($header, Keys::SCHEMA_ID);
+
         $this->header = $header;
         $this->body = $body;
     }
 
     public function isError() : bool
     {
-        $code = $this->header[Keys::CODE];
-
-        return $code >= self::TYPE_ERROR;
+        return $this->getCode() >= self::TYPE_ERROR;
     }
 
     public function getCode() : int
@@ -54,7 +58,7 @@ final class Response
             return $this->body[$key];
         }
 
-        throw new \OutOfRangeException(\sprintf('The body key 0x%x does not exist', $key));
+        throw new UnexpectedResponse(\sprintf('Missing response body field 0x%x', $key));
     }
 
     public function tryGetBodyField(int $key, $default = null)
@@ -65,5 +69,12 @@ final class Response
     public function hasBodyField(int $key) : bool
     {
         return \array_key_exists($key, $this->body);
+    }
+
+    private static function validateHeaderField(array $header, int $key) : void
+    {
+        if (!\array_key_exists($key, $header) || !\is_int($header[$key])) {
+            throw new UnexpectedResponse(\sprintf('Missing or invalid response header field 0x%x', $key));
+        }
     }
 }

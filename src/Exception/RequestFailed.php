@@ -28,14 +28,24 @@ final class RequestFailed extends \RuntimeException implements ClientException
 
     public static function fromErrorResponse(Response $response) : self
     {
-        $self = new self(
-            $response->getBodyField(Keys::ERROR_24),
-            $response->getCode() & (Response::TYPE_ERROR - 1)
-        );
-
-        if ($error = $response->tryGetBodyField(Keys::ERROR)) {
-            $self->error = Error::fromMap($error);
+        $error = null;
+        if ($errorMap = $response->tryGetBodyField(Keys::ERROR)) {
+            $error = Error::fromMap($errorMap);
         }
+
+        $message = $response->tryGetBodyField(Keys::ERROR_24);
+        if ($response->hasBodyField(Keys::ERROR_24) && !\is_string($message)) {
+            throw new UnexpectedResponse(\sprintf('Invalid response body field 0x%x', Keys::ERROR_24));
+        }
+
+        $message ??= $error?->getMessage();
+        if (!\is_string($message)) {
+            throw new UnexpectedResponse(\sprintf('Missing response body field 0x%x', Keys::ERROR_24));
+        }
+
+        $self = new self($message, $response->getCode() & (Response::TYPE_ERROR - 1));
+
+        $self->error = $error;
 
         return $self;
     }
