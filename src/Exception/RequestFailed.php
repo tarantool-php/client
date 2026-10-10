@@ -30,7 +30,11 @@ final class RequestFailed extends \RuntimeException implements ClientException
     {
         $error = null;
         if ($errorMap = $response->tryGetBodyField(Keys::ERROR)) {
-            $error = Error::fromMap($errorMap);
+            try {
+                $error = Error::fromMap($errorMap);
+            } catch (\InvalidArgumentException|\TypeError $exception) {
+                throw new UnexpectedResponse(\sprintf('Invalid response body field 0x%x', Keys::ERROR), 0, $exception);
+            }
         }
 
         $message = $response->tryGetBodyField(Keys::ERROR_24);
@@ -44,7 +48,6 @@ final class RequestFailed extends \RuntimeException implements ClientException
         }
 
         $self = new self($message, $response->getCode() & (Response::TYPE_ERROR - 1));
-
         $self->error = $error;
 
         return $self;

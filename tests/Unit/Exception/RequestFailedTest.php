@@ -45,4 +45,26 @@ final class RequestFailedTest extends TestCase
         $this->expectException(UnexpectedResponse::class);
         RequestFailed::fromErrorResponse($response);
     }
+
+    public function testRejectsNonArrayStructuredError() : void
+    {
+        $response = new Response(
+            [Keys::CODE => Response::TYPE_ERROR, Keys::SYNC => 1, Keys::SCHEMA_ID => 0],
+            [Keys::ERROR => 'malformed', Keys::ERROR_24 => 'The server error']
+        );
+
+        $this->expectException(UnexpectedResponse::class);
+        RequestFailed::fromErrorResponse($response);
+    }
+
+    public function testTranslatesMalformedStructuredErrorMap() : void
+    {
+        $response = new Response(
+            [Keys::CODE => Response::TYPE_ERROR, Keys::SYNC => 1, Keys::SCHEMA_ID => 0],
+            [Keys::ERROR => [Keys::ERROR_STACK => []], Keys::ERROR_24 => 'The server error']
+        );
+
+        $this->expectException(UnexpectedResponse::class);
+        RequestFailed::fromErrorResponse($response);
+    }
 }
