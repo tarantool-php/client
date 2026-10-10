@@ -73,7 +73,7 @@ final class Response
 
     private static function validateHeaderField(array $header, int $key) : void
     {
-        if (!\array_key_exists($key, $header) || !\is_int($header[$key])) {
+        if (!\is_int($header[$key] ?? null)) {
             throw new UnexpectedResponse(\sprintf('Missing or invalid response header field 0x%x', $key));
         }
     }
