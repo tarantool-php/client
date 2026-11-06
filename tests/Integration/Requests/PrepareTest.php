@@ -68,7 +68,7 @@ final class PrepareTest extends TestCase
     {
         $stmt = $this->client->prepare('INSERT INTO prepare_execute VALUES(:id, :name)');
 
-        $insertResult1 = $stmt->executeUpdate(1, 'foo');
+        $insertResult1 = $stmt->executeUpdate([':id' => 1], [':name' => 'foo']);
         $insertResult2 = $stmt->executeUpdate([':name' => 'bar'], [':id' => 2]);
 
         $selectResult = $this->client->executeQuery('SELECT * FROM prepare_execute WHERE id > 0 ORDER BY id');
