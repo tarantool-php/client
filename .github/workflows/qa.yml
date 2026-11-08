@@ -22,6 +22,8 @@ jobs:
       matrix:
         operating-system: [ubuntu-24.04]
         env:
+          - TNT_IMAGE: tarantool/tarantool:3.9
+          - TNT_IMAGE: tarantool/tarantool:3.8
           - TNT_IMAGE: tarantool/tarantool:3.7
           - TNT_IMAGE: tarantool/tarantool:3.6
           - TNT_IMAGE: tarantool/tarantool:3.5
